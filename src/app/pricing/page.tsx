@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { ComparisonTable } from "@/components/marketing/ComparisonTable";
 
 const tiers = [
   {
@@ -61,9 +62,8 @@ const tiers = [
       "Photo order optimization",
     ],
     highlighted: false,
-    href: "/unlock?product=dating_audit",
-    cta: "Coming Soon",
-    disabled: true,
+    href: "/products/dating-audit",
+    cta: "Learn More",
   },
   {
     name: "30-Day Glow-Up Plan",
@@ -78,9 +78,8 @@ const tiers = [
       "Final comparison report",
     ],
     highlighted: false,
-    href: "/unlock?product=glowup_plan",
-    cta: "Coming Soon",
-    disabled: true,
+    href: "/products/glowup-plan",
+    cta: "Learn More",
   },
 ];
 
@@ -140,20 +139,14 @@ export default function PricingPage() {
                 </ul>
 
                 <div className="mt-8">
-                  {tier.disabled ? (
-                    <Button variant="outline" className="w-full" disabled>
+                  <Link href={tier.href}>
+                    <Button
+                      variant={tier.highlighted ? "primary" : "outline"}
+                      className="w-full"
+                    >
                       {tier.cta}
                     </Button>
-                  ) : (
-                    <Link href={tier.href}>
-                      <Button
-                        variant={tier.highlighted ? "primary" : "outline"}
-                        className="w-full"
-                      >
-                        {tier.cta}
-                      </Button>
-                    </Link>
-                  )}
+                  </Link>
                 </div>
               </Card>
             ))}
@@ -167,6 +160,23 @@ export default function PricingPage() {
               Your report is unlocked after payment verification. No external
               payment API is used.
             </p>
+          </div>
+
+          {/* ─── Comparison Table ─── */}
+          <div className="mt-16">
+            <SectionHeading title="Free vs Paid comparison" subtitle="See exactly what changes when you unlock." />
+            <div className="mx-auto max-w-4xl">
+              <ComparisonTable />
+            </div>
+          </div>
+
+          {/* ─── Trust & Offer Notes ─── */}
+          <div className="mt-12 space-y-4 text-center text-xs text-gray-600">
+            <p>Early users may receive manual offer codes. If you have one, enter it on the unlock page to get a discount.</p>
+            <p>Manual UPI unlock flow for MVP. No automatic payment verification.</p>
+            <p>AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
+            <p>No external AI service is used. No data is uploaded to any server.</p>
+            <p>No guaranteed dating, social, career, or financial outcomes.</p>
           </div>
 
           <div className="mt-16 text-center">

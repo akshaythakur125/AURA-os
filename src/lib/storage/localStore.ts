@@ -40,6 +40,7 @@ export function clearAll(): void {
     localStorage.removeItem("auracheck:v1:unlocks");
     localStorage.removeItem("auracheck:v1:orders");
     localStorage.removeItem("auracheck:v1:analytics");
+    localStorage.removeItem("auracheck:v1:leads");
   } catch {
     console.warn("Failed to clear localStorage");
   }

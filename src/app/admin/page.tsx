@@ -11,10 +11,11 @@ import { CATEGORY_LABELS, CATEGORY_COLORS } from "@/types/product";
 import { getAffiliateStats, getAffiliateClicks } from "@/lib/storage/affiliateStore";
 import { getOrders, updateOrder, deleteOrder, getOrderStats } from "@/lib/storage/orderStore";
 import { getAuditStats, getAudits } from "@/lib/storage/auditStore";
-import { getAnalyticsSummary, clearAnalytics } from "@/lib/storage/analyticsStore";
+import { getAnalyticsSummary, clearAnalytics, getEvents } from "@/lib/storage/analyticsStore";
 import { generateUnlockCode } from "@/lib/payments/unlockCodeGenerator";
 import { downloadJson } from "@/lib/export/downloadJson";
 import { jsonToCsv, downloadCsv } from "@/lib/export/csv";
+import { getLeads, deleteLead, clearLeads, exportLeads } from "@/lib/storage/leadStore";
 import type { ManualOrder } from "@/types/order";
 
 function getAdminCode(): string {
@@ -106,6 +107,35 @@ export default function AdminPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authenticated, refreshKey]);
 
+  const leads = useMemo(() => {
+    if (!authenticated) return [];
+    return getLeads();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authenticated, refreshKey]);
+
+  const productPageViews = useMemo(() => {
+    if (!authenticated) return { aura_report: 0, dating_audit: 0, glowup_plan: 0, examples: 0 };
+    const events = getEvents();
+    return {
+      aura_report: events.filter((e) => e.eventName === "product_page_viewed" && e.metadata?.product === "aura_report").length,
+      dating_audit: events.filter((e) => e.eventName === "product_page_viewed" && e.metadata?.product === "dating_audit").length,
+      glowup_plan: events.filter((e) => e.eventName === "product_page_viewed" && e.metadata?.product === "glowup_plan").length,
+      examples: events.filter((e) => e.eventName === "examples_viewed").length,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authenticated, refreshKey]);
+
+  const productUnlockCounts = useMemo(() => {
+    if (!authenticated) return { aura_report: 0, dating_audit: 0, glowup_plan: 0 };
+    const orders = getOrders();
+    return {
+      aura_report: orders.filter((o) => o.productType === "aura_report" && o.status === "unlocked").length,
+      dating_audit: orders.filter((o) => o.productType === "dating_audit" && o.status === "unlocked").length,
+      glowup_plan: orders.filter((o) => o.productType === "glowup_plan" && o.status === "unlocked").length,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authenticated, refreshKey]);
+
   const totalActive = useMemo(() => PRODUCTS.filter((p) => p.isActive).length, []);
   const totalSponsored = useMemo(() => PRODUCTS.filter((p) => p.isSponsored).length, []);
 
@@ -183,6 +213,27 @@ export default function AdminPage() {
     }));
     const csv = jsonToCsv(rows);
     downloadCsv(csv, `auracheck-affiliate-clicks-${new Date().toISOString().slice(0, 10)}.csv`);
+  }
+
+  function handleExportLeadsCSV() {
+    const allLeads = exportLeads();
+    const rows = allLeads.map((l) => ({
+      id: l.id,
+      name: l.name || "",
+      contact: l.contact || "",
+      interestProduct: l.interestProduct || "",
+      note: l.note || "",
+      source: l.source,
+      createdAt: l.createdAt,
+    }));
+    const csv = jsonToCsv(rows);
+    downloadCsv(csv, `auracheck-leads-${new Date().toISOString().slice(0, 10)}.csv`);
+  }
+
+  function handleDeleteLead(id: string) {
+    if (!window.confirm("Delete this lead?")) return;
+    deleteLead(id);
+    setRefreshKey((k) => k + 1);
   }
 
   if (!authenticated) {
@@ -274,6 +325,88 @@ export default function AdminPage() {
         )}
       </Card>
 
+      {/* ─── Funnel Analytics ─── */}
+      <Card className="mb-8">
+        <h3 className="mb-4 text-sm font-semibold text-white">Product Funnel</h3>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+            <div className="text-xs text-gray-500">Aura Report views</div>
+            <div className="mt-1 text-lg font-bold text-white">{productPageViews.aura_report}</div>
+          </div>
+          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+            <div className="text-xs text-gray-500">Dating Audit views</div>
+            <div className="mt-1 text-lg font-bold text-white">{productPageViews.dating_audit}</div>
+          </div>
+          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+            <div className="text-xs text-gray-500">Glow-Up Plan views</div>
+            <div className="mt-1 text-lg font-bold text-white">{productPageViews.glowup_plan}</div>
+          </div>
+          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+            <div className="text-xs text-gray-500">Examples views</div>
+            <div className="mt-1 text-lg font-bold text-white">{productPageViews.examples}</div>
+          </div>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="rounded-lg border border-purple-500/20 bg-purple-500/5 p-3">
+            <div className="text-xs text-gray-500">Aura Report unlocked</div>
+            <div className="mt-1 text-lg font-bold text-emerald-400">{productUnlockCounts.aura_report}</div>
+          </div>
+          <div className="rounded-lg border border-purple-500/20 bg-purple-500/5 p-3">
+            <div className="text-xs text-gray-500">Dating Audit unlocked</div>
+            <div className="mt-1 text-lg font-bold text-emerald-400">{productUnlockCounts.dating_audit}</div>
+          </div>
+          <div className="rounded-lg border border-purple-500/20 bg-purple-500/5 p-3">
+            <div className="text-xs text-gray-500">Glow-Up Plan unlocked</div>
+            <div className="mt-1 text-lg font-bold text-emerald-400">{productUnlockCounts.glowup_plan}</div>
+          </div>
+        </div>
+      </Card>
+
+      {/* ─── Leads ─── */}
+      <Card className="mb-8">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold text-white">Local Leads ({leads.length})</h3>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="secondary" size="sm" onClick={handleExportLeadsCSV}>Export CSV</Button>
+            <Button variant="ghost" size="sm" onClick={() => { if (window.confirm("Clear all leads?")) { clearLeads(); setRefreshKey((k) => k + 1); } }}>Clear All</Button>
+          </div>
+        </div>
+        {leads.length === 0 ? (
+          <p className="text-sm text-gray-500">No leads captured yet.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="border-b border-white/5 text-gray-500">
+                  <th className="pb-2 pr-3 font-medium">Name</th>
+                  <th className="pb-2 pr-3 font-medium">Contact</th>
+                  <th className="pb-2 pr-3 font-medium">Interest</th>
+                  <th className="pb-2 pr-3 font-medium">Source</th>
+                  <th className="pb-2 pr-3 font-medium">Note</th>
+                  <th className="pb-2 pr-3 font-medium">Date</th>
+                  <th className="pb-2 font-medium">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leads.map((l) => (
+                  <tr key={l.id} className="border-b border-white/5 text-gray-300">
+                    <td className="py-2 pr-3">{l.name || "—"}</td>
+                    <td className="py-2 pr-3">{l.contact || "—"}</td>
+                    <td className="py-2 pr-3">{l.interestProduct || "—"}</td>
+                    <td className="py-2 pr-3">{l.source}</td>
+                    <td className="py-2 pr-3 text-[10px] text-gray-500 max-w-[120px] truncate">{l.note || "—"}</td>
+                    <td className="py-2 pr-3 text-[10px] text-gray-500">{formatDate(l.createdAt)}</td>
+                    <td className="py-2">
+                      <button onClick={() => handleDeleteLead(l.id)} className="rounded bg-red-500/20 px-1.5 py-0.5 text-[10px] text-red-300 hover:bg-red-500/30">Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+
       {/* ─── Manual Orders Table ─── */}
       <Card className="mb-8">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -297,6 +430,7 @@ export default function AdminPage() {
                   <th className="pb-2 pr-3 font-medium">Audit</th>
                   <th className="pb-2 pr-3 font-medium">Product</th>
                   <th className="pb-2 pr-3 font-medium">Amount</th>
+                  <th className="pb-2 pr-3 font-medium">Discount</th>
                   <th className="pb-2 pr-3 font-medium">Status</th>
                   <th className="pb-2 pr-3 font-medium">Customer</th>
                   <th className="pb-2 pr-3 font-medium">UPI Ref</th>
@@ -311,7 +445,11 @@ export default function AdminPage() {
                     <td className="py-2 pr-3 text-[10px] text-gray-500">{o.id.slice(0, 8)}</td>
                     <td className="py-2 pr-3 text-[10px] text-gray-500">{o.auditId.slice(0, 8)}</td>
                     <td className="py-2 pr-3">{o.productName}</td>
-                    <td className="py-2 pr-3 text-amber-400">₹{o.amount}</td>
+                    <td className="py-2 pr-3 text-amber-400">
+                      {o.discountAmount ? <span className="line-through text-gray-600 mr-1">₹{o.originalAmount || o.amount}</span> : ""}
+                      ₹{o.amount}
+                    </td>
+                    <td className="py-2 pr-3">{o.discountCode ? <span className="text-emerald-400 text-[10px]">{o.discountCode} (-₹{o.discountAmount})</span> : <span className="text-gray-600">—</span>}</td>
                     <td className="py-2 pr-3">
                       <Badge variant={STATUS_BADGE[o.status] || "default"}>{o.status.replace(/_/g, " ")}</Badge>
                     </td>

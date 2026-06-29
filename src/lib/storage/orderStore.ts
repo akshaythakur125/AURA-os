@@ -42,6 +42,10 @@ export function createOrder(input: {
   customerName?: string;
   customerContact?: string;
   userNote?: string;
+  offerCode?: string;
+  originalAmount?: number;
+  discountAmount?: number;
+  finalAmount?: number;
 }): ManualOrder {
   const now = new Date().toISOString();
   const amount = getProductPrice(input.productType);
@@ -60,7 +64,11 @@ export function createOrder(input: {
     auditId: input.auditId,
     productType: input.productType,
     productName,
-    amount,
+    amount: input.finalAmount ?? amount,
+    originalAmount: input.originalAmount,
+    discountCode: input.offerCode,
+    discountAmount: input.discountAmount,
+    finalAmount: input.finalAmount,
     status: "payment_submitted",
     customerName: input.customerName || undefined,
     customerContact: input.customerContact || undefined,

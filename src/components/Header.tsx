@@ -7,14 +7,21 @@ import { useState } from "react";
 
 const navLinks = [
   { href: "/#how-it-works", label: "How it Works" },
-  { href: "/#examples", label: "Examples" },
+  { href: "/examples", label: "Examples" },
   { href: "/shop", label: "Shop" },
   { href: "/pricing", label: "Pricing" },
   { href: "/privacy", label: "Privacy" },
 ];
 
+const productLinks = [
+  { href: "/products/aura-report", label: "Aura Report — ₹99" },
+  { href: "/products/dating-audit", label: "Dating Audit — ₹299" },
+  { href: "/products/glowup-plan", label: "Glow-Up Plan — ₹499" },
+];
+
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [productsOpen, setProductsOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/5 bg-black/80 backdrop-blur-xl">
@@ -37,6 +44,35 @@ export function Header() {
                 {link.label}
               </Link>
             ))}
+
+            {/* Products dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setProductsOpen(!productsOpen)}
+                onBlur={() => setTimeout(() => setProductsOpen(false), 200)}
+                className="flex items-center gap-1 text-sm text-gray-400 transition-colors hover:text-white"
+              >
+                Products
+                <svg className={`h-3 w-3 transition-transform ${productsOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              {productsOpen && (
+                <div className="absolute right-0 top-full mt-2 w-52 overflow-hidden rounded-xl border border-white/10 bg-black/90 backdrop-blur-xl">
+                  {productLinks.map((p) => (
+                    <Link
+                      key={p.href}
+                      href={p.href}
+                      onClick={() => setProductsOpen(false)}
+                      className="block px-4 py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/5 hover:text-white"
+                    >
+                      {p.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <Link href="/audit/new">
               <Button size="sm">Start Aura Check</Button>
             </Link>
@@ -72,6 +108,19 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
+              <div className="border-t border-white/5 pt-4">
+                <p className="mb-2 text-xs text-gray-600">Products</p>
+                {productLinks.map((p) => (
+                  <Link
+                    key={p.href}
+                    href={p.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="block py-1.5 text-sm text-gray-400 transition-colors hover:text-white"
+                  >
+                    {p.label}
+                  </Link>
+                ))}
+              </div>
               <Link href="/audit/new" onClick={() => setMobileOpen(false)}>
                 <Button className="w-full" size="sm">
                   Start Aura Check

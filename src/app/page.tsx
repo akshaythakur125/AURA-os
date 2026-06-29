@@ -442,6 +442,97 @@ export default function HomePage() {
         </Container>
       </section>
 
+      {/* ─── See Sample Reports ─── */}
+      <section className="border-t border-white/5 py-20">
+        <Container>
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              See sample reports before paying
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">
+              Three demo reports — one for each product. See exactly what you get before you decide to unlock.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            <Link href="/products/aura-report" className="group">
+              <Card hover className="relative overflow-hidden h-full">
+                <Badge variant="premium" className="mb-3">Aura Report — ₹99</Badge>
+                <div className="flex items-baseline gap-1 mb-3">
+                  <span className="text-3xl font-bold text-white">72</span>
+                  <span className="text-xs text-gray-500">/ 100</span>
+                </div>
+                <p className="text-sm text-gray-400">Full visual breakdown, status leaks ranked, budget upgrade plan, and shareable card.</p>
+                <span className="mt-4 inline-block text-xs text-purple-400 group-hover:text-purple-300">View product →</span>
+              </Card>
+            </Link>
+            <Link href="/products/dating-audit" className="group">
+              <Card hover className="relative overflow-hidden h-full">
+                <Badge variant="premium" className="mb-3">Dating Audit — ₹299</Badge>
+                <div className="flex items-baseline gap-1 mb-3">
+                  <span className="text-3xl font-bold text-white">68</span>
+                  <span className="text-xs text-gray-500">/ 100</span>
+                </div>
+                <p className="text-sm text-gray-400">Bio analysis, red-flag detection, prompt grading, and 3 suggested bios.</p>
+                <span className="mt-4 inline-block text-xs text-purple-400 group-hover:text-purple-300">View product →</span>
+              </Card>
+            </Link>
+            <Link href="/products/glowup-plan" className="group">
+              <Card hover className="relative overflow-hidden h-full">
+                <Badge variant="premium" className="mb-3">Glow-Up Plan — ₹499</Badge>
+                <div className="flex items-baseline gap-1 mb-3">
+                  <span className="text-3xl font-bold text-white">74</span>
+                  <span className="text-xs text-gray-500">/ 100</span>
+                </div>
+                <p className="text-sm text-gray-400">30-day roadmap, daily missions, budget tiers, and week-by-week focus.</p>
+                <span className="mt-4 inline-block text-xs text-purple-400 group-hover:text-purple-300">View product →</span>
+              </Card>
+            </Link>
+          </div>
+          <div className="mt-8 text-center">
+            <Link href="/examples">
+              <Button variant="outline" size="lg">View All Sample Reports</Button>
+            </Link>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── Three Paid Upgrades ─── */}
+      <section className="border-t border-white/5 py-20">
+        <Container>
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              Three paid upgrades. One clear path.
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">
+              Start free. Go deeper when you are ready.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card hover className="text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 text-lg font-bold text-white">1</div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Full Aura Report</h3>
+              <p className="mb-2 text-2xl font-bold text-amber-400">₹99</p>
+              <p className="text-sm text-gray-400">Deep analysis of your visual signal with a detailed upgrade roadmap.</p>
+              <div className="mt-4"><Link href="/products/aura-report"><Button variant="outline" size="sm">Learn More</Button></Link></div>
+            </Card>
+            <Card hover className="text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 text-lg font-bold text-white">2</div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Dating Profile Audit</h3>
+              <p className="mb-2 text-2xl font-bold text-amber-400">₹299</p>
+              <p className="text-sm text-gray-400">Profile text analysis with bio suggestions, red-flag detection, and prompt grading.</p>
+              <div className="mt-4"><Link href="/products/dating-audit"><Button variant="outline" size="sm">Learn More</Button></Link></div>
+            </Card>
+            <Card hover className="text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-lg font-bold text-white">3</div>
+              <h3 className="mb-2 text-lg font-semibold text-white">30-Day Glow-Up Plan</h3>
+              <p className="mb-2 text-2xl font-bold text-amber-400">₹499</p>
+              <p className="text-sm text-gray-400">A structured month-long roadmap for grooming, outfit, and photo consistency.</p>
+              <div className="mt-4"><Link href="/products/glowup-plan"><Button variant="outline" size="sm">Learn More</Button></Link></div>
+            </Card>
+          </div>
+        </Container>
+      </section>
+
       {/* ─── Example Report Preview ─── */}
       <section className="border-t border-white/5 py-20">
         <Container>

@@ -15,8 +15,10 @@ import { trackEvent } from "@/lib/storage/analyticsStore";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
 import { generateDatingProfileReport } from "@/lib/aura-engine/datingAudit";
 import { generateGlowupPlan } from "@/lib/aura-engine/glowupPlan";
+import { applyOfferCode } from "@/lib/offers/applyOffer";
 import type { ProductType } from "@/types/payment";
 import type { Audit } from "@/types/audit";
+import type { OfferApplication } from "@/types/offer";
 
 type UnlockStage = "request" | "submit" | "summary" | "unlock" | "done";
 
@@ -86,11 +88,15 @@ function UnlockForm() {
   const [unlocking, setUnlocking] = useState(false);
   const [orderId, setOrderId] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [offerCode, setOfferCode] = useState("");
+  const [offerResult, setOfferResult] = useState<OfferApplication | null>(null);
 
   const audit = typeof window !== "undefined" && auditId ? getAuditById(auditId) : undefined;
   const productName = getProductName(defaultProduct);
   const productPrice = getProductPrice(defaultProduct);
   const productPriceLabel = getProductPriceLabel(defaultProduct);
+  const finalPrice = offerResult?.isValid ? offerResult.finalAmount : productPrice;
+  const finalPriceLabel = offerResult?.isValid && offerResult.finalAmount !== productPrice ? `₹${offerResult.finalAmount}` : productPriceLabel;
   const features = PRODUCT_FEATURES[defaultProduct] || PRODUCT_FEATURES.aura_report;
   const upiId = getUpiId();
   const supportEmail = getSupportEmail();
@@ -107,23 +113,26 @@ function UnlockForm() {
     const params = new URLSearchParams();
     params.set("pa", upiId);
     params.set("pn", "AuraCheck");
-    params.set("am", String(productPrice));
+    params.set("am", String(finalPrice));
     params.set("cu", "INR");
     params.set("tn", `AuraCheck ${productName} ${auditId.slice(0, 8)}`);
     return `${base}?${params.toString()}`;
   }
 
   function buildPaymentNote(): string {
-    return `AuraCheck ${productName}\nAmount: ${productPriceLabel}\nAudit: ${auditId.slice(0, 8)}...\nUPI: ${upiId}`;
+    return `AuraCheck ${productName}\nAmount: ${finalPriceLabel}\nAudit: ${auditId.slice(0, 8)}...\nUPI: ${upiId}`;
   }
 
   function buildPaymentSummary(): string {
     const lines = [
       `Product: ${productName}`,
-      `Amount: ${productPriceLabel}`,
+      `Amount: ${finalPriceLabel}`,
       `Audit ID: ${auditId}`,
       `UPI ID: ${upiId}`,
     ];
+    if (offerResult?.isValid && offerResult.finalAmount !== productPrice) {
+      lines.push(`Discount: ${offerResult.code} — You pay ₹${offerResult.finalAmount} (was ₹${productPrice})`);
+    }
     if (customerName) lines.push(`Name: ${customerName}`);
     if (customerContact) lines.push(`Contact: ${customerContact}`);
     if (upiTxRef) lines.push(`UPI Ref: ${upiTxRef}`);
@@ -134,7 +143,7 @@ function UnlockForm() {
 
   function buildWhatsAppSummary(): string {
     return encodeURIComponent(
-      `AuraCheck Payment Request\n\nProduct: ${productName}\nAmount: ${productPriceLabel}\nAudit ID: ${auditId}\n${customerName ? `Name: ${customerName}\n` : ""}${customerContact ? `Contact: ${customerContact}\n` : ""}${upiTxRef ? `UPI Ref: ${upiTxRef}\n` : ""}${userNote ? `Note: ${userNote}\n` : ""}\nStatus: Payment Submitted`
+      `AuraCheck Payment Request\n\nProduct: ${productName}\nAmount: ${finalPriceLabel}\nAudit ID: ${auditId}\n${offerResult?.isValid && offerResult.finalAmount !== productPrice ? `Discount: ${offerResult.code} — Pay ₹${offerResult.finalAmount}\n` : ""}${customerName ? `Name: ${customerName}\n` : ""}${customerContact ? `Contact: ${customerContact}\n` : ""}${upiTxRef ? `UPI Ref: ${upiTxRef}\n` : ""}${userNote ? `Note: ${userNote}\n` : ""}\nStatus: Payment Submitted`
     );
   }
 
@@ -142,6 +151,18 @@ function UnlockForm() {
     navigator.clipboard.writeText(text);
     setCopied(label);
     setTimeout(() => setCopied(null), 2000);
+  }
+
+  function handleApplyOffer() {
+    if (!offerCode.trim()) {
+      setOfferResult(null);
+      return;
+    }
+    const result = applyOfferCode(defaultProduct, productPrice, offerCode);
+    setOfferResult(result);
+    if (result.isValid && result.finalAmount < productPrice) {
+      trackEvent({ eventName: "offer_applied", auditId, productType: defaultProduct, metadata: { code: result.code, discount: String(result.discountAmount) } });
+    }
   }
 
   function handleSavePaymentRequest() {
@@ -152,6 +173,10 @@ function UnlockForm() {
       customerName: customerName.trim() || undefined,
       customerContact: customerContact.trim() || undefined,
       userNote: userNote.trim() || undefined,
+      offerCode: offerResult?.isValid ? offerResult.code : undefined,
+      originalAmount: offerResult?.isValid ? productPrice : undefined,
+      discountAmount: offerResult?.isValid ? offerResult.discountAmount : undefined,
+      finalAmount: offerResult?.isValid ? offerResult.finalAmount : undefined,
     });
     const withRef = order.upiTransactionRef !== upiTxRef.trim() ? { ...order, upiTransactionRef: upiTxRef.trim() || undefined } : order;
     if (withRef.upiTransactionRef !== order.upiTransactionRef) {
@@ -292,7 +317,7 @@ function UnlockForm() {
         <Card className="mb-6">
           <Badge variant="premium" className="mb-3">{productName}</Badge>
           <h1 className="mb-2 text-2xl font-bold text-white">Unlock {productName}</h1>
-          <p className="mb-6 text-sm text-gray-400">One-time payment of <span className="text-amber-400">{productPriceLabel}</span></p>
+          <p className="mb-6 text-sm text-gray-400">One-time payment of <span className="text-amber-400">{finalPriceLabel}</span></p>
           <ul className="mb-6 space-y-3">
             {features.map((f) => (
               <li key={f} className="flex items-start gap-3 text-sm text-gray-300">
@@ -329,10 +354,32 @@ function UnlockForm() {
         {/* ─── STAGE 1: Payment Request ─── */}
         {stage === "request" && (
           <>
+            {/* Offer Code */}
+            <Card className="mb-6">
+              <h3 className="mb-3 text-sm font-semibold text-white">Have an offer code?</h3>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={offerCode}
+                  onChange={(e) => setOfferCode(e.target.value)}
+                  placeholder="e.g. EARLY50"
+                  className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+                />
+                <Button variant="secondary" size="sm" onClick={handleApplyOffer}>
+                  Apply
+                </Button>
+              </div>
+              {offerResult && (
+                <div className={`mt-3 rounded-lg px-3 py-2 text-xs ${offerResult.isValid ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>
+                  {offerResult.message}
+                </div>
+              )}
+            </Card>
+
             <Card className="mb-6">
               <h3 className="mb-4 text-sm font-semibold text-white">Step 1: Pay via UPI</h3>
               <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
-                <p className="mb-2 text-xs text-gray-500">Send <span className="text-amber-400">{productPriceLabel}</span> to:</p>
+                <p className="mb-2 text-xs text-gray-500">Send <span className="text-amber-400">{finalPriceLabel}</span> to:</p>
                 <div className="flex items-center justify-between gap-2">
                   <p className="font-mono text-lg text-purple-300">{upiId}</p>
                   <button onClick={() => handleCopy(upiId, "upi")} className="shrink-0 rounded-lg border border-white/10 px-2.5 py-1 text-xs text-gray-400 hover:border-purple-500/30 hover:text-purple-300">
@@ -398,6 +445,11 @@ function UnlockForm() {
         {stage === "submit" && (
           <Card className="mb-6">
             <h3 className="mb-4 text-sm font-semibold text-white">Submit Payment Details</h3>
+            {offerResult?.isValid && offerResult.finalAmount !== productPrice && (
+              <div className="mb-4 rounded-lg bg-emerald-500/10 px-3 py-2 text-xs text-emerald-400">
+                Offer {offerResult.code} applied: {productPriceLabel} → <span className="font-bold">{finalPriceLabel}</span>
+              </div>
+            )}
             <div className="space-y-4">
               <div>
                 <label className="mb-1 block text-xs text-gray-500">Your Name <span className="text-gray-600">(optional)</span></label>
@@ -437,7 +489,13 @@ function UnlockForm() {
               <h3 className="mb-4 text-sm font-semibold text-white">Payment Request Summary</h3>
               <div className="space-y-3 rounded-xl border border-white/5 bg-white/[0.03] p-4">
                 <div className="flex justify-between text-sm"><span className="text-gray-500">Product</span><span className="text-white">{productName}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-gray-500">Amount</span><span className="text-amber-400">{productPriceLabel}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-gray-500">Amount</span><span className="text-amber-400">{finalPriceLabel}</span></div>
+              {offerResult?.isValid && offerResult.finalAmount !== productPrice && (
+                <div className="flex justify-between text-sm"><span className="text-gray-500">Original</span><span className="text-gray-500 line-through">{productPriceLabel}</span></div>
+              )}
+              {offerResult?.isValid && offerResult.finalAmount !== productPrice && (
+                <div className="flex justify-between text-sm"><span className="text-gray-500">Discount</span><span className="text-emerald-400">-₹{offerResult.discountAmount}</span></div>
+              )}
                 <div className="flex justify-between text-sm"><span className="text-gray-500">Audit ID</span><span className="text-white text-xs truncate max-w-[200px]">{auditId}</span></div>
                 {customerName && <div className="flex justify-between text-sm"><span className="text-gray-500">Name</span><span className="text-white">{customerName}</span></div>}
                 {customerContact && <div className="flex justify-between text-sm"><span className="text-gray-500">Contact</span><span className="text-white">{customerContact}</span></div>}
@@ -472,7 +530,7 @@ function UnlockForm() {
                 </div>
                 {error && <p className="rounded-lg bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
                 <Button className="w-full" size="lg" onClick={handleUnlock} disabled={unlocking}>
-                  {unlocking ? "Generating Report..." : `Unlock ${productName} — ${productPriceLabel}`}
+                {unlocking ? "Generating Report..." : `Unlock ${productName} — ${finalPriceLabel}`}
                 </Button>
               </div>
             </Card>
