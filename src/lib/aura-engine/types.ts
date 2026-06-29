@@ -5,9 +5,9 @@ import type {
 } from "@/types/audit";
 
 export interface ScoringInput {
-  imageCount: number;
-  type: string;
+  auditType: string;
   goal: string;
+  budgetRange: number;
   visualFactors?: Record<string, number>;
   presentationFactors?: Record<string, number>;
 }

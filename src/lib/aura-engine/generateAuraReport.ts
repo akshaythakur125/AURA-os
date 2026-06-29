@@ -6,9 +6,9 @@ import type { ScoringInput } from "./types";
 
 export function generateReport(audit: Audit): AuraReport {
   const input: ScoringInput = {
-    imageCount: audit.imageCount,
-    type: audit.type,
+    auditType: audit.auditType,
     goal: audit.goal,
+    budgetRange: audit.budgetRange,
   };
 
   const result = calculateAuraScore(input);

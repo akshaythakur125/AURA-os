@@ -1,34 +1,46 @@
-export type AuditType =
-  | "photo"
-  | "profile"
-  | "outfit"
-  | "lifestyle"
-  | "full";
+export type AuditType = "photo" | "instagram" | "dating" | "outfit" | "room";
 
-export type AuditGoal =
-  | "casual"
-  | "professional"
-  | "dating"
-  | "social"
-  | "general";
+export type AuditGoal = "dating" | "instagram" | "college" | "office" | "glowup";
+
+export type BudgetAmount = 0 | 2000 | 5000 | 10000 | 25000;
 
 export interface BudgetRange {
-  min: number;
-  max: number;
+  min: BudgetAmount;
+  max: BudgetAmount;
   currency: "INR";
 }
 
-export type UnlockStatus = "locked" | "unlocked" | "pending";
+export type AuraReportStatus =
+  | "draft"
+  | "free_generated"
+  | "locked"
+  | "unlocked";
+
+export type UnlockStatus = "free" | "locked" | "unlocked";
+
+export interface ImageMeta {
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  width?: number;
+  height?: number;
+}
 
 export interface Audit {
   id: string;
-  type: AuditType;
+  auditType: AuditType;
   goal: AuditGoal;
+  budgetRange: BudgetAmount;
+  imageDataUrl?: string;
+  imageMeta?: ImageMeta;
+  freeScore?: number;
+  fullScore?: number;
+  freeSummary?: string;
+  fullReport?: AuraReport;
+  reportStatus: AuraReportStatus;
+  unlockStatus: UnlockStatus;
   createdAt: string;
   updatedAt: string;
-  imageCount: number;
-  unlockStatus: UnlockStatus;
-  unlockCode?: string;
 }
 
 export interface AuraScore {
@@ -59,16 +71,44 @@ export interface UpgradeSuggestion {
   cost: "free" | "low" | "medium" | "high";
 }
 
+export interface BudgetUpgradePlan {
+  items: UpgradeSuggestion[];
+  totalBudget: number;
+  currency: "INR";
+}
+
+export interface VisualBreakdown {
+  label: string;
+  score: number;
+  maxScore: number;
+}
+
 export interface AuraReport {
   id: string;
   auditId: string;
   score: AuraScore;
   leaks: StatusLeak[];
   suggestions: UpgradeSuggestion[];
+  visualBreakdown?: VisualBreakdown[];
   summary: string;
   createdAt: string;
   isPremium: boolean;
   premiumContent?: string;
+}
+
+export interface AuditInput {
+  auditType: AuditType;
+  goal: AuditGoal;
+  budgetRange: BudgetAmount;
+}
+
+export interface AuditStats {
+  totalAudits: number;
+  unlockedReports: number;
+  averageFreeScore: number | null;
+  latestScore: number | null;
+  bestScore: number | null;
+  lastAuditDate: string | null;
 }
 
 export function createLocalId(): string {

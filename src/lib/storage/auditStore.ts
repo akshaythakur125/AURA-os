@@ -1,0 +1,97 @@
+import type { Audit, AuditInput, AuditStats } from "@/types/audit";
+import { createLocalId } from "@/types/audit";
+import { getItem, setItem } from "./localStore";
+import { STORAGE_KEYS } from "./storageKeys";
+
+function getAll(): Audit[] {
+  return getItem<Audit[]>(STORAGE_KEYS.AUDITS, []);
+}
+
+function persist(audits: Audit[]): void {
+  setItem(STORAGE_KEYS.AUDITS, audits);
+}
+
+export function getAudits(): Audit[] {
+  return getAll().sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+}
+
+export function getAuditById(id: string): Audit | undefined {
+  return getAll().find((a) => a.id === id);
+}
+
+export function createAudit(input: AuditInput): Audit {
+  const now = new Date().toISOString();
+  const audit: Audit = {
+    id: createLocalId(),
+    auditType: input.auditType,
+    goal: input.goal,
+    budgetRange: input.budgetRange,
+    reportStatus: "draft",
+    unlockStatus: "free",
+    createdAt: now,
+    updatedAt: now,
+  };
+  const audits = getAll();
+  audits.push(audit);
+  persist(audits);
+  return audit;
+}
+
+export function updateAudit(
+  id: string,
+  updates: Partial<Audit>
+): Audit | undefined {
+  const audits = getAll();
+  const idx = audits.findIndex((a) => a.id === id);
+  if (idx === -1) return undefined;
+  audits[idx] = { ...audits[idx], ...updates, updatedAt: new Date().toISOString() };
+  persist(audits);
+  return audits[idx];
+}
+
+export function deleteAudit(id: string): boolean {
+  const audits = getAll();
+  const filtered = audits.filter((a) => a.id !== id);
+  if (filtered.length === audits.length) return false;
+  persist(filtered);
+  return true;
+}
+
+export function clearAudits(): void {
+  setItem(STORAGE_KEYS.AUDITS, []);
+}
+
+export function getLatestAudit(): Audit | undefined {
+  const audits = getAll();
+  if (audits.length === 0) return undefined;
+  return audits.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  )[0];
+}
+
+export function getAuditStats(): AuditStats {
+  const audits = getAll();
+  const scores = audits
+    .map((a) => a.freeScore)
+    .filter((s): s is number => s !== undefined && s !== null);
+
+  return {
+    totalAudits: audits.length,
+    unlockedReports: audits.filter((a) => a.unlockStatus === "unlocked").length,
+    averageFreeScore:
+      scores.length > 0
+        ? Math.round(scores.reduce((sum, s) => sum + s, 0) / scores.length)
+        : null,
+    latestScore: scores.length > 0 ? scores[scores.length - 1] : null,
+    bestScore: scores.length > 0 ? Math.max(...scores) : null,
+    lastAuditDate:
+      audits.length > 0
+        ? audits.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )[0].createdAt
+        : null,
+  };
+}

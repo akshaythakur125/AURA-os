@@ -1,50 +1,44 @@
-import type { StorageData, StorageKey, StorageListener } from "./types";
-import { DEFAULT_STORAGE } from "./types";
+export function isBrowser(): boolean {
+  return typeof window !== "undefined";
+}
 
-const STORAGE_KEY = "auracheck-data";
-
-let listeners: StorageListener[] = [];
-
-function read(): StorageData {
-  if (typeof window === "undefined") return { ...DEFAULT_STORAGE };
+export function getItem<T>(key: string, fallback: T): T {
+  if (!isBrowser()) return fallback;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { ...DEFAULT_STORAGE };
-    return JSON.parse(raw) as StorageData;
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw) as T;
   } catch {
-    return { ...DEFAULT_STORAGE };
+    return fallback;
   }
 }
 
-function write(data: StorageData): void {
-  if (typeof window === "undefined") return;
+export function setItem<T>(key: string, value: T): void {
+  if (!isBrowser()) return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    listeners.forEach((fn) => fn(data));
+    localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    console.warn("Failed to write to localStorage");
+    console.warn(`Failed to write localStorage key "${key}"`);
   }
 }
 
-export function getData(): StorageData {
-  return read();
-}
-
-export function updateData(key: StorageKey, value: unknown): void {
-  const data = read();
-  (data as unknown as Record<string, unknown>)[key] = value;
-  write(data);
+export function removeItem(key: string): void {
+  if (!isBrowser()) return;
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    console.warn(`Failed to remove localStorage key "${key}"`);
+  }
 }
 
 export function clearAll(): void {
-  if (typeof window === "undefined") return;
-  localStorage.removeItem(STORAGE_KEY);
-  write({ ...DEFAULT_STORAGE });
-}
-
-export function subscribe(listener: StorageListener): () => void {
-  listeners.push(listener);
-  return () => {
-    listeners = listeners.filter((fn) => fn !== listener);
-  };
+  if (!isBrowser()) return;
+  try {
+    localStorage.removeItem("auracheck:v1:audits");
+    localStorage.removeItem("auracheck:v1:user");
+    localStorage.removeItem("auracheck:v1:settings");
+    localStorage.removeItem("auracheck:v1:unlocks");
+  } catch {
+    console.warn("Failed to clear localStorage");
+  }
 }
