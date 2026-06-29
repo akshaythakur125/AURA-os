@@ -333,6 +333,12 @@ export default function DashboardPage() {
         </div>
       )}
 
+      <div className="flex flex-wrap justify-center gap-4 mb-6">
+        <Link href="/data"><Button variant="ghost" size="sm">Your Local Data</Button></Link>
+        <Link href="/help"><Button variant="ghost" size="sm">Help & FAQ</Button></Link>
+        <Link href="/privacy-center"><Button variant="ghost" size="sm">Privacy Center</Button></Link>
+      </div>
+
       <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center text-xs text-gray-600">
         Local-only MVP: your data is stored in your browser, not uploaded to a server. Referral and challenge tracking is local — no real social network.
       </div>

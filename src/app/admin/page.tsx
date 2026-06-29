@@ -16,6 +16,8 @@ import { generateUnlockCode } from "@/lib/payments/unlockCodeGenerator";
 import { downloadJson } from "@/lib/export/downloadJson";
 import { jsonToCsv, downloadCsv } from "@/lib/export/csv";
 import { getLeads, deleteLead, clearLeads, exportLeads } from "@/lib/storage/leadStore";
+import { exportAllData, downloadExport } from "@/lib/data/exportAllData";
+import { getItem, setItem } from "@/lib/storage/localStore";
 import { getReferralProfile, getReferralStats, getReferralClaims } from "@/lib/storage/referralStore";
 import { getChallengeEntries, getChallengeStats } from "@/lib/storage/challengeStore";
 import { getProgressComparisons, getProgressStats } from "@/lib/storage/progressStore";
@@ -249,6 +251,16 @@ export default function AdminPage() {
         <SectionHeading title="Admin Panel" subtitle="Orders, analytics, unlock codes, and exports." />
         <Button variant="ghost" size="sm" onClick={() => { sessionStorage.removeItem("auracheck_admin_auth"); setAuthenticated(false); }}>
           Lock Admin
+        </Button>
+      </div>
+
+      {/* ─── Admin Snapshot Export ─── */}
+      <div className="mb-8 flex justify-end">
+        <Button variant="secondary" size="sm" onClick={() => {
+          const data = exportAllData();
+          downloadExport(data);
+        }}>
+          Export Full Admin Snapshot
         </Button>
       </div>
 
@@ -568,6 +580,85 @@ export default function AdminPage() {
           </div>
         )}
       </Card>
+
+      {/* ─── Founder Launch Checklist ─── */}
+      {(() => {
+        const CHECKLIST_KEY = "auracheck:v1:founder_checklist";
+        const saved = getItem<Record<string, boolean>>(CHECKLIST_KEY, {});
+
+        const checklistItems = [
+          { id: "upi_id", label: "Set UPI ID in env (NEXT_PUBLIC_MANUAL_UPI_ID)" },
+          { id: "support_email", label: "Set support email (NEXT_PUBLIC_SUPPORT_EMAIL)" },
+          { id: "whatsapp", label: "Set owner WhatsApp (NEXT_PUBLIC_OWNER_WHATSAPP)" },
+          { id: "admin_code", label: "Set local admin code (NEXT_PUBLIC_LOCAL_ADMIN_CODE)" },
+          { id: "free_score", label: "Test free score generation" },
+          { id: "aura_report", label: "Test Aura Report unlock (₹99)" },
+          { id: "dating_audit", label: "Test Dating Audit unlock (₹299)" },
+          { id: "glowup_plan", label: "Test Glow-Up Plan unlock (₹499)" },
+          { id: "offer_codes", label: "Test offer codes (EARLY50, AURA99, etc.)" },
+          { id: "order_export", label: "Test order export (JSON + CSV)" },
+          { id: "data_export", label: "Test data export from /data page" },
+          { id: "mobile_upload", label: "Test mobile image upload" },
+          { id: "share_card", label: "Test share card download" },
+          { id: "privacy_terms", label: "Review privacy/terms/privacy-center pages" },
+          { id: "examples_pricing", label: "Review examples and pricing pages" },
+          { id: "challenges_progress", label: "Review challenges and progress pages" },
+        ];
+
+        function toggleChecklistItem(id: string) {
+          const current = getItem<Record<string, boolean>>(CHECKLIST_KEY, {});
+          current[id] = !current[id];
+          setItem(CHECKLIST_KEY, current);
+          window.dispatchEvent(new Event("storage"));
+        }
+
+        const [checklist, setChecklist] = useState(saved);
+        const completedCount = Object.values(checklist).filter(Boolean).length;
+
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const [checklistRefresh, setChecklistRefresh] = useState(0);
+
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useState(() => {
+          const handler = () => {
+            setChecklist(getItem<Record<string, boolean>>(CHECKLIST_KEY, {}));
+            setChecklistRefresh((k) => k + 1);
+          };
+          if (typeof window !== "undefined") {
+            window.addEventListener("storage", handler);
+            return () => window.removeEventListener("storage", handler);
+          }
+          return;
+        });
+
+        return (
+          <Card className="mb-8">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-white">Founder Launch Checklist</h3>
+              <span className="text-xs text-gray-500">{completedCount}/{checklistItems.length} completed</span>
+            </div>
+            <div className="mb-3 h-2 overflow-hidden rounded-full bg-white/5">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all"
+                style={{ width: `${(completedCount / checklistItems.length) * 100}%` }}
+              />
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {checklistItems.map((item) => (
+                <label key={item.id} className="flex cursor-pointer items-start gap-2 rounded-lg border border-white/5 bg-white/[0.02] p-2.5 hover:bg-white/[0.04]">
+                  <input
+                    type="checkbox"
+                    checked={!!checklist[item.id]}
+                    onChange={() => toggleChecklistItem(item.id)}
+                    className="mt-0.5 h-3.5 w-3.5 rounded border-white/20 bg-white/5 text-purple-600 focus:ring-purple-500"
+                  />
+                  <span className={`text-xs ${checklist[item.id] ? "text-gray-500 line-through" : "text-gray-300"}`}>{item.label}</span>
+                </label>
+              ))}
+            </div>
+          </Card>
+        );
+      })()}
 
       {/* ─── Product Catalog ─── */}
       <Card className="mb-8">

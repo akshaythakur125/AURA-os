@@ -23,6 +23,7 @@ import type {
   SelfRatedConfidence,
   DeepAuditInput,
 } from "@/types/personalization";
+import { detectUnsafePromptText, sanitizeUserText, getSafetyWarningForAudit } from "@/lib/safety/contentSafety";
 
 const AUDIT_TYPES: { id: AuditType; label: string; desc: string; gradient: string; icon: string }[] = [
   { id: "photo", label: "Photo Aura Check", desc: "Analyze a single photo for expression, lighting, background, and overall visual signal.", gradient: "from-purple-600 to-pink-500", icon: "camera" },
@@ -168,6 +169,7 @@ export default function NewAuditPage() {
   const [wantsBrutalFeedback, setWantsBrutalFeedback] = useState(false);
   const [notes, setNotes] = useState("");
   const [personalizationSkipped, setPersonalizationSkipped] = useState(false);
+  const [safetyError, setSafetyError] = useState<string | null>(null);
   // Profile text inputs for dating/instagram
   const [profileBio, setProfileBio] = useState("");
   const [prompts, setPrompts] = useState<{ prompt: string; answer: string }[]>([]);
@@ -178,9 +180,9 @@ export default function NewAuditPage() {
       case 0: return auditType !== null;
       case 1: return goal !== null;
       case 2: return budget !== null;
-      case 3: return true; // optional
+      case 3: return !safetyError;
       case 4: return file !== null && !imageError;
-      case 5: return consent;
+      case 5: return consent && !safetyError;
       default: return false;
     }
   };
@@ -515,6 +517,13 @@ export default function NewAuditPage() {
                   </label>
                 </Card>
 
+                {/* Safety Warning */}
+                {auditType && (
+                  <div className="rounded-xl border border-amber-500/10 bg-amber-500/5 p-3 text-xs text-amber-300">
+                    {getSafetyWarningForAudit(auditType)}
+                  </div>
+                )}
+
                 {/* H. Profile Text Inputs (for dating/instagram types) */}
                 {(auditType === "dating" || goal === "dating" || auditType === "instagram" || goal === "instagram") && (
                   <Card>
@@ -568,11 +577,23 @@ export default function NewAuditPage() {
                   <label className="mb-2 block text-sm font-semibold text-white">Anything specific you want AuraCheck to consider?</label>
                   <textarea
                     value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
+                    onChange={(e) => {
+                      const text = e.target.value;
+                      setNotes(text);
+                      const result = detectUnsafePromptText(text);
+                      if (result.unsafe) {
+                        setSafetyError("AuraCheck can analyze presentation for self-improvement, but it cannot be used to shame, harass, or judge protected traits.");
+                      } else {
+                        setSafetyError(null);
+                      }
+                    }}
                     placeholder="Optional — e.g., 'I have an important event coming up' or 'I mainly use this photo on LinkedIn'"
                     className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
                     rows={3}
                   />
+                  {safetyError && (
+                    <p className="mt-2 text-xs text-red-400">{safetyError}</p>
+                  )}
                 </Card>
 
                 <div className="rounded-xl border border-purple-500/10 bg-purple-500/5 p-4 text-center text-xs text-gray-400">
@@ -713,19 +734,47 @@ export default function NewAuditPage() {
               </Card>
             )}
 
-            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-4">
-              <input
-                type="checkbox"
-                checked={consent}
-                onChange={(e) => setConsent(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-white/10 bg-white/5 text-purple-600 focus:ring-purple-500/50"
-              />
-              <span className="text-xs leading-relaxed text-gray-400">
-                I confirm I own this image or have permission to analyze it. I
-                understand AuraCheck analyzes presentation only and does not
-                measure human worth.
-              </span>
-            </label>
+            <div className="space-y-3">
+              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-white/10 bg-white/5 text-purple-600 focus:ring-purple-500/50"
+                />
+                <span className="text-xs leading-relaxed text-gray-400">
+                  I confirm I own this image or have permission to analyze it.
+                </span>
+              </label>
+              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-white/10 bg-white/5 text-purple-600 focus:ring-purple-500/50"
+                />
+                <span className="text-xs leading-relaxed text-gray-400">
+                  I am using AuraCheck for self-improvement and presentation guidance.
+                </span>
+              </label>
+              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-4">
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-white/10 bg-white/5 text-purple-600 focus:ring-purple-500/50"
+                />
+                <span className="text-xs leading-relaxed text-gray-400">
+                  I acknowledge that AuraCheck analyzes presentation only and does not measure human worth. Scores are guidance, not objective truth.
+                </span>
+              </label>
+            </div>
+
+            {safetyError && (
+              <div className="mt-3 rounded-xl border border-red-500/10 bg-red-500/5 p-3 text-xs text-red-400">
+                {safetyError}
+              </div>
+            )}
 
             {errors.length > 0 && (
               <div className="mt-4 space-y-1">

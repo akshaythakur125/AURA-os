@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { useToast } from "@/components/ui/Toast";
+import { getAuditById, updateAudit, deleteAudit, createAudit } from "@/lib/storage/auditStore";
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
@@ -153,6 +155,8 @@ function GoalStrategyCard({ strategy }: { strategy: GoalStrategy }) {
 export default function AuditDetailPage() {
   const params = useParams();
   const id = params.id as string;
+  const router = useRouter();
+  const { toast } = useToast();
 
   const [audit, rawSetAudit] = useState<Audit | null | undefined>(() => {
     if (typeof window === "undefined") return undefined;
@@ -162,6 +166,7 @@ export default function AuditDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<FreeAuraResult | null>(null);
   const [fullContent] = useState<FullAuraReportContent | null>(null);
+  const [confirmAction, setConfirmAction] = useState<string | null>(null);
 
   function handlePrint() {
     window.print();
@@ -933,6 +938,135 @@ export default function AuditDetailPage() {
               </Link>
             </div>
           )}
+
+          {/* Report Management */}
+          <Card className="mt-10 border-white/5">
+            <h3 className="mb-4 text-sm font-semibold text-white">Report Management</h3>
+            <div className="flex flex-wrap gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  const draft = createAudit({ auditType: audit.auditType, goal: audit.goal, budgetRange: audit.budgetRange });
+                  if (audit.deepInput) updateAudit(draft.id, { deepInput: audit.deepInput });
+                  if (audit.profileTexts) updateAudit(draft.id, { profileTexts: audit.profileTexts });
+                  router.push(`/audit/${draft.id}`);
+                }}
+              >
+                Duplicate Settings
+              </Button>
+              {audit.imageDataUrl && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setConfirmAction("remove_image");
+                  }}
+                >
+                  Remove Image Only
+                </Button>
+              )}
+              {audit.reportStatus !== "draft" && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setConfirmAction("regenerate_free");
+                  }}
+                >
+                  Regenerate Free Score
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setConfirmAction("delete_audit");
+                }}
+              >
+                Delete This Audit
+              </Button>
+            </div>
+            <p className="mt-3 text-[10px] text-gray-600">
+              Removing the image keeps metadata and scores. Deleting the audit removes all associated data including unlocked products.
+            </p>
+          </Card>
+
+          {/* Confirm Dialogs */}
+          <ConfirmDialog
+            open={confirmAction === "delete_audit"}
+            title="Delete this audit?"
+            message="This will permanently remove this audit and all associated data including unlocked products. This cannot be undone."
+            confirmLabel="DELETE"
+            variant="danger"
+            requireTypedConfirm="DELETE"
+            onConfirm={() => {
+              deleteAudit(audit.id);
+              toast("Audit deleted", "success");
+              router.push("/dashboard");
+            }}
+            onCancel={() => setConfirmAction(null)}
+          />
+          <ConfirmDialog
+            open={confirmAction === "remove_image"}
+            title="Remove uploaded image?"
+            message="This will remove the uploaded image data. Metadata, scores, and reports will be kept. Future regeneration may not work without an image."
+            confirmLabel="Remove Image"
+            variant="warning"
+            onConfirm={() => {
+              const updated = updateAudit(audit.id, {
+                imageDataUrl: undefined,
+              });
+              if (updated) setAudit(updated);
+              toast("Image removed", "success");
+              setConfirmAction(null);
+            }}
+            onCancel={() => setConfirmAction(null)}
+          />
+          <ConfirmDialog
+            open={confirmAction === "regenerate_free"}
+            title="Regenerate free score?"
+            message="This will overwrite the existing free score and personalization data. Your unlocked premium reports will not be affected."
+            confirmLabel="Regenerate"
+            variant="warning"
+            onConfirm={async () => {
+              setConfirmAction(null);
+              if (!audit.imageDataUrl) {
+                toast("No image to analyze", "error");
+                return;
+              }
+              setGenerating(true);
+              try {
+                const report = await generateFreeAuraReport(audit);
+                const personalization = generateStatusArchetype(audit, report.imageMetrics);
+                const updated = updateAudit(audit.id, {
+                  freeScore: report.auraScore,
+                  freeSummary: report.oneLineVerdict,
+                  reportStatus: "free_generated",
+                  unlockStatus: "locked",
+                  personalization,
+                  fullReport: {
+                    id: audit.id + "-report",
+                    auditId: audit.id,
+                    score: { overall: report.auraScore, categories: { visual: report.imageMetrics.lightingScore, presentation: report.imageMetrics.clarityScore, signals: Math.round((report.imageMetrics.contrast + report.imageMetrics.saturation) / 2), cohesion: report.imageMetrics.compositionScore } },
+                    leaks: report.statusLeaks,
+                    suggestions: report.quickFixes.map((q) => ({ id: "qf-" + q.title.toLowerCase().replace(/\s+/g, "-"), category: "quick-fix" as const, title: q.title, description: q.description, effort: q.effort, cost: q.cost })),
+                    summary: report.oneLineVerdict,
+                    createdAt: report.generatedAt,
+                    isPremium: false,
+                    freeResult: report,
+                  },
+                });
+                if (updated) setAudit(updated);
+                toast("Free score regenerated", "success");
+              } catch {
+                toast("Failed to regenerate", "error");
+              } finally {
+                setGenerating(false);
+              }
+            }}
+            onCancel={() => setConfirmAction(null)}
+          />
         </div>
       )}
     </Container>
