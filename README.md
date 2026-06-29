@@ -6,19 +6,37 @@ AuraCheck is a first-impression and status-signal audit app for Indian youth. Up
 
 ## Current Build Stage
 
-**No-API Foundation** — This is the initial project scaffold. All pages, components, and architecture are in place, but the full scoring engine, image upload, and payment flow are not yet implemented.
+**Prompt 6 — Local manual unlock system + full paid report generation.**
 
 - [x] Next.js App Router + TypeScript + Tailwind CSS
 - [x] Reusable UI components (dark premium theme)
-- [x] All placeholder routes (/, /dashboard, /audit/new, /audit/[id], /pricing, /unlock, /success, /privacy, /terms, /admin)
+- [x] All routes (/, /dashboard, /audit/new, /audit/[id], /pricing, /unlock, /success, /privacy, /terms, /admin)
 - [x] Local storage architecture (localStorage)
-- [x] Rule-based scoring engine stubs
-- [x] Manual payment/unlock placeholder
-- [x] TypeScript data models
-- [ ] Full scoring engine
-- [ ] Image upload & preview
+- [x] Aura Engine v1 — image metrics, rule-based scoring, free report
+- [x] Full Aura Report generator — premium report with visual breakdown, priority map, photo guidance, goal advice
+- [x] Manual unlock flow — UPI payment instructions + unlock code validation
+- [x] TypeScript data models for all entities
+- [x] Dashboard + audit history with locked/unlocked status
 - [ ] Real admin dashboard
 - [ ] PDF report generation
+
+## Manual Monetization MVP
+
+AuraCheck uses a **manual unlock system** for payment. There is no Razorpay, Stripe, or any payment API integrated.
+
+How it works:
+1. User creates an audit and generates a free Aura Score.
+2. User clicks "Unlock Full Aura Report — ₹99".
+3. User sends ₹99 via UPI to the owner's UPI ID (configured in `.env`).
+4. Owner provides an unlock code (manually or via a demo code).
+5. User enters the unlock code on `/unlock?auditId=...&product=aura_report`.
+6. The app validates the code locally and generates the full report.
+
+**Important security notes:**
+- The unlock mechanism is **not secure** against technical users. It is client-side only.
+- This is intended for **MVP demand testing only**.
+- A real payment provider (Razorpay/Stripe) + backend is required for production.
+- See `src/lib/payments/manualUnlock.ts` for the code validation logic.
 
 ## Why No External APIs?
 
@@ -30,7 +48,7 @@ AuraCheck is a first-impression and status-signal audit app for Indian youth. Up
 | AI-style reports        | Template-generated summaries            |
 | Storage                 | Browser localStorage                    |
 | Authentication          | None (local-first)                      |
-| Payments                | Manual UPI + unlock code (placeholder)  |
+| Payments                | Manual UPI + unlock code (MVP only)     |
 | Deployment              | Vercel-ready                            |
 
 This approach means:
@@ -68,12 +86,12 @@ npm run lint
 
 ## Required Environment Variables
 
-| Variable                    | Description                          |
-| --------------------------- | ------------------------------------ |
-| `NEXT_PUBLIC_APP_URL`       | Your production URL                  |
-| `NEXT_PUBLIC_MANUAL_UPI_ID` | UPI ID for manual payments           |
-| `NEXT_PUBLIC_SUPPORT_EMAIL` | Support email                        |
-| `ADMIN_UNLOCK_CODE`         | Admin code to unlock reports         |
+| Variable                      | Description                          |
+| ----------------------------- | ------------------------------------ |
+| `NEXT_PUBLIC_APP_URL`         | Your production URL                  |
+| `NEXT_PUBLIC_MANUAL_UPI_ID`   | UPI ID for manual payments           |
+| `NEXT_PUBLIC_SUPPORT_EMAIL`   | Support email                        |
+| `NEXT_PUBLIC_DEMO_UNLOCK_CODE`| Demo unlock code (default: AURADEMO) |
 
 All variables are optional during local development.
 
@@ -81,21 +99,21 @@ All variables are optional during local development.
 
 ```
 src/
-├── app/                    # App Router pages
-│   ├── audit/[id]/         # Single audit report
-│   ├── audit/new/          # New audit form
-│   ├── dashboard/          # User dashboard
-│   ├── pricing/            # Pricing plans
-│   ├── unlock/             # Manual unlock flow
-│   ├── success/            # Payment success
-│   ├── privacy/            # Privacy policy
-│   ├── terms/              # Terms of service
-│   ├── admin/              # Admin panel
-│   ├── layout.tsx          # Root layout
-│   ├── page.tsx            # Landing page
-│   └── globals.css         # Global styles
+├── app/                      # App Router pages
+│   ├── audit/[id]/           # Single audit report
+│   ├── audit/new/            # New audit form
+│   ├── dashboard/            # User dashboard
+│   ├── pricing/              # Pricing plans
+│   ├── unlock/               # Manual unlock flow
+│   ├── success/              # Payment success
+│   ├── privacy/              # Privacy policy
+│   ├── terms/                # Terms of service
+│   ├── admin/                # Admin panel
+│   ├── layout.tsx            # Root layout
+│   ├── page.tsx              # Landing page
+│   └── globals.css           # Global styles
 ├── components/
-│   ├── ui/                 # Base UI components
+│   ├── ui/                   # Base UI components
 │   │   ├── Badge.tsx
 │   │   ├── Button.tsx
 │   │   ├── Card.tsx
@@ -104,31 +122,30 @@ src/
 │   ├── Header.tsx
 │   └── Footer.tsx
 ├── lib/
-│   ├── aura-engine/        # Scoring & report logic
-│   │   ├── types.ts
+│   ├── aura-engine/          # Scoring & report logic
+│   │   ├── imageMetrics.ts
 │   │   ├── scoring.ts
-│   │   ├── reportTemplates.ts
-│   │   └── generateAuraReport.ts
-│   ├── payments/           # Manual unlock logic
+│   │   ├── budgetPlans.ts
+│   │   ├── generateAuraReport.ts
+│   │   └── generateFullAuraReport.ts
+│   ├── payments/             # Manual unlock logic
 │   │   └── manualUnlock.ts
-│   ├── storage/            # localStorage helpers
-│   │   ├── types.ts
-│   │   └── localStore.ts
+│   ├── storage/              # localStorage helpers
+│   │   ├── localStore.ts
+│   │   ├── auditStore.ts
+│   │   ├── userStore.ts
+│   │   ├── unlockStore.ts
+│   │   └── storageKeys.ts
 │   └── utils/
 │       └── cn.ts
 ├── types/
-│   └── audit.ts            # Data models
+│   ├── audit.ts              # Audit data models
+│   ├── payment.ts            # Payment/unlock types
+│   ├── user.ts               # User preferences
+│   └── product.ts            # Product definitions
 └── config/
-    └── index.ts            # App configuration
+    └── index.ts              # App configuration
 ```
-
-## Next Planned Modules
-
-1. **Full Scoring Engine** — Rule-based evaluation across visual, presentation, signal, and cohesion dimensions
-2. **Image Upload & Preview** — Client-side image handling with EXIF-like metadata
-3. **Real Admin Dashboard** — Unlock request management, manual code generation
-4. **PDF Report Generation** — Downloadable reports using client-side libraries
-5. **Expanded Upgrade Library** — 100+ actionable upgrade suggestions across categories
 
 ## Important Notes
 
@@ -137,3 +154,4 @@ src/
 - No guaranteed dating, social, or financial outcomes are promised
 - The app does not infer caste, religion, ethnicity, sexuality, income, disease, or other protected traits
 - Language focuses on "visual signals," "first impressions," "presentation," and "upgrade paths"
+- Unlock mechanism is MVP-only and not secure for production use

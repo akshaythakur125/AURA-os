@@ -135,12 +135,74 @@ export interface AuraReport {
   isPremium: boolean;
   premiumContent?: string;
   freeResult?: FreeAuraResult;
+  fullContent?: FullAuraReportContent;
 }
 
 export interface AuditInput {
   auditType: AuditType;
   goal: AuditGoal;
   budgetRange: BudgetAmount;
+}
+
+export interface FullStatusLeak {
+  title: string;
+  explanation: string;
+  fix: string;
+  severity: "low" | "medium" | "high";
+  impactScore: number;
+  estimatedCost: "free" | "low" | "medium" | "high";
+}
+
+export interface PriorityUpgradeMap {
+  firstPriority: string;
+  secondPriority: string;
+  avoidForNow: string;
+}
+
+export interface TieredBudgetPlan {
+  immediateFree: string[];
+  under2000: string[];
+  under5000: string[];
+  under10000: string[];
+  under25000: string[];
+}
+
+export interface PhotoGuidance {
+  lighting: string;
+  framing: string;
+  background: string;
+  posingOrPresentation: string;
+  editing: string;
+}
+
+export interface GoalSpecificAdvice {
+  goal: string;
+  strategy: string;
+  doThis: string;
+  avoidThis: string;
+}
+
+export interface FullAuraReportContent {
+  fullScore: number;
+  category: string;
+  detailedVerdict: string;
+  visualBreakdown: {
+    lighting: number;
+    clarity: number;
+    composition: number;
+    backgroundControl: number;
+    colorSignal: number;
+    premiumSignal: number;
+    overallConsistency: number;
+  };
+  strongestSignals: string[];
+  biggestStatusLeaks: FullStatusLeak[];
+  priorityUpgradeMap: PriorityUpgradeMap;
+  budgetUpgradePlan: TieredBudgetPlan;
+  photoGuidance: PhotoGuidance;
+  goalSpecificAdvice: GoalSpecificAdvice;
+  finalVerdict: string;
+  generatedAt: string;
 }
 
 export interface AuditStats {

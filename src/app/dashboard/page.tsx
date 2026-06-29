@@ -84,6 +84,7 @@ export default function DashboardPage() {
   const hasAudits = audits.length > 0;
 
   function getCategory(audit: Audit): string | undefined {
+    if (audit.fullReport?.fullContent?.category) return audit.fullReport.fullContent.category;
     return audit.fullReport?.freeResult?.category;
   }
 
@@ -174,7 +175,7 @@ export default function DashboardPage() {
                           {auditTypeLabels[audit.auditType] || audit.auditType}
                         </h3>
                         <Badge variant={statusBadge[audit.reportStatus] || "default"}>
-                          {audit.reportStatus.replace("_", " ")}
+                          {audit.reportStatus === "unlocked" ? "Full Report Unlocked" : audit.reportStatus.replace("_", " ")}
                         </Badge>
                         {category && (
                           <Badge variant="premium">{category}</Badge>
@@ -197,6 +198,11 @@ export default function DashboardPage() {
                     <Link href={`/audit/${audit.id}`}>
                       <Button variant="secondary" size="sm">View</Button>
                     </Link>
+                    {audit.reportStatus === "free_generated" && audit.unlockStatus === "locked" && (
+                      <Link href={`/unlock?auditId=${audit.id}&product=aura_report`}>
+                        <Button size="sm">Unlock ₹99</Button>
+                      </Link>
+                    )}
                     <button
                       onClick={() => handleDeleteAudit(audit.id)}
                       className="rounded-lg px-2 py-1.5 text-xs text-gray-500 transition-colors hover:bg-white/5 hover:text-red-400"

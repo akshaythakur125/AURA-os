@@ -36,8 +36,8 @@ const tiers = [
       "Unlock code access",
     ],
     highlighted: true,
-    href: "/unlock",
-    cta: "Unlock Report",
+    href: "/audit/new",
+    cta: "Start Free, Then Unlock",
   },
   {
     name: "Dating / Profile Audit",
@@ -52,8 +52,9 @@ const tiers = [
       "Photo order optimization",
     ],
     highlighted: false,
-    href: "/unlock",
-    cta: "Unlock Audit",
+    href: "/unlock?product=dating_audit",
+    cta: "Coming Soon",
+    disabled: true,
   },
   {
     name: "30-Day Glow-Up Plan",
@@ -68,8 +69,9 @@ const tiers = [
       "Final comparison report",
     ],
     highlighted: false,
-    href: "/unlock",
-    cta: "Get the Plan",
+    href: "/unlock?product=glowup_plan",
+    cta: "Coming Soon",
+    disabled: true,
   },
 ];
 
@@ -129,14 +131,20 @@ export default function PricingPage() {
                 </ul>
 
                 <div className="mt-8">
-                  <Link href={tier.href}>
-                    <Button
-                      variant={tier.highlighted ? "primary" : "outline"}
-                      className="w-full"
-                    >
+                  {tier.disabled ? (
+                    <Button variant="outline" className="w-full" disabled>
                       {tier.cta}
                     </Button>
-                  </Link>
+                  ) : (
+                    <Link href={tier.href}>
+                      <Button
+                        variant={tier.highlighted ? "primary" : "outline"}
+                        className="w-full"
+                      >
+                        {tier.cta}
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </Card>
             ))}

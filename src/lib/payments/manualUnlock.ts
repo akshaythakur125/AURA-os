@@ -1,46 +1,74 @@
-import { config } from "@/config";
+import type { ProductType } from "@/types/payment";
 
-export interface UnlockRequest {
+/**
+ * Manual unlock utility — MVP only.
+ *
+ * This is NOT secure. Unlock codes are validated client-side with a
+ * predictable pattern or an env-var-based demo code. A real payment
+ * provider + backend is required for production.
+ *
+ * See README "Manual monetization MVP" section for details.
+ */
+
+const PRODUCT_PRICES: Record<ProductType, number> = {
+  aura_report: 99,
+  dating_audit: 299,
+  glowup_plan: 499,
+};
+
+const PRODUCT_NAMES: Record<ProductType, string> = {
+  aura_report: "Full Aura Report",
+  dating_audit: "Dating / Profile Audit",
+  glowup_plan: "30-Day Glow-Up Plan",
+};
+
+export function getProductPrice(productType: ProductType): number {
+  return PRODUCT_PRICES[productType] || 99;
+}
+
+export function getProductName(productType: ProductType): string {
+  return PRODUCT_NAMES[productType] || "Aura Report";
+}
+
+export function getProductPriceLabel(productType: ProductType): string {
+  return `₹${getProductPrice(productType)}`;
+}
+
+/**
+ * Validate an unlock code for a given audit + product.
+ *
+ * Accepted codes (MVP only):
+ * 1. The value of NEXT_PUBLIC_DEMO_UNLOCK_CODE (default: "AURADEMO")
+ * 2. A deterministic audit-specific code: "AURA-" + last 6 alphanumeric chars of auditId, uppercased
+ */
+export function validateUnlockCode(params: {
+  code: string;
   auditId: string;
-  name: string;
-  email: string;
-  upiTransactionId: string;
-}
+  productType: ProductType;
+}): boolean {
+  const { code, auditId } = params;
+  if (!code || typeof code !== "string") return false;
 
-export interface UnlockResult {
-  success: boolean;
-  code?: string;
-  message: string;
-}
+  const trimmed = code.trim();
 
-export function validateUnlockCode(code: string): boolean {
-  return code === config.payments.adminUnlockCode;
-}
+  const demoCode =
+    typeof process !== "undefined" &&
+    process.env &&
+    (process.env as Record<string, string | undefined>)
+      .NEXT_PUBLIC_DEMO_UNLOCK_CODE
+      ? ((process.env as Record<string, string | undefined>)
+          .NEXT_PUBLIC_DEMO_UNLOCK_CODE as string)
+      : "AURADEMO";
 
-export function createUnlockRequest(request: UnlockRequest): UnlockResult {
-  if (!request.upiTransactionId || request.upiTransactionId.length < 6) {
-    return {
-      success: false,
-      message:
-        "Please provide a valid UPI transaction reference (min 6 characters).",
-    };
-  }
+  if (trimmed.toUpperCase() === demoCode.toUpperCase()) return true;
 
-  const code = `AURA-${request.auditId.slice(0, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+  const auditSuffix = auditId
+    .replace(/-/g, "")
+    .slice(-6)
+    .toUpperCase();
+  const computedCode = `AURA-${auditSuffix}`;
 
-  return {
-    success: true,
-    code,
-    message:
-      "Your unlock request has been received. Admin will verify your payment and activate your report.",
-  };
-}
+  if (trimmed.toUpperCase() === computedCode) return true;
 
-export function getPaymentInfo() {
-  return {
-    upiId: config.payments.upiId,
-    amount: config.pricing.premium,
-    currency: config.pricing.currency,
-    note: "AuraCheck Premium Report",
-  };
+  return false;
 }

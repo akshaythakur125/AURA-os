@@ -1,3 +1,24 @@
+export type ProductType = "aura_report" | "dating_audit" | "glowup_plan";
+
+export interface UnlockRecord {
+  id: string;
+  auditId: string;
+  productType: ProductType;
+  amount: number;
+  status: "pending" | "unlocked" | "failed";
+  transactionReference?: string;
+  unlockCode?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface UnlockRecordInput {
+  auditId: string;
+  productType: ProductType;
+  transactionReference?: string;
+  unlockCode?: string;
+}
+
 export interface UnlockRequest {
   auditId: string;
   name: string;
@@ -16,12 +37,4 @@ export interface PaymentInfo {
   amount: number;
   currency: string;
   note: string;
-}
-
-export interface StoredUnlock {
-  auditId: string;
-  code: string;
-  email: string;
-  createdAt: string;
-  verified: boolean;
 }
