@@ -168,6 +168,10 @@ export default function NewAuditPage() {
   const [wantsBrutalFeedback, setWantsBrutalFeedback] = useState(false);
   const [notes, setNotes] = useState("");
   const [personalizationSkipped, setPersonalizationSkipped] = useState(false);
+  // Profile text inputs for dating/instagram
+  const [profileBio, setProfileBio] = useState("");
+  const [prompts, setPrompts] = useState<{ prompt: string; answer: string }[]>([]);
+  const [captionsText, setCaptionsText] = useState("");
 
   const canNext = (): boolean => {
     switch (step) {

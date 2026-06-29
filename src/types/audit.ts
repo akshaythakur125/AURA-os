@@ -44,6 +44,10 @@ export interface Audit {
   unlockStatus: UnlockStatus;
   deepInput?: DeepAuditInput;
   personalization?: PersonalizationResult;
+  profileTexts?: ProfileTexts;
+  datingProfileReport?: DatingProfileReport;
+  glowupPlan?: GlowupPlan;
+  unlockedProducts?: import("./payment").ProductType[];
   createdAt: string;
   updatedAt: string;
 }
@@ -216,6 +220,92 @@ export interface AuditStats {
   latestScore: number | null;
   bestScore: number | null;
   lastAuditDate: string | null;
+}
+
+// ── Dating Profile Audit Types ──
+
+export interface DatingProfileReport {
+  textScore: number;
+  bioAnalysis: BioAnalysis;
+  promptAnalysis: PromptAnalysis[];
+  redFlags: RedFlag[];
+  suggestedBios: SuggestedBio[];
+  overallAdvice: string;
+  generatedAt: string;
+}
+
+export interface BioAnalysis {
+  length: "too_short" | "good" | "too_long";
+  effort: "low" | "medium" | "high";
+  tone: string;
+  hooksReader: boolean;
+  showsPersonality: boolean;
+  feedback: string;
+}
+
+export interface PromptAnalysis {
+  prompt: string;
+  answer: string;
+  quality: "weak" | "average" | "good" | "excellent";
+  feedback: string;
+  suggestedImprovement: string;
+}
+
+export interface RedFlag {
+  text: string;
+  type: "negative" | "cliche" | "low_effort" | "aggressive" | "desperate" | "vague";
+  severity: "low" | "medium" | "high";
+  explanation: string;
+  fixSuggestion: string;
+}
+
+export interface SuggestedBio {
+  version: string;
+  text: string;
+  whyItWorks: string;
+}
+
+// ── 30-Day Glow-Up Plan Types ──
+
+export interface GlowupPlan {
+  week1: WeekPlan;
+  week2: WeekPlan;
+  week3: WeekPlan;
+  week4: WeekPlan;
+  budgetRoadmap: BudgetRoadmap2;
+  generatedAt: string;
+}
+
+export interface WeekPlan {
+  title: string;
+  focus: string;
+  dailyMissions: DailyMission[];
+}
+
+export interface DailyMission {
+  day: number;
+  category: "photo" | "grooming" | "outfit" | "background" | "mindset";
+  title: string;
+  description: string;
+  effort: "easy" | "medium" | "hard";
+  isCompleted?: boolean;
+}
+
+export interface BudgetRoadmap2 {
+  free: string[];
+  under2000: string[];
+  under5000: string[];
+  under10000: string[];
+  totalEstimatedCost: number;
+}
+
+// ── Profile Texts for Dating/Instagram Input ──
+
+export interface ProfileTexts {
+  bio?: string;
+  prompts?: { prompt: string; answer: string }[];
+  captions?: string;
+  photosDescription?: string;
 }
 
 export function createLocalId(): string {

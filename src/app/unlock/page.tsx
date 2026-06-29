@@ -11,6 +11,8 @@ import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
 import { createUnlockRecord } from "@/lib/storage/unlockStore";
 import { validateUnlockCode, getProductName, getProductPriceLabel } from "@/lib/payments/manualUnlock";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
+import { generateDatingProfileReport } from "@/lib/aura-engine/datingAudit";
+import { generateGlowupPlan } from "@/lib/aura-engine/glowupPlan";
 import type { ProductType } from "@/types/payment";
 
 const PRODUCT_FEATURES: Record<string, string[]> = {
@@ -24,18 +26,18 @@ const PRODUCT_FEATURES: Record<string, string[]> = {
     "Share-ready report view",
   ],
   dating_audit: [
-    "Dating profile specific analysis",
-    "Bio & photo coherence check",
-    "Platform-specific tips",
-    "Competitive signal audit",
-    "Coming soon — contact us to beta test",
+    "Profile bio & prompt text analysis",
+    "Red-flag detection for negativity, clichés, and low effort",
+    "3 alternative bio versions tailored to your style",
+    "Prompt answer quality scoring per response",
+    "Conversation hook & personality presence check",
   ],
   glowup_plan: [
-    "Full audit every week for 30 days",
-    "Personalized upgrade tasks",
-    "Progress tracking dashboard",
-    "Priority support",
-    "Coming soon — contact us to beta test",
+    "4-week structured glow-up roadmap",
+    "30 daily missions — one for every day of the month",
+    "Covers photo, grooming, outfit, background, and mindset",
+    "Budget roadmap from free to ₹10,000+",
+    "Week-by-week focus areas with measurable progress",
   ],
 };
 
@@ -61,11 +63,13 @@ function UnlockForm() {
       ? getAuditById(auditId)
       : undefined;
 
-  const isComingSoon = defaultProduct !== "aura_report";
   const productName = getProductName(defaultProduct);
   const productPriceLabel = getProductPriceLabel(defaultProduct);
   const features =
     PRODUCT_FEATURES[defaultProduct] || PRODUCT_FEATURES.aura_report;
+  const missingDatingText = defaultProduct === "dating_audit" && (!audit?.profileTexts?.bio || audit.profileTexts.bio.trim() === "");
+  const missingGlowupData = defaultProduct === "glowup_plan" && (!audit?.imageDataUrl && !audit?.fullReport?.freeResult?.imageMetrics);
+  const cannotGenerate = (defaultProduct === "dating_audit" && missingDatingText) || (defaultProduct === "glowup_plan" && missingGlowupData);
 
   const upiId =
     typeof process !== "undefined" &&
@@ -82,11 +86,6 @@ function UnlockForm() {
 
     if (!unlockCode.trim()) {
       setError("Please enter your unlock code.");
-      return;
-    }
-
-    if (isComingSoon) {
-      setError(`${productName} is coming soon. Please check back later.`);
       return;
     }
 
@@ -114,13 +113,15 @@ function UnlockForm() {
         unlockCode: unlockCode.trim(),
       });
 
-      const fullContent = await generateFullAuraReport(audit);
+      const updates: Record<string, unknown> = {};
+      updates.unlockedProducts = [...(audit.unlockedProducts || []), defaultProduct];
 
-      updateAudit(auditId, {
-        fullScore: fullContent.fullScore,
-        reportStatus: "unlocked",
-        unlockStatus: "unlocked",
-        fullReport: audit.fullReport
+      if (defaultProduct === "aura_report") {
+        const fullContent = await generateFullAuraReport(audit);
+        updates.fullScore = fullContent.fullScore;
+        updates.reportStatus = "unlocked";
+        updates.unlockStatus = "unlocked";
+        updates.fullReport = audit.fullReport
           ? {
               ...audit.fullReport,
               score: {
@@ -148,8 +149,24 @@ function UnlockForm() {
               createdAt: fullContent.generatedAt,
               isPremium: true,
               fullContent,
-            },
-      });
+            };
+      } else if (defaultProduct === "dating_audit") {
+        const datingReport = generateDatingProfileReport(audit);
+        updates.datingProfileReport = datingReport;
+        updates.reportStatus = "free_generated";
+      } else if (defaultProduct === "glowup_plan") {
+        const glowupReport = generateGlowupPlan(audit);
+        updates.glowupPlan = glowupReport;
+        updates.reportStatus = "free_generated";
+      }
+
+      if (audit.reportStatus === "locked" || audit.reportStatus === "free_generated") {
+        if (defaultProduct !== "aura_report") {
+          updates.reportStatus = "free_generated";
+        }
+      }
+
+      updateAudit(auditId, updates as Partial<import("@/types/audit").Audit>);
 
       setSuccess(true);
       setTimeout(() => {
@@ -241,17 +258,15 @@ function UnlockForm() {
       <div className="mx-auto max-w-2xl">
         <Card className="mb-6">
           <Badge variant="premium" className="mb-3">
-            {isComingSoon ? "Coming Soon" : productName}
+            {productName}
           </Badge>
           <h1 className="mb-2 text-2xl font-bold text-white">
             Unlock {productName}
           </h1>
-          {!isComingSoon && (
-            <p className="mb-6 text-sm text-gray-400">
-              One-time payment of{" "}
-              <span className="text-amber-400">{productPriceLabel}</span>
-            </p>
-          )}
+          <p className="mb-6 text-sm text-gray-400">
+            One-time payment of{" "}
+            <span className="text-amber-400">{productPriceLabel}</span>
+          </p>
 
           <ul className="mb-6 space-y-3">
             {features.map((feature) => (
@@ -278,16 +293,16 @@ function UnlockForm() {
           </ul>
         </Card>
 
-        {isComingSoon ? (
+        {cannotGenerate ? (
           <Card className="text-center">
             <p className="mb-2 text-lg text-gray-300">
-              {productName} is not available yet
+              Profile text required for Dating Audit
             </p>
             <p className="mb-6 text-sm text-gray-500">
-              We are working on it. Stay tuned!
+              Please create a new audit with the Dating type and enter your profile bio/text first.
             </p>
-            <Link href={`/audit/${auditId}`}>
-              <Button variant="secondary">Back to Report</Button>
+            <Link href="/audit/new">
+              <Button>Create New Audit</Button>
             </Link>
           </Card>
         ) : (
@@ -357,10 +372,10 @@ function UnlockForm() {
                 className="mt-4 w-full"
                 size="lg"
                 onClick={handleUnlock}
-                disabled={unlocking}
+                disabled={unlocking || cannotGenerate}
               >
                 {unlocking
-                  ? "Generating Full Report..."
+                  ? "Generating Report..."
                   : `Unlock ${productName} — ${productPriceLabel}`}
               </Button>
             </Card>
