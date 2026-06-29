@@ -1,6 +1,5 @@
 "use client";
 
-import { getItem } from "@/lib/storage/localStore";
 import { STORAGE_KEYS } from "@/lib/storage/storageKeys";
 
 export interface ExportedData {

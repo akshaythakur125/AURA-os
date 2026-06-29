@@ -74,7 +74,7 @@ export default function TermsPage() {
           <section>
             <h2 className="mb-3 text-lg font-semibold text-white">Local Data Risk</h2>
             <p>
-              AuraCheck stores all data locally in your browser's localStorage. This means:
+              AuraCheck stores all data locally in your browser&apos;s localStorage. This means:
             </p>
             <ul className="mt-2 list-inside list-disc space-y-1 text-gray-400">
               <li>Clearing browser data will permanently remove your audits, reports, and orders</li>

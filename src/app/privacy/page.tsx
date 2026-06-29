@@ -23,7 +23,7 @@ export default function PrivacyPage() {
             <h2 className="mb-3 text-lg font-semibold text-white">Local Storage</h2>
             <p>
               Audit results, uploaded images (as data URLs), user preferences, orders, analytics events, leads, 
-              referral data, challenge entries, progress comparisons, and onboarding state are stored in your browser's 
+              referral data, challenge entries, progress comparisons, and onboarding state are stored in your browser&apos;s 
               <span className="text-gray-300"> localStorage</span>. This data never leaves your device.
             </p>
             <p className="mt-2">
@@ -57,7 +57,7 @@ export default function PrivacyPage() {
             <p>
               You can delete specific data types (audits, orders, analytics, etc.) or all data from the 
               Data Management page. All destructive actions require typing DELETE to confirm.
-              Alternatively, clearing your browser's localStorage for this site removes all data immediately.
+              Alternatively, clearing your browser&apos;s localStorage for this site removes all data immediately.
             </p>
           </section>
 

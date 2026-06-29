@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { trackEvent } from "@/lib/storage/analyticsStore";

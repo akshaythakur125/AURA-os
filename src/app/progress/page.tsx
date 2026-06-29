@@ -11,7 +11,6 @@ import { getAudits } from "@/lib/storage/auditStore";
 import { getProgressComparisons, createProgressComparison, deleteProgressComparison } from "@/lib/storage/progressStore";
 import { compareAudits } from "@/lib/progress/compareAudits";
 import { trackEvent } from "@/lib/storage/analyticsStore";
-import type { Audit } from "@/types/audit";
 import type { ProgressComparison } from "@/types/progress";
 
 function formatDate(iso: string): string {

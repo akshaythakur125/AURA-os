@@ -118,6 +118,34 @@ export default function AdminPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authenticated, refreshKey]);
 
+  const CHECKLIST_KEY = "auracheck:v1:founder_checklist";
+  const [checklistState, setChecklistState] = useState<Record<string, boolean>>(() => getItem<Record<string, boolean>>(CHECKLIST_KEY, {}));
+  const checklistItems = [
+    { id: "upi_id", label: "Set UPI ID in env (NEXT_PUBLIC_MANUAL_UPI_ID)" },
+    { id: "support_email", label: "Set support email (NEXT_PUBLIC_SUPPORT_EMAIL)" },
+    { id: "whatsapp", label: "Set owner WhatsApp (NEXT_PUBLIC_OWNER_WHATSAPP)" },
+    { id: "admin_code", label: "Set local admin code (NEXT_PUBLIC_LOCAL_ADMIN_CODE)" },
+    { id: "free_score", label: "Test free score generation" },
+    { id: "aura_report", label: "Test Aura Report unlock (₹99)" },
+    { id: "dating_audit", label: "Test Dating Audit unlock (₹299)" },
+    { id: "glowup_plan", label: "Test Glow-Up Plan unlock (₹499)" },
+    { id: "offer_codes", label: "Test offer codes (EARLY50, AURA99, etc.)" },
+    { id: "order_export", label: "Test order export (JSON + CSV)" },
+    { id: "data_export", label: "Test data export from /data page" },
+    { id: "mobile_upload", label: "Test mobile image upload" },
+    { id: "share_card", label: "Test share card download" },
+    { id: "privacy_terms", label: "Review privacy/terms/privacy-center pages" },
+    { id: "examples_pricing", label: "Review examples and pricing pages" },
+    { id: "challenges_progress", label: "Review challenges and progress pages" },
+  ];
+
+  function toggleChecklistItem(id: string) {
+    const current = getItem<Record<string, boolean>>(CHECKLIST_KEY, {});
+    current[id] = !current[id];
+    setItem(CHECKLIST_KEY, current);
+    setChecklistState({ ...current });
+  }
+
   const productPageViews = useMemo(() => {
     if (!authenticated) return { aura_report: 0, dating_audit: 0, glowup_plan: 0, examples: 0 };
     const events = getEvents();
@@ -525,7 +553,7 @@ export default function AdminPage() {
                 <div className="flex justify-between"><span className="text-gray-400">Referral Code</span><span className="text-purple-300">{getReferralProfile()?.referralCode || "—"}</span></div>
                 <div className="flex justify-between"><span className="text-gray-400">Total Claims</span><span className="text-white">{rs?.totalClaimsLocal ?? 0}</span></div>
                 <div className="flex justify-between"><span className="text-gray-400">Referral Code Used</span><span className="text-white">{rs?.referralCode || "—"}</span></div>
-                <div className="mt-2"><Button variant="ghost" size="sm" onClick={() => { const data = getReferralClaims(); const csv = jsonToCsv(data.map((c: any) => ({ id: c.id, referrerCode: c.referrerCode, claimedAt: c.claimedAt }))); downloadCsv(csv, `referral-claims-${new Date().toISOString().slice(0, 10)}.csv`); }}>Export Claims CSV</Button></div>
+                <div className="mt-2"><Button variant="ghost" size="sm" onClick={() => { const data = getReferralClaims(); const csv = jsonToCsv(data.map((c) => ({ id: c.id, referralCode: c.referralCode, claimedAt: c.claimedAt }))); downloadCsv(csv, `referral-claims-${new Date().toISOString().slice(0, 10)}.csv`); }}>Export Claims CSV</Button></div>
               </div>
             );})()}
           </div>
@@ -583,54 +611,7 @@ export default function AdminPage() {
 
       {/* ─── Founder Launch Checklist ─── */}
       {(() => {
-        const CHECKLIST_KEY = "auracheck:v1:founder_checklist";
-        const saved = getItem<Record<string, boolean>>(CHECKLIST_KEY, {});
-
-        const checklistItems = [
-          { id: "upi_id", label: "Set UPI ID in env (NEXT_PUBLIC_MANUAL_UPI_ID)" },
-          { id: "support_email", label: "Set support email (NEXT_PUBLIC_SUPPORT_EMAIL)" },
-          { id: "whatsapp", label: "Set owner WhatsApp (NEXT_PUBLIC_OWNER_WHATSAPP)" },
-          { id: "admin_code", label: "Set local admin code (NEXT_PUBLIC_LOCAL_ADMIN_CODE)" },
-          { id: "free_score", label: "Test free score generation" },
-          { id: "aura_report", label: "Test Aura Report unlock (₹99)" },
-          { id: "dating_audit", label: "Test Dating Audit unlock (₹299)" },
-          { id: "glowup_plan", label: "Test Glow-Up Plan unlock (₹499)" },
-          { id: "offer_codes", label: "Test offer codes (EARLY50, AURA99, etc.)" },
-          { id: "order_export", label: "Test order export (JSON + CSV)" },
-          { id: "data_export", label: "Test data export from /data page" },
-          { id: "mobile_upload", label: "Test mobile image upload" },
-          { id: "share_card", label: "Test share card download" },
-          { id: "privacy_terms", label: "Review privacy/terms/privacy-center pages" },
-          { id: "examples_pricing", label: "Review examples and pricing pages" },
-          { id: "challenges_progress", label: "Review challenges and progress pages" },
-        ];
-
-        function toggleChecklistItem(id: string) {
-          const current = getItem<Record<string, boolean>>(CHECKLIST_KEY, {});
-          current[id] = !current[id];
-          setItem(CHECKLIST_KEY, current);
-          window.dispatchEvent(new Event("storage"));
-        }
-
-        const [checklist, setChecklist] = useState(saved);
-        const completedCount = Object.values(checklist).filter(Boolean).length;
-
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const [checklistRefresh, setChecklistRefresh] = useState(0);
-
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useState(() => {
-          const handler = () => {
-            setChecklist(getItem<Record<string, boolean>>(CHECKLIST_KEY, {}));
-            setChecklistRefresh((k) => k + 1);
-          };
-          if (typeof window !== "undefined") {
-            window.addEventListener("storage", handler);
-            return () => window.removeEventListener("storage", handler);
-          }
-          return;
-        });
-
+        const completedCount = Object.values(checklistState).filter(Boolean).length;
         return (
           <Card className="mb-8">
             <div className="mb-4 flex items-center justify-between">
@@ -648,11 +629,11 @@ export default function AdminPage() {
                 <label key={item.id} className="flex cursor-pointer items-start gap-2 rounded-lg border border-white/5 bg-white/[0.02] p-2.5 hover:bg-white/[0.04]">
                   <input
                     type="checkbox"
-                    checked={!!checklist[item.id]}
+                    checked={!!checklistState[item.id]}
                     onChange={() => toggleChecklistItem(item.id)}
                     className="mt-0.5 h-3.5 w-3.5 rounded border-white/20 bg-white/5 text-purple-600 focus:ring-purple-500"
                   />
-                  <span className={`text-xs ${checklist[item.id] ? "text-gray-500 line-through" : "text-gray-300"}`}>{item.label}</span>
+                  <span className={`text-xs ${checklistState[item.id] ? "text-gray-500 line-through" : "text-gray-300"}`}>{item.label}</span>
                 </label>
               ))}
             </div>

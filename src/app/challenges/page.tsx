@@ -10,22 +10,16 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getActiveChallenges } from "@/config/challenges";
 import { getChallengeEntries } from "@/lib/storage/challengeStore";
 import { getAudits } from "@/lib/storage/auditStore";
-import { getOrCreateReferralProfile } from "@/lib/storage/referralStore";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 import { LocalLeaderboard } from "@/components/challenges/LocalLeaderboard";
-import type { Challenge } from "@/types/challenge";
 
 export default function ChallengesPage() {
   const challenges = getActiveChallenges();
-  const [allEntries, setAllEntries] = useState<ReturnType<typeof getChallengeEntries>>([]);
-  const [hasAudit, setHasAudit] = useState(false);
+  const [allEntries] = useState(getChallengeEntries());
+  const [hasAudit] = useState(typeof window !== "undefined" && getAudits().length > 0);
 
   useEffect(() => {
     trackEvent({ eventName: "challenge_viewed" });
-    setAllEntries(getChallengeEntries());
-    const audits = getAudits();
-    setHasAudit(audits.length > 0);
-    getOrCreateReferralProfile();
   }, []);
 
   return (

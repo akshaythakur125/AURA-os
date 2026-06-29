@@ -1,6 +1,5 @@
 "use client";
 
-import { getItem } from "@/lib/storage/localStore";
 import { STORAGE_KEYS } from "@/lib/storage/storageKeys";
 
 export interface StorageSummary {
@@ -61,11 +60,12 @@ function getLastUpdated(key: string): string {
     if (!raw) return "";
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      const dates = parsed.map((item: any) => item.createdAt || item.updatedAt || "").filter(Boolean).sort().reverse();
+      const dates = parsed.map((item: Record<string, unknown>) => (item.createdAt || item.updatedAt || "") as string).filter(Boolean).sort().reverse();
       return dates[0] || "";
     }
     if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-      return (parsed as any).createdAt || (parsed as any).updatedAt || "";
+      const obj = parsed as Record<string, unknown>;
+      return (obj.createdAt || obj.updatedAt || "") as string;
     }
     return "";
   } catch {

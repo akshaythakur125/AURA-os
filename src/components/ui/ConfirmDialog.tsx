@@ -29,13 +29,6 @@ export function ConfirmDialog({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (open) {
-      setTypedText("");
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
-  }, [open]);
-
-  useEffect(() => {
     function handleEscape(e: KeyboardEvent) {
       if (e.key === "Escape" && open) onCancel();
     }

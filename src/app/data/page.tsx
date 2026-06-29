@@ -5,14 +5,13 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { EmptyState } from "@/components/ui/EmptyState";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useToast } from "@/components/ui/Toast";
-import { getStorageSummary, type StorageSummary } from "@/lib/data/getStorageSummary";
+import { getStorageSummary } from "@/lib/data/getStorageSummary";
 import { exportAllData, downloadExport, type ExportedData } from "@/lib/data/exportAllData";
-import { validateImportData, importAllData, type ImportResult } from "@/lib/data/importAllData";
+import { validateImportData, importAllData } from "@/lib/data/importAllData";
 import { clearLocalData, type ClearTarget } from "@/lib/data/clearLocalData";
-import { estimateLocalStorageUsage, checkStorageAvailability, detectCorruptStore, repairKnownStores, isLowOnStorage, formatStorageBytes } from "@/lib/storage/storageHealth";
+import { estimateLocalStorageUsage, checkStorageAvailability, repairKnownStores, isLowOnStorage, formatStorageBytes } from "@/lib/storage/storageHealth";
 
 function formatDate(iso: string): string {
   if (!iso) return "—";
@@ -25,16 +24,16 @@ function formatDate(iso: string): string {
 
 export default function DataPage() {
   const { toast } = useToast();
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [, setRefreshKey] = useState(0);
   const [confirmTarget, setConfirmTarget] = useState<ClearTarget | null>(null);
   const [importPreview, setImportPreview] = useState<ExportedData | null>(null);
   const [importMode, setImportMode] = useState<"merge" | "replace">("merge");
   const [importError, setImportError] = useState<string | null>(null);
 
-  const summary = useMemo(() => getStorageSummary(), [refreshKey]);
-  const storageUsage = useMemo(() => estimateLocalStorageUsage(), [refreshKey]);
-  const storageAvail = useMemo(() => checkStorageAvailability(), [refreshKey]);
-  const lowStorage = useMemo(() => isLowOnStorage(), [refreshKey]);
+  const summary = useMemo(() => getStorageSummary(), []);
+  const storageUsage = useMemo(() => estimateLocalStorageUsage(), []);
+  const storageAvail = useMemo(() => checkStorageAvailability(), []);
+  const lowStorage = useMemo(() => isLowOnStorage(), []);
 
   const dataTypes = useMemo(() => [
     { label: "Audits", count: summary.audits.count, size: summary.audits.size, updated: summary.lastUpdated.audits, key: "audits" as ClearTarget },

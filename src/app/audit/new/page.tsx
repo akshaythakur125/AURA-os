@@ -23,7 +23,7 @@ import type {
   SelfRatedConfidence,
   DeepAuditInput,
 } from "@/types/personalization";
-import { detectUnsafePromptText, sanitizeUserText, getSafetyWarningForAudit } from "@/lib/safety/contentSafety";
+import { detectUnsafePromptText, getSafetyWarningForAudit } from "@/lib/safety/contentSafety";
 
 const AUDIT_TYPES: { id: AuditType; label: string; desc: string; gradient: string; icon: string }[] = [
   { id: "photo", label: "Photo Aura Check", desc: "Analyze a single photo for expression, lighting, background, and overall visual signal.", gradient: "from-purple-600 to-pink-500", icon: "camera" },

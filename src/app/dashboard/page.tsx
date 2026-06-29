@@ -59,8 +59,8 @@ export default function DashboardPage() {
   const [displayName, setDisplayName] = useState(initial.user?.displayName || "");
   const [city, setCity] = useState(initial.user?.city || "");
   const [saved, setSaved] = useState(false);
-  const [referralStats, setReferralStats] = useState<ReferralStats | null>(initial.referralStats);
-  const [referralCode, setReferralCode] = useState(initial.referralCode);
+  const [referralStats] = useState<ReferralStats | null>(initial.referralStats);
+  const [referralCode] = useState(initial.referralCode);
 
   function refresh() {
     setAudits(getAudits());

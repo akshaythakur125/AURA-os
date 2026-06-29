@@ -7,8 +7,8 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { getChallengeBySlug, getActiveChallenges } from "@/config/challenges";
-import { getChallengeEntries, getEntriesByChallengeId, createChallengeEntry } from "@/lib/storage/challengeStore";
+import { getChallengeBySlug } from "@/config/challenges";
+import { getEntriesByChallengeId, createChallengeEntry } from "@/lib/storage/challengeStore";
 import { getAudits, getAuditById } from "@/lib/storage/auditStore";
 import { LocalLeaderboard } from "@/components/challenges/LocalLeaderboard";
 import { trackEvent } from "@/lib/storage/analyticsStore";
@@ -19,25 +19,27 @@ export default function ChallengeDetailPage() {
   const slug = typeof params.slug === "string" ? params.slug : "";
   const challenge = getChallengeBySlug(slug);
 
-  const [entries, setEntries] = useState<ChallengeEntry[]>([]);
-  const [hasEntered, setHasEntered] = useState(false);
+  const [entries, setEntries] = useState<ChallengeEntry[]>(() => {
+    if (!challenge || typeof window === "undefined") return [];
+    return getEntriesByChallengeId(challenge.id);
+  });
+  const [hasEntered, setHasEntered] = useState(() => {
+    if (!challenge || typeof window === "undefined") return false;
+    const allEntries = getEntriesByChallengeId(challenge.id);
+    const existingIds = allEntries.map((e) => e.auditId).filter(Boolean);
+    const audits = getAudits().filter((a) => a.freeScore !== undefined);
+    return audits.some((a) => existingIds.includes(a.id));
+  });
   const [message, setMessage] = useState<string | null>(null);
-  const [latestAuditId, setLatestAuditId] = useState<string | null>(null);
+  const [latestAuditId] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    const audits = getAudits().filter((a) => a.freeScore !== undefined);
+    return audits.length > 0 ? audits[0].id : null;
+  });
 
   useEffect(() => {
     if (!challenge) return;
     trackEvent({ eventName: "challenge_viewed", metadata: { slug } });
-    const allEntries = getEntriesByChallengeId(challenge.id);
-    setEntries(allEntries);
-
-    const audits = getAudits().filter((a) => a.freeScore !== undefined);
-    if (audits.length > 0) {
-      setLatestAuditId(audits[0].id);
-    }
-
-    const existingIds = allEntries.map((e) => e.auditId).filter(Boolean);
-    const already = audits.some((a) => existingIds.includes(a.id));
-    setHasEntered(already);
   }, [challenge, slug]);
 
   if (!challenge) {
