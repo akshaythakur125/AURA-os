@@ -9,9 +9,11 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
+import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
 import { RecommendationSection } from "@/components/products/RecommendationSection";
 import type { Audit, FreeAuraResult, FullAuraReportContent } from "@/types/audit";
+import type { PersonalizationResult, SignalMismatch, GoalStrategy } from "@/types/personalization";
 
 const auditTypeLabels: Record<string, string> = {
   photo: "Photo Aura Check",
@@ -48,6 +50,106 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function ArchetypeCard({ personalization }: { personalization: PersonalizationResult }) {
+  const colorMap: Record<string, string> = {
+    "Clean Basic": "border-slate-500/30 bg-slate-500/10",
+    "Urban Aspirational": "border-purple-500/30 bg-purple-500/10",
+    "Premium Minimalist": "border-emerald-500/30 bg-emerald-500/10",
+    "Loud Flex": "border-rose-500/30 bg-rose-500/10",
+    "Soft Luxury": "border-amber-500/30 bg-amber-500/10",
+    "Creator Vibe": "border-cyan-500/30 bg-cyan-500/10",
+    "College Casual": "border-blue-500/30 bg-blue-500/10",
+    "Corporate Sharp": "border-indigo-500/30 bg-indigo-500/10",
+    "Try-Hard Signal": "border-orange-500/30 bg-orange-500/10",
+    "Mismatched Flex": "border-red-500/30 bg-red-500/10",
+    "Low-Clarity Potential": "border-gray-500/30 bg-gray-500/10",
+  };
+  const colors = colorMap[personalization.archetype] || colorMap["Clean Basic"];
+  return (
+    <Card>
+      <h3 className="mb-4 text-sm font-semibold text-white">Your Status Archetype</h3>
+      <div className={`mb-4 rounded-xl border p-4 ${colors}`}>
+        <div className="text-lg font-bold text-white">{personalization.archetype}</div>
+        <p className="mt-2 text-xs text-gray-300">{personalization.archetypeExplanation}</p>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="text-xs text-purple-400">Priority</div>
+          <p className="mt-1 text-xs text-gray-300">{personalization.userPriority}</p>
+        </div>
+        <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="text-xs text-purple-400">Focus Areas</div>
+          <p className="mt-1 text-xs text-gray-300">{personalization.recommendedFocus}</p>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+function SignalMismatchCard({ mismatches }: { mismatches: SignalMismatch[] }) {
+  if (mismatches.length === 0) return null;
+  return (
+    <Card>
+      <h3 className="mb-4 text-sm font-semibold text-white">Signal Mismatches</h3>
+      <div className="space-y-4">
+        {mismatches.map((m) => (
+          <div key={m.title} className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
+            <div className="mb-2 flex items-start justify-between gap-2">
+              <h4 className="text-sm font-medium text-white">{m.title}</h4>
+              <Badge variant={m.severity === "high" ? "danger" : m.severity === "medium" ? "warning" : "default"}>
+                {m.severity}
+              </Badge>
+            </div>
+            <p className="mb-2 text-xs text-gray-400">{m.explanation}</p>
+            <p className="text-xs text-gray-500">
+              <span className="text-purple-300">Correction:</span> {m.correction}
+            </p>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function GoalStrategyCard({ strategy }: { strategy: GoalStrategy }) {
+  return (
+    <Card>
+      <h3 className="mb-4 text-sm font-semibold text-white">Goal Strategy</h3>
+      <div className="space-y-4">
+        <div>
+          <div className="mb-1 text-xs text-purple-400">{strategy.goal}</div>
+          <div className="text-xs text-gray-500">Strategy</div>
+          <p className="text-sm text-gray-300">{strategy.strategyTitle}</p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
+            <div className="mb-1 text-xs text-emerald-400">Optimize</div>
+            <p className="text-xs text-gray-300">{strategy.whatToOptimize}</p>
+          </div>
+          <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-3">
+            <div className="mb-1 text-xs text-red-400">Avoid</div>
+            <p className="text-xs text-gray-300">{strategy.whatToAvoid}</p>
+          </div>
+        </div>
+        <div className="rounded-lg border border-purple-500/20 bg-purple-500/5 p-3">
+          <div className="mb-1 text-xs text-purple-400">Best Next Move</div>
+          <p className="text-xs text-gray-300">{strategy.bestNextMove}</p>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+            <div className="mb-1 text-xs text-gray-500">Photo Direction</div>
+            <p className="text-xs text-gray-300">{strategy.suggestedPhotoDirection}</p>
+          </div>
+          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+            <div className="mb-1 text-xs text-gray-500">Style Direction</div>
+            <p className="text-xs text-gray-300">{strategy.suggestedStyleDirection}</p>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 export default function AuditDetailPage() {
   const params = useParams();
   const id = params.id as string;
@@ -78,11 +180,14 @@ export default function AuditDetailPage() {
       const report = await generateFreeAuraReport(audit);
       setResult(report);
 
+      const personalization = generateStatusArchetype(audit, report.imageMetrics);
+
       const updated = updateAudit(audit.id, {
         freeScore: report.auraScore,
         freeSummary: report.oneLineVerdict,
         reportStatus: "free_generated",
         unlockStatus: "locked",
+        personalization,
         fullReport: {
           id: audit.id + "-report",
           auditId: audit.id,
@@ -92,8 +197,7 @@ export default function AuditDetailPage() {
               visual: report.imageMetrics.lightingScore,
               presentation: report.imageMetrics.clarityScore,
               signals: Math.round(
-                (report.imageMetrics.contrast + report.imageMetrics.saturation) /
-                  2
+                (report.imageMetrics.contrast + report.imageMetrics.saturation) / 2
               ),
               cohesion: report.imageMetrics.compositionScore,
             },
@@ -127,6 +231,7 @@ export default function AuditDetailPage() {
   const displayResult = result || (hasResult ? (audit!.fullReport!.freeResult as FreeAuraResult) : null);
   const isUnlocked = audit?.reportStatus === "unlocked" && audit?.fullReport?.fullContent;
   const displayFull = fullContent || (isUnlocked ? (audit!.fullReport!.fullContent as FullAuraReportContent) : null);
+  const personalization = audit?.personalization;
 
   return (
     <Container className="py-12">
@@ -271,6 +376,15 @@ export default function AuditDetailPage() {
                 </p>
               )}
               {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+            </div>
+          )}
+
+          {/* Personalization sections for any generated result */}
+          {personalization && (displayResult || displayFull) && (
+            <div className="mb-6 space-y-6">
+              <ArchetypeCard personalization={personalization} />
+              <SignalMismatchCard mismatches={personalization.signalMismatches} />
+              <GoalStrategyCard strategy={personalization.goalStrategy} />
             </div>
           )}
 
@@ -470,6 +584,7 @@ export default function AuditDetailPage() {
               <div className="space-y-2 text-center text-xs text-gray-600">
                 <p>AuraCheck analyzes presentation signals, not human worth.</p>
                 <p>Scores are guidance, not objective truth.</p>
+                <p>Archetypes describe presentation style, not your identity or worth.</p>
                 <p>No external AI service is used in this MVP.</p>
               </div>
             </>
@@ -625,7 +740,7 @@ export default function AuditDetailPage() {
                 </h3>
                 <p className="mb-6 text-sm text-gray-400">
                   Get a detailed visual breakdown, goal-specific profile
-                  strategy, personalized shopping plan, and a shareable Aura
+                  strategy, personalized upgrade path, and a shareable Aura
                   card.
                 </p>
                 <div className="mx-auto mb-6 grid max-w-sm gap-3 text-left">
@@ -635,6 +750,8 @@ export default function AuditDetailPage() {
                     "Goal-specific profile strategy",
                     "Shopping & action plan within your budget",
                     "Shareable Aura card for your profile",
+                    "Status Archetype classification",
+                    "Signal mismatch analysis",
                   ].map((item) => (
                     <div key={item} className="flex items-start gap-2 text-xs text-gray-400">
                       <svg
@@ -676,6 +793,7 @@ export default function AuditDetailPage() {
                   AuraCheck analyzes presentation signals using local
                   browser-based rules. This is guidance, not objective truth.
                 </p>
+                <p>Archetypes describe presentation style, not your identity or worth.</p>
                 <p>
                   No image is sent to an external AI service in this MVP.
                 </p>

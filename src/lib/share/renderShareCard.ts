@@ -150,6 +150,18 @@ function drawPremiumDark(
     y += 52;
   }
 
+  // Archetype
+  if (data.archetype) {
+    ctx.fillStyle = "rgba(251, 191, 36, 0.15)";
+    drawRoundedRect(ctx, cx - 180, y, 360, 32, 16);
+    ctx.fill();
+    ctx.fillStyle = "#fbbf24";
+    ctx.font = "13px Arial, Helvetica, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(`Archetype: ${data.archetype}`, cx, y + 21);
+    y += 42;
+  }
+
   // Verdict
   ctx.fillStyle = "rgba(255,255,255,0.75)";
   ctx.font = "20px Arial, Helvetica, sans-serif";

@@ -21,6 +21,7 @@ export function buildShareCardData(
       auditType: audit.auditType,
       imageDataUrl: audit.imageDataUrl,
       generatedAt: fullContent.generatedAt,
+      archetype: audit.personalization?.archetype,
     };
   }
 
@@ -42,6 +43,7 @@ export function buildShareCardData(
       auditType: audit.auditType,
       imageDataUrl: audit.imageDataUrl,
       generatedAt: freeResult.generatedAt,
+      archetype: audit.personalization?.archetype,
     };
   }
 

@@ -14,6 +14,15 @@ import {
 } from "@/lib/image/processImage";
 import type { AuditType, AuditGoal, BudgetAmount } from "@/types/audit";
 import type { ImageMeta } from "@/types/audit";
+import type {
+  StyleIntent,
+  CurrentSignalItem,
+  BiggestConcern,
+  OccasionContext,
+  SpendComfort,
+  SelfRatedConfidence,
+  DeepAuditInput,
+} from "@/types/personalization";
 
 const AUDIT_TYPES: { id: AuditType; label: string; desc: string; gradient: string; icon: string }[] = [
   { id: "photo", label: "Photo Aura Check", desc: "Analyze a single photo for expression, lighting, background, and overall visual signal.", gradient: "from-purple-600 to-pink-500", icon: "camera" },
@@ -39,7 +48,69 @@ const BUDGETS: { id: BudgetAmount; label: string }[] = [
   { id: 25000, label: "₹25,000+" },
 ];
 
-const STEPS = ["Type", "Goal", "Budget", "Image", "Review"];
+const STEPS = ["Type", "Goal", "Budget", "Personalize", "Image", "Review"];
+
+const STYLE_OPTIONS: { id: StyleIntent; label: string }[] = [
+  { id: "premium", label: "Premium" },
+  { id: "clean", label: "Clean" },
+  { id: "attractive", label: "Attractive" },
+  { id: "professional", label: "Professional" },
+  { id: "confident", label: "Confident" },
+  { id: "creator", label: "Creator-like" },
+  { id: "college", label: "College-ready" },
+  { id: "understated", label: "Understated" },
+  { id: "bold", label: "Bold" },
+];
+
+const SIGNAL_OPTIONS: { id: CurrentSignalItem; label: string }[] = [
+  { id: "phone_visible", label: "Phone visible" },
+  { id: "watch_visible", label: "Watch visible" },
+  { id: "shoes_visible", label: "Shoes visible" },
+  { id: "branded_item_visible", label: "Branded item visible" },
+  { id: "bike_car_visible", label: "Bike/car visible" },
+  { id: "gym_body_signal", label: "Gym/body signal" },
+  { id: "travel_signal", label: "Travel signal" },
+  { id: "cafe_signal", label: "Café/social signal" },
+  { id: "room_signal", label: "Room/background signal" },
+  { id: "none", label: "None" },
+];
+
+const CONCERN_OPTIONS: { id: BiggestConcern; label: string }[] = [
+  { id: "looking_average", label: "I look average" },
+  { id: "weak_photos", label: "My photos are weak" },
+  { id: "low_matches", label: "I get low matches" },
+  { id: "poor_instagram", label: "My Instagram looks poor" },
+  { id: "outfit_confusion", label: "I don't know what to wear" },
+  { id: "looking_tryhard", label: "I look try-hard" },
+  { id: "background_issue", label: "My background is weak" },
+  { id: "grooming_issue", label: "Grooming issue" },
+  { id: "not_sure", label: "Not sure" },
+];
+
+const OCCASION_OPTIONS: { id: OccasionContext; label: string }[] = [
+  { id: "dating_profile", label: "Dating profile" },
+  { id: "instagram_post", label: "Instagram post" },
+  { id: "college_daily", label: "College daily/social life" },
+  { id: "office_profile", label: "Office/professional profile" },
+  { id: "party_event", label: "Party/event" },
+  { id: "family_function", label: "Family function" },
+  { id: "creator_content", label: "Creator content" },
+  { id: "general_profile", label: "General profile" },
+];
+
+const SPEND_OPTIONS: { id: SpendComfort; label: string }[] = [
+  { id: "no_spend", label: "No spend" },
+  { id: "under_2000", label: "Under ₹2,000" },
+  { id: "under_5000", label: "Under ₹5,000" },
+  { id: "under_10000", label: "Under ₹10,000" },
+  { id: "flexible", label: "Flexible" },
+];
+
+const CONFIDENCE_OPTIONS: { id: SelfRatedConfidence; label: string }[] = [
+  { id: "low", label: "Low" },
+  { id: "medium", label: "Medium" },
+  { id: "high", label: "High" },
+];
 
 function Icon({ name }: { name: string }) {
   const paths: Record<string, string> = {
@@ -53,6 +124,21 @@ function Icon({ name }: { name: string }) {
     <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={paths[name] || paths.camera} />
     </svg>
+  );
+}
+
+function PillButton({ selected, onClick, children }: { selected: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-lg border px-3 py-1.5 text-xs transition-colors ${
+        selected
+          ? "border-purple-500/50 bg-purple-500/20 text-purple-300"
+          : "border-white/10 text-gray-400 hover:border-white/20"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -72,16 +158,56 @@ export default function NewAuditPage() {
   const [imageError, setImageError] = useState<string | null>(null);
   const [consent, setConsent] = useState(false);
 
+  // Personalization state
+  const [styleIntent, setStyleIntent] = useState<StyleIntent | null>(null);
+  const [currentSignals, setCurrentSignals] = useState<CurrentSignalItem[]>([]);
+  const [biggestConcern, setBiggestConcern] = useState<BiggestConcern | null>(null);
+  const [occasionContext, setOccasionContext] = useState<OccasionContext | null>(null);
+  const [spendComfort, setSpendComfort] = useState<SpendComfort | null>(null);
+  const [selfRatedConfidence, setSelfRatedConfidence] = useState<SelfRatedConfidence | null>(null);
+  const [wantsBrutalFeedback, setWantsBrutalFeedback] = useState(false);
+  const [notes, setNotes] = useState("");
+  const [personalizationSkipped, setPersonalizationSkipped] = useState(false);
+
   const canNext = (): boolean => {
     switch (step) {
       case 0: return auditType !== null;
       case 1: return goal !== null;
       case 2: return budget !== null;
-      case 3: return file !== null && !imageError;
-      case 4: return consent;
+      case 3: return true; // optional
+      case 4: return file !== null && !imageError;
+      case 5: return consent;
       default: return false;
     }
   };
+
+  function buildDeepInput(): DeepAuditInput | undefined {
+    if (personalizationSkipped) return undefined;
+    return {
+      styleIntent: styleIntent || "clean",
+      currentSignals: currentSignals.length > 0 ? currentSignals : ["none"],
+      biggestConcern: biggestConcern || "not_sure",
+      occasionContext: occasionContext || "general_profile",
+      spendComfort: spendComfort || "under_5000",
+      selfRatedConfidence: selfRatedConfidence || "medium",
+      wantsBrutalFeedback,
+      notes: notes.trim() || undefined,
+    };
+  }
+
+  function toggleSignal(signal: CurrentSignalItem) {
+    if (signal === "none") {
+      setCurrentSignals(["none"]);
+      return;
+    }
+    setCurrentSignals((prev) => {
+      const filtered = prev.filter((s) => s !== "none");
+      if (filtered.includes(signal)) {
+        return filtered.filter((s) => s !== signal);
+      }
+      return [...filtered, signal];
+    });
+  }
 
   function handleFileSelect(f: File) {
     setImageError(null);
@@ -133,9 +259,11 @@ export default function NewAuditPage() {
       };
 
       const audit = createAudit({ auditType, goal, budgetRange: budget });
+      const deepInput = buildDeepInput();
       updateAudit(audit.id, {
         imageDataUrl: compressed.dataUrl,
         imageMeta,
+        deepInput,
       });
 
       router.push(`/audit/${audit.id}`);
@@ -162,7 +290,7 @@ export default function NewAuditPage() {
             New Aura Check
           </h1>
           <p className="mt-2 text-gray-400">
-            Select what you want to audit, and upload your image.
+            Select what you want to audit, upload your image, and personalize your results.
           </p>
         </div>
 
@@ -270,8 +398,142 @@ export default function NewAuditPage() {
           </div>
         )}
 
-        {/* Step 3: Image Upload */}
+        {/* Step 3: Personalization */}
         {step === 3 && (
+          <div>
+            <h2 className="mb-2 text-center text-lg font-semibold text-white">
+              Personalize your Aura Check
+            </h2>
+            <p className="mb-6 text-center text-sm text-gray-500">
+              Help us tailor your results. All fields are optional.
+            </p>
+
+            {personalizationSkipped ? (
+              <Card className="py-8 text-center">
+                <p className="mb-4 text-sm text-gray-400">Personalization skipped.</p>
+                <Button size="sm" variant="secondary" onClick={() => setPersonalizationSkipped(false)}>
+                  Add Personalization
+                </Button>
+              </Card>
+            ) : (
+              <div className="space-y-6">
+                {/* A. Style Intent */}
+                <Card>
+                  <h3 className="mb-3 text-sm font-semibold text-white">What do you want to look like?</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {STYLE_OPTIONS.map((s) => (
+                      <PillButton key={s.id} selected={styleIntent === s.id} onClick={() => setStyleIntent(s.id)}>
+                        {s.label}
+                      </PillButton>
+                    ))}
+                  </div>
+                </Card>
+
+                {/* B. Current Signals */}
+                <Card>
+                  <h3 className="mb-3 text-sm font-semibold text-white">What visible signals are currently part of your look?</h3>
+                  <p className="mb-3 text-xs text-gray-500">Select all that apply.</p>
+                  <div className="flex flex-wrap gap-2">
+                    {SIGNAL_OPTIONS.map((s) => (
+                      <PillButton key={s.id} selected={currentSignals.includes(s.id)} onClick={() => toggleSignal(s.id)}>
+                        {s.label}
+                      </PillButton>
+                    ))}
+                  </div>
+                </Card>
+
+                {/* C. Biggest Concern */}
+                <Card>
+                  <h3 className="mb-3 text-sm font-semibold text-white">What is your biggest concern?</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {CONCERN_OPTIONS.map((c) => (
+                      <PillButton key={c.id} selected={biggestConcern === c.id} onClick={() => setBiggestConcern(c.id)}>
+                        {c.label}
+                      </PillButton>
+                    ))}
+                  </div>
+                </Card>
+
+                {/* D. Occasion Context */}
+                <Card>
+                  <h3 className="mb-3 text-sm font-semibold text-white">Where will this image/profile be used?</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {OCCASION_OPTIONS.map((o) => (
+                      <PillButton key={o.id} selected={occasionContext === o.id} onClick={() => setOccasionContext(o.id)}>
+                        {o.label}
+                      </PillButton>
+                    ))}
+                  </div>
+                </Card>
+
+                {/* E. Spend Comfort */}
+                <Card>
+                  <h3 className="mb-3 text-sm font-semibold text-white">What is your spending comfort?</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {SPEND_OPTIONS.map((s) => (
+                      <PillButton key={s.id} selected={spendComfort === s.id} onClick={() => setSpendComfort(s.id)}>
+                        {s.label}
+                      </PillButton>
+                    ))}
+                  </div>
+                </Card>
+
+                {/* F. Self-rated confidence */}
+                <Card>
+                  <h3 className="mb-3 text-sm font-semibold text-white">Self-rated confidence</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {CONFIDENCE_OPTIONS.map((c) => (
+                      <PillButton key={c.id} selected={selfRatedConfidence === c.id} onClick={() => setSelfRatedConfidence(c.id)}>
+                        {c.label}
+                      </PillButton>
+                    ))}
+                  </div>
+                </Card>
+
+                {/* G. Feedback style */}
+                <Card>
+                  <label className="flex cursor-pointer items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={wantsBrutalFeedback}
+                      onChange={(e) => setWantsBrutalFeedback(e.target.checked)}
+                      className="h-4 w-4 rounded border-white/20 bg-white/5 text-purple-600 focus:ring-purple-500"
+                    />
+                    <span className="text-sm text-gray-300">I want direct/brutal but useful feedback</span>
+                  </label>
+                </Card>
+
+                {/* H. Notes */}
+                <Card>
+                  <label className="mb-2 block text-sm font-semibold text-white">Anything specific you want AuraCheck to consider?</label>
+                  <textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Optional — e.g., 'I have an important event coming up' or 'I mainly use this photo on LinkedIn'"
+                    className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+                    rows={3}
+                  />
+                </Card>
+
+                <div className="rounded-xl border border-purple-500/10 bg-purple-500/5 p-4 text-center text-xs text-gray-400">
+                  We do not ask for caste, religion, ethnicity, sexuality, health details, or exact income.
+                  AuraCheck only uses your selected presentation goals and image-quality signals.
+                </div>
+              </div>
+            )}
+
+            <div className="mt-6 flex justify-center">
+              {!personalizationSkipped && (
+                <Button variant="ghost" size="sm" onClick={() => setPersonalizationSkipped(true)}>
+                  Skip Personalization
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Step 4: Image Upload */}
+        {step === 4 && (
           <div>
             <h2 className="mb-2 text-center text-lg font-semibold text-white">
               Upload your photo or screenshot
@@ -349,8 +611,8 @@ export default function NewAuditPage() {
           </div>
         )}
 
-        {/* Step 4: Review & Consent */}
-        {step === 4 && (
+        {/* Step 5: Review & Consent */}
+        {step === 5 && (
           <div>
             <h2 className="mb-6 text-center text-lg font-semibold text-white">
               Review your audit
@@ -367,6 +629,10 @@ export default function NewAuditPage() {
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Budget</span>
                 <span className="text-amber-400">{BUDGETS.find((b) => b.id === budget)?.label}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Personalization</span>
+                <span className="text-white">{personalizationSkipped ? "Skipped" : "Completed"}</span>
               </div>
               {file && (
                 <div className="flex justify-between text-sm">

@@ -507,6 +507,65 @@ export default function HomePage() {
         </Container>
       </section>
 
+      {/* ─── Signal Consistency ─── */}
+      <section className="border-t border-white/5 py-20">
+        <Container>
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              Status is not one thing. It is signal consistency.
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">
+              Every visible detail in your presentation either strengthens or weakens your first impression.
+              AuraCheck helps you find the gaps and fix them.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-blue-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Archetype Detection</h3>
+              <p className="text-sm leading-relaxed text-gray-400">
+                AuraCheck classifies your presentation into one of 11 status archetypes — from Clean Basic
+                to Urban Aspirational to Premium Minimalist. Knowing your archetype tells you which direction
+                to upgrade.
+              </p>
+            </Card>
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Signal Mismatch Analysis</h3>
+              <p className="text-sm leading-relaxed text-gray-400">
+                Expensive phone with a cluttered background. Dating profile with a try-hard filter. Office photo
+                with a casual selfie. AuraCheck detects these mismatches and tells you which one to fix first.
+              </p>
+            </Card>
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Goal-Specific Upgrade Path</h3>
+              <p className="text-sm leading-relaxed text-gray-400">
+                AuraCheck generates a personalized strategy for your specific goal — dating, Instagram, office,
+                college, or glow-up. Every recommendation targets your biggest status leak first.
+              </p>
+            </Card>
+          </div>
+          <div className="mt-10 text-center">
+            <Link href="/audit/new">
+              <Button size="lg">Find Your Status Archetype</Button>
+            </Link>
+          </div>
+        </Container>
+      </section>
+
       {/* ─── Share Card Preview ─── */}
       <section className="border-t border-white/5 py-20">
         <Container>

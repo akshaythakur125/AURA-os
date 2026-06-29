@@ -1,3 +1,5 @@
+import type { DeepAuditInput, PersonalizationResult } from "./personalization";
+
 export type AuditType = "photo" | "instagram" | "dating" | "outfit" | "room";
 
 export type AuditGoal = "dating" | "instagram" | "college" | "office" | "glowup";
@@ -40,6 +42,8 @@ export interface Audit {
   fullReport?: AuraReport;
   reportStatus: AuraReportStatus;
   unlockStatus: UnlockStatus;
+  deepInput?: DeepAuditInput;
+  personalization?: PersonalizationResult;
   createdAt: string;
   updatedAt: string;
 }

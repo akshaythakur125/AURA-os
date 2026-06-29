@@ -152,7 +152,7 @@ export default function DashboardPage() {
 
       {/* Upgrade Recommendations Card */}
       {hasAudits && (
-        <Card className="mb-10">
+        <Card className="mb-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="text-sm font-semibold text-white">
@@ -168,6 +168,38 @@ export default function DashboardPage() {
           </div>
         </Card>
       )}
+
+      {/* Repeated Pattern Insight */}
+      {hasAudits && (() => {
+        const withMetrics = audits.filter(
+          (a) => a.fullReport?.freeResult?.imageMetrics
+        );
+        if (withMetrics.length < 2) return null;
+        const lowLighting = withMetrics.filter(
+          (a) => (a.fullReport?.freeResult?.imageMetrics.lightingScore ?? 50) < 55
+        ).length;
+        const lowClarity = withMetrics.filter(
+          (a) => (a.fullReport?.freeResult?.imageMetrics.clarityScore ?? 50) < 55
+        ).length;
+        const highBg = withMetrics.filter(
+          (a) => (a.fullReport?.freeResult?.imageMetrics.backgroundComplexityEstimate ?? 0) > 60
+        ).length;
+        const total = withMetrics.length;
+
+        let insight = "";
+        if (lowLighting >= total * 0.6) insight = "Low lighting is a recurring pattern across your audits. Improving your lighting setup will lift every future photo.";
+        else if (highBg >= total * 0.6) insight = "Busy backgrounds appear repeatedly. A clean, consistent background will improve all your photos.";
+        else if (lowClarity >= total * 0.6) insight = "Clarity is a repeated challenge. Focus on steady framing and clean lenses for sharper results.";
+        else if (lowLighting >= total * 0.4) insight = "Lighting tends to be a common area for improvement. Even small lighting upgrades can make a difference.";
+        else return null;
+
+        return (
+          <Card className="mb-10">
+            <h3 className="mb-2 text-sm font-semibold text-white">Your Repeated Pattern</h3>
+            <p className="text-xs text-gray-300">{insight}</p>
+          </Card>
+        );
+      })()}
 
       {hasAudits && (
         <div className="mb-10">
@@ -198,6 +230,9 @@ export default function DashboardPage() {
                         </Badge>
                         {category && (
                           <Badge variant="premium">{category}</Badge>
+                        )}
+                        {audit.personalization?.archetype && (
+                          <span className="text-[10px] text-amber-400">{audit.personalization.archetype}</span>
                         )}
                       </div>
                       <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">

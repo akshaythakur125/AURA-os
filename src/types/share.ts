@@ -22,4 +22,5 @@ export interface ShareCardData {
   auditType: string;
   imageDataUrl?: string;
   generatedAt: string;
+  archetype?: string;
 }
