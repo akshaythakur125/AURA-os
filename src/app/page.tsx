@@ -555,6 +555,79 @@ export default function HomePage() {
         </Container>
       </section>
 
+      {/* ─── Upgrade Impact ─── */}
+      <section className="border-t border-white/5 py-20">
+        <Container>
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              Not every upgrade gives equal status impact.
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">
+              AuraCheck helps you find the cheapest change that improves your
+              first impression the most.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card hover className="border-red-500/10">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-red-600/20 to-red-500/10">
+                <svg className="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <Badge variant="danger" className="mb-3">Bad Upgrade</Badge>
+              <h3 className="mb-2 text-lg font-semibold text-white">
+                Buying an expensive phone before fixing basics
+              </h3>
+              <p className="text-sm leading-relaxed text-gray-400">
+                A flagship phone means little if the lighting is harsh, the
+                background is cluttered, or your outfit does not fit. The
+                contrast between a premium device and a weak frame makes the
+                status leak worse, not better.
+              </p>
+            </Card>
+            <Card hover className="border-emerald-500/10">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600/20 to-emerald-500/10">
+                <svg className="h-6 w-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <Badge variant="success" className="mb-3">Smart Upgrade</Badge>
+              <h3 className="mb-2 text-lg font-semibold text-white">
+                Better lighting + grooming + clean outfit
+              </h3>
+              <p className="text-sm leading-relaxed text-gray-400">
+                Upgrading your lighting setup, basic grooming, and wearing a
+                well-fitted solid-color outfit costs under ₹3,000 combined. This
+                changes how every photo of you is perceived — regardless of the
+                phone or background.
+              </p>
+            </Card>
+            <Card hover className="border-purple-500/10">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600/20 to-pink-500/10">
+                <svg className="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <Badge variant="premium" className="mb-3">Best Upgrade</Badge>
+              <h3 className="mb-2 text-lg font-semibold text-white">
+                Target your biggest status leak first
+              </h3>
+              <p className="text-sm leading-relaxed text-gray-400">
+                AuraCheck identifies your single biggest status leak — the one
+                element weakening your first impression the most. Fixing that
+                one thing delivers more visible upgrade per rupee than any
+                random purchase.
+              </p>
+            </Card>
+          </div>
+          <div className="mt-10 text-center">
+            <Link href="/audit/new">
+              <Button size="lg">Start Free Aura Check</Button>
+            </Link>
+          </div>
+        </Container>
+      </section>
+
       {/* ─── Safety Note ─── */}
       <section className="border-t border-white/5 py-12">
         <Container>
