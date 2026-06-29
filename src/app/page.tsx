@@ -507,6 +507,54 @@ export default function HomePage() {
         </Container>
       </section>
 
+      {/* ─── Share Card Preview ─── */}
+      <section className="border-t border-white/5 py-20">
+        <Container>
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              Built to be shared.
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">
+              Generate a clean Aura Score card without exposing your photo by
+              default.
+            </p>
+          </div>
+          <div className="mx-auto max-w-sm">
+            <Card className="relative overflow-hidden border-purple-500/20">
+              <div className="pointer-events-none absolute -right-10 -top-10 h-24 w-24 rounded-full bg-purple-600/10 blur-2xl" />
+              <div className="mb-3 flex items-center justify-between">
+                <span className="text-xs text-purple-400">AuraCheck</span>
+                <Badge variant="premium">Clean but Basic</Badge>
+              </div>
+              <div className="mb-4">
+                <div className="text-5xl font-bold text-white">72</div>
+                <div className="text-sm text-gray-500">/ 100</div>
+                <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/5">
+                  <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-purple-600 to-pink-500" />
+                </div>
+              </div>
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center gap-2 rounded-lg bg-red-500/10 px-3 py-2">
+                  <span className="text-red-400">Biggest Status Leak:</span>
+                  <span className="text-gray-300">Background</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2">
+                  <span className="text-emerald-400">Upgrade Path:</span>
+                  <span className="text-gray-300">Better lighting + cleaner frame</span>
+                </div>
+              </div>
+              <div className="mt-4 rounded-lg border border-purple-500/20 bg-purple-500/10 py-2 text-center text-xs text-purple-300">
+                Find your biggest status leak
+              </div>
+            </Card>
+          </div>
+          <p className="mt-6 text-center text-xs text-gray-600">
+            Your uploaded image is never included in a share card unless you
+            turn it on.
+          </p>
+        </Container>
+      </section>
+
       {/* ─── Safety Note ─── */}
       <section className="border-t border-white/5 py-12">
         <Container>

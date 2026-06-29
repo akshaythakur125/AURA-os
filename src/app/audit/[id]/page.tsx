@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
+import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
+import { RecommendationSection } from "@/components/products/RecommendationSection";
 import type { Audit, FreeAuraResult, FullAuraReportContent } from "@/types/audit";
 
 const auditTypeLabels: Record<string, string> = {
@@ -58,6 +60,10 @@ export default function AuditDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<FreeAuraResult | null>(null);
   const [fullContent] = useState<FullAuraReportContent | null>(null);
+
+  function handlePrint() {
+    window.print();
+  }
 
   function setAudit(a: Audit | null) {
     rawSetAudit(a);
@@ -440,6 +446,26 @@ export default function AuditDetailPage() {
                 <p className="text-sm text-gray-300 leading-relaxed">{displayFull.finalVerdict}</p>
               </Card>
 
+              {/* Print / PDF */}
+              <div className="mb-6 flex flex-wrap gap-3">
+                <Button variant="secondary" size="sm" onClick={handlePrint}>
+                  Print Report
+                </Button>
+                <span className="text-xs text-gray-500 self-center">
+                  Save as PDF from the print dialog (browser print-to-PDF).
+                </span>
+              </div>
+
+              {/* Share section */}
+              <div className="mb-6">
+                <ShareCardBuilder audit={audit!} type="full_report" />
+              </div>
+
+              {/* Premium recommendations */}
+              <div className="mb-6">
+                <RecommendationSection audit={audit!} isPremium />
+              </div>
+
               {/* Disclaimers */}
               <div className="space-y-2 text-center text-xs text-gray-600">
                 <p>AuraCheck analyzes presentation signals, not human worth.</p>
@@ -634,6 +660,16 @@ export default function AuditDetailPage() {
                   </Button>
                 </Link>
               </Card>
+
+              {/* Share section for free result */}
+              <div className="mb-6">
+                <ShareCardBuilder audit={audit!} type="free_result" />
+              </div>
+
+              {/* Recommendations for free result */}
+              <div className="mb-6">
+                <RecommendationSection audit={audit!} />
+              </div>
 
               <div className="space-y-2 text-center text-xs text-gray-600">
                 <p>

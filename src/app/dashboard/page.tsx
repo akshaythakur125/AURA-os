@@ -150,6 +150,25 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* Upgrade Recommendations Card */}
+      {hasAudits && (
+        <Card className="mb-10">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-white">
+                Upgrade Recommendations
+              </h3>
+              <p className="mt-1 text-xs text-gray-500">
+                Personalized product suggestions based on your latest audit.
+              </p>
+            </div>
+            <Link href="/shop">
+              <Button size="sm">Open Shop</Button>
+            </Link>
+          </div>
+        </Card>
+      )}
+
       {hasAudits && (
         <div className="mb-10">
           <h2 className="mb-4 text-lg font-semibold text-white">Audit History</h2>
