@@ -1,106 +1,189 @@
+import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import Link from "next/link";
 
-const plans = [
+const tiers = [
   {
-    name: "Basic",
-    price: "99",
-    description: "Quick snapshot of your first impression.",
+    name: "Free Aura Score",
+    price: "0",
+    bestFor: "Quick check",
+    description: "A free snapshot of your first impression — no payment needed.",
     features: [
-      "Single photo audit",
-      "Basic aura score",
+      "Single photo scan",
+      "Basic aura score (0–100)",
       "3 status leak insights",
-      "5 upgrade suggestions",
+      "3 upgrade suggestions",
+      "No login required",
     ],
-    badge: null,
+    highlighted: false,
+    href: "/audit/new",
+    cta: "Start Free",
   },
   {
-    name: "Premium",
-    price: "299",
-    description: "Deep analysis with actionable upgrade roadmap.",
+    name: "Full Aura Report",
+    price: "99",
+    bestFor: "Serious upgrade",
+    description: "Deep analysis with a clear, actionable upgrade roadmap.",
     features: [
-      "Up to 5 photos",
-      "Full aura score breakdown",
+      "Up to 3 photos",
+      "Full score breakdown by category",
       "Unlimited leak detection",
       "Priority upgrade plan",
-      "Downloadable PDF report",
+      "Downloadable report",
       "Unlock code access",
     ],
-    badge: "Best Value",
     highlighted: true,
+    href: "/unlock",
+    cta: "Unlock Report",
+  },
+  {
+    name: "Dating / Profile Audit",
+    price: "299",
+    bestFor: "Profile optimizer",
+    description: "Optimize how your dating profile presents you.",
+    features: [
+      "Profile screenshot analysis",
+      "Bio & photo coherence check",
+      "Platform-specific tips",
+      "Competitive signal audit",
+      "Photo order optimization",
+    ],
+    highlighted: false,
+    href: "/unlock",
+    cta: "Unlock Audit",
+  },
+  {
+    name: "30-Day Glow-Up Plan",
+    price: "499",
+    bestFor: "Maximum impact",
+    description: "A month-long upgrade program with tracking and support.",
+    features: [
+      "Full audit every week",
+      "Personalized upgrade tasks",
+      "Progress tracking dashboard",
+      "Priority email support",
+      "Final comparison report",
+    ],
+    highlighted: false,
+    href: "/unlock",
+    cta: "Get the Plan",
   },
 ];
 
 export default function PricingPage() {
   return (
-    <Container className="py-16">
-      <SectionHeading
-        title="Simple Pricing"
-        subtitle="Choose the plan that fits your needs. All prices in INR."
-      />
+    <>
+      <section className="relative overflow-hidden py-24 sm:py-32">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(147,51,234,0.1),transparent_50%)]" />
+        <Container className="relative">
+          <SectionHeading
+            title="Simple pricing, real results"
+            subtitle="Start free. Upgrade when you want the full picture."
+          />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {tiers.map((tier) => (
+              <Card
+                key={tier.name}
+                className={`relative flex flex-col ${tier.highlighted ? "border-purple-500/30 ring-1 ring-purple-500/20" : ""}`}
+              >
+                {tier.highlighted && (
+                  <Badge variant="premium" className="absolute -top-2 right-4">
+                    Popular
+                  </Badge>
+                )}
+                <div className="mb-1 text-xs text-gray-500">{tier.bestFor}</div>
+                <h3 className="text-lg font-bold text-white">{tier.name}</h3>
+                <div className="mt-2 flex items-baseline gap-1">
+                  <span className="text-4xl font-bold text-white">
+                    &#8377;{tier.price}
+                  </span>
+                  <span className="text-sm text-gray-500">one-time</span>
+                </div>
+                <p className="mt-2 text-sm text-gray-400">{tier.description}</p>
 
-      <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
-        {plans.map((plan) => (
-          <Card
-            key={plan.name}
-            className={`relative flex flex-col ${plan.highlighted ? "border-purple-500/30 ring-1 ring-purple-500/20" : ""}`}
-          >
-            {plan.badge && (
-              <Badge variant="premium" className="absolute -top-2 right-4">
-                {plan.badge}
-              </Badge>
-            )}
-            <h3 className="text-xl font-bold text-white">{plan.name}</h3>
-            <div className="mt-2 flex items-baseline gap-1">
-              <span className="text-4xl font-bold text-white">
-                &#8377;{plan.price}
-              </span>
-              <span className="text-sm text-gray-500">one-time</span>
-            </div>
-            <p className="mt-3 text-sm text-gray-400">{plan.description}</p>
-            <ul className="mt-6 space-y-3">
-              {plan.features.map((feature) => (
-                <li key={feature} className="flex items-start gap-3 text-sm text-gray-300">
-                  <svg
-                    className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  {feature}
-                </li>
+                <ul className="mt-6 flex-1 space-y-3">
+                  {tier.features.map((f) => (
+                    <li
+                      key={f}
+                      className="flex items-start gap-3 text-sm text-gray-300"
+                    >
+                      <svg
+                        className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-8">
+                  <Link href={tier.href}>
+                    <Button
+                      variant={tier.highlighted ? "primary" : "outline"}
+                      className="w-full"
+                    >
+                      {tier.cta}
+                    </Button>
+                  </Link>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <div className="mt-12 rounded-xl border border-purple-500/10 bg-purple-500/5 p-6 text-center">
+            <p className="text-sm text-gray-400">
+              All payments are processed manually via UPI. No automatic
+              recurring billing.
+              <br />
+              Your report is unlocked after payment verification. No external
+              payment API is used.
+            </p>
+          </div>
+
+          <div className="mt-16 text-center">
+            <h3 className="mb-4 text-lg font-semibold text-white">
+              Frequently Asked
+            </h3>
+            <div className="mx-auto grid max-w-2xl gap-6 text-left">
+              {[
+                {
+                  q: "What do I get in the free version?",
+                  a: "A basic Aura Score, 3 status leak insights, and 3 upgrade suggestions from a single photo.",
+                },
+                {
+                  q: "How do I unlock a paid report?",
+                  a: "Send payment via UPI, enter your transaction ID, and receive an unlock code within 24 hours.",
+                },
+                {
+                  q: "Is my data safe?",
+                  a: "Yes. All processing is local in your browser. No images are uploaded to any server in the current MVP.",
+                },
+                {
+                  q: "Can I upgrade from Free to Premium later?",
+                  a: "Yes. Your free audit can be upgraded to a full report at any time.",
+                },
+              ].map((faq) => (
+                <div key={faq.q}>
+                  <h4 className="text-sm font-medium text-white">{faq.q}</h4>
+                  <p className="mt-1 text-sm text-gray-500">{faq.a}</p>
+                </div>
               ))}
-            </ul>
-            <div className="mt-8">
-              <Link href={plan.highlighted ? "/unlock" : "/audit/new"}>
-                <Button
-                  variant={plan.highlighted ? "primary" : "outline"}
-                  className="w-full"
-                >
-                  {plan.highlighted ? "Unlock Premium" : "Start Basic"}
-                </Button>
-              </Link>
             </div>
-          </Card>
-        ))}
-      </div>
-
-      <p className="mt-12 text-center text-sm text-gray-600">
-        Payments are processed manually via UPI. No automatic billing.
-        <br />
-        Your report is unlocked after payment verification.
-      </p>
-    </Container>
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }
