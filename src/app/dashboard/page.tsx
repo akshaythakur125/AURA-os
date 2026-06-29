@@ -6,11 +6,14 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
 import { getAudits, deleteAudit, getAuditStats } from "@/lib/storage/auditStore";
 import { getLocalUser, updateLocalUser } from "@/lib/storage/userStore";
 import { clearAll } from "@/lib/storage/localStore";
+import { getReferralProfile, getReferralStats } from "@/lib/storage/referralStore";
 import type { Audit, AuditStats } from "@/types/audit";
 import type { LocalUser } from "@/types/user";
+import type { ReferralStats } from "@/types/referral";
 
 const auditTypeLabels: Record<string, string> = {
   photo: "Photo Aura Check",
@@ -41,10 +44,11 @@ function formatDate(iso: string): string {
 
 function loadState() {
   if (typeof window === "undefined") {
-    return { audits: [] as Audit[], stats: null as AuditStats | null, user: null as LocalUser | null };
+    return { audits: [] as Audit[], stats: null as AuditStats | null, user: null as LocalUser | null, referralStats: null as ReferralStats | null, referralCode: "" as string };
   }
   const u = getLocalUser();
-  return { audits: getAudits(), stats: getAuditStats(), user: u };
+  const rp = getReferralProfile();
+  return { audits: getAudits(), stats: getAuditStats(), user: u, referralStats: getReferralStats(), referralCode: rp?.referralCode || "" };
 }
 
 export default function DashboardPage() {
@@ -55,6 +59,8 @@ export default function DashboardPage() {
   const [displayName, setDisplayName] = useState(initial.user?.displayName || "");
   const [city, setCity] = useState(initial.user?.city || "");
   const [saved, setSaved] = useState(false);
+  const [referralStats, setReferralStats] = useState<ReferralStats | null>(initial.referralStats);
+  const [referralCode, setReferralCode] = useState(initial.referralCode);
 
   function refresh() {
     setAudits(getAudits());
@@ -79,6 +85,11 @@ export default function DashboardPage() {
     if (!window.confirm("Delete this audit? This cannot be undone.")) return;
     deleteAudit(id);
     refresh();
+  }
+
+  function handleCopyReferralLink() {
+    const url = `${window.location.origin}/?ref=${referralCode}`;
+    navigator.clipboard.writeText(url);
   }
 
   const hasAudits = audits.length > 0;
@@ -149,6 +160,52 @@ export default function DashboardPage() {
           </Card>
         </div>
       )}
+
+      {/* Onboarding Checklist */}
+      <OnboardingChecklist />
+
+      {/* Referral Card */}
+      <Card className="mb-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-sm font-semibold text-white">
+              {referralCode ? "Your Referral Link" : "Referral Program"}
+            </h3>
+            <p className="mt-1 text-xs text-gray-500">
+              {referralCode
+                    ? `Share your link — ${referralStats?.totalClaimsLocal ?? 0} friends have claimed so far`
+                : "Complete an audit to get your referral code"}
+            </p>
+          </div>
+          <div className="flex gap-2">
+            {referralCode && (
+              <>
+                <Button size="sm" variant="secondary" onClick={handleCopyReferralLink}>Copy Invite Link</Button>
+                <Link href={`/?ref=${referralCode}`}>
+                  <Button size="sm">View Public Page</Button>
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      </Card>
+
+      {/* Progress Comparisons Link */}
+      <Card className="mb-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-sm font-semibold text-white">
+              Track Your Improvement
+            </h3>
+            <p className="mt-1 text-xs text-gray-500">
+              Compare audits over time and see how your score changes.
+            </p>
+          </div>
+          <Link href="/progress">
+            <Button size="sm">View Progress</Button>
+          </Link>
+        </div>
+      </Card>
 
       {/* Upgrade Recommendations Card */}
       {hasAudits && (
@@ -277,8 +334,7 @@ export default function DashboardPage() {
       )}
 
       <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center text-xs text-gray-600">
-        Local-only MVP: your audit data is stored in your browser, not uploaded
-        to a server. Clearing browser data may remove them.
+        Local-only MVP: your data is stored in your browser, not uploaded to a server. Referral and challenge tracking is local — no real social network.
       </div>
 
       <div className="mt-10">

@@ -19,6 +19,12 @@ export const metadata: Metadata = {
   description:
     "AI-style first-impression audit for photos, profiles, outfits, and lifestyle presentation.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  manifest: "/manifest.json",
+  other: {
+    "theme-color": "#000000",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "black",
+  },
 };
 
 export default function RootLayout({

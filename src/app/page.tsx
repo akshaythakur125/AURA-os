@@ -533,6 +533,93 @@ export default function HomePage() {
         </Container>
       </section>
 
+      {/* ─── Referral / Invite Section ─── */}
+      <section className="border-t border-white/5 py-20">
+        <Container>
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              Invite friends. Earn rewards.
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">
+              Share your referral code after your first audit. When friends claim it, you both get a boost.
+            </p>
+          </div>
+          <div className="mx-auto max-w-lg rounded-xl border border-purple-500/20 bg-purple-500/5 p-6 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500">
+              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+            </div>
+            <p className="mb-4 text-sm text-gray-300">Get your unique referral link after completing an audit. Share it with friends to earn recognition on the leaderboard.</p>
+            <p className="text-xs text-gray-500">Referral tracking is local-only in this MVP. No real rewards — just bragging rights.</p>
+          </div>
+          <div className="mt-8 text-center">
+            <Link href="/dashboard"><Button variant="outline" size="lg">Get Your Referral Link</Button></Link>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── Challenges Section ─── */}
+      <section className="border-t border-white/5 py-20">
+        <Container>
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              Challenges to level up
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">
+              Daily and weekly challenges to improve your visual signal and track your progress against yourself.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card hover className="text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 text-lg font-bold text-white">1</div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Photo Challenge</h3>
+              <p className="mb-4 text-sm text-gray-400">Upload a new photo with improved lighting and framing. Score yourself against your previous best.</p>
+            </Card>
+            <Card hover className="text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 text-lg font-bold text-white">2</div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Consistency Challenge</h3>
+              <p className="mb-4 text-sm text-gray-400">Submit the same photo type 3 days in a row. Track how your signal consistency improves.</p>
+            </Card>
+            <Card hover className="text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-lg font-bold text-white">3</div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Profile Refresh</h3>
+              <p className="mb-4 text-sm text-gray-400">Redo your dating or Instagram profile and run a new audit to compare the delta.</p>
+            </Card>
+          </div>
+          <div className="mt-8 text-center">
+            <Link href="/challenges"><Button size="lg">Explore Challenges</Button></Link>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── Install App Section ─── */}
+      <section className="border-t border-white/5 py-20">
+        <Container>
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              Use AuraCheck like an app
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">
+              Install on your home screen for quick access. Works offline after first visit.
+            </p>
+          </div>
+          <div className="mx-auto max-w-sm rounded-xl border border-white/5 bg-white/[0.02] p-6 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-600 to-pink-500">
+              <span className="text-2xl font-bold text-white">A</span>
+            </div>
+            <h3 className="mb-2 text-lg font-semibold text-white">AuraCheck</h3>
+            <p className="mb-4 text-sm text-gray-400">First-impression intelligence</p>
+            <div className="space-y-2 text-left text-xs text-gray-500">
+              <p className="flex items-center gap-2"><span className="h-1 w-1 rounded-full bg-purple-400" /> Chrome Android: Add to Home Screen</p>
+              <p className="flex items-center gap-2"><span className="h-1 w-1 rounded-full bg-purple-400" /> iOS Safari: Share → Add to Home Screen</p>
+              <p className="flex items-center gap-2"><span className="h-1 w-1 rounded-full bg-purple-400" /> Desktop: Install icon in address bar</p>
+            </div>
+          </div>
+          <div className="mt-8 text-center">
+            <Link href="/install"><Button variant="outline" size="lg">Installation Guide</Button></Link>
+          </div>
+        </Container>
+      </section>
+
       {/* ─── Example Report Preview ─── */}
       <section className="border-t border-white/5 py-20">
         <Container>

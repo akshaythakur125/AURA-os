@@ -7,6 +7,11 @@ export const STORAGE_KEYS = {
   ORDERS: "auracheck:v1:orders",
   ANALYTICS: "auracheck:v1:analytics",
   LEADS: "auracheck:v1:leads",
+  REFERRAL_PROFILE: "auracheck:v1:referral_profile",
+  REFERRAL_CLAIMS: "auracheck:v1:referral_claims",
+  CHALLENGE_ENTRIES: "auracheck:v1:challenge_entries",
+  PROGRESS_COMPARISONS: "auracheck:v1:progress_comparisons",
+  ONBOARDING: "auracheck:v1:onboarding",
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

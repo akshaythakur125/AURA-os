@@ -8,6 +8,8 @@ const footerLinks = [
       { href: "/pricing", label: "Pricing" },
       { href: "/audit/new", label: "Start Audit" },
       { href: "/dashboard", label: "Dashboard" },
+      { href: "/challenges", label: "Challenges" },
+      { href: "/progress", label: "Progress" },
     ],
   },
   {
@@ -21,6 +23,7 @@ const footerLinks = [
     label: "Support",
     links: [
       { href: "/unlock", label: "Unlock Report" },
+      { href: "/install", label: "Install App" },
       { href: "/admin", label: "Admin" },
     ],
   },

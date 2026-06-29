@@ -22,6 +22,15 @@ export interface AnalyticsSummary {
   shareCardDownloaded: number;
   affiliateClicked: number;
   reportPrinted: number;
+  referralLinkCopied: number;
+  referralShared: number;
+  referralClaimed: number;
+  challengeViewed: number;
+  challengeEntered: number;
+  progressComparisonCreated: number;
+  pwaInstallPageViewed: number;
+  leadCreated: number;
+  offerApplied: number;
   conversionEstimate: {
     paymentRequestsPerFreeScore: number | null;
     unlocksPerPaymentRequest: number | null;
@@ -73,6 +82,15 @@ export function getAnalyticsSummary(): AnalyticsSummary {
   const shareCardDownloaded = events.filter((e) => e.eventName === "share_card_downloaded").length;
   const affiliateClicked = events.filter((e) => e.eventName === "affiliate_clicked").length;
   const reportPrinted = events.filter((e) => e.eventName === "report_printed").length;
+  const referralLinkCopied = events.filter((e) => e.eventName === "referral_link_copied").length;
+  const referralShared = events.filter((e) => e.eventName === "referral_shared").length;
+  const referralClaimed = events.filter((e) => e.eventName === "referral_claimed").length;
+  const challengeViewed = events.filter((e) => e.eventName === "challenge_viewed").length;
+  const challengeEntered = events.filter((e) => e.eventName === "challenge_entered").length;
+  const progressComparisonCreated = events.filter((e) => e.eventName === "progress_comparison_created").length;
+  const pwaInstallPageViewed = events.filter((e) => e.eventName === "pwa_install_page_viewed").length;
+  const leadCreated = events.filter((e) => e.eventName === "lead_created").length;
+  const offerApplied = events.filter((e) => e.eventName === "offer_applied").length;
 
   return {
     totalEvents: events.length,
@@ -84,6 +102,15 @@ export function getAnalyticsSummary(): AnalyticsSummary {
     shareCardDownloaded,
     affiliateClicked,
     reportPrinted,
+    referralLinkCopied,
+    referralShared,
+    referralClaimed,
+    challengeViewed,
+    challengeEntered,
+    progressComparisonCreated,
+    pwaInstallPageViewed,
+    leadCreated,
+    offerApplied,
     conversionEstimate: {
       paymentRequestsPerFreeScore:
         freeScoreGenerated > 0

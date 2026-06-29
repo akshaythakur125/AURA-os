@@ -16,6 +16,9 @@ import { generateUnlockCode } from "@/lib/payments/unlockCodeGenerator";
 import { downloadJson } from "@/lib/export/downloadJson";
 import { jsonToCsv, downloadCsv } from "@/lib/export/csv";
 import { getLeads, deleteLead, clearLeads, exportLeads } from "@/lib/storage/leadStore";
+import { getReferralProfile, getReferralStats, getReferralClaims } from "@/lib/storage/referralStore";
+import { getChallengeEntries, getChallengeStats } from "@/lib/storage/challengeStore";
+import { getProgressComparisons, getProgressStats } from "@/lib/storage/progressStore";
 import type { ManualOrder } from "@/types/order";
 
 function getAdminCode(): string {
@@ -497,6 +500,45 @@ export default function AdminPage() {
             </table>
           </div>
         )}
+      </Card>
+
+      {/* ─── Growth Dashboard ─── */}
+      <Card className="mb-8">
+        <h3 className="mb-4 text-sm font-semibold text-white">Growth Dashboard</h3>
+        <div className="grid gap-6 sm:grid-cols-3">
+          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-4">
+            <div className="mb-2 text-xs text-gray-500">Referral Program</div>
+            {(() => { const rs = getReferralStats(); return (
+              <div className="space-y-1 text-xs">
+                <div className="flex justify-between"><span className="text-gray-400">Referral Code</span><span className="text-purple-300">{getReferralProfile()?.referralCode || "—"}</span></div>
+                <div className="flex justify-between"><span className="text-gray-400">Total Claims</span><span className="text-white">{rs?.totalClaimsLocal ?? 0}</span></div>
+                <div className="flex justify-between"><span className="text-gray-400">Referral Code Used</span><span className="text-white">{rs?.referralCode || "—"}</span></div>
+                <div className="mt-2"><Button variant="ghost" size="sm" onClick={() => { const data = getReferralClaims(); const csv = jsonToCsv(data.map((c: any) => ({ id: c.id, referrerCode: c.referrerCode, claimedAt: c.claimedAt }))); downloadCsv(csv, `referral-claims-${new Date().toISOString().slice(0, 10)}.csv`); }}>Export Claims CSV</Button></div>
+              </div>
+            );})()}
+          </div>
+          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-4">
+            <div className="mb-2 text-xs text-gray-500">Challenge Entries</div>
+            {(() => { const cs = getChallengeStats(); const entries = getChallengeEntries(); const uniqueChallenges = cs ? Object.keys(cs.entriesByChallenge).length : 0; return (
+              <div className="space-y-1 text-xs">
+                <div className="flex justify-between"><span className="text-gray-400">Total Entries</span><span className="text-white">{cs?.totalEntries ?? 0}</span></div>
+                <div className="flex justify-between"><span className="text-gray-400">Unique Challenges</span><span className="text-white">{uniqueChallenges}</span></div>
+                <div className="mt-2"><Button variant="ghost" size="sm" onClick={() => { const csv = jsonToCsv(entries.map((e) => ({ id: e.id, challengeId: e.challengeId, score: e.auraScore, timestamp: e.createdAt }))); downloadCsv(csv, `challenge-entries-${new Date().toISOString().slice(0, 10)}.csv`); }}>Export Entries CSV</Button></div>
+              </div>
+            );})()}
+          </div>
+          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-4">
+            <div className="mb-2 text-xs text-gray-500">Progress Comparisons</div>
+            {(() => { const ps = getProgressStats(); const all = getProgressComparisons(); const improved = all.filter((c) => c.scoreDelta > 0).length; const deltas = all.map((c) => c.scoreDelta); const avgDelta = deltas.length > 0 ? Math.round(deltas.reduce((s, d) => s + d, 0) / deltas.length) : null; return (
+              <div className="space-y-1 text-xs">
+                <div className="flex justify-between"><span className="text-gray-400">Total Comparisons</span><span className="text-white">{ps?.totalComparisons ?? 0}</span></div>
+                <div className="flex justify-between"><span className="text-gray-400">Improved</span><span className="text-emerald-400">{improved}</span></div>
+                <div className="flex justify-between"><span className="text-gray-400">Avg Delta</span><span className="text-amber-400">{avgDelta != null ? `${avgDelta > 0 ? "+" : ""}${avgDelta}` : "—"}</span></div>
+                <div className="mt-2"><Button variant="ghost" size="sm" onClick={() => { const csv = jsonToCsv(all.map((c) => ({ id: c.id, beforeAuditId: c.beforeAuditId, afterAuditId: c.afterAuditId, scoreDelta: c.scoreDelta, summary: c.summary, createdAt: c.createdAt }))); downloadCsv(csv, `progress-comparisons-${new Date().toISOString().slice(0, 10)}.csv`); }}>Export Comparisons CSV</Button></div>
+              </div>
+            );})()}
+          </div>
+        </div>
       </Card>
 
       {/* ─── Affiliate Stats ─── */}

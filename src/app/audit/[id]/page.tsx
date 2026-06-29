@@ -731,6 +731,18 @@ export default function AuditDetailPage() {
                 </div>
               </Card>
 
+              {/* ─── Challenge CTA ─── */}
+              <Card className="mb-6">
+                <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:text-left">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-lg font-bold text-white">!</div>
+                  <div className="flex-1">
+                    <h4 className="text-sm font-semibold text-white">Compete in a Challenge</h4>
+                    <p className="text-xs text-gray-400">Submit this audit to a challenge and see how you rank on the local leaderboard.</p>
+                  </div>
+                  <Link href="/challenges"><Button size="sm" variant="outline">View Challenges</Button></Link>
+                </div>
+              </Card>
+
               {/* ─── Multi-Product Unlock CTAs ─── */}
               <h3 className="mb-3 text-sm font-semibold text-white">Upgrade Options</h3>
               <div className="mb-6 grid gap-4 sm:grid-cols-3">

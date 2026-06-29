@@ -34,13 +34,13 @@ export function removeItem(key: string): void {
 export function clearAll(): void {
   if (!isBrowser()) return;
   try {
-    localStorage.removeItem("auracheck:v1:audits");
-    localStorage.removeItem("auracheck:v1:user");
-    localStorage.removeItem("auracheck:v1:settings");
-    localStorage.removeItem("auracheck:v1:unlocks");
-    localStorage.removeItem("auracheck:v1:orders");
-    localStorage.removeItem("auracheck:v1:analytics");
-    localStorage.removeItem("auracheck:v1:leads");
+    const keys = [
+      "auracheck:v1:audits", "auracheck:v1:user", "auracheck:v1:settings",
+      "auracheck:v1:unlocks", "auracheck:v1:orders", "auracheck:v1:analytics",
+      "auracheck:v1:leads", "auracheck:v1:referral_profile", "auracheck:v1:referral_claims",
+      "auracheck:v1:challenge_entries", "auracheck:v1:progress_comparisons", "auracheck:v1:onboarding",
+    ];
+    keys.forEach((k) => localStorage.removeItem(k));
   } catch {
     console.warn("Failed to clear localStorage");
   }
