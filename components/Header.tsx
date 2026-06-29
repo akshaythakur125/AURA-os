@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 
 const navLinks = [
+  { href: "/#how-it-works", label: "How it Works" },
+  { href: "/#examples", label: "Examples" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/dashboard", label: "Dashboard" },
+  { href: "/privacy", label: "Privacy" },
 ];
 
 export function Header() {
