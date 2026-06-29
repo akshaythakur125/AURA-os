@@ -83,6 +83,10 @@ export default function DashboardPage() {
 
   const hasAudits = audits.length > 0;
 
+  function getCategory(audit: Audit): string | undefined {
+    return audit.fullReport?.freeResult?.category;
+  }
+
   return (
     <Container className="py-12">
       <div className="mb-10 flex items-start justify-between gap-4">
@@ -137,9 +141,9 @@ export default function DashboardPage() {
             </div>
           </Card>
           <Card>
-            <div className="text-xs text-gray-500">Unlocked Reports</div>
+            <div className="text-xs text-gray-500">Avg Free Score</div>
             <div className="mt-1 text-2xl font-bold text-purple-400">
-              {stats.unlockedReports}
+              {stats.averageFreeScore ?? "—"}
             </div>
           </Card>
         </div>
@@ -149,51 +153,60 @@ export default function DashboardPage() {
         <div className="mb-10">
           <h2 className="mb-4 text-lg font-semibold text-white">Audit History</h2>
           <div className="space-y-4">
-            {audits.map((audit) => (
-              <Card key={audit.id} className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex min-w-0 flex-1 items-center gap-4">
-                  {audit.imageDataUrl && (
-                    <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-white/5">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={audit.imageDataUrl}
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="truncate text-sm font-semibold text-white">
-                        {auditTypeLabels[audit.auditType] || audit.auditType}
-                      </h3>
-                      <Badge variant={statusBadge[audit.reportStatus] || "default"}>
-                        {audit.reportStatus.replace("_", " ")}
-                      </Badge>
-                    </div>
-                    <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
-                      <span>Goal: {audit.goal}</span>
-                      <span>Budget: &#8377;{audit.budgetRange.toLocaleString()}</span>
-                      {audit.freeScore !== undefined && (
-                        <span>Score: <span className="text-purple-300">{audit.freeScore}</span></span>
-                      )}
-                      <span>{formatDate(audit.createdAt)}</span>
+            {audits.map((audit) => {
+              const category = getCategory(audit);
+              return (
+                <Card key={audit.id} className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex min-w-0 flex-1 items-center gap-4">
+                    {audit.imageDataUrl && (
+                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-white/5">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={audit.imageDataUrl}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="truncate text-sm font-semibold text-white">
+                          {auditTypeLabels[audit.auditType] || audit.auditType}
+                        </h3>
+                        <Badge variant={statusBadge[audit.reportStatus] || "default"}>
+                          {audit.reportStatus.replace("_", " ")}
+                        </Badge>
+                        {category && (
+                          <Badge variant="premium">{category}</Badge>
+                        )}
+                      </div>
+                      <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+                        <span>Goal: {audit.goal}</span>
+                        <span>Budget: &#8377;{audit.budgetRange.toLocaleString()}</span>
+                        {audit.freeScore !== undefined && (
+                          <span>
+                            Score:{" "}
+                            <span className="text-purple-300">{audit.freeScore}</span>
+                          </span>
+                        )}
+                        <span>{formatDate(audit.createdAt)}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  <Link href={`/audit/${audit.id}`}>
-                    <Button variant="secondary" size="sm">View</Button>
-                  </Link>
-                  <button
-                    onClick={() => handleDeleteAudit(audit.id)}
-                    className="rounded-lg px-2 py-1.5 text-xs text-gray-500 transition-colors hover:bg-white/5 hover:text-red-400"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </Card>
-            ))}
+                  <div className="flex shrink-0 items-center gap-2">
+                    <Link href={`/audit/${audit.id}`}>
+                      <Button variant="secondary" size="sm">View</Button>
+                    </Link>
+                    <button
+                      onClick={() => handleDeleteAudit(audit.id)}
+                      className="rounded-lg px-2 py-1.5 text-xs text-gray-500 transition-colors hover:bg-white/5 hover:text-red-400"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </Card>
+              );
+            })}
           </div>
         </div>
       )}

@@ -60,7 +60,8 @@ export interface StatusLeak {
   category: string;
   title: string;
   description: string;
-  impact: string;
+  fix: string;
+  impactScore: number;
 }
 
 export interface UpgradeSuggestion {
@@ -73,9 +74,47 @@ export interface UpgradeSuggestion {
 }
 
 export interface BudgetUpgradePlan {
-  items: UpgradeSuggestion[];
-  totalBudget: number;
+  budgetRange: number;
+  priority: string;
+  actions: string[];
+  estimatedImpact: string;
   currency: "INR";
+}
+
+export interface QuickFix {
+  title: string;
+  effort: "easy" | "medium" | "hard";
+  cost: "free" | "low" | "medium" | "high";
+  description: string;
+}
+
+export interface ImageSignalMetrics {
+  width: number;
+  height: number;
+  aspectRatio: number;
+  brightness: number;
+  contrast: number;
+  saturation: number;
+  sharpness: number;
+  edgeDensity: number;
+  resolutionScore: number;
+  lightingScore: number;
+  clarityScore: number;
+  compositionScore: number;
+  backgroundComplexityEstimate: number;
+  overallImageQualityScore: number;
+}
+
+export interface FreeAuraResult {
+  auraScore: number;
+  category: string;
+  oneLineVerdict: string;
+  strongestSignals: string[];
+  statusLeaks: StatusLeak[];
+  quickFixes: QuickFix[];
+  budgetUpgradePlan: BudgetUpgradePlan;
+  imageMetrics: ImageSignalMetrics;
+  generatedAt: string;
 }
 
 export interface VisualBreakdown {
@@ -95,6 +134,7 @@ export interface AuraReport {
   createdAt: string;
   isPremium: boolean;
   premiumContent?: string;
+  freeResult?: FreeAuraResult;
 }
 
 export interface AuditInput {
