@@ -151,22 +151,34 @@ export default function DashboardPage() {
           <div className="space-y-4">
             {audits.map((audit) => (
               <Card key={audit.id} className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-sm font-semibold text-white">
-                      {auditTypeLabels[audit.auditType] || audit.auditType}
-                    </h3>
-                    <Badge variant={statusBadge[audit.reportStatus] || "default"}>
-                      {audit.reportStatus.replace("_", " ")}
-                    </Badge>
-                  </div>
-                  <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
-                    <span>Goal: {audit.goal}</span>
-                    <span>Budget: &#8377;{audit.budgetRange.toLocaleString()}</span>
-                    {audit.freeScore !== undefined && (
-                      <span>Score: <span className="text-purple-300">{audit.freeScore}</span></span>
-                    )}
-                    <span>{formatDate(audit.createdAt)}</span>
+                <div className="flex min-w-0 flex-1 items-center gap-4">
+                  {audit.imageDataUrl && (
+                    <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-white/5">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={audit.imageDataUrl}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="truncate text-sm font-semibold text-white">
+                        {auditTypeLabels[audit.auditType] || audit.auditType}
+                      </h3>
+                      <Badge variant={statusBadge[audit.reportStatus] || "default"}>
+                        {audit.reportStatus.replace("_", " ")}
+                      </Badge>
+                    </div>
+                    <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+                      <span>Goal: {audit.goal}</span>
+                      <span>Budget: &#8377;{audit.budgetRange.toLocaleString()}</span>
+                      {audit.freeScore !== undefined && (
+                        <span>Score: <span className="text-purple-300">{audit.freeScore}</span></span>
+                      )}
+                      <span>{formatDate(audit.createdAt)}</span>
+                    </div>
                   </div>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">

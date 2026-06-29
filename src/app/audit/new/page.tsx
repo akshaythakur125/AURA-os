@@ -1,54 +1,47 @@
 "use client";
 
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
+import { createAudit, updateAudit } from "@/lib/storage/auditStore";
+import {
+  validateImageFile,
+  getImageDimensions,
+  compressImageToDataUrl,
+  estimateDataUrlSize,
+} from "@/lib/image/processImage";
+import type { AuditType, AuditGoal, BudgetAmount } from "@/types/audit";
+import type { ImageMeta } from "@/types/audit";
 
-const auditTypes = [
-  {
-    id: "photo" as const,
-    title: "Photo Aura Check",
-    desc: "Analyze a single photo for expression, lighting, background, and overall visual signal.",
-    icon: "camera",
-    gradient: "from-purple-600 to-pink-500",
-    status: "coming-soon" as const,
-  },
-  {
-    id: "instagram" as const,
-    title: "Instagram Profile Audit",
-    desc: "Review your Instagram profile for coherence, photo quality, bio signals, and grid presentation.",
-    icon: "instagram",
-    gradient: "from-pink-500 to-rose-500",
-    status: "coming-soon" as const,
-  },
-  {
-    id: "dating" as const,
-    title: "Dating Profile Audit",
-    desc: "Optimize your dating app profile — photo order, bio alignment, and platform-specific signals.",
-    icon: "heart",
-    gradient: "from-rose-500 to-red-500",
-    status: "coming-soon" as const,
-  },
-  {
-    id: "outfit" as const,
-    title: "Outfit Audit",
-    desc: "Evaluate outfit choices for fit, color coordination, occasion alignment, and overall style signal.",
-    icon: "tag",
-    gradient: "from-amber-500 to-orange-500",
-    status: "coming-soon" as const,
-  },
-  {
-    id: "room" as const,
-    title: "Room / Background Audit",
-    desc: "Check your background and environment for visual noise, lighting, and lifestyle signals.",
-    icon: "home",
-    gradient: "from-emerald-500 to-teal-500",
-    status: "coming-soon" as const,
-  },
+const AUDIT_TYPES: { id: AuditType; label: string; desc: string; gradient: string; icon: string }[] = [
+  { id: "photo", label: "Photo Aura Check", desc: "Analyze a single photo for expression, lighting, background, and overall visual signal.", gradient: "from-purple-600 to-pink-500", icon: "camera" },
+  { id: "instagram", label: "Instagram Profile Audit", desc: "Review your Instagram profile for coherence, photo quality, bio signals, and grid presentation.", gradient: "from-pink-500 to-rose-500", icon: "instagram" },
+  { id: "dating", label: "Dating Profile Audit", desc: "Optimize your dating app profile — photo order, bio alignment, and platform-specific signals.", gradient: "from-rose-500 to-red-500", icon: "heart" },
+  { id: "outfit", label: "Outfit Audit", desc: "Evaluate outfit choices for fit, color coordination, occasion alignment, and overall style signal.", gradient: "from-amber-500 to-orange-500", icon: "tag" },
+  { id: "room", label: "Room / Background Audit", desc: "Check your background and environment for visual noise, lighting, and lifestyle signals.", gradient: "from-emerald-500 to-teal-500", icon: "home" },
 ];
 
-function AuditIcon({ icon }: { icon: string }) {
+const GOALS: { id: AuditGoal; label: string }[] = [
+  { id: "dating", label: "Dating" },
+  { id: "instagram", label: "Instagram" },
+  { id: "college", label: "College" },
+  { id: "office", label: "Office" },
+  { id: "glowup", label: "General Glow-Up" },
+];
+
+const BUDGETS: { id: BudgetAmount; label: string }[] = [
+  { id: 0, label: "₹0 — Free only" },
+  { id: 2000, label: "₹2,000" },
+  { id: 5000, label: "₹5,000" },
+  { id: 10000, label: "₹10,000" },
+  { id: 25000, label: "₹25,000+" },
+];
+
+const STEPS = ["Type", "Goal", "Budget", "Image", "Review"];
+
+function Icon({ name }: { name: string }) {
   const paths: Record<string, string> = {
     camera: "M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
     instagram: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z",
@@ -58,58 +51,386 @@ function AuditIcon({ icon }: { icon: string }) {
   };
   return (
     <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={paths[icon]} />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={paths[name] || paths.camera} />
     </svg>
   );
 }
 
 export default function NewAuditPage() {
+  const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [step, setStep] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
+
+  const [auditType, setAuditType] = useState<AuditType | null>(null);
+  const [goal, setGoal] = useState<AuditGoal | null>(null);
+  const [budget, setBudget] = useState<BudgetAmount | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [imageDims, setImageDims] = useState<{ width: number; height: number } | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const [consent, setConsent] = useState(false);
+
+  const canNext = (): boolean => {
+    switch (step) {
+      case 0: return auditType !== null;
+      case 1: return goal !== null;
+      case 2: return budget !== null;
+      case 3: return file !== null && !imageError;
+      case 4: return consent;
+      default: return false;
+    }
+  };
+
+  function handleFileSelect(f: File) {
+    setImageError(null);
+    const validation = validateImageFile(f);
+    if (!validation.valid) {
+      setImageError(validation.error || "Invalid file");
+      setFile(null);
+      setPreviewUrl(null);
+      setImageDims(null);
+      return;
+    }
+    setFile(f);
+    const url = URL.createObjectURL(f);
+    setPreviewUrl(url);
+    getImageDimensions(f).then(setImageDims).catch(() => {});
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    const f = e.dataTransfer.files[0];
+    if (f) handleFileSelect(f);
+  }
+
+  function handleRemoveImage() {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setFile(null);
+    setPreviewUrl(null);
+    setImageDims(null);
+    setImageError(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  async function handleSubmit() {
+    if (!auditType || !goal || budget === null || !file || !consent) return;
+    setSubmitting(true);
+    setErrors([]);
+
+    try {
+      const compressed = await compressImageToDataUrl(file);
+      const compressedSize = estimateDataUrlSize(compressed.dataUrl);
+
+      const imageMeta: ImageMeta = {
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        width: compressed.width,
+        height: compressed.height,
+        compressedSize,
+      };
+
+      const audit = createAudit({ auditType, goal, budgetRange: budget });
+      updateAudit(audit.id, {
+        imageDataUrl: compressed.dataUrl,
+        imageMeta,
+      });
+
+      router.push(`/audit/${audit.id}`);
+    } catch {
+      setErrors(["Something went wrong while processing the image. Please try again."]);
+      setSubmitting(false);
+    }
+  }
+
+  function goNext() {
+    if (!canNext()) return;
+    if (step === STEPS.length - 1) {
+      handleSubmit();
+    } else {
+      setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    }
+  }
+
   return (
     <Container className="py-12">
-      <div className="mb-10 text-center">
-        <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
-          New Aura Check
-        </h1>
-        <p className="mt-3 text-gray-400">
-          Select the type of audit you want to run. The full audit flow will be
-          available in the next update.
-        </p>
-      </div>
+      <div className="mx-auto max-w-3xl">
+        <div className="mb-8 text-center">
+          <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            New Aura Check
+          </h1>
+          <p className="mt-2 text-gray-400">
+            Select what you want to audit, and upload your image.
+          </p>
+        </div>
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {auditTypes.map((item) => (
-          <Card key={item.id} hover className="relative flex flex-col">
-            <div className="mb-4 flex items-center justify-between">
+        {/* Progress */}
+        <div className="mb-10 flex items-center justify-center gap-1 sm:gap-2">
+          {STEPS.map((label, i) => (
+            <div key={label} className="flex items-center gap-1 sm:gap-2">
               <div
-                className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${item.gradient}`}
+                className={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-xs font-medium transition-colors sm:h-9 sm:w-9 ${
+                  i === step
+                    ? "bg-gradient-to-r from-purple-600 to-pink-500 text-white"
+                    : i < step
+                      ? "bg-purple-500/20 text-purple-300"
+                      : "bg-white/5 text-gray-600"
+                }`}
+                onClick={() => { if (i < step) setStep(i); }}
               >
-                <AuditIcon icon={item.icon} />
+                {i + 1}
               </div>
-              <Badge variant="default">{item.status.replace("-", " ")}</Badge>
+              <span
+                className={`hidden text-xs sm:inline ${i === step ? "text-white" : "text-gray-600"}`}
+              >
+                {label}
+              </span>
+              {i < STEPS.length - 1 && (
+                <div className={`mx-1 h-px w-6 sm:w-10 ${i < step ? "bg-purple-500/40" : "bg-white/5"}`} />
+              )}
             </div>
-            <h3 className="mb-2 text-lg font-semibold text-white">
-              {item.title}
-            </h3>
-            <p className="flex-1 text-sm leading-relaxed text-gray-400">
-              {item.desc}
-            </p>
-            <div className="mt-4">
-              <Button variant="outline" size="sm" disabled className="w-full">
-                Select
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      <div className="mt-10 rounded-xl border border-purple-500/10 bg-purple-500/5 p-6 text-center">
-        <p className="text-sm text-gray-400">
-          The audit creation and scoring flow will be built in the next update.
-          <br />
-          <span className="text-xs text-gray-600">
-            Local-only MVP: all audit data stays in your browser.
-          </span>
-        </p>
+        {/* Step 0: Audit Type */}
+        {step === 0 && (
+          <div>
+            <h2 className="mb-6 text-center text-lg font-semibold text-white">
+              What do you want to audit?
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {AUDIT_TYPES.map((t) => (
+                <Card
+                  key={t.id}
+                  hover
+                  className={`cursor-pointer transition-all duration-200 ${
+                    auditType === t.id ? "border-purple-500/50 ring-1 ring-purple-500/30" : ""
+                  }`}
+                  onClick={() => setAuditType(t.id)}
+                >
+                  <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${t.gradient}`}>
+                    <Icon name={t.icon} />
+                  </div>
+                  <h3 className="mb-1 text-sm font-semibold text-white">{t.label}</h3>
+                  <p className="text-xs text-gray-400">{t.desc}</p>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Step 1: Goal */}
+        {step === 1 && (
+          <div>
+            <h2 className="mb-6 text-center text-lg font-semibold text-white">
+              What is your goal?
+            </h2>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {GOALS.map((g) => (
+                <Card
+                  key={g.id}
+                  hover
+                  className={`cursor-pointer text-center transition-all duration-200 ${
+                    goal === g.id ? "border-purple-500/50 ring-1 ring-purple-500/30" : ""
+                  }`}
+                  onClick={() => setGoal(g.id)}
+                >
+                  <h3 className="text-sm font-semibold text-white capitalize">{g.label}</h3>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Budget */}
+        {step === 2 && (
+          <div>
+            <h2 className="mb-6 text-center text-lg font-semibold text-white">
+              What is your upgrade budget?
+            </h2>
+            <p className="mb-6 text-center text-sm text-gray-500">
+              This helps us tailor suggestions to your range.
+            </p>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {BUDGETS.map((b) => (
+                <Card
+                  key={b.id}
+                  hover
+                  className={`cursor-pointer text-center transition-all duration-200 ${
+                    budget === b.id ? "border-purple-500/50 ring-1 ring-purple-500/30" : ""
+                  }`}
+                  onClick={() => setBudget(b.id)}
+                >
+                  <h3 className="text-sm font-semibold text-white">{b.label}</h3>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Image Upload */}
+        {step === 3 && (
+          <div>
+            <h2 className="mb-2 text-center text-lg font-semibold text-white">
+              Upload your photo or screenshot
+            </h2>
+            <p className="mb-6 text-center text-sm text-gray-500">
+              JPEG, PNG, or WebP. Max 8 MB.
+            </p>
+
+            {!previewUrl ? (
+              <div
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/10 bg-white/[0.02] p-12 transition-colors hover:border-purple-500/30 hover:bg-white/[0.04]"
+              >
+                <svg className="mb-4 h-10 w-10 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <p className="text-sm text-gray-400">
+                  Drag & drop or <span className="text-purple-400">browse</span>
+                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); }}
+                />
+              </div>
+            ) : (
+              <div className="relative">
+                <div className="overflow-hidden rounded-2xl border border-white/5">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="max-h-[400px] w-full object-contain"
+                  />
+                </div>
+                {imageDims && (
+                  <p className="mt-2 text-center text-xs text-gray-500">
+                    {imageDims.width} &times; {imageDims.height} px
+                  </p>
+                )}
+                <div className="mt-4 flex justify-center gap-3">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    Replace
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={handleRemoveImage}>
+                    Remove
+                  </Button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileSelect(f); }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {imageError && (
+              <p className="mt-3 text-center text-sm text-red-400">{imageError}</p>
+            )}
+
+            <div className="mt-6 rounded-xl border border-purple-500/10 bg-purple-500/5 p-4 text-center text-xs text-gray-400">
+              Local-only MVP: your image is processed and stored in this browser.
+              It is not uploaded to a server.
+            </div>
+          </div>
+        )}
+
+        {/* Step 4: Review & Consent */}
+        {step === 4 && (
+          <div>
+            <h2 className="mb-6 text-center text-lg font-semibold text-white">
+              Review your audit
+            </h2>
+            <Card className="mb-6 space-y-4">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Audit Type</span>
+                <span className="text-white">{AUDIT_TYPES.find((t) => t.id === auditType)?.label}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Goal</span>
+                <span className="text-white capitalize">{GOALS.find((g) => g.id === goal)?.label}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Budget</span>
+                <span className="text-amber-400">{BUDGETS.find((b) => b.id === budget)?.label}</span>
+              </div>
+              {file && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">Image</span>
+                  <span className="text-white truncate max-w-[200px]">{file.name}</span>
+                </div>
+              )}
+            </Card>
+
+            {previewUrl && (
+              <Card className="mb-6">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  className="max-h-[200px] w-full rounded-xl object-contain"
+                />
+              </Card>
+            )}
+
+            <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-4">
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-white/10 bg-white/5 text-purple-600 focus:ring-purple-500/50"
+              />
+              <span className="text-xs leading-relaxed text-gray-400">
+                I confirm I own this image or have permission to analyze it. I
+                understand AuraCheck analyzes presentation only and does not
+                measure human worth.
+              </span>
+            </label>
+
+            {errors.length > 0 && (
+              <div className="mt-4 space-y-1">
+                {errors.map((e) => (
+                  <p key={e} className="text-sm text-red-400">{e}</p>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Navigation */}
+        <div className="mt-8 flex items-center justify-between">
+          <div>
+            {step > 0 && (
+              <Button variant="ghost" onClick={() => setStep((s) => s - 1)}>
+                Back
+              </Button>
+            )}
+          </div>
+          <Button
+            onClick={goNext}
+            disabled={!canNext() || submitting}
+          >
+            {submitting
+              ? "Processing..."
+              : step === STEPS.length - 1
+                ? "Create Aura Check"
+                : "Next"}
+          </Button>
+        </div>
       </div>
     </Container>
   );

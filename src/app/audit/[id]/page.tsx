@@ -25,6 +25,26 @@ const statusBadge: Record<string, "default" | "success" | "warning" | "danger" |
   unlocked: "premium",
 };
 
+function formatDate(iso: string): string {
+  try {
+    return new Date(iso).toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return iso;
+  }
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 export default function AuditDetailPage() {
   const params = useParams();
   const id = params.id as string;
@@ -67,9 +87,14 @@ export default function AuditDetailPage() {
           <p className="mb-6 text-sm text-gray-500">
             This audit does not exist or may have been deleted.
           </p>
-          <Link href="/dashboard">
-            <Button variant="secondary">Back to Dashboard</Button>
-          </Link>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link href="/dashboard">
+              <Button variant="secondary">Back to Dashboard</Button>
+            </Link>
+            <Link href="/audit/new">
+              <Button>Start New Audit</Button>
+            </Link>
+          </div>
         </Card>
       )}
 
@@ -81,19 +106,51 @@ export default function AuditDetailPage() {
                 <h1 className="text-xl font-bold text-white">
                   {auditTypeLabels[audit.auditType] || audit.auditType}
                 </h1>
-                <p className="mt-1 text-sm text-gray-500">
-                  Created{" "}
-                  {new Date(audit.createdAt).toLocaleDateString("en-IN", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })}
-                </p>
+                <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+                  <span>Created: {formatDate(audit.createdAt)}</span>
+                  <span>Updated: {formatDate(audit.updatedAt)}</span>
+                </div>
               </div>
               <Badge variant={statusBadge[audit.reportStatus] || "default"}>
                 {audit.reportStatus.replace("_", " ")}
               </Badge>
             </div>
+
+            {/* Image preview */}
+            {audit.imageDataUrl && (
+              <div className="mb-6 overflow-hidden rounded-xl border border-white/5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={audit.imageDataUrl}
+                  alt="Audit image"
+                  className="max-h-[400px] w-full object-contain"
+                />
+              </div>
+            )}
+
+            {/* Image metadata */}
+            {audit.imageMeta && (
+              <div className="mb-6 grid grid-cols-2 gap-3 rounded-xl border border-white/5 bg-white/[0.03] p-4 sm:grid-cols-4">
+                <div>
+                  <div className="text-xs text-gray-500">Width</div>
+                  <div className="text-sm text-white">{audit.imageMeta.width || "—"} px</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Height</div>
+                  <div className="text-sm text-white">{audit.imageMeta.height || "—"} px</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Original Size</div>
+                  <div className="text-sm text-white">{formatBytes(audit.imageMeta.fileSize)}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Compressed</div>
+                  <div className="text-sm text-white">
+                    {audit.imageMeta.compressedSize ? formatBytes(audit.imageMeta.compressedSize) : "—"}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
@@ -118,9 +175,7 @@ export default function AuditDetailPage() {
 
             {audit.freeScore !== undefined && (
               <div className="mt-6">
-                <div className="mb-2 text-xs text-gray-500">
-                  Free Aura Score
-                </div>
+                <div className="mb-2 text-xs text-gray-500">Free Aura Score</div>
                 <div className="flex items-baseline gap-2">
                   <span className="text-4xl font-bold text-white">
                     {audit.freeScore}
@@ -139,21 +194,15 @@ export default function AuditDetailPage() {
             {audit.freeSummary && (
               <div className="mt-6 rounded-xl border border-white/5 bg-white/[0.03] p-4">
                 <div className="text-xs text-gray-500">Summary</div>
-                <p className="mt-1 text-sm text-gray-300">
-                  {audit.freeSummary}
-                </p>
-              </div>
-            )}
-
-            {audit.reportStatus === "draft" && (
-              <div className="mt-6 rounded-xl border border-purple-500/10 bg-purple-500/5 p-4 text-center text-sm text-gray-400">
-                This audit is still in draft. The scoring engine will process it
-                in a future update.
+                <p className="mt-1 text-sm text-gray-300">{audit.freeSummary}</p>
               </div>
             )}
           </Card>
 
           <div className="flex flex-wrap gap-3">
+            <Button variant="primary" disabled>
+              Generate Free Aura Score — Coming in next step
+            </Button>
             <Link href="/unlock">
               <Button variant="outline">Unlock Premium Report</Button>
             </Link>

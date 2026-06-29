@@ -24,6 +24,7 @@ export interface ImageMeta {
   fileSize: number;
   width?: number;
   height?: number;
+  compressedSize?: number;
 }
 
 export interface Audit {
