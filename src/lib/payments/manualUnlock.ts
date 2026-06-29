@@ -1,4 +1,5 @@
 import type { ProductType } from "@/types/payment";
+import { getProductPrefix, normalizeUnlockCode } from "./unlockCodeGenerator";
 
 /**
  * Manual unlock utility — MVP only.
@@ -39,17 +40,20 @@ export function getProductPriceLabel(productType: ProductType): string {
  *
  * Accepted codes (MVP only):
  * 1. The value of NEXT_PUBLIC_DEMO_UNLOCK_CODE (default: "AURADEMO")
- * 2. A deterministic audit-specific code: "AURA-" + last 6 alphanumeric chars of auditId, uppercased
+ * 2. A deterministic audit-specific code: "<PREFIX>-" + last 6 alphanumeric chars of auditId
+ *    - aura_report: AURA-XXXXXX
+ *    - dating_audit: DATE-XXXXXX
+ *    - glowup_plan: GLOW-XXXXXX
  */
 export function validateUnlockCode(params: {
   code: string;
   auditId: string;
   productType: ProductType;
 }): boolean {
-  const { code, auditId } = params;
+  const { code, auditId, productType } = params;
   if (!code || typeof code !== "string") return false;
 
-  const trimmed = code.trim();
+  const trimmed = normalizeUnlockCode(code);
 
   const demoCode =
     typeof process !== "undefined" &&
@@ -60,15 +64,16 @@ export function validateUnlockCode(params: {
           .NEXT_PUBLIC_DEMO_UNLOCK_CODE as string)
       : "AURADEMO";
 
-  if (trimmed.toUpperCase() === demoCode.toUpperCase()) return true;
+  if (trimmed === normalizeUnlockCode(demoCode)) return true;
 
   const auditSuffix = auditId
     .replace(/-/g, "")
     .slice(-6)
     .toUpperCase();
-  const computedCode = `AURA-${auditSuffix}`;
+  const prefix = getProductPrefix(productType);
+  const computedCode = `${prefix}-${auditSuffix}`;
 
-  if (trimmed.toUpperCase() === computedCode) return true;
+  if (trimmed === computedCode) return true;
 
   return false;
 }

@@ -264,10 +264,18 @@ export default function NewAuditPage() {
 
       const audit = createAudit({ auditType, goal, budgetRange: budget });
       const deepInput = buildDeepInput();
+      const profileTexts = profileBio.trim()
+        ? {
+            bio: profileBio.trim() || undefined,
+            prompts: prompts.length > 0 ? prompts.filter((p) => p.answer.trim()) : undefined,
+            captions: captionsText.trim() || undefined,
+          }
+        : undefined;
       updateAudit(audit.id, {
         imageDataUrl: compressed.dataUrl,
         imageMeta,
         deepInput,
+        profileTexts,
       });
 
       router.push(`/audit/${audit.id}`);
@@ -507,7 +515,55 @@ export default function NewAuditPage() {
                   </label>
                 </Card>
 
-                {/* H. Notes */}
+                {/* H. Profile Text Inputs (for dating/instagram types) */}
+                {(auditType === "dating" || goal === "dating" || auditType === "instagram" || goal === "instagram") && (
+                  <Card>
+                    <h3 className="mb-3 text-sm font-semibold text-white">Profile Text</h3>
+                    <p className="mb-3 text-xs text-gray-500">Enter your dating profile or Instagram bio text for analysis.</p>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="mb-1 block text-xs text-gray-500">Bio / About You</label>
+                        <textarea
+                          value={profileBio}
+                          onChange={(e) => setProfileBio(e.target.value)}
+                          placeholder="Paste your bio here..."
+                          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+                          rows={3}
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-xs text-gray-500">Prompts & Answers <span className="text-gray-600">(optional, one per line, format: Prompt: Answer)</span></label>
+                        <textarea
+                          value={prompts.map((p) => `${p.prompt}: ${p.answer}`).join("\n")}
+                          onChange={(e) => {
+                            const lines = e.target.value.split("\n").filter(Boolean);
+                            const parsed = lines.map((line) => {
+                              const sep = line.indexOf(":");
+                              if (sep > 0) return { prompt: line.slice(0, sep).trim(), answer: line.slice(sep + 1).trim() };
+                              return { prompt: "General", answer: line.trim() };
+                            });
+                            setPrompts(parsed);
+                          }}
+                          placeholder="My simple pleasure: A quiet morning coffee"
+                          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+                          rows={3}
+                        />
+                      </div>
+                      <div>
+                        <label className="mb-1 block text-xs text-gray-500">Captions / Other Text <span className="text-gray-600">(optional)</span></label>
+                        <textarea
+                          value={captionsText}
+                          onChange={(e) => setCaptionsText(e.target.value)}
+                          placeholder="Any other profile text or captions..."
+                          className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+                          rows={2}
+                        />
+                      </div>
+                    </div>
+                  </Card>
+                )}
+
+                {/* I. Notes */}
                 <Card>
                   <label className="mb-2 block text-sm font-semibold text-white">Anything specific you want AuraCheck to consider?</label>
                   <textarea

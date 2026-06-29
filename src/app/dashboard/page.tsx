@@ -234,6 +234,11 @@ export default function DashboardPage() {
                         {audit.personalization?.archetype && (
                           <span className="text-[10px] text-amber-400">{audit.personalization.archetype}</span>
                         )}
+                        {audit.unlockedProducts && audit.unlockedProducts.length > 0 && audit.unlockedProducts.map((up) => (
+                          <Badge key={up} variant="success">
+                            {up === "aura_report" ? "Full Report" : up === "dating_audit" ? "Dating" : "Glow-Up"}
+                          </Badge>
+                        ))}
                       </div>
                       <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
                         <span>Goal: {audit.goal}</span>

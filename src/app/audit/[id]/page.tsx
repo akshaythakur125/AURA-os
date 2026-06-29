@@ -731,52 +731,162 @@ export default function AuditDetailPage() {
                 </div>
               </Card>
 
-              <Card className="mb-6 border-purple-500/20 text-center">
-                <Badge variant="premium" className="mb-3">
-                  Premium
-                </Badge>
-                <h3 className="mb-2 text-lg font-semibold text-white">
-                  Unlock the Full Aura Report
-                </h3>
-                <p className="mb-6 text-sm text-gray-400">
-                  Get a detailed visual breakdown, goal-specific profile
-                  strategy, personalized upgrade path, and a shareable Aura
-                  card.
-                </p>
-                <div className="mx-auto mb-6 grid max-w-sm gap-3 text-left">
-                  {[
-                    "Full visual breakdown across 12+ dimensions",
-                    "Detailed status leaks with personalized fixes",
-                    "Goal-specific profile strategy",
-                    "Shopping & action plan within your budget",
-                    "Shareable Aura card for your profile",
-                    "Status Archetype classification",
-                    "Signal mismatch analysis",
-                  ].map((item) => (
-                    <div key={item} className="flex items-start gap-2 text-xs text-gray-400">
-                      <svg
-                        className="mt-0.5 h-3.5 w-3.5 shrink-0 text-purple-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 15v2m0 0v2m0-2h2m-2 0H10"
-                        />
-                      </svg>
-                      {item}
+              {/* ─── Multi-Product Unlock CTAs ─── */}
+              <h3 className="mb-3 text-sm font-semibold text-white">Upgrade Options</h3>
+              <div className="mb-6 grid gap-4 sm:grid-cols-3">
+                {[
+                  { type: "aura_report" as const, name: "Full Aura Report", price: 99, desc: "Full visual breakdown, goal strategy, upgrade path", feature: "View full report" },
+                  { type: "dating_audit" as const, name: "Dating / Profile Audit", price: 299, desc: "Bio analysis, red-flag detection, suggested bios", feature: "View dating audit" },
+                  { type: "glowup_plan" as const, name: "30-Day Glow-Up Plan", price: 499, desc: "4-week roadmap, daily missions, budget plan", feature: "View glow-up plan" },
+                ].map((p) => {
+                  const unlocked = audit.unlockedProducts?.includes(p.type);
+                  const hasReport = p.type === "dating_audit" ? audit.datingProfileReport : p.type === "glowup_plan" ? audit.glowupPlan : audit.fullReport?.fullContent;
+                  return (
+                    <Card key={p.type} className={`relative text-center ${unlocked ? "border-emerald-500/20" : "border-purple-500/20"}`}>
+                      {unlocked ? (
+                        <Badge variant="success" className="mb-2">Unlocked</Badge>
+                      ) : (
+                        <Badge variant="premium" className="mb-2">&#8377;{p.price}</Badge>
+                      )}
+                      <h4 className="mb-1 text-sm font-semibold text-white">{p.name}</h4>
+                      <p className="mb-4 text-xs text-gray-400">{p.desc}</p>
+                      {unlocked && hasReport ? (
+                        <span className="text-xs text-emerald-400">{p.feature} available below</span>
+                      ) : unlocked ? (
+                        <span className="text-xs text-emerald-400">Unlocked</span>
+                      ) : (
+                        <Link href={`/unlock?auditId=${audit.id}&product=${p.type}`} className="block">
+                          <Button size="sm" className="w-full">Unlock — &#8377;{p.price}</Button>
+                        </Link>
+                      )}
+                    </Card>
+                  );
+                })}
+              </div>
+
+              {/* ─── Dating Profile Report Display ─── */}
+              {audit.datingProfileReport && (
+                <Card className="mb-6">
+                  <Badge variant="success" className="mb-2">Dating / Profile Audit</Badge>
+                  <h3 className="mb-4 text-sm font-semibold text-white">Profile Text Analysis</h3>
+                  <div className="mb-4 text-center">
+                    <div className="text-4xl font-bold text-white">{audit.datingProfileReport.textScore}</div>
+                    <div className="text-xs text-gray-500">Text Score / 100</div>
+                  </div>
+                  <div className="mb-4 rounded-lg border border-white/5 bg-white/[0.03] p-4">
+                    <p className="text-xs text-gray-300">{audit.datingProfileReport.overallAdvice}</p>
+                  </div>
+                  {audit.datingProfileReport.bioAnalysis && (
+                    <div className="mb-4 grid gap-3 sm:grid-cols-2">
+                      <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+                        <div className="text-xs text-gray-500">Bio Length</div>
+                        <div className="text-sm text-white capitalize">{audit.datingProfileReport.bioAnalysis.length.replace(/_/g, " ")}</div>
+                      </div>
+                      <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+                        <div className="text-xs text-gray-500">Effort</div>
+                        <div className="text-sm text-white capitalize">{audit.datingProfileReport.bioAnalysis.effort}</div>
+                      </div>
+                      <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3 sm:col-span-2">
+                        <div className="text-xs text-purple-400">Feedback</div>
+                        <p className="mt-1 text-xs text-gray-300">{audit.datingProfileReport.bioAnalysis.feedback}</p>
+                      </div>
                     </div>
-                  ))}
-                </div>
-                <Link href={`/unlock?auditId=${audit.id}&product=aura_report`}>
-                  <Button variant="primary" className="w-full sm:w-auto">
-                    Unlock Full Aura Report — &#8377;99
-                  </Button>
-                </Link>
-              </Card>
+                  )}
+                  {audit.datingProfileReport.redFlags.length > 0 && (
+                    <div className="mb-4">
+                      <h4 className="mb-2 text-xs font-semibold text-white">Detected Issues</h4>
+                      <div className="space-y-2">
+                        {audit.datingProfileReport.redFlags.map((rf, i) => (
+                          <div key={i} className="rounded-lg border border-red-500/20 bg-red-500/5 p-3">
+                            <div className="mb-1 flex items-center gap-2">
+                              <Badge variant={rf.severity === "high" ? "danger" : rf.severity === "medium" ? "warning" : "default"}>{rf.type}</Badge>
+                            </div>
+                            <p className="text-xs text-gray-300">{rf.explanation}</p>
+                            <p className="mt-1 text-xs text-gray-500"><span className="text-purple-300">Fix:</span> {rf.fixSuggestion}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {audit.datingProfileReport.suggestedBios.length > 0 && (
+                    <div>
+                      <h4 className="mb-2 text-xs font-semibold text-white">Suggested Bio Versions</h4>
+                      <div className="space-y-3">
+                        {audit.datingProfileReport.suggestedBios.map((sb, i) => (
+                          <div key={i} className="rounded-lg border border-purple-500/20 bg-purple-500/5 p-3">
+                            <div className="mb-1 text-xs text-purple-300">{sb.version}</div>
+                            <p className="mb-1 text-xs text-gray-200">{sb.text}</p>
+                            <p className="text-[10px] text-gray-500">{sb.whyItWorks}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </Card>
+              )}
+
+              {/* ─── Glow-Up Plan Display ─── */}
+              {audit.glowupPlan && (
+                <Card className="mb-6">
+                  <Badge variant="success" className="mb-2">30-Day Glow-Up Plan</Badge>
+                  <h3 className="mb-4 text-sm font-semibold text-white">Your 4-Week Roadmap</h3>
+                  <div className="mb-4 grid gap-4 sm:grid-cols-2">
+                    {[audit.glowupPlan.week1, audit.glowupPlan.week2, audit.glowupPlan.week3, audit.glowupPlan.week4].map((week, wi) => (
+                      <details key={wi} className="group rounded-lg border border-white/5 bg-white/[0.03]">
+                        <summary className="flex cursor-pointer items-center gap-2 px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.05]">
+                          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">W{wi + 1}</span>
+                          {week.title}
+                        </summary>
+                        <div className="px-4 pb-3">
+                          <p className="mb-2 text-xs text-purple-300">{week.focus}</p>
+                          <div className="space-y-1">
+                            {week.dailyMissions.map((m) => (
+                              <div key={m.day} className="flex items-start gap-2 text-xs">
+                                <span className="shrink-0 text-gray-500">D{m.day}</span>
+                                <span className="text-gray-300">{m.title}</span>
+                                <Badge variant={m.effort === "hard" ? "danger" : m.effort === "medium" ? "warning" : "default"}>{m.effort}</Badge>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </details>
+                    ))}
+                  </div>
+                  <div className="rounded-lg border border-white/5 bg-white/[0.03] p-4">
+                    <h4 className="mb-2 text-xs font-semibold text-white">Budget Roadmap</h4>
+                    <div className="space-y-2 text-xs">
+                      {audit.glowupPlan.budgetRoadmap.free.length > 0 && (
+                        <div>
+                          <div className="text-emerald-400">Free Actions</div>
+                          <ul className="ml-3 list-disc text-gray-400">{audit.glowupPlan.budgetRoadmap.free.map((a) => <li key={a}>{a}</li>)}</ul>
+                        </div>
+                      )}
+                      {audit.glowupPlan.budgetRoadmap.under2000.length > 0 && (
+                        <div>
+                          <div className="text-amber-400">Under ₹2,000</div>
+                          <ul className="ml-3 list-disc text-gray-400">{audit.glowupPlan.budgetRoadmap.under2000.map((a) => <li key={a}>{a}</li>)}</ul>
+                        </div>
+                      )}
+                      {audit.glowupPlan.budgetRoadmap.under5000.length > 0 && (
+                        <div>
+                          <div className="text-purple-400">Under ₹5,000</div>
+                          <ul className="ml-3 list-disc text-gray-400">{audit.glowupPlan.budgetRoadmap.under5000.map((a) => <li key={a}>{a}</li>)}</ul>
+                        </div>
+                      )}
+                      {audit.glowupPlan.budgetRoadmap.under10000.length > 0 && (
+                        <div>
+                          <div className="text-blue-400">Under ₹10,000</div>
+                          <ul className="ml-3 list-disc text-gray-400">{audit.glowupPlan.budgetRoadmap.under10000.map((a) => <li key={a}>{a}</li>)}</ul>
+                        </div>
+                      )}
+                      <div className="mt-2 border-t border-white/5 pt-2">
+                        <span className="text-gray-500">Estimated total: </span>
+                        <span className="text-amber-400">₹{audit.glowupPlan.budgetRoadmap.totalEstimatedCost}</span>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              )}
 
               {/* Share section for free result */}
               <div className="mb-6">

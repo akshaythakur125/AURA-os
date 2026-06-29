@@ -64,7 +64,7 @@ function generateWeek1(audit: Audit): WeekPlan {
   };
 }
 
-function generateWeek2(audit: Audit): WeekPlan {
+function generateWeek2(): WeekPlan {
   const missions: DailyMission[] = [
     {
       day: 8,
@@ -124,7 +124,7 @@ function generateWeek2(audit: Audit): WeekPlan {
   };
 }
 
-function generateWeek3(audit: Audit): WeekPlan {
+function generateWeek3(): WeekPlan {
   const missions: DailyMission[] = [
     {
       day: 15,
@@ -184,7 +184,7 @@ function generateWeek3(audit: Audit): WeekPlan {
   };
 }
 
-function generateWeek4(audit: Audit): WeekPlan {
+function generateWeek4(): WeekPlan {
   const missions: DailyMission[] = [
     {
       day: 22,
@@ -299,9 +299,9 @@ function generateBudgetRoadmap(audit: Audit): BudgetRoadmap2 {
 export function generateGlowupPlan(audit: Audit): GlowupPlan {
   return {
     week1: generateWeek1(audit),
-    week2: generateWeek2(audit),
-    week3: generateWeek3(audit),
-    week4: generateWeek4(audit),
+    week2: generateWeek2(),
+    week3: generateWeek3(),
+    week4: generateWeek4(),
     budgetRoadmap: generateBudgetRoadmap(audit),
     generatedAt: new Date().toISOString(),
   };

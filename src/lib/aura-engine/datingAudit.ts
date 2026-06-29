@@ -8,7 +8,6 @@ const DESPERATE_SIGNS = ["anyone interested", "please like me", "i need", "despe
 
 function analyzeBio(bio: string): BioAnalysis {
   const cleaned = bio.trim();
-  const wordCount = cleaned.split(/\s+/).filter(Boolean).length;
   const charCount = cleaned.length;
 
   const length: BioAnalysis["length"] = charCount < 30 ? "too_short" : charCount > 500 ? "too_long" : "good";

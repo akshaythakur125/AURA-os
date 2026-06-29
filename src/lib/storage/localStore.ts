@@ -38,6 +38,8 @@ export function clearAll(): void {
     localStorage.removeItem("auracheck:v1:user");
     localStorage.removeItem("auracheck:v1:settings");
     localStorage.removeItem("auracheck:v1:unlocks");
+    localStorage.removeItem("auracheck:v1:orders");
+    localStorage.removeItem("auracheck:v1:analytics");
   } catch {
     console.warn("Failed to clear localStorage");
   }
