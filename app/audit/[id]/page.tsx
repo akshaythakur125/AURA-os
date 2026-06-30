@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
@@ -10,6 +10,8 @@ import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
 
 import { generateFreeAuraReport, generateFreeReportWithPersonalization } from "@/lib/aura-engine/generateFreeAuraReport";
 import { RecommendationSection } from "@/components/products/RecommendationSection";
+import { generateShareCardPng } from "@/lib/export/generateShareCard";
+import { trackEvent } from "@/lib/storage/analyticsStore";
 import type { FreeAuraResult, FullAuraReport, ProductType } from "@/types";
 import type { PersonalizationResult } from "@/types/personalization";
 import type { ProfileAuditResult } from "@/types/profileAudit";
@@ -29,16 +31,39 @@ const PRODUCT_CTA: { type: ProductType; name: string; price: number; gradient: s
   { type: "glowup_plan", name: "30-Day Glow-Up Plan", price: 499, gradient: "from-amber-500 to-orange-500", features: ["30 daily missions", "4-week structured plan", "Budget roadmap (₹0–₹25K+)", "Photo/grooming/outfit system", "Progress tracker"] },
 ];
 
-function ScoreGauge({ score, size = "lg" }: { score: number; size?: "sm" | "lg" }) {
+function ScoreGauge({ score, size = "lg", animate = true }: { score: number; size?: "sm" | "lg"; animate?: boolean }) {
+  const [displayScore, setDisplayScore] = useState(score);
+  const [barWidth, setBarWidth] = useState(score);
+  const initialRender = useRef(true);
+
+  useEffect(() => {
+    if (initialRender.current) { initialRender.current = false; return; }
+    if (!animate) return;
+    const duration = 1200;
+    let rafId: number;
+    const start = Date.now();
+    const tick = () => {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(1, elapsed / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayScore(Math.round(score * eased));
+      setBarWidth(score * eased);
+      if (progress < 1) rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [score, animate]);
+
   const dimension = size === "lg" ? "h-3" : "h-2";
+
   return (
     <div>
       <div className="flex items-baseline gap-1">
-        <span className={`font-bold text-white ${size === "lg" ? "text-5xl" : "text-lg"}`}>{score}</span>
+        <span className={`font-bold text-white tabular-nums ${size === "lg" ? "text-5xl" : "text-lg"}`}>{displayScore}</span>
         <span className="text-sm text-gray-500">/ 100</span>
       </div>
       <div className={`mt-2 overflow-hidden rounded-full bg-white/5 ${dimension}`}>
-        <div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-700" style={{ width: `${score}%` }} />
+        <div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-100" style={{ width: `${barWidth}%` }} />
       </div>
     </div>
   );
@@ -499,6 +524,18 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                   <div><div className="text-xs text-gray-500">Strongest Signals</div><div className="mt-1 flex flex-wrap gap-1.5">{fullReport.strongestSignals.map((s) => (<span key={s} className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs text-emerald-400">{s}</span>))}</div></div>
                 </div>
               </div>
+              <div className="flex flex-wrap gap-2 border-t border-white/5 pt-4">
+                <Button size="sm" variant="outline" onClick={() => {
+                  generateShareCardPng(
+                    fullReport.fullScore, fullReport.category,
+                    fullReport.strongestSignals[0] || "Presentation",
+                    fullReport.biggestStatusLeaks[0]?.title || "Background",
+                  );
+                  trackEvent("share_card_downloaded");
+                }}>📤 Share Aura Card</Button>
+                <Link href="/progress"><Button size="sm" variant="ghost">📊 Compare Progress</Button></Link>
+                <Link href="/twin-simulator"><Button size="sm" variant="ghost">🔮 Aura Twin</Button></Link>
+              </div>
             </Card>
 
             {/* ─── Status Archetype ─── */}
@@ -666,6 +703,18 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                   <div><div className="text-xs text-gray-500">Strongest Signals</div><div className="mt-1 flex flex-wrap gap-1.5">{freeResult.strongestSignals.map((s) => (<span key={s} className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs text-emerald-400">{s}</span>))}</div></div>
                 </div>
               </div>
+              <div className="flex flex-wrap gap-2 border-t border-white/5 pt-4">
+                <Button size="sm" variant="outline" onClick={() => {
+                  generateShareCardPng(
+                    freeResult.auraScore, freeResult.category,
+                    freeResult.strongestSignals[0] || "Presentation",
+                    freeResult.statusLeaks[0]?.title || "Background",
+                  );
+                  trackEvent("share_card_downloaded");
+                }}>📤 Share Aura Card</Button>
+                <Link href="/progress"><Button size="sm" variant="ghost">📊 Compare Progress</Button></Link>
+                <Link href="/twin-simulator"><Button size="sm" variant="ghost">🔮 Aura Twin</Button></Link>
+              </div>
             </Card>
 
             {/* ─── Free Archetype ─── */}
@@ -779,7 +828,23 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
             <h3 className="mb-3 text-sm font-semibold text-white">Generate Free Aura Score</h3>
             <p className="mb-4 text-sm text-gray-400">Analyze this image locally and get your free Aura Score, status leaks, and upgrade plan.</p>
             {error && <div className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</div>}
-            <Button onClick={handleGenerate} disabled={generating} className="w-full">{generating ? "Analyzing image..." : "Generate Free Aura Score"}</Button>
+            {generating ? (
+              <div className="space-y-4">
+                <Button disabled className="w-full">
+                  <span className="flex items-center gap-2">
+                    <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Analyzing your photo locally...
+                  </span>
+                </Button>
+                <div className="h-20 animate-pulse rounded-xl bg-white/[0.03]" />
+                <div className="h-12 animate-pulse rounded-xl bg-white/[0.03]" />
+              </div>
+            ) : (
+              <Button onClick={handleGenerate} className="w-full">Generate Free Aura Score</Button>
+            )}
             <p className="mt-2 text-xs text-gray-600">Image is analyzed locally. No data is sent to any server.</p>
           </Card>
         )}

@@ -1,8 +1,17 @@
+"use client";
+
+"use client";
+
+"use client";
+
+import { useMemo } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { getAudits } from "@/lib/storage/auditStore";
+import { getTwinStats } from "@/lib/storage/auraTwinStore";
 import { ReferralBanner } from "@/components/marketing/ReferralBanner";
 
 const statusLeaks = [
@@ -45,7 +54,7 @@ const products = [
     desc: "Quick snapshot of your first impression.",
     features: ["Single photo scan", "Basic aura score", "3 leak insights"],
     bestFor: "Quick check",
-    href: "/pricing",
+    href: "/audit/new",
   },
   {
     name: "Full Aura Report",
@@ -90,15 +99,21 @@ const products = [
 ];
 
 export default function HomePage() {
+  const stats = useMemo(() => ({
+    auditCount: typeof window !== "undefined" ? getAudits().length : 0,
+    twinCount: typeof window !== "undefined" ? getTwinStats().totalSimulations : 0,
+  }), []);
+
   return (
-    <>      <ReferralBanner />
+    <>
+      <ReferralBanner />
       {/* ─── 1. Hero ─── */}
       <section className="relative overflow-hidden pb-32 pt-24 sm:pt-32">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(147,51,234,0.15),transparent_50%)]" />
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(236,72,153,0.08),transparent_50%)]" />
         <Container className="relative text-center">
           <span className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 px-3 py-1 text-xs text-purple-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-purple-400" />
             First-Impression Intelligence
           </span>
           <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl md:text-6xl">
@@ -109,6 +124,23 @@ export default function HomePage() {
             what is weakening your first impression — and how to upgrade your
             visual signal under your budget.
           </p>
+
+          {/* Live counter */}
+          <div className="mt-8 flex items-center justify-center gap-6 text-xs text-gray-500">
+            {stats.auditCount > 0 && (
+              <span className="flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                {stats.auditCount} audit{stats.auditCount !== 1 ? "s" : ""} completed
+              </span>
+            )}
+            {stats.twinCount > 0 && (
+              <span className="flex items-center gap-1.5">
+                <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
+                {stats.twinCount} twin simulation{stats.twinCount !== 1 ? "s" : ""}
+              </span>
+            )}
+          </div>
+
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <Link href="/audit/new">
               <Button size="lg">Start Free Aura Check</Button>

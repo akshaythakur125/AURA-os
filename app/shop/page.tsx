@@ -34,7 +34,7 @@ export default function ShopPage() {
   const [goalFilter, setGoalFilter] = useState<string>("all");
 
   const filtered = useMemo(() => {
-    return PRODUCTS.filter((p) => {
+    const active = PRODUCTS.filter((p) => {
       if (!p.isActive) return false;
       if (categoryFilter !== "all" && p.category !== categoryFilter) return false;
       if (budgetFilter !== "all") {
@@ -47,6 +47,9 @@ export default function ShopPage() {
       if (goalFilter !== "all" && !p.goalTags.includes(goalFilter as Goal)) return false;
       return true;
     });
+
+    // Sort by priorityScore descending
+    return active.sort((a, b) => b.priorityScore - a.priorityScore);
   }, [categoryFilter, budgetFilter, goalFilter]);
 
   const categories = Object.entries(CATEGORY_LABELS) as [ProductCategory, string][];
@@ -144,11 +147,11 @@ export default function ShopPage() {
               key={product.id}
               recommendation={{
                 product,
-                matchScore: 0,
-                reason: "",
-                linkedStatusLeak: "",
-                estimatedImpact: "",
-                priority: "low",
+                matchScore: product.priorityScore,
+                reason: product.whyItWorks || "",
+                linkedStatusLeak: product.statusLeakTags?.[0] || "",
+                estimatedImpact: product.priorityScore >= 80 ? "High impact" : product.priorityScore >= 50 ? "Moderate" : "Low",
+                priority: product.priorityScore >= 80 ? "high" : product.priorityScore >= 50 ? "medium" : "low",
               }}
               source="shop"
             />
