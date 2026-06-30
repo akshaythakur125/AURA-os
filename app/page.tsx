@@ -532,7 +532,67 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ─── 9. Safety Note ─── */}
+      {/* ─── 9. Upgrade ROI ─── */}
+      <section className="border-t border-white/5 py-20">
+        <Container>
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              Not every upgrade gives equal status impact.
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">
+              AuraCheck helps you find the cheapest change that improves your first impression the most.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card className="border-red-500/10">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10 text-sm font-bold text-red-400">X</span>
+                <Badge variant="danger">Bad Upgrade</Badge>
+              </div>
+              <h3 className="mb-2 text-sm font-semibold text-white">Expensive item before fixing basics</h3>
+              <p className="text-sm text-gray-400">
+                Buying a flagship phone or premium watch before fixing lighting and background. The expensive item loses impact when the frame is weak.
+              </p>
+              <div className="mt-3 rounded-lg bg-red-500/5 p-3 text-xs text-red-400">
+                ROI: Low — the upgrade is invisible because the basics are broken.
+              </div>
+            </Card>
+            <Card className="border-emerald-500/10">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-sm font-bold text-emerald-400">✓</span>
+                <Badge variant="success">Smart Upgrade</Badge>
+              </div>
+              <h3 className="mb-2 text-sm font-semibold text-white">Lighting + grooming + clean outfit</h3>
+              <p className="text-sm text-gray-400">
+                A ring light, fresh haircut, and solid-color shirt cost under ₹2,000 combined. The improvement in first impression is dramatic.
+              </p>
+              <div className="mt-3 rounded-lg bg-emerald-500/5 p-3 text-xs text-emerald-400">
+                ROI: High — each element compounds the others for maximum visible impact.
+              </div>
+            </Card>
+            <Card className="border-purple-500/10">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500/10 text-sm font-bold text-purple-400">★</span>
+                <Badge variant="premium">Best Upgrade</Badge>
+              </div>
+              <h3 className="mb-2 text-sm font-semibold text-white">Target your biggest status leak</h3>
+              <p className="text-sm text-gray-400">
+                AuraCheck identifies the single leak causing the most signal damage. Fixing it first gives you the highest ROI per rupee spent.
+              </p>
+              <div className="mt-3 rounded-lg bg-purple-500/5 p-3 text-xs text-purple-300">
+                ROI: Maximum — targeted fixes eliminate the weakest link in your presentation.
+              </div>
+            </Card>
+          </div>
+          <div className="mt-10 text-center">
+            <Link href="/shop">
+              <Button variant="outline">Browse Upgrade Recommendations</Button>
+            </Link>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── 10. Safety Note ─── */}
       <section className="border-t border-white/5 py-12">
         <Container>
           <div className="mx-auto max-w-2xl rounded-xl border border-white/5 bg-white/[0.02] p-6 text-center">
@@ -544,7 +604,7 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ─── 10. Final CTA ─── */}
+      {/* ─── 11. Final CTA ─── */}
       <section className="relative overflow-hidden border-t border-white/5 py-24">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.12),transparent_50%)]" />
         <Container className="relative text-center">

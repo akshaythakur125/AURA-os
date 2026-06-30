@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateFreeAuraReport";
+import { RecommendationSection } from "@/components/products/RecommendationSection";
 import type { FreeAuraResult, FullAuraReport } from "@/types";
 
 const AUDIT_TYPE_LABELS: Record<string, string> = {
@@ -253,6 +254,9 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               <h3 className="mb-2 text-sm font-semibold text-white">Final Verdict</h3>
               <p className="text-sm text-gray-300">{fullReport.finalVerdict}</p>
             </Card>
+
+            {/* ─── Premium Recommendations ─── */}
+            <RecommendationSection audit={audit} />
           </>
         ) : freeResult ? (
           /* ─── Free Score Results + Locked Teaser ─── */
@@ -342,6 +346,9 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                 </div>
               </Card>
             </details>
+
+            {/* ─── Recommendations ─── */}
+            <RecommendationSection audit={audit} />
 
             {/* ─── Locked Teaser ─── */}
             <Card className="mb-8 border-purple-500/20">

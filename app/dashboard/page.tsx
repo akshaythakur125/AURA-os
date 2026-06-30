@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { getAudits, deleteAudit } from "@/lib/storage/auditStore";
 import { getUnlockedAuditCount, isAuditUnlocked } from "@/lib/storage/unlockStore";
+import { getRecommendationsForAudit } from "@/lib/recommendations/getRecommendations";
 
 const AUDIT_TYPE_LABELS: Record<string, string> = {
   photo: "Photo Aura Check",
@@ -100,6 +101,37 @@ export default function DashboardPage() {
             </Card>
           </div>
         )}
+
+        {/* ─── Latest Upgrade Path ─── */}
+        {audits.length > 0 && audits[0].freeScore !== undefined && (() => {
+          const latestRecs = getRecommendationsForAudit(audits[0], { limit: 3 });
+          if (latestRecs.length === 0) return null;
+          return (
+            <Card className="mb-8 border-purple-500/20">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h2 className="mb-1 text-sm font-semibold text-white">Your Next Best Upgrade Path</h2>
+                  <p className="text-xs text-gray-400">
+                    Your latest Aura Check found {audits[0].freeResult?.statusLeaks.length ?? 0} status leaks.
+                    Here are the highest-impact upgrades.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {latestRecs.slice(0, 3).map((rec) => (
+                      <span key={rec.product.id} className="rounded-full bg-purple-500/10 px-2.5 py-1 text-xs text-purple-300">
+                        {rec.product.title}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex-shrink-0">
+                  <Link href={`/audit/${audits[0].id}`}>
+                    <Button size="sm" variant="outline">View Path</Button>
+                  </Link>
+                </div>
+              </div>
+            </Card>
+          );
+        })()}
 
         {/* ─── Audit History ─── */}
         <h2 className="mb-4 text-lg font-semibold text-white">Audit History</h2>
