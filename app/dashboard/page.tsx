@@ -15,6 +15,7 @@ import { getOrdersByAuditId } from "@/lib/storage/orderStore";
 import { getOrCreateReferralProfile, getReferralStats } from "@/lib/storage/referralStore";
 import { getProgressComparisons } from "@/lib/storage/progressStore";
 import { getLatestTwinResult } from "@/lib/storage/auraTwinStore";
+import { getHabitStats, getTodayMission } from "@/lib/storage/habitStore";
 import { copyInviteLink, copyInviteMessage, nativeShare, incrementInviteCount } from "@/lib/referrals/referralUtils";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 import { AUDIT_TYPE_LABELS, GOAL_LABELS } from "@/lib/audit/auditUtils";
@@ -32,6 +33,8 @@ export default function DashboardPage() {
   const [referralStats] = useState(() => getReferralStats());
   const [progressComparisons] = useState(() => getProgressComparisons());
   const [latestTwin] = useState(() => getLatestTwinResult());
+  const [habitStats] = useState(() => getHabitStats());
+  const [todayMission] = useState(() => getTodayMission());
   const [shareCopied, setShareCopied] = useState(false);
 
   function handleDelete(id: string) {
@@ -126,6 +129,34 @@ export default function DashboardPage() {
         <div className="mb-8">
           <OnboardingChecklist />
         </div>
+
+        {/* ─── Daily Habit / Streak Card ─── */}
+        <Card className="mb-8 border-amber-500/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-2xl">
+                {habitStats.currentStreak > 0 ? "🔥" : "📋"}
+              </div>
+              <div>
+                <h2 className="text-sm font-semibold text-white">
+                  {habitStats.currentStreak > 0
+                    ? `${habitStats.currentStreak}-day streak`
+                    : "Daily Habit Check"}
+                </h2>
+                <p className="text-xs text-gray-400">
+                  {habitStats.totalCompletions > 0
+                    ? `${habitStats.totalCompletions} missions completed. Longest streak: ${habitStats.longestStreak} days.`
+                    : "Start your glow-up journey. Complete today's mission to begin your streak."}
+                </p>
+                {todayMission && (
+                  <p className="mt-1 text-xs text-amber-400">
+                    Today: <span className="text-white">{todayMission.title}</span>
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        </Card>
 
         {/* ─── Aura Twin Simulator Card ─── */}
         {latestTwin && (() => {

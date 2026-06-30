@@ -12,6 +12,7 @@ import { generateFreeAuraReport, generateFreeReportWithPersonalization } from "@
 import { RecommendationSection } from "@/components/products/RecommendationSection";
 import { generateShareCardPng } from "@/lib/export/generateShareCard";
 import { trackEvent } from "@/lib/storage/analyticsStore";
+import { isMissionComplete, markMissionComplete, isChecklistComplete, markChecklistComplete } from "@/lib/storage/habitStore";
 import type { FreeAuraResult, FullAuraReport, ProductType } from "@/types";
 import type { PersonalizationResult } from "@/types/personalization";
 import type { ProfileAuditResult } from "@/types/profileAudit";
@@ -200,8 +201,43 @@ function DatingAuditSection({ report }: { report: ProfileAuditResult }) {
   );
 }
 
-function GlowUpSection({ plan }: { plan: GlowUpPlan }) {
+function GlowUpSection({ plan, auditId }: { plan: GlowUpPlan; auditId: string }) {
   const [weekIndex, setWeekIndex] = useState(0);
+  const [completedMissions, setCompletedMissions] = useState<Set<number>>(() => {
+    const set = new Set<number>();
+    for (let d = 1; d <= 30; d++) {
+      if (isMissionComplete(auditId, d)) set.add(d);
+    }
+    return set;
+  });
+  const [completedChecklist, setCompletedChecklist] = useState<Set<string>>(() => {
+    const set = new Set<string>();
+    for (let w = 1; w <= 4; w++) {
+      for (let i = 0; i < 5; i++) {
+        if (isChecklistComplete(auditId, w, i)) set.add(`${w}:${i}`);
+      }
+    }
+    return set;
+  });
+
+  const handleMissionToggle = (day: number) => {
+    const newSet = new Set(completedMissions);
+    if (newSet.has(day)) return;
+    markMissionComplete(auditId, day);
+    newSet.add(day);
+    setCompletedMissions(newSet);
+  };
+
+  const handleChecklistToggle = (weekNum: number, itemIndex: number) => {
+    const key = `${weekNum}:${itemIndex}`;
+    const newSet = new Set(completedChecklist);
+    if (newSet.has(key)) return;
+    markChecklistComplete(auditId, weekNum, itemIndex);
+    newSet.add(key);
+    setCompletedChecklist(newSet);
+  };
+
+  const totalCompleted = completedMissions.size;
   return (
     <>
       <Card className="mb-8 border-amber-500/20">
@@ -250,19 +286,51 @@ function GlowUpSection({ plan }: { plan: GlowUpPlan }) {
               <Badge variant="premium">{plan.weeklyPlan[weekIndex].estimatedCost}</Badge>
             </div>
             <div className="mb-3 space-y-1">
-              {plan.weeklyPlan[weekIndex].missions.map((m) => (
-                <div key={m.day} className="flex items-start gap-2 text-xs">
-                  <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-white/5 text-[10px] text-gray-500">{m.day.replace("Day ", "")}</span>
-                  <div><span className="text-gray-300">{m.title}</span><p className="text-gray-500">{m.task}</p></div>
-                </div>
-              ))}
+              {plan.weeklyPlan[weekIndex].missions.map((m) => {
+                const dayNum = parseInt(m.day.replace("Day ", ""), 10);
+                const done = completedMissions.has(dayNum);
+                return (
+                  <div key={m.day} className="flex items-start gap-2 text-xs">
+                    <button
+                      onClick={() => handleMissionToggle(dayNum)}
+                      className={`mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border transition-colors ${
+                        done
+                          ? "border-emerald-500/40 bg-emerald-500/20 text-emerald-400"
+                          : "border-white/10 bg-white/5 text-gray-500 hover:border-amber-500/30"
+                      }`}
+                    >
+                      {done ? "✓" : m.day.replace("Day ", "")}
+                    </button>
+                    <div>
+                      <span className={done ? "text-gray-500 line-through" : "text-gray-300"}>{m.title}</span>
+                      <p className="text-gray-500">{m.task}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
             <details>
               <summary className="cursor-pointer text-xs text-gray-500 hover:text-gray-300">Checklist</summary>
               <ul className="mt-2 space-y-1">
-                {plan.weeklyPlan[weekIndex].checklist.map((c) => (
-                  <li key={c} className="flex items-start gap-2 text-xs text-gray-300"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-amber-400" />{c}</li>
-                ))}
+                {plan.weeklyPlan[weekIndex].checklist.map((c, i) => {
+                  const key = `${plan.weeklyPlan[weekIndex].weekNumber}:${i}`;
+                  const done = completedChecklist.has(key);
+                  return (
+                    <li key={c} className="flex items-start gap-2 text-xs">
+                      <button
+                        onClick={() => handleChecklistToggle(plan.weeklyPlan[weekIndex].weekNumber, i)}
+                        className={`mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded border transition-colors ${
+                          done
+                            ? "border-emerald-500/40 bg-emerald-500/20 text-emerald-400"
+                            : "border-white/10 bg-white/5 text-gray-500 hover:border-amber-500/30"
+                        }`}
+                      >
+                        {done ? "✓" : "○"}
+                      </button>
+                      <span className={done ? "text-gray-500 line-through" : "text-gray-300"}>{c}</span>
+                    </li>
+                  );
+                })}
               </ul>
             </details>
           </Card>
@@ -271,21 +339,45 @@ function GlowUpSection({ plan }: { plan: GlowUpPlan }) {
 
       {/* ─── Daily Missions ─── */}
       <Card className="mb-8">
-        <h3 className="mb-3 text-sm font-semibold text-white">Daily Missions</h3>
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-white">Daily Missions</h3>
+          <Badge variant={totalCompleted >= 20 ? "success" : totalCompleted >= 10 ? "warning" : "default"}>
+            {totalCompleted}/30 done
+          </Badge>
+        </div>
+        {totalCompleted > 0 && (
+          <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-white/5">
+            <div className="h-full rounded-full bg-gradient-to-r from-amber-500 to-orange-500 transition-all" style={{ width: `${(totalCompleted / 30) * 100}%` }} />
+          </div>
+        )}
         <div className="space-y-2">
-          {plan.dailyMissions.map((m) => (
-            <div key={m.day} className="flex items-start gap-3 rounded-lg bg-white/5 p-2.5">
-              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-xs font-bold text-amber-300">{m.day}</span>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-white">{m.title}</span>
-                  <span className="text-[10px] text-gray-600">{m.timeRequired}</span>
+          {plan.dailyMissions.map((m) => {
+            const done = completedMissions.has(m.day);
+            return (
+              <div key={m.day} className="flex items-start gap-3 rounded-lg bg-white/5 p-2.5">
+                <button
+                  onClick={() => handleMissionToggle(m.day)}
+                  className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors ${
+                    done
+                      ? "bg-emerald-500/30 text-emerald-300"
+                      : "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30"
+                  }`}
+                >
+                  {done ? "✓" : m.day}
+                </button>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className={`text-xs font-semibold ${done ? "text-gray-500 line-through" : "text-white"}`}>
+                      {m.title}
+                    </span>
+                    <span className="text-[10px] text-gray-600">{m.timeRequired}</span>
+                  </div>
+                  <p className="mt-0.5 text-xs text-gray-400">{m.task}</p>
+                  <p className="mt-0.5 text-[10px] text-gray-600">{m.reason}</p>
                 </div>
-                <p className="mt-0.5 text-xs text-gray-400">{m.task}</p>
-                <p className="mt-0.5 text-[10px] text-gray-600">{m.reason}</p>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </Card>
 
@@ -746,23 +838,47 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
 
             <h2 className="mb-4 text-lg font-semibold text-white">Status Leaks</h2>
             <div className="mb-8 space-y-3">
-              {freeResult.statusLeaks.map((leak) => (
-                <Card key={leak.title} className={`border ${severityColors[leak.severity] || severityColors.low}`}>
-                  <div className="mb-1 flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-white">{leak.title}</h3>
-                    <Badge variant={leak.severity === "high" ? "danger" : leak.severity === "medium" ? "warning" : "default"}>{leak.severity}</Badge>
-                  </div>
-                  <p className="mb-2 text-xs text-gray-400">{leak.explanation}</p>
-                  <p className="text-xs text-purple-300">{leak.fix}</p>
-                  <div className="mt-2 flex items-center gap-2 text-xs text-gray-600">
-                    <span>Impact</span>
-                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
-                      <div className="h-full rounded-full bg-purple-500" style={{ width: `${Math.min(100, leak.impactScore)}%` }} />
+              {freeResult.statusLeaks.map((leak, idx) => {
+                if (idx > 1 && !unlockedProducts.includes("aura_report")) {
+                  return (
+                    <div key={leak.title} className="relative">
+                      <div className="pointer-events-none mt-3 opacity-15 blur-sm">
+                        <Card className={`border ${severityColors[leak.severity] || severityColors.low}`}>
+                          <div className="mb-1 flex items-center justify-between">
+                            <h3 className="text-sm font-semibold text-white">{leak.title}</h3>
+                          </div>
+                          <p className="mb-2 text-xs text-gray-400">{leak.explanation.slice(0, 60)}...</p>
+                        </Card>
+                      </div>
                     </div>
-                    <span className="text-gray-500">{leak.impactScore}</span>
-                  </div>
-                </Card>
-              ))}
+                  );
+                }
+                return (
+                  <Card key={leak.title} className={`border ${severityColors[leak.severity] || severityColors.low}`}>
+                    <div className="mb-1 flex items-center justify-between">
+                      <h3 className="text-sm font-semibold text-white">{leak.title}</h3>
+                      <Badge variant={leak.severity === "high" ? "danger" : leak.severity === "medium" ? "warning" : "default"}>{leak.severity}</Badge>
+                    </div>
+                    <p className="mb-2 text-xs text-gray-400">{leak.explanation}</p>
+                    <p className="text-xs text-purple-300">{leak.fix}</p>
+                    <div className="mt-2 flex items-center gap-2 text-xs text-gray-600">
+                      <span>Impact</span>
+                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
+                        <div className="h-full rounded-full bg-purple-500" style={{ width: `${Math.min(100, leak.impactScore)}%` }} />
+                      </div>
+                      <span className="text-gray-500">{leak.impactScore}</span>
+                    </div>
+                  </Card>
+                );
+              })}
+              {freeResult.statusLeaks.length > 2 && !unlockedProducts.includes("aura_report") && (
+                <div className="flex justify-center py-2">
+                  <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-4 py-2 text-xs text-purple-300 hover:bg-purple-500/20 transition-colors">
+                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" /></svg>
+                    Unlock Full Report — See {freeResult.statusLeaks.length - 2} more leaks → ₹99
+                  </Link>
+                </div>
+              )}
             </div>
 
             <h2 className="mb-4 text-lg font-semibold text-white">Quick Fixes</h2>
@@ -853,7 +969,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
         {datingReport && <DatingAuditSection report={datingReport} />}
 
         {/* ─── Glow-Up Plan Section (if unlocked) ─── */}
-        {glowupPlan && <GlowUpSection plan={glowupPlan} />}
+        {glowupPlan && <GlowUpSection plan={glowupPlan} auditId={audit.id} />}
 
         {/* ─── Challenge CTA ─── */}
         {freeResult && (
