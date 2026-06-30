@@ -27,7 +27,7 @@ const GOAL_LABELS: Record<string, string> = {
 
 const STATUS_BADGE: Record<string, { label: string; variant: "default" | "warning" | "success" | "premium" }> = {
   draft: { label: "Draft", variant: "default" },
-  free_score: { label: "Free Score", variant: "success" },
+  free_generated: { label: "Free Score", variant: "success" },
   full_report: { label: "Full Report", variant: "premium" },
 };
 
@@ -41,7 +41,12 @@ export default function DashboardPage() {
     setDeleteTarget(null);
   }
 
-  const latestAudit = audits.length > 0 ? audits[0] : null;
+  const scoredAudits = audits.filter((a) => a.freeScore !== undefined);
+  const latestScore = audits.length > 0 ? audits[0].freeScore ?? null : null;
+  const bestScore = scoredAudits.length > 0 ? Math.max(...scoredAudits.map((a) => a.freeScore!)) : null;
+  const avgScore = scoredAudits.length > 0
+    ? Math.round(scoredAudits.reduce((sum, a) => sum + (a.freeScore ?? 0), 0) / scoredAudits.length)
+    : null;
 
   return (
     <Container className="py-8 sm:py-12">
@@ -60,20 +65,31 @@ export default function DashboardPage() {
             <div className="mt-1 text-3xl font-bold text-white">{audits.length}</div>
           </Card>
           <Card>
-            <div className="text-xs text-gray-500">Latest Audit</div>
-            <div className="mt-1 text-sm text-white">
-              {latestAudit
-                ? new Date(latestAudit.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })
-                : "—"}
+            <div className="text-xs text-gray-500">Latest Aura Score</div>
+            <div className="mt-1 text-3xl font-bold text-white">
+              {latestScore !== null ? latestScore : <span className="text-base text-gray-500">—</span>}
             </div>
           </Card>
           <Card>
-            <div className="text-xs text-gray-500">Drafts</div>
-            <div className="mt-1 text-3xl font-bold text-white">
-              {audits.filter((a) => a.reportStatus === "draft").length}
+            <div className="text-xs text-gray-500">Best Score</div>
+            <div className="mt-1 text-3xl font-bold text-emerald-400">
+              {bestScore !== null ? bestScore : <span className="text-base text-gray-500">—</span>}
             </div>
           </Card>
         </div>
+
+        {scoredAudits.length > 0 && (
+          <div className="mb-8 grid gap-4 sm:grid-cols-2">
+            <Card>
+              <div className="text-xs text-gray-500">Average Score</div>
+              <div className="mt-1 text-3xl font-bold text-white">{avgScore}</div>
+            </Card>
+            <Card>
+              <div className="text-xs text-gray-500">Scored Audits</div>
+              <div className="mt-1 text-3xl font-bold text-white">{scoredAudits.length} / {audits.length}</div>
+            </Card>
+          </div>
+        )}
 
         {/* ─── Audit History ─── */}
         <h2 className="mb-4 text-lg font-semibold text-white">Audit History</h2>
@@ -113,15 +129,21 @@ export default function DashboardPage() {
 
                   {/* ─── Info ─── */}
                   <div className="flex min-w-0 flex-1 flex-col justify-between">
-                    <div>
-                      <h3 className="truncate text-sm font-semibold text-white">
-                        {AUDIT_TYPE_LABELS[audit.auditType] || audit.auditType}
-                      </h3>
-                      <div className="mt-0.5 flex items-center gap-2 text-xs text-gray-500">
-                        <span>{GOAL_LABELS[audit.goal] || audit.goal}</span>
-                        <span className="text-gray-700">|</span>
-                        <span>&#8377;{audit.budgetRange === "0" ? "0" : audit.budgetRange === "25000" ? "25,000+" : Number(audit.budgetRange).toLocaleString("en-IN")}</span>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <h3 className="truncate text-sm font-semibold text-white">
+                          {AUDIT_TYPE_LABELS[audit.auditType] || audit.auditType}
+                        </h3>
+                        <div className="mt-0.5 flex items-center gap-2 text-xs text-gray-500">
+                          <span>{GOAL_LABELS[audit.goal] || audit.goal}</span>
+                        </div>
                       </div>
+                      {audit.freeScore !== undefined && (
+                        <div className="flex-shrink-0 text-right">
+                          <div className="text-lg font-bold text-white">{audit.freeScore}</div>
+                          <div className="text-[10px] text-gray-600">score</div>
+                        </div>
+                      )}
                     </div>
                     <div className="flex items-center justify-between">
                       <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
