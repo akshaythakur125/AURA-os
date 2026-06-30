@@ -12,7 +12,13 @@ export type AnalyticsEvent =
   | "product_unlocked"
   | "share_card_downloaded"
   | "affiliate_clicked"
-  | "report_printed";
+  | "report_printed"
+  | "product_page_viewed"
+  | "examples_viewed"
+  | "offer_applied"
+  | "lead_created"
+  | "pricing_cta_clicked"
+  | "unlock_started";
 
 export interface AnalyticsRecord {
   id: string;
@@ -52,6 +58,12 @@ export function getAnalyticsSummary(): Record<string, number> {
     shareCardDownloaded: events.filter((e) => e.event === "share_card_downloaded").length,
     affiliateClicked: events.filter((e) => e.event === "affiliate_clicked").length,
     reportPrinted: events.filter((e) => e.event === "report_printed").length,
+    productPageViewed: events.filter((e) => e.event === "product_page_viewed").length,
+    examplesViewed: events.filter((e) => e.event === "examples_viewed").length,
+    offerApplied: events.filter((e) => e.event === "offer_applied").length,
+    leadCreated: events.filter((e) => e.event === "lead_created").length,
+    pricingCtaClicked: events.filter((e) => e.event === "pricing_cta_clicked").length,
+    unlockStarted: events.filter((e) => e.event === "unlock_started").length,
   };
 }
 

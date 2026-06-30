@@ -14,6 +14,10 @@ export interface ManualOrder {
   productType: ProductType;
   productName: string;
   amount: number;
+  originalAmount?: number;
+  discountCode?: string;
+  discountAmount?: number;
+  finalAmount?: number;
   status: OrderStatus;
   customerName?: string;
   customerContact?: string;

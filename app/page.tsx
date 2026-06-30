@@ -57,7 +57,7 @@ const products = [
       "Priority upgrade plan",
     ],
     bestFor: "Serious upgrade",
-    href: "/pricing",
+    href: "/products/aura-report",
     highlighted: true,
   },
   {
@@ -71,7 +71,7 @@ const products = [
       "Competitive signal audit",
     ],
     bestFor: "Profile optimizer",
-    href: "/pricing",
+    href: "/products/dating-audit",
   },
   {
     name: "30-Day Glow-Up Plan",
@@ -84,7 +84,7 @@ const products = [
       "Priority support",
     ],
     bestFor: "Maximum impact",
-    href: "/pricing",
+    href: "/products/glowup-plan",
   },
 ];
 
@@ -467,6 +467,11 @@ export default function HomePage() {
               </div>
             </div>
           </Card>
+          <div className="mt-8 text-center">
+            <Link href="/examples">
+              <Button variant="outline">View All Sample Reports</Button>
+            </Link>
+          </div>
         </Container>
       </section>
 
@@ -559,7 +564,7 @@ export default function HomePage() {
                 <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Archetype + mismatch map</li>
               </ul>
               <div className="mt-6">
-                <Link href="/pricing"><Button variant="outline" size="sm">Learn More</Button></Link>
+                <Link href="/products/aura-report"><Button variant="outline" size="sm">Learn More</Button></Link>
               </div>
             </Card>
             <Card hover>
@@ -577,7 +582,7 @@ export default function HomePage() {
                 <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Photo order strategy</li>
               </ul>
               <div className="mt-6">
-                <Link href="/pricing"><Button variant="outline" size="sm">Learn More</Button></Link>
+                <Link href="/products/dating-audit"><Button variant="outline" size="sm">Learn More</Button></Link>
               </div>
             </Card>
             <Card hover>
@@ -595,7 +600,7 @@ export default function HomePage() {
                 <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Photo/grooming/outfit systems</li>
               </ul>
               <div className="mt-6">
-                <Link href="/pricing"><Button variant="outline" size="sm">Learn More</Button></Link>
+                <Link href="/products/glowup-plan"><Button variant="outline" size="sm">Learn More</Button></Link>
               </div>
             </Card>
           </div>

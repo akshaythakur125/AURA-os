@@ -30,6 +30,10 @@ export function createOrder(input: {
   productType: ProductType;
   productName: string;
   amount: number;
+  originalAmount?: number;
+  discountCode?: string;
+  discountAmount?: number;
+  finalAmount?: number;
   upiId: string;
   customerName?: string;
   customerContact?: string;
@@ -76,8 +80,8 @@ export function getOrderStats(): OrderStats {
     paymentSubmitted: orders.filter((o) => o.status === "payment_submitted").length,
     unlockedOrders: orders.filter((o) => o.status === "unlocked").length,
     cancelledOrders: orders.filter((o) => o.status === "cancelled").length,
-    totalExpectedRevenue: orders.reduce((sum, o) => sum + (o.status !== "cancelled" ? o.amount : 0), 0),
-    totalUnlockedRevenue: orders.filter((o) => o.status === "unlocked").reduce((sum, o) => sum + o.amount, 0),
+    totalExpectedRevenue: orders.reduce((sum, o) => sum + (o.status !== "cancelled" ? (o.finalAmount ?? o.amount) : 0), 0),
+    totalUnlockedRevenue: orders.filter((o) => o.status === "unlocked").reduce((sum, o) => sum + (o.finalAmount ?? o.amount), 0),
     latestOrderDate: orders.length > 0 ? orders[0].createdAt : null,
   };
   return stats;

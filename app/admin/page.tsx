@@ -12,6 +12,8 @@ import { generateUnlockCode } from "@/lib/payments/unlockCodeGenerator";
 import { downloadCSV } from "@/lib/export/csv";
 import { downloadJSON } from "@/lib/export/downloadJson";
 import type { ManualOrder, OrderStatus } from "@/types/order";
+import { getLeads, deleteLead, clearLeads } from "@/lib/storage/leadStore";
+import { OFFERS } from "@/config/offers";
 
 const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   draft: "Draft",
@@ -40,11 +42,13 @@ export default function AdminPage() {
   const [orders, setOrders] = useState(() => getOrders());
   const [audits] = useState(() => getAudits());
   const [analytics] = useState(() => getAnalyticsSummary());
-  const [activeTab, setActiveTab] = useState<"orders" | "analytics" | "export">("orders");
+  const [leads, setLeads] = useState(() => getLeads());
+  const [activeTab, setActiveTab] = useState<"orders" | "analytics" | "leads" | "funnel" | "export">("orders");
   const [toast, setToast] = useState<string | null>(null);
 
   function refresh() {
     setOrders(getOrders());
+    setLeads(getLeads());
   }
 
   function showToast(msg: string) {
@@ -199,13 +203,13 @@ export default function AdminPage() {
 
         {/* ─── Tabs ─── */}
         <div className="mb-6 flex gap-2">
-          {(["orders", "analytics", "export"] as const).map((tab) => (
+          {(["orders", "analytics", "leads", "funnel", "export"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`rounded-full px-4 py-1.5 text-xs transition-all ${activeTab === tab ? "bg-purple-500/20 text-purple-300" : "bg-white/5 text-gray-500 hover:text-gray-300"}`}
             >
-              {tab === "orders" ? "Orders" : tab === "analytics" ? "Analytics" : "Export"}
+              {tab === "orders" ? "Orders" : tab === "analytics" ? "Analytics" : tab === "leads" ? "Leads" : tab === "funnel" ? "Funnel" : "Export"}
             </button>
           ))}
         </div>
@@ -302,6 +306,104 @@ export default function AdminPage() {
           </>
         )}
 
+        {/* ─── Leads Tab ─── */}
+        {activeTab === "leads" && (
+          <>
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-white">Leads ({leads.length})</h3>
+              <div className="flex gap-2">
+                <Button variant="ghost" size="sm" onClick={() => { downloadCSV(leads.map(l => ({ id: l.id, name: l.name || "", contact: l.contact || "", product: l.interestProduct || "", source: l.source, note: l.note || "", createdAt: l.createdAt })), `auracheck-leads-${Date.now()}.csv`); showToast("Leads CSV downloaded"); }}>Export CSV</Button>
+                <Button variant="ghost" size="sm" onClick={() => { if (confirm("Clear all leads?")) { clearLeads(); refresh(); showToast("Leads cleared"); } }}>Clear All</Button>
+              </div>
+            </div>
+            {leads.length === 0 ? (
+              <Card><div className="py-8 text-center text-sm text-gray-500">No leads captured yet.</div></Card>
+            ) : (
+              <div className="space-y-3">
+                {leads.map((lead) => (
+                  <Card key={lead.id}>
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="text-xs font-mono text-gray-500">{lead.id.slice(0, 8)}</span>
+                          {lead.interestProduct && <span className="text-xs text-purple-300">{lead.interestProduct}</span>}
+                        </div>
+                        <div className="grid gap-1 text-xs sm:grid-cols-2">
+                          <div><span className="text-gray-500">Name:</span> <span className="text-gray-300">{lead.name || "—"}</span></div>
+                          <div><span className="text-gray-500">Contact:</span> <span className="text-gray-300">{lead.contact || "—"}</span></div>
+                          <div><span className="text-gray-500">Source:</span> <span className="text-gray-300">{lead.source}</span></div>
+                          <div><span className="text-gray-500">Date:</span> <span className="text-gray-300">{new Date(lead.createdAt).toLocaleDateString("en-IN")}</span></div>
+                          {lead.note && <div className="sm:col-span-2"><span className="text-gray-500">Note:</span> <span className="text-gray-300">{lead.note}</span></div>}
+                        </div>
+                      </div>
+                      <Button size="sm" variant="ghost" onClick={() => { deleteLead(lead.id); refresh(); showToast("Lead deleted"); }}>
+                        <svg className="h-3.5 w-3.5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ─── Funnel Tab ─── */}
+        {activeTab === "funnel" && (
+          <>
+            <div className="mb-6 grid gap-4 sm:grid-cols-3">
+              {(["aura_report", "dating_audit", "glowup_plan"] as const).map((pt) => {
+                const productOrders = orders.filter((o) => o.productType === pt);
+                const productUnlocks = productOrders.filter((o) => o.status === "unlocked");
+                const productPayments = productOrders.filter((o) => o.status === "payment_submitted" || o.status === "code_sent");
+                const pageViews = analytics.productPageViewed || 0;
+                return (
+                  <Card key={pt}>
+                    <h3 className="mb-3 text-sm font-semibold text-white capitalize">{pt.replace("_", " ")}</h3>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between"><span className="text-gray-500">Page Views</span><span className="text-white">{pageViews}</span></div>
+                      <div className="flex justify-between"><span className="text-gray-500">Payment Requests</span><span className="text-amber-400">{productPayments.length + productUnlocks.length}</span></div>
+                      <div className="flex justify-between"><span className="text-gray-500">Unlocks</span><span className="text-emerald-400">{productUnlocks.length}</span></div>
+                      <div className="mt-2 border-t border-white/5 pt-2">
+                        <div className="text-gray-500">Conversion Rate</div>
+                        <div className="mt-1 text-lg font-bold text-white">
+                          {pageViews > 0 ? `${((productUnlocks.length / pageViews) * 100).toFixed(1)}%` : "—"}
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+
+            {/* ─── Offer Usage ─── */}
+            <Card>
+              <h3 className="mb-3 text-sm font-semibold text-white">Offer Usage</h3>
+              {orders.filter((o) => o.discountCode).length === 0 ? (
+                <div className="py-4 text-center text-xs text-gray-500">No offers applied yet.</div>
+              ) : (
+                <div className="space-y-2">
+                  {OFFERS.filter((o) => orders.some((order) => order.discountCode === o.code)).map((offer) => {
+                    const usageCount = orders.filter((o) => o.discountCode === offer.code).length;
+                    const revenue = orders.filter((o) => o.discountCode === offer.code).reduce((sum, o) => sum + (o.finalAmount || o.amount), 0);
+                    return (
+                      <div key={offer.code} className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2 text-xs">
+                        <div>
+                          <span className="font-mono text-purple-300">{offer.code}</span>
+                          <span className="ml-2 text-gray-500">{offer.label}</span>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-white">{usageCount}x used</div>
+                          <div className="text-gray-500">₹{revenue} revenue</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </Card>
+          </>
+        )}
+
         {/* ─── Export Tab ─── */}
         {activeTab === "export" && (
           <div className="grid gap-4 sm:grid-cols-2">
@@ -322,6 +424,13 @@ export default function AdminPage() {
               <h3 className="mb-3 text-sm font-semibold text-white">Export Analytics</h3>
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" onClick={handleExportAnalyticsCSV}>CSV</Button>
+              </div>
+            </Card>
+            <Card>
+              <h3 className="mb-3 text-sm font-semibold text-white">Export Leads</h3>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => { downloadCSV(leads.map(l => ({ id: l.id, name: l.name || "", contact: l.contact || "", product: l.interestProduct || "", source: l.source, note: l.note || "", createdAt: l.createdAt })), `auracheck-leads-${Date.now()}.csv`); showToast("Leads CSV downloaded"); }}>CSV</Button>
+                <Button size="sm" variant="outline" onClick={() => { const json = JSON.stringify(leads, null, 2); const blob = new Blob([json], { type: "application/json" }); const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `auracheck-leads-${Date.now()}.json`; a.click(); showToast("Leads JSON downloaded"); }}>JSON</Button>
               </div>
             </Card>
           </div>

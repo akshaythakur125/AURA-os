@@ -19,6 +19,8 @@ import { generateDatingProfileAudit } from "@/lib/aura-engine/generateDatingProf
 import { generateGlowUpPlan } from "@/lib/aura-engine/generateGlowUpPlan";
 import type { ProductType } from "@/types";
 import type { ManualOrder } from "@/types/order";
+import { applyOffer } from "@/lib/offers/applyOffer";
+import type { OfferApplyResult } from "@/types/offer";
 
 const PRODUCT_INFO: Record<ProductType, { name: string; price: number; desc: string }> = {
   aura_report: { name: "Full Aura Report", price: 99, desc: "Deep visual analysis with upgrade roadmap." },
@@ -58,12 +60,17 @@ function UnlockContent() {
   const [success, setSuccess] = useState<string | null>(null);
   const [unlocking, setUnlocking] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [offerCodeInput, setOfferCodeInput] = useState("");
+  const [offerResult, setOfferResult] = useState<OfferApplyResult | null>(null);
+  const [offerError, setOfferError] = useState<string | null>(null);
 
   const audit = auditId ? getAuditById(auditId) : undefined;
   const upiId = getUpiiId();
   const demoCode = getDemoCode();
   const productInfo = PRODUCT_INFO[product];
   const auditCode = generateUnlockCode(auditId, product);
+
+  const finalAmount = (offerResult?.valid && offerResult.finalAmount >= 0) ? offerResult.finalAmount : productInfo.price;
 
   const existingOrders = auditId ? getOrdersByAuditId(auditId) : [];
   const foundExisting = existingOrders.find((o) => o.productType === product);
@@ -110,6 +117,18 @@ function UnlockContent() {
     );
   }
 
+  function handleApplyOffer() {
+    setOfferError(null);
+    const result = applyOffer(offerCodeInput, product);
+    if (result.valid) {
+      setOfferResult(result);
+      trackEvent("offer_applied", { code: offerCodeInput.toUpperCase(), product, discountAmount: String(result.discountAmount), finalAmount: String(result.finalAmount) });
+    } else {
+      setOfferError(result.message);
+      setOfferResult(null);
+    }
+  }
+
   async function handleSavePayment() {
     setSaving(true);
     setError(null);
@@ -119,6 +138,10 @@ function UnlockContent() {
         productType: product,
         productName: productInfo.name,
         amount: productInfo.price,
+        originalAmount: productInfo.price,
+        discountCode: offerResult?.valid ? offerResult.offer?.code : undefined,
+        discountAmount: offerResult?.valid ? offerResult.discountAmount : undefined,
+        finalAmount: offerResult?.valid ? offerResult.finalAmount : productInfo.price,
         upiId,
         customerName: customerName.trim() || undefined,
         customerContact: customerContact.trim() || undefined,
@@ -174,8 +197,8 @@ function UnlockContent() {
     }
   }
 
-  const upiDeepLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=AuraCheck&am=${productInfo.price}&cu=INR&tn=AuraCheck%20${encodeURIComponent(productInfo.name)}%20${encodeURIComponent(auditId.slice(0, 8))}`;
-  const paymentSummary = `AuraCheck Payment Request\nProduct: ${productInfo.name}\nAmount: ₹${productInfo.price}\nAudit: ${auditId}\nCustomer: ${customerName || "—"}\nContact: ${customerContact || "—"}\nUPI Ref: ${upiTransactionRef || "—"}\nStatus: Payment Submitted`;
+  const upiDeepLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=AuraCheck&am=${finalAmount}&cu=INR&tn=AuraCheck%20${encodeURIComponent(productInfo.name)}%20${encodeURIComponent(auditId.slice(0, 8))}`;
+  const paymentSummary = `AuraCheck Payment Request\nProduct: ${productInfo.name}\nAmount: ₹${finalAmount}${offerResult?.valid ? ` (original ₹${productInfo.price}, saved ₹${offerResult.discountAmount})` : ""}\nAudit: ${auditId}\nCustomer: ${customerName || "—"}\nContact: ${customerContact || "—"}\nUPI Ref: ${upiTransactionRef || "—"}\nStatus: Payment Submitted`;
   const ownerWhatsApp = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_OWNER_WHATSAPP : "";
   const waUrl = ownerWhatsApp ? `https://wa.me/${ownerWhatsApp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(paymentSummary)}` : "";
 
@@ -207,7 +230,16 @@ function UnlockContent() {
               <h2 className="text-lg font-bold text-white">{productInfo.name}</h2>
               <p className="text-xs text-gray-500">Audit: {audit.id.slice(0, 8)}...</p>
             </div>
-            <span className="text-2xl font-bold text-amber-400">₹{productInfo.price}</span>
+            <div className="text-right">
+              {offerResult?.valid && finalAmount !== productInfo.price ? (
+                <>
+                  <span className="block text-sm text-gray-500 line-through">₹{productInfo.price}</span>
+                  <span className="text-2xl font-bold text-emerald-400">₹{finalAmount}</span>
+                </>
+              ) : (
+                <span className="text-2xl font-bold text-amber-400">₹{productInfo.price}</span>
+              )}
+            </div>
           </div>
           <p className="mt-2 text-xs text-gray-400">{productInfo.desc}</p>
         </Card>
@@ -223,13 +255,44 @@ function UnlockContent() {
               </div>
               <div className="mb-4 grid grid-cols-2 gap-2">
                 <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(upiId)}>Copy UPI ID</Button>
-                <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(`₹${productInfo.price}`)}>Copy Amount</Button>
+                <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(`₹${finalAmount}`)}>Copy Amount</Button>
                 <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(`AuraCheck ${productInfo.name} ${auditId.slice(0, 8)}`)}>Copy Payment Note</Button>
                 <a href={upiDeepLink} target="_blank" rel="noopener noreferrer">
                   <Button variant="outline" size="sm" className="w-full">Open UPI App</Button>
                 </a>
               </div>
               <p className="text-xs text-gray-500">Manual MVP payment flow: AuraCheck does not automatically verify UPI payments yet. After payment, submit your details below and send the summary to the owner/admin.</p>
+            </Card>
+
+            {/* ─── Offer Code ─── */}
+            <Card className="mb-6">
+              <h3 className="mb-4 text-sm font-semibold text-white">Have an Offer Code?</h3>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={offerCodeInput}
+                  onChange={(e) => setOfferCodeInput(e.target.value.toUpperCase())}
+                  placeholder="Enter code"
+                  className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none"
+                />
+                <Button variant="outline" size="sm" onClick={handleApplyOffer}>Apply</Button>
+              </div>
+              {offerResult?.valid && (
+                <div className="mt-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-xs">
+                  <div className="text-emerald-400">{offerResult.message}</div>
+                  <div className="mt-1 flex justify-between text-gray-300">
+                    <span>Original</span>
+                    <span className="line-through text-gray-500">₹{offerResult.originalAmount}</span>
+                  </div>
+                  <div className="flex justify-between text-emerald-300">
+                    <span>You pay</span>
+                    <span className="font-bold">₹{offerResult.finalAmount}</span>
+                  </div>
+                </div>
+              )}
+              {offerError && (
+                <div className="mt-3 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">{offerError}</div>
+              )}
             </Card>
 
             <Card className="mb-6">

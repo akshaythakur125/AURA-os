@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { ComparisonTable } from "@/components/marketing/ComparisonTable";
 
 const plans = [
   {
@@ -168,56 +169,15 @@ export default function PricingPage() {
         ))}
       </div>
 
-      {/* ─── Comparison Table ─── */}
-      <div className="mx-auto mb-16 max-w-4xl">
-        <h2 className="mb-8 text-center text-2xl font-bold text-white">
-          Compare what you get
-        </h2>
-        <div className="overflow-hidden rounded-2xl border border-white/5">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-white/5 bg-white/[0.03]">
-                <th className="px-4 py-3 font-semibold text-white">Feature</th>
-                <th className="px-4 py-3 text-center text-xs text-gray-400">Free</th>
-                <th className="px-4 py-3 text-center text-xs text-purple-300">Aura Report</th>
-                <th className="px-4 py-3 text-center text-xs text-gray-400">Dating Audit</th>
-                <th className="px-4 py-3 text-center text-xs text-gray-400">Glow-Up Plan</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {[
-                { label: "Score out of 100", values: ["Basic", "Detailed", "Detailed", "Detailed"] },
-                { label: "Photos analyzed", values: ["1", "Up to 3", "Up to 3", "Up to 3"] },
-                { label: "Status leak detection", values: ["Top 1", "Unlimited", "Unlimited", "Unlimited"] },
-                { label: "Budget upgrade plan", values: ["—", "✓", "✓", "✓"] },
-                { label: "Personalized product recommendations", values: ["—", "✓", "✓", "✓"] },
-                { label: "Budget bundle pricing", values: ["—", "✓", "✓", "✓"] },
-                { label: "Status ROI score", values: ["—", "✓", "✓", "✓"] },
-                { label: "Avoid-for-now advice", values: ["—", "✓", "✓", "✓"] },
-                { label: "Browse upgrade shop", values: ["Free", "Free", "Free", "Free"] },
-                { label: "Profile text analysis", values: ["—", "—", "✓", "—"] },
-                { label: "30-day roadmap", values: ["—", "—", "—", "✓"] },
-                { label: "Before/after tracking", values: ["—", "—", "—", "✓"] },
-              ].map((row) => (
-                <tr key={row.label} className="hover:bg-white/[0.02]">
-                  <td className="px-4 py-2.5 text-gray-300">{row.label}</td>
-                  {row.values.map((v, i) => (
-                    <td key={i} className="px-4 py-2.5 text-center text-xs">
-                      {v === "✓" ? (
-                        <span className="text-emerald-400">✓</span>
-                      ) : v === "—" ? (
-                        <span className="text-gray-600">—</span>
-                      ) : (
-                        <span className="text-gray-400">{v}</span>
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* ─── Comparison Table ─── */}
+        <div className="mx-auto mb-16 max-w-4xl">
+          <h2 className="mb-8 text-center text-2xl font-bold text-white">
+            Compare what you get
+          </h2>
+          <div className="overflow-hidden rounded-2xl border border-white/5 p-4">
+            <ComparisonTable />
+          </div>
         </div>
-      </div>
 
       {/* ─── FAQ ─── */}
       <div className="mx-auto max-w-2xl">
