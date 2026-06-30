@@ -1,3 +1,5 @@
+import type { DeepAuditInput, PersonalizationResult } from "@/types/personalization";
+
 export type AuditType =
   | "photo"
   | "instagram"
@@ -38,6 +40,8 @@ export interface Audit {
   freeResult?: FreeAuraResult;
   fullScore?: number;
   fullReport?: FullAuraReport;
+  deepInput?: DeepAuditInput;
+  personalization?: PersonalizationResult;
   createdAt: string;
   updatedAt: string;
 }

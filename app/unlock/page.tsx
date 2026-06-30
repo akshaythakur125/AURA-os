@@ -10,6 +10,8 @@ import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
 import { getUnlocks, recordUnlock } from "@/lib/storage/unlockStore";
 import { validateUnlockCode, getDemoCode, getUpiiId } from "@/lib/payments/manualUnlock";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
+import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
+
 
 export default function UnlockPage() {
   return (
@@ -62,12 +64,17 @@ function UnlockContent() {
     setUnlocking(true);
     setError(null);
     try {
-      const report = await generateFullAuraReport(audit.imageDataUrl, audit.freeResult);
+      const report = await generateFullAuraReport(audit.imageDataUrl, audit.freeResult, audit);
+      let personalization = audit.personalization;
+      if (!personalization && audit.freeResult) {
+        personalization = generateStatusArchetype(audit, audit.freeResult.imageMetrics);
+      }
       recordUnlock(auditId, product, unlockCode.trim(), transactionRef.trim() || undefined);
       updateAudit(auditId, {
         reportStatus: "full_report",
         fullScore: report.fullScore,
         fullReport: report,
+        personalization,
       });
       setSuccess("Report unlocked successfully!");
       setTimeout(() => {

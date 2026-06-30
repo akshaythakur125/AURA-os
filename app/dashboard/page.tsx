@@ -51,6 +51,29 @@ export default function DashboardPage() {
     : null;
   const unlockedCount = getUnlockedAuditCount();
 
+  const scoredWithResults = scoredAudits.filter((a) => a.freeResult);
+  const repeatedLeak = (() => {
+    if (scoredWithResults.length < 2) return null;
+    const leakCounts = new Map<string, number>();
+    for (const a of scoredWithResults) {
+      for (const l of (a.freeResult?.statusLeaks || [])) {
+        const title = l.title.toLowerCase();
+        if (title.includes("lighting")) leakCounts.set("lighting", (leakCounts.get("lighting") || 0) + 1);
+        if (title.includes("background") || title.includes("clutter") || title.includes("busy")) leakCounts.set("background", (leakCounts.get("background") || 0) + 1);
+        if (title.includes("clarity") || title.includes("sharp")) leakCounts.set("clarity", (leakCounts.get("clarity") || 0) + 1);
+        if (title.includes("framing") || title.includes("composition")) leakCounts.set("framing", (leakCounts.get("framing") || 0) + 1);
+      }
+    }
+    let maxLeak = "";
+    let maxCount = 0;
+    for (const [leak, count] of leakCounts) {
+      if (count > maxCount) { maxCount = count; maxLeak = leak; }
+    }
+    if (maxCount < 2) return null;
+    const labels: Record<string, string> = { lighting: "lighting", background: "background clutter", clarity: "image clarity", framing: "framing" };
+    return { leak: labels[maxLeak] || maxLeak, count: maxCount, total: scoredWithResults.length };
+  })();
+
   return (
     <Container className="py-8 sm:py-12">
       <div className="mx-auto max-w-4xl">
@@ -133,6 +156,25 @@ export default function DashboardPage() {
           );
         })()}
 
+        {/* ─── Repeated Pattern ─── */}
+        {repeatedLeak && (
+          <Card className="mb-8 border-amber-500/20">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-amber-500/10">
+                <svg className="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="mb-1 text-sm font-semibold text-white">Your Repeated Pattern</h3>
+                <p className="text-xs text-gray-400">
+                  <strong className="text-amber-300">{repeatedLeak.leak.charAt(0).toUpperCase() + repeatedLeak.leak.slice(1)}</strong> appears in {repeatedLeak.count} out of your last {repeatedLeak.total} scored audits. This may be a recurring gap worth prioritizing.
+                </p>
+              </div>
+            </div>
+          </Card>
+        )}
+
         {/* ─── Audit History ─── */}
         <h2 className="mb-4 text-lg font-semibold text-white">Audit History</h2>
 
@@ -184,6 +226,9 @@ export default function DashboardPage() {
                         <div className="flex-shrink-0 text-right">
                           <div className="text-lg font-bold text-white">{audit.freeScore}</div>
                           <div className="text-[10px] text-gray-600">score</div>
+                          {audit.personalization?.archetype && (
+                            <div className="mt-0.5 text-[9px] text-purple-400">{audit.personalization.archetype}</div>
+                          )}
                         </div>
                       )}
                     </div>

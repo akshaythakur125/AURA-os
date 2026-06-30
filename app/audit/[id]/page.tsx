@@ -7,9 +7,11 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
-import { generateFreeAuraReport } from "@/lib/aura-engine/generateFreeAuraReport";
+import { generateFreeAuraReport, generateFreeReportWithPersonalization } from "@/lib/aura-engine/generateFreeAuraReport";
 import { RecommendationSection } from "@/components/products/RecommendationSection";
 import type { FreeAuraResult, FullAuraReport } from "@/types";
+import type { PersonalizationResult } from "@/types/personalization";
+import { generateGoalStrategy, generateGoalStrategyTitle } from "@/lib/aura-engine/goalStrategy";
 
 const AUDIT_TYPE_LABELS: Record<string, string> = {
   photo: "Photo Aura Check",
@@ -77,6 +79,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
   const statusInfo = STATUS_BADGE[audit.reportStatus] || STATUS_BADGE.draft;
   const freeResult: FreeAuraResult | undefined = audit.freeResult;
   const fullReport: FullAuraReport | undefined = audit.fullReport;
+  const personalization: PersonalizationResult | undefined = audit.personalization;
 
   async function handleGenerate() {
     if (!audit) return;
@@ -84,14 +87,26 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
     setGenerating(true);
     setError(null);
     try {
-      const freeResult = await generateFreeAuraReport(currentAudit.imageDataUrl, currentAudit.budgetRange);
-      const updated = updateAudit(currentAudit.id, {
-        reportStatus: "free_generated",
-        freeScore: freeResult.auraScore,
-        freeSummary: freeResult.oneLineVerdict,
-        freeResult,
-      });
-      if (updated) setAudit(updated);
+      if (currentAudit.deepInput) {
+        const { freeResult, personalization } = await generateFreeReportWithPersonalization(currentAudit);
+        const updated = updateAudit(currentAudit.id, {
+          reportStatus: "free_generated",
+          freeScore: freeResult.auraScore,
+          freeSummary: freeResult.oneLineVerdict,
+          freeResult,
+          personalization,
+        });
+        if (updated) setAudit(updated);
+      } else {
+        const freeResult = await generateFreeAuraReport(currentAudit.imageDataUrl, currentAudit.budgetRange);
+        const updated = updateAudit(currentAudit.id, {
+          reportStatus: "free_generated",
+          freeScore: freeResult.auraScore,
+          freeSummary: freeResult.oneLineVerdict,
+          freeResult,
+        });
+        if (updated) setAudit(updated);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Generation failed");
     } finally {
@@ -159,6 +174,58 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                 </div>
               </div>
             </Card>
+
+            {/* ─── Status Archetype ─── */}
+            {personalization && (() => {
+              const strategy = generateGoalStrategy(audit, personalization);
+              const strategyTitle = generateGoalStrategyTitle(audit);
+              return (
+                <>
+                  <Card className="mb-8 border-purple-500/20">
+                    <div className="mb-3 flex items-center gap-2">
+                      <Badge variant="premium">Archetype</Badge>
+                      <span className="text-sm font-semibold text-white">{personalization.archetype}</span>
+                    </div>
+                    <p className="mb-4 text-sm text-gray-300">{personalization.archetypeExplanation}</p>
+                    <div className="rounded-lg bg-white/5 p-3">
+                      <div className="mb-1 text-xs text-purple-400">Your Best Next Move</div>
+                      <p className="text-sm text-gray-300">{personalization.userPriority}</p>
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {personalization.recommendedFocus.map((f) => (
+                        <span key={f} className="rounded-full bg-purple-500/10 px-2.5 py-0.5 text-xs text-purple-300">{f}</span>
+                      ))}
+                    </div>
+                  </Card>
+
+                  {personalization.signalMismatches.length > 0 && (
+                    <>
+                      <h2 className="mb-4 text-lg font-semibold text-white">Signal Mismatch Map</h2>
+                      <div className="mb-8 space-y-3">
+                        {personalization.signalMismatches.map((m) => (
+                          <Card key={m.title} className={`border ${m.severity === "high" ? "border-red-500/20" : m.severity === "medium" ? "border-amber-500/20" : "border-blue-500/20"}`}>
+                            <div className="mb-1 flex items-center justify-between">
+                              <h3 className="text-sm font-semibold text-white">{m.title}</h3>
+                              <Badge variant={m.severity === "high" ? "danger" : m.severity === "medium" ? "warning" : "default"}>{m.severity}</Badge>
+                            </div>
+                            <p className="mb-2 text-xs text-gray-400">{m.explanation}</p>
+                            <p className="text-xs text-purple-300">{m.correction}</p>
+                          </Card>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  <Card className="mb-8 border-emerald-500/20">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Badge variant="success">Strategy</Badge>
+                      <span className="text-sm font-semibold text-white">{strategyTitle}</span>
+                    </div>
+                    <p className="text-sm text-gray-300">{strategy}</p>
+                  </Card>
+                </>
+              );
+            })()}
 
             {/* ─── Visual Breakdown ─── */}
             <h2 className="mb-4 text-lg font-semibold text-white">Visual Breakdown</h2>
@@ -274,6 +341,33 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                 </div>
               </div>
             </Card>
+
+            {/* ─── Free Archetype ─── */}
+            {personalization && (
+              <Card className="mb-8 border-purple-500/20">
+                <div className="mb-3 flex items-center gap-2">
+                  <Badge variant="premium">Archetype</Badge>
+                  <span className="text-sm font-semibold text-white">{personalization.archetype}</span>
+                </div>
+                <p className="mb-3 text-sm text-gray-300">{personalization.archetypeExplanation}</p>
+                <div className="rounded-lg bg-white/5 p-3">
+                  <div className="mb-1 text-xs text-purple-400">Best Next Move</div>
+                  <p className="text-sm text-gray-300">{personalization.userPriority}</p>
+                </div>
+                {personalization.signalMismatches.length > 0 && (
+                  <div className="mt-3 space-y-1">
+                    {personalization.signalMismatches.slice(0, 2).map((m) => (
+                      <div key={m.title} className="flex items-start gap-2 text-xs">
+                        <svg className={`mt-0.5 h-3 w-3 flex-shrink-0 ${m.severity === "high" ? "text-red-400" : m.severity === "medium" ? "text-amber-400" : "text-blue-400"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                        </svg>
+                        <span className="text-gray-400">{m.title}: {m.explanation}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Card>
+            )}
 
             <h2 className="mb-4 text-lg font-semibold text-white">Status Leaks</h2>
             <div className="mb-8 space-y-3">

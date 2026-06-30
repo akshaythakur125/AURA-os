@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/Button";
 import { createAudit } from "@/lib/storage/auditStore";
 import { validateImage, processImage } from "@/lib/image/processImage";
 import type { AuditType, Goal, BudgetRange } from "@/types";
+import type { StyleIntent, CurrentSignalItem, BiggestConcern, OccasionContext, SpendComfort, SelfRatedConfidence } from "@/types/personalization";
+import { STYLE_INTENT_LABELS, SIGNAL_ITEM_LABELS, CONCERN_LABELS, OCCASION_LABELS, SPEND_LABELS, CONFIDENCE_LABELS } from "@/types/personalization";
 
 const AUDIT_TYPES: { id: AuditType; label: string; desc: string; gradient: string; icon: string }[] = [
   { id: "photo", label: "Photo Aura Check", desc: "Analyze a single photo for expression, lighting, background, and overall visual signal.", gradient: "from-purple-600 to-pink-500", icon: "camera" },
@@ -41,10 +43,25 @@ export default function NewAuditPage() {
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
   const [imageMeta, setImageMeta] = useState<{ fileName: string; fileType: string; fileSize: number; compressedSize: number; width: number; height: number } | null>(null);
   const [consent, setConsent] = useState(false);
+  const [showPersonalization, setShowPersonalization] = useState(false);
+  const [styleIntent, setStyleIntent] = useState<StyleIntent | null>(null);
+  const [currentSignals, setCurrentSignals] = useState<CurrentSignalItem[]>([]);
+  const [biggestConcern, setBiggestConcern] = useState<BiggestConcern | null>(null);
+  const [occasionContext, setOccasionContext] = useState<OccasionContext | null>(null);
+  const [spendComfort, setSpendComfort] = useState<SpendComfort | null>(null);
+  const [selfRatedConfidence, setSelfRatedConfidence] = useState<SelfRatedConfidence | null>(null);
+  const [wantsDirectFeedback, setWantsDirectFeedback] = useState(false);
+  const [notes, setNotes] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function toggleSignal(signal: CurrentSignalItem) {
+    setCurrentSignals((prev) =>
+      prev.includes(signal) ? prev.filter((s) => s !== signal) : [...prev, signal]
+    );
+  }
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -79,13 +96,23 @@ export default function NewAuditPage() {
     if (!auditType || !goal || !budgetRange || !imageDataUrl || !imageMeta || !consent) return;
     setSubmitting(true);
     try {
-      const audit = createAudit({
-        auditType,
-        goal,
-        budgetRange,
-        imageDataUrl,
-        imageMeta,
-      });
+      const base = {
+        auditType, goal, budgetRange, imageDataUrl, imageMeta,
+      } as const;
+      const data: Record<string, unknown> = { ...base };
+      if (showPersonalization) {
+        data.deepInput = {
+          styleIntent,
+          currentSignals,
+          biggestConcern,
+          occasionContext,
+          spendComfort,
+          selfRatedConfidence,
+          wantsDirectFeedback,
+          notes,
+        };
+      }
+      const audit = createAudit(data as Parameters<typeof createAudit>[0]);
       router.push(`/audit/${audit.id}`);
     } catch {
       setError("Failed to save audit. Please try again.");
@@ -240,6 +267,162 @@ export default function NewAuditPage() {
                 </>
               )}
             </button>
+          )}
+        </section>
+
+        {/* ─── Personalization ─── */}
+        <section className="mb-8">
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-white">5. Personalize your Aura Check (optional)</h2>
+            {!showPersonalization ? (
+              <Button variant="ghost" size="sm" onClick={() => setShowPersonalization(true)}>+ Add Details</Button>
+            ) : (
+              <Button variant="ghost" size="sm" onClick={() => setShowPersonalization(false)}>Skip</Button>
+            )}
+          </div>
+          {showPersonalization && (
+            <Card>
+              <div className="space-y-6">
+                <div>
+                  <div className="mb-2 text-xs text-gray-500">What do you want to look like?</div>
+                  <div className="flex flex-wrap gap-2">
+                    {(Object.entries(STYLE_INTENT_LABELS) as [StyleIntent, string][]).map(([key, label]) => (
+                      <button
+                        key={key}
+                        onClick={() => setStyleIntent(key)}
+                        className={`rounded-full border px-3 py-1 text-xs transition-all ${
+                          styleIntent === key
+                            ? "border-purple-500/50 bg-purple-500/10 text-purple-300"
+                            : "border-white/10 text-gray-400 hover:border-white/20"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="mb-2 text-xs text-gray-500">What visible signals are part of your look?</div>
+                  <div className="flex flex-wrap gap-2">
+                    {(Object.entries(SIGNAL_ITEM_LABELS) as [CurrentSignalItem, string][]).map(([key, label]) => (
+                      <button
+                        key={key}
+                        onClick={() => toggleSignal(key)}
+                        className={`rounded-full border px-3 py-1 text-xs transition-all ${
+                          currentSignals.includes(key)
+                            ? "border-purple-500/50 bg-purple-500/10 text-purple-300"
+                            : "border-white/10 text-gray-400 hover:border-white/20"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="mb-2 text-xs text-gray-500">What is your biggest concern?</div>
+                  <div className="flex flex-wrap gap-2">
+                    {(Object.entries(CONCERN_LABELS) as [BiggestConcern, string][]).map(([key, label]) => (
+                      <button
+                        key={key}
+                        onClick={() => setBiggestConcern(key)}
+                        className={`rounded-full border px-3 py-1 text-xs transition-all ${
+                          biggestConcern === key
+                            ? "border-purple-500/50 bg-purple-500/10 text-purple-300"
+                            : "border-white/10 text-gray-400 hover:border-white/20"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="mb-2 text-xs text-gray-500">Where will this image be used?</div>
+                  <div className="flex flex-wrap gap-2">
+                    {(Object.entries(OCCASION_LABELS) as [OccasionContext, string][]).map(([key, label]) => (
+                      <button
+                        key={key}
+                        onClick={() => setOccasionContext(key)}
+                        className={`rounded-full border px-3 py-1 text-xs transition-all ${
+                          occasionContext === key
+                            ? "border-purple-500/50 bg-purple-500/10 text-purple-300"
+                            : "border-white/10 text-gray-400 hover:border-white/20"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="mb-2 text-xs text-gray-500">What is your spending comfort?</div>
+                  <div className="flex flex-wrap gap-2">
+                    {(Object.entries(SPEND_LABELS) as [SpendComfort, string][]).map(([key, label]) => (
+                      <button
+                        key={key}
+                        onClick={() => setSpendComfort(key)}
+                        className={`rounded-full border px-3 py-1 text-xs transition-all ${
+                          spendComfort === key
+                            ? "border-purple-500/50 bg-purple-500/10 text-purple-300"
+                            : "border-white/10 text-gray-400 hover:border-white/20"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="mb-2 text-xs text-gray-500">Self-rated confidence</div>
+                  <div className="flex flex-wrap gap-2">
+                    {(Object.entries(CONFIDENCE_LABELS) as [SelfRatedConfidence, string][]).map(([key, label]) => (
+                      <button
+                        key={key}
+                        onClick={() => setSelfRatedConfidence(key)}
+                        className={`rounded-full border px-3 py-1 text-xs transition-all ${
+                          selfRatedConfidence === key
+                            ? "border-purple-500/50 bg-purple-500/10 text-purple-300"
+                            : "border-white/10 text-gray-400 hover:border-white/20"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <label className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={wantsDirectFeedback}
+                    onChange={(e) => setWantsDirectFeedback(e.target.checked)}
+                    className="mt-1 h-4 w-4 rounded border-white/20 bg-white/5 text-purple-600 focus:ring-purple-500"
+                  />
+                  <span className="text-sm text-gray-400">I want direct but useful feedback.</span>
+                </label>
+
+                <div>
+                  <label className="mb-1 block text-xs text-gray-500">Anything specific you want AuraCheck to consider?</label>
+                  <textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Optional notes..."
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="rounded-lg bg-purple-500/5 p-3 text-xs text-gray-500">
+                  We do not ask for caste, religion, ethnicity, sexuality, health details, or exact income. AuraCheck only uses your selected presentation goals and image-quality signals.
+                </div>
+              </div>
+            </Card>
           )}
         </section>
 

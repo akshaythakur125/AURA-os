@@ -1,7 +1,8 @@
-import type { FreeAuraResult, FullAuraReport, VisualBreakdown, BiggestStatusLeak, PriorityUpgradeMap, BudgetUpgradePlan, PhotoGuidance } from "@/types";
+import type { FreeAuraResult, FullAuraReport, VisualBreakdown, BiggestStatusLeak, PriorityUpgradeMap, BudgetUpgradePlan, PhotoGuidance, Audit } from "@/types";
 import { extractImageMetrics } from "@/lib/aura-engine/imageMetrics";
 import { computeAuraScore, getCategory, getVerdict, getStrongestSignals, generateStatusLeaks } from "@/lib/aura-engine/scoring";
 import { getBudgetPlans } from "@/lib/aura-engine/budgetPlans";
+
 
 function clamp(v: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, v));
@@ -9,7 +10,8 @@ function clamp(v: number, min: number, max: number): number {
 
 export async function generateFullAuraReport(
   imageDataUrl: string,
-  existingFreeResult?: FreeAuraResult | null
+  existingFreeResult?: FreeAuraResult | null,
+  audit?: Audit | null
 ): Promise<FullAuraReport> {
   let freeResult: FreeAuraResult;
 
@@ -148,14 +150,21 @@ export async function generateFullAuraReport(
   if (freeResult.statusLeaks.length > 0) {
     detailedVerdict += ` Your most significant area is "${freeResult.statusLeaks[0].title}". Details below show exactly what to fix and in what order.`;
   }
+  if (audit?.personalization) {
+    detailedVerdict += ` Your status archetype is "${audit.personalization.archetype}". ${audit.personalization.archetypeExplanation}`;
+  }
 
-  const finalVerdict = `Your Full Aura Score of ${fullScore}/100 places you in the "${freeResult.category}" category. ${
+  let finalVerdict = `Your Full Aura Score of ${fullScore}/100 places you in the "${freeResult.category}" category. ${
     fullScore >= 70
       ? "Your visual presentation is generally strong. Focus on small refinements and consistency across all photos."
       : fullScore >= 50
         ? "You have a solid foundation. Addressing the priority areas above will noticeably improve your first impression."
         : "Small targeted changes can significantly improve your visual signal. Start with the highest-priority fix listed above."
-  } AuraCheck analyzes presentation signals, not human worth. This report is guidance based on local browser-based analysis.`;
+  }`;
+  if (audit?.personalization) {
+    finalVerdict += ` Your priority is: ${audit.personalization.userPriority}.`;
+  }
+  finalVerdict += ` AuraCheck analyzes presentation signals, not human worth. This report is guidance based on local browser-based analysis.`;
 
   return {
     fullScore,
