@@ -105,6 +105,19 @@ Use this checklist before sharing AuraCheck with real users for the first time.
 - [ ] `npm run build` produces successful production build
 - [ ] All 21 routes are listed in the build output
 
+## 11. Vercel Deployment
+
+- [ ] Repo pushed to GitHub
+- [ ] Vercel project created from GitHub repo
+- [ ] All environment variables set in Vercel dashboard
+- [ ] Deployment succeeds (no build errors)
+- [ ] Deployed URL loads homepage
+- [ ] All routes work on deployed URL
+- [ ] Audit creation works on deployed version
+- [ ] Free score generation works
+- [ ] Unlock flow works with demo code
+- [ ] Admin page loads and gate works
+
 ## Known Limitations (MVP)
 
 - All data is stored in browser localStorage — cleared in private/incognito mode

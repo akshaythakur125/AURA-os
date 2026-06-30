@@ -603,6 +603,7 @@ export default function NewAuditPage() {
         >
           {submitting ? "Saving..." : "Start Aura Check"}
         </Button>
+        <p className="mt-3 text-center text-[10px] text-gray-600">This MVP stores data locally in your browser. Clearing browser data may delete your reports.</p>
       </div>
     </Container>
   );

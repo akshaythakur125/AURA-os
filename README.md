@@ -68,6 +68,28 @@ npm run build
 npm run start
 ```
 
+### Deploy to Vercel
+
+This project is ready for Vercel deployment:
+
+1. Push this repo to GitHub
+2. Import the repo in [Vercel](https://vercel.com/new)
+3. Set these environment variables in Vercel dashboard:
+
+   | Variable | Example | Required |
+   |---|---|---|
+   | `NEXT_PUBLIC_APP_URL` | `https://auracheck.vercel.app` | Yes |
+   | `NEXT_PUBLIC_MANUAL_UPI_ID` | `your-upi@upi` | Yes |
+   | `NEXT_PUBLIC_SUPPORT_EMAIL` | `support@example.com` | No |
+   | `NEXT_PUBLIC_OWNER_WHATSAPP` | `919999999999` | No |
+   | `NEXT_PUBLIC_DEMO_UNLOCK_CODE` | `AURADEMO` | No (defaults to AURADEMO) |
+   | `NEXT_PUBLIC_LOCAL_ADMIN_CODE` | `your-admin-code` | No (defaults to ADMINDEMO) |
+
+4. Deploy — no build command or output directory changes needed
+5. Set a custom domain in Vercel dashboard (optional)
+
+**Important**: All data stays in the user's browser localStorage. Deploying to Vercel does not add a backend. The app remains fully client-side.
+
 ## npm Scripts
 
 | Script | Description |
@@ -148,9 +170,11 @@ Admin can also export a full snapshot from the **Checklist** tab in `/admin`.
 ## How to Test All Three Paid Products
 
 1. **Free Aura Score** — Create an audit → Generate Free Aura Score
-2. **₹99 Full Aura Report** — Use demo unlock code: `DEMO123` on `/unlock`
-3. **₹299 Dating/Profile Audit** — Create a dating-type audit → unlock with `DEMO123`
-4. **₹499 30-Day Glow-Up Plan** — Unlock on any scored audit → enter `DEMO123`
+2. **₹99 Full Aura Report** — Use demo unlock code: `AURADEMO` on `/unlock`
+3. **₹299 Dating/Profile Audit** — Create a dating-type audit → unlock with `AURADEMO`
+4. **₹499 30-Day Glow-Up Plan** — Unlock on any scored audit → enter `AURADEMO`
+
+The demo code unlocks any product for any audit. Change it via `NEXT_PUBLIC_DEMO_UNLOCK_CODE`.
 
 ## Tech Stack
 
