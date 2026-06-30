@@ -27,7 +27,13 @@ export type AnalyticsEvent =
   | "challenge_entered"
   | "progress_comparison_created"
   | "pwa_install_page_viewed"
-  | "onboarding_step_completed";
+  | "onboarding_step_completed"
+  | "aura_twin_page_viewed"
+  | "aura_twin_uploaded"
+  | "aura_twin_generated"
+  | "aura_twin_saved"
+  | "aura_twin_audit_created"
+  | "aura_twin_strategy_copied";
 
 export interface AnalyticsRecord {
   id: string;
@@ -82,6 +88,12 @@ export function getAnalyticsSummary(): Record<string, number> {
     progressComparisonCreated: events.filter((e) => e.event === "progress_comparison_created").length,
     pwaInstallPageViewed: events.filter((e) => e.event === "pwa_install_page_viewed").length,
     onboardingStepCompleted: events.filter((e) => e.event === "onboarding_step_completed").length,
+    auraTwinPageViewed: events.filter((e) => e.event === "aura_twin_page_viewed").length,
+    auraTwinUploaded: events.filter((e) => e.event === "aura_twin_uploaded").length,
+    auraTwinGenerated: events.filter((e) => e.event === "aura_twin_generated").length,
+    auraTwinSaved: events.filter((e) => e.event === "aura_twin_saved").length,
+    auraTwinAuditCreated: events.filter((e) => e.event === "aura_twin_audit_created").length,
+    auraTwinStrategyCopied: events.filter((e) => e.event === "aura_twin_strategy_copied").length,
   };
 }
 

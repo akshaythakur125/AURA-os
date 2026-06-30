@@ -18,6 +18,7 @@ import { getOrCreateReferralProfile, getReferralClaims } from "@/lib/storage/ref
 import { getChallengeEntries } from "@/lib/storage/challengeStore";
 import { CHALLENGES } from "@/config/challenges";
 import { getProgressComparisons, getProgressStats } from "@/lib/storage/progressStore";
+import { getTwinStats } from "@/lib/storage/auraTwinStore";
 import { getItem, setItem } from "@/lib/storage/localStore";
 
 const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
@@ -53,6 +54,7 @@ export default function AdminPage() {
   const [challengeEntries] = useState(() => getChallengeEntries());
   const [progressComparisons] = useState(() => getProgressComparisons());
   const [progressStats] = useState(() => getProgressStats());
+  const [twinStats] = useState(() => getTwinStats());
   const [activeTab, setActiveTab] = useState<"orders" | "analytics" | "leads" | "funnel" | "growth" | "export" | "checklist">("orders");
   const [checklist, setChecklist] = useState<Record<string, boolean>>(() => getItem<Record<string, boolean>>("auracheck:v1:founder_checklist", {}));
   function toggleChecklistItem(key: string) {
@@ -215,6 +217,9 @@ export default function AdminPage() {
           <Card><div className="text-xs text-gray-500">Unlocked Revenue</div><div className="mt-1 text-2xl font-bold text-emerald-400">₹{stats.totalUnlockedRevenue}</div></Card>
           <Card><div className="text-xs text-gray-500">Total Audits</div><div className="mt-1 text-3xl font-bold text-white">{audits.length}</div></Card>
           <Card><div className="text-xs text-gray-500">Unlocked Reports</div><div className="mt-1 text-3xl font-bold text-purple-400">{audits.filter((a) => a.fullReport).length}</div></Card>
+          <Card><div className="text-xs text-gray-500">Aura Twin Sims</div><div className="mt-1 text-2xl font-bold text-white">{twinStats.totalSimulations}</div></Card>
+          <Card><div className="text-xs text-gray-500">Avg Twin Improvement</div><div className="mt-1 text-2xl font-bold text-emerald-400">{twinStats.averageImprovement > 0 ? "+" : ""}{twinStats.averageImprovement}</div></Card>
+          <Card><div className="text-xs text-gray-500">Top Twin Variant</div><div className="mt-1 text-lg font-bold text-purple-300">{twinStats.mostCommonWinner}</div></Card>
         </div>
 
         {/* ─── Tabs ─── */}

@@ -14,6 +14,7 @@ import { getRecommendationsForAudit } from "@/lib/recommendations/getRecommendat
 import { getOrdersByAuditId } from "@/lib/storage/orderStore";
 import { getOrCreateReferralProfile, getReferralStats } from "@/lib/storage/referralStore";
 import { getProgressComparisons } from "@/lib/storage/progressStore";
+import { getLatestTwinResult } from "@/lib/storage/auraTwinStore";
 import { copyInviteLink, copyInviteMessage, nativeShare, incrementInviteCount } from "@/lib/referrals/referralUtils";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 import { AUDIT_TYPE_LABELS, GOAL_LABELS } from "@/lib/audit/auditUtils";
@@ -30,6 +31,7 @@ export default function DashboardPage() {
   const [referralProfile] = useState(() => getOrCreateReferralProfile());
   const [referralStats] = useState(() => getReferralStats());
   const [progressComparisons] = useState(() => getProgressComparisons());
+  const [latestTwin] = useState(() => getLatestTwinResult());
   const [shareCopied, setShareCopied] = useState(false);
 
   function handleDelete(id: string) {
@@ -124,6 +126,56 @@ export default function DashboardPage() {
         <div className="mb-8">
           <OnboardingChecklist />
         </div>
+
+        {/* ─── Aura Twin Simulator Card ─── */}
+        {latestTwin && (() => {
+          const best = latestTwin.variants.find((v) => v.id === latestTwin.bestVariantId);
+          return (
+            <Card className="mb-8 border-purple-500/20">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h2 className="mb-1 text-sm font-semibold text-white">Aura Twin Simulator</h2>
+                  <p className="mb-2 text-xs text-gray-400">
+                    Your latest Aura Twin prediction shows a potential improvement of +{best?.scoreDelta ?? 0} points with &ldquo;{best?.title ?? "—"}&rdquo;.
+                  </p>
+                  <div className="flex items-center gap-4 text-xs">
+                    <div>
+                      <span className="text-gray-500">Original:</span>{" "}
+                      <span className="text-white font-semibold">{latestTwin.originalScore}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Best:</span>{" "}
+                      <span className="text-emerald-400 font-semibold">{best?.score ?? "—"}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Best Fix:</span>{" "}
+                      <span className="text-purple-300">{best?.title ?? "—"}</span>
+                    </div>
+                  </div>
+                </div>
+                <Link href="/twin-simulator">
+                  <Button size="sm" variant="outline">Open Simulator</Button>
+                </Link>
+              </div>
+            </Card>
+          );
+        })()}
+
+        {!latestTwin && (
+          <Card className="mb-8 border-purple-500/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="mb-1 text-sm font-semibold text-white">Aura Twin Simulator</h2>
+                <p className="text-xs text-gray-400">
+                  See which visual upgrade could improve your Aura Score before spending money.
+                </p>
+              </div>
+              <Link href="/twin-simulator">
+                <Button size="sm">Try Aura Twin</Button>
+              </Link>
+            </div>
+          </Card>
+        )}
 
         {/* ─── Referral Card ─── */}
         <Card className="mb-8 border-purple-500/20">
