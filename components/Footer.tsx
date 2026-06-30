@@ -6,8 +6,18 @@ const footerGroups = [
     label: "Product",
     links: [
       { href: "/pricing", label: "Pricing" },
+      { href: "/examples", label: "Examples" },
+      { href: "/challenges", label: "Challenges" },
+      { href: "/progress", label: "Progress" },
+      { href: "/install", label: "Install App" },
+    ],
+  },
+  {
+    label: "Account",
+    links: [
       { href: "/audit/new", label: "Start Audit" },
       { href: "/dashboard", label: "Dashboard" },
+      { href: "/unlock", label: "Unlock Report" },
     ],
   },
   {
@@ -15,12 +25,6 @@ const footerGroups = [
     links: [
       { href: "/privacy", label: "Privacy Policy" },
       { href: "/terms", label: "Terms of Service" },
-    ],
-  },
-  {
-    label: "Support",
-    links: [
-      { href: "/unlock", label: "Unlock Report" },
       { href: "/admin", label: "Admin" },
     ],
   },

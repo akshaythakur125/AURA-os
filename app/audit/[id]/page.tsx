@@ -813,6 +813,16 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
         {/* ─── Glow-Up Plan Section (if unlocked) ─── */}
         {glowupPlan && <GlowUpSection plan={glowupPlan} />}
 
+        {/* ─── Challenge CTA ─── */}
+        {freeResult && (
+          <div className="mb-6">
+            <Link href="/challenges" className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-600/20 to-pink-500/20 px-4 py-3 text-sm text-purple-300 hover:from-purple-600/30 hover:to-pink-500/30">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+              Enter a challenge with this audit
+            </Link>
+          </div>
+        )}
+
         {/* ─── Disclaimers ─── */}
         <div className="mb-8 space-y-2 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-xs text-gray-600">
           <p>AuraCheck analyzes presentation signals using local browser-based rules. This is guidance, not objective truth.</p>

@@ -18,6 +18,14 @@ export const metadata: Metadata = {
   title: "AuraCheck — Find Your Biggest Status Leak",
   description:
     "AI-style first-impression audit for photos, profiles, outfits, and lifestyle presentation.",
+  manifest: "/manifest.json",
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
+};
+
+export const viewport = {
+  themeColor: "#0a0a0f",
 };
 
 export default function RootLayout({

@@ -3,6 +3,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { ReferralBanner } from "@/components/marketing/ReferralBanner";
 
 const statusLeaks = [
   {
@@ -90,7 +91,7 @@ const products = [
 
 export default function HomePage() {
   return (
-    <>
+    <>      <ReferralBanner />
       {/* ─── 1. Hero ─── */}
       <section className="relative overflow-hidden pb-32 pt-24 sm:pt-32">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(147,51,234,0.15),transparent_50%)]" />
@@ -672,7 +673,62 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ─── 11. Safety Note ─── */}
+      {/* ─── 11. Growth Features ─── */}
+      <section className="border-t border-white/5 py-20">
+        <Container>
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              Share, Compete, Improve
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">Your Aura Score is the start. Challenges and progress tracking make it stick.</p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Share Your Score</h3>
+              <p className="text-sm text-gray-400">Share your Aura Score without sharing your photo. Invite friends to check their own status leak.</p>
+            </Card>
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-red-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Join Challenges</h3>
+              <p className="text-sm text-gray-400">Enter your audit into challenges like Best Background or Dating Profile Cleanup.</p>
+            </Card>
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-green-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Track Progress</h3>
+              <p className="text-sm text-gray-400">Compare before and after audits. See your score improve and which signals got better.</p>
+            </Card>
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Invite Friends</h3>
+              <p className="text-sm text-gray-400">Share your referral code. Friends can check their own Aura Score and join challenges.</p>
+            </Card>
+          </div>
+          <div className="mt-10 text-center">
+            <Link href="/challenges">
+              <Button variant="outline" size="lg">View Challenges</Button>
+            </Link>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── 12. Safety Note ─── */}
       <section className="border-t border-white/5 py-12">
         <Container>
           <div className="mx-auto max-w-2xl rounded-xl border border-white/5 bg-white/[0.02] p-6 text-center">

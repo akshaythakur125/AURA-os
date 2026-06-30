@@ -14,6 +14,10 @@ import { downloadJSON } from "@/lib/export/downloadJson";
 import type { ManualOrder, OrderStatus } from "@/types/order";
 import { getLeads, deleteLead, clearLeads } from "@/lib/storage/leadStore";
 import { OFFERS } from "@/config/offers";
+import { getOrCreateReferralProfile, getReferralClaims } from "@/lib/storage/referralStore";
+import { getChallengeEntries } from "@/lib/storage/challengeStore";
+import { CHALLENGES } from "@/config/challenges";
+import { getProgressComparisons, getProgressStats } from "@/lib/storage/progressStore";
 
 const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   draft: "Draft",
@@ -43,7 +47,12 @@ export default function AdminPage() {
   const [audits] = useState(() => getAudits());
   const [analytics] = useState(() => getAnalyticsSummary());
   const [leads, setLeads] = useState(() => getLeads());
-  const [activeTab, setActiveTab] = useState<"orders" | "analytics" | "leads" | "funnel" | "export">("orders");
+  const [referralProfile] = useState(() => getOrCreateReferralProfile());
+  const [referralClaims] = useState(() => getReferralClaims());
+  const [challengeEntries] = useState(() => getChallengeEntries());
+  const [progressComparisons] = useState(() => getProgressComparisons());
+  const [progressStats] = useState(() => getProgressStats());
+  const [activeTab, setActiveTab] = useState<"orders" | "analytics" | "leads" | "funnel" | "growth" | "export">("orders");
   const [toast, setToast] = useState<string | null>(null);
 
   function refresh() {
@@ -203,13 +212,13 @@ export default function AdminPage() {
 
         {/* ─── Tabs ─── */}
         <div className="mb-6 flex gap-2">
-          {(["orders", "analytics", "leads", "funnel", "export"] as const).map((tab) => (
+          {(["orders", "analytics", "leads", "funnel", "growth", "export"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`rounded-full px-4 py-1.5 text-xs transition-all ${activeTab === tab ? "bg-purple-500/20 text-purple-300" : "bg-white/5 text-gray-500 hover:text-gray-300"}`}
             >
-              {tab === "orders" ? "Orders" : tab === "analytics" ? "Analytics" : tab === "leads" ? "Leads" : tab === "funnel" ? "Funnel" : "Export"}
+              {tab === "orders" ? "Orders" : tab === "analytics" ? "Analytics" : tab === "leads" ? "Leads" : tab === "funnel" ? "Funnel" : tab === "growth" ? "Growth" : "Export"}
             </button>
           ))}
         </div>
@@ -401,6 +410,77 @@ export default function AdminPage() {
                 </div>
               )}
             </Card>
+          </>
+        )}
+
+        {/* ─── Growth Tab ─── */}
+        {activeTab === "growth" && (
+          <>
+            <div className="mb-6 grid gap-4 sm:grid-cols-4">
+              <Card>
+                <div className="text-xs text-gray-500">Referral Code</div>
+                <div className="mt-1 text-lg font-bold text-purple-300">{referralProfile.referralCode}</div>
+              </Card>
+              <Card>
+                <div className="text-xs text-gray-500">Local Claims</div>
+                <div className="mt-1 text-2xl font-bold text-white">{referralClaims.length}</div>
+              </Card>
+              <Card>
+                <div className="text-xs text-gray-500">Challenge Entries</div>
+                <div className="mt-1 text-2xl font-bold text-white">{challengeEntries.length}</div>
+              </Card>
+              <Card>
+                <div className="text-xs text-gray-500">Progress Comparisons</div>
+                <div className="mt-1 text-2xl font-bold text-white">{progressComparisons.length}</div>
+              </Card>
+            </div>
+
+            <div className="mb-6 grid gap-4 sm:grid-cols-3">
+              <Card>
+                <div className="text-xs text-gray-500">Share Events</div>
+                <div className="mt-1 text-2xl font-bold text-white">{(analytics.referralLinkCopied || 0) + (analytics.referralShared || 0)}</div>
+              </Card>
+              <Card>
+                <div className="text-xs text-gray-500">Onboarding Completion</div>
+                <div className="mt-1 text-2xl font-bold text-white">{analytics.onboardingStepCompleted || 0}%</div>
+              </Card>
+              <Card>
+                <div className="text-xs text-gray-500">Avg Improvement</div>
+                <div className="mt-1 text-2xl font-bold text-emerald-400">{progressStats.averageImprovement > 0 ? "+" : ""}{progressStats.averageImprovement}</div>
+              </Card>
+            </div>
+
+            <Card className="mb-6">
+              <h3 className="mb-3 text-sm font-semibold text-white">Top Challenge by Entries</h3>
+              {(() => {
+                if (challengeEntries.length === 0) return <div className="py-4 text-center text-xs text-gray-500">No challenge entries yet.</div>;
+                const entryCounts: Record<string, number> = {};
+                for (const e of challengeEntries) entryCounts[e.challengeId] = (entryCounts[e.challengeId] || 0) + 1;
+                const sorted = Object.entries(entryCounts).sort((a, b) => b[1] - a[1]);
+                if (sorted.length === 0) return <div className="py-4 text-center text-xs text-gray-500">No data.</div>;
+                const top = sorted[0];
+                const challenge = CHALLENGES.find((c) => c.id === top[0]);
+                return <div className="text-sm text-gray-300"><span className="text-purple-300">{challenge?.title ?? top[0]}</span> — {top[1]} entries</div>;
+              })()}
+            </Card>
+
+            <div className="flex gap-2">
+              <Button variant="ghost" size="sm" onClick={() => {
+                const rows = referralClaims.map((c) => ({ code: c.referralCode, source: c.source || "", claimedAt: c.claimedAt }));
+                downloadCSV(rows, `auracheck-referrals-${Date.now()}.csv`);
+                showToast("Referral CSV downloaded");
+              }}>Export Referral Data</Button>
+              <Button variant="ghost" size="sm" onClick={() => {
+                const rows = challengeEntries.map((e) => ({ id: e.id, challengeId: e.challengeId, auditId: e.auditId || "", auraScore: e.auraScore ?? "", archetype: e.archetype || "", createdAt: e.createdAt }));
+                downloadCSV(rows, `auracheck-challenges-${Date.now()}.csv`);
+                showToast("Challenge entries CSV downloaded");
+              }}>Export Challenge Entries</Button>
+              <Button variant="ghost" size="sm" onClick={() => {
+                const rows = progressComparisons.map((c) => ({ id: c.id, before: c.beforeAuditId, after: c.afterAuditId, delta: c.scoreDelta, improved: c.improvedSignals.join("; "), createdAt: c.createdAt }));
+                downloadCSV(rows, `auracheck-progress-${Date.now()}.csv`);
+                showToast("Progress CSV downloaded");
+              }}>Export Progress Data</Button>
+            </div>
           </>
         )}
 

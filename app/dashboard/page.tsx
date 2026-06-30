@@ -7,10 +7,15 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
 import { getAudits, deleteAudit } from "@/lib/storage/auditStore";
 import { getUnlockedAuditCount } from "@/lib/storage/unlockStore";
 import { getRecommendationsForAudit } from "@/lib/recommendations/getRecommendations";
 import { getOrdersByAuditId } from "@/lib/storage/orderStore";
+import { getOrCreateReferralProfile, getReferralStats } from "@/lib/storage/referralStore";
+import { getProgressComparisons } from "@/lib/storage/progressStore";
+import { copyInviteLink, copyInviteMessage, nativeShare, incrementInviteCount } from "@/lib/referrals/referralUtils";
+import { trackEvent } from "@/lib/storage/analyticsStore";
 
 const AUDIT_TYPE_LABELS: Record<string, string> = {
   photo: "Photo Aura Check",
@@ -37,6 +42,10 @@ const STATUS_BADGE: Record<string, { label: string; variant: "default" | "warnin
 export default function DashboardPage() {
   const [audits, setAudits] = useState(() => getAudits());
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [referralProfile] = useState(() => getOrCreateReferralProfile());
+  const [referralStats] = useState(() => getReferralStats());
+  const [progressComparisons] = useState(() => getProgressComparisons());
+  const [shareCopied, setShareCopied] = useState(false);
 
   function handleDelete(id: string) {
     deleteAudit(id);
@@ -124,6 +133,71 @@ export default function DashboardPage() {
               </div>
             </Card>
           </div>
+        )}
+
+        {/* ─── Onboarding Checklist ─── */}
+        <div className="mb-8">
+          <OnboardingChecklist />
+        </div>
+
+        {/* ─── Referral Card ─── */}
+        <Card className="mb-8 border-purple-500/20">
+          <h2 className="mb-4 text-lg font-bold text-white">Invite Friends</h2>
+          <div className="mb-4 rounded-xl bg-white/5 p-4 text-center">
+            <div className="mb-1 text-xs text-gray-500">Your Referral Code</div>
+            <div className="text-2xl font-bold text-purple-300">{referralProfile.referralCode}</div>
+          </div>
+          <div className="mb-4 grid grid-cols-3 gap-2 text-center text-xs">
+            <div className="rounded-lg bg-white/5 p-2">
+              <div className="text-lg font-bold text-white">{referralStats.totalInvitesLocal}</div>
+              <div className="text-gray-500">Invites</div>
+            </div>
+            <div className="rounded-lg bg-white/5 p-2">
+              <div className="text-lg font-bold text-white">{referralStats.totalClaimsLocal}</div>
+              <div className="text-gray-500">Claims</div>
+            </div>
+            <div className="rounded-lg bg-white/5 p-2">
+              <div className="text-lg font-bold text-white">{referralStats.claimRate.toFixed(0)}%</div>
+              <div className="text-gray-500">Claim Rate</div>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <Button variant="outline" size="sm" onClick={async () => {
+              await copyInviteLink(referralProfile.referralCode);
+              incrementInviteCount();
+              trackEvent("referral_link_copied");
+              setShareCopied(true);
+              setTimeout(() => setShareCopied(false), 2000);
+            }}>{shareCopied ? "Copied!" : "Copy Invite Link"}</Button>
+            <Button variant="outline" size="sm" onClick={async () => {
+              await copyInviteMessage(referralProfile.referralCode);
+              incrementInviteCount();
+              trackEvent("referral_shared");
+            }}>Copy Message</Button>
+            {typeof navigator.share !== "undefined" && (
+              <Button variant="ghost" size="sm" className="col-span-2" onClick={async () => {
+                try {
+                  await nativeShare(referralProfile.referralCode);
+                  incrementInviteCount();
+                  trackEvent("referral_shared");
+                } catch { /* user cancelled */ }
+              }}>Share via Native Share</Button>
+            )}
+          </div>
+          <p className="mt-3 text-[10px] text-gray-600">Referral claims are tracked only in this browser for MVP testing.</p>
+        </Card>
+
+        {/* ─── Progress Card ─── */}
+        {progressComparisons.length > 0 && (
+          <Card className="mb-8 border-emerald-500/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-sm font-semibold text-white">Track Your Improvement</h2>
+                <p className="text-xs text-gray-400">{progressComparisons.length} comparison{progressComparisons.length > 1 ? "s" : ""} saved. Latest delta: {progressComparisons[0].scoreDelta >= 0 ? "+" : ""}{progressComparisons[0].scoreDelta}</p>
+              </div>
+              <Link href="/progress"><Button size="sm" variant="outline">View Progress</Button></Link>
+            </div>
+          </Card>
         )}
 
         {/* ─── Latest Upgrade Path ─── */}

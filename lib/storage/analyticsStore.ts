@@ -18,7 +18,16 @@ export type AnalyticsEvent =
   | "offer_applied"
   | "lead_created"
   | "pricing_cta_clicked"
-  | "unlock_started";
+  | "unlock_started"
+  | "referral_created"
+  | "referral_link_copied"
+  | "referral_shared"
+  | "referral_claimed"
+  | "challenge_viewed"
+  | "challenge_entered"
+  | "progress_comparison_created"
+  | "pwa_install_page_viewed"
+  | "onboarding_step_completed";
 
 export interface AnalyticsRecord {
   id: string;
@@ -64,6 +73,15 @@ export function getAnalyticsSummary(): Record<string, number> {
     leadCreated: events.filter((e) => e.event === "lead_created").length,
     pricingCtaClicked: events.filter((e) => e.event === "pricing_cta_clicked").length,
     unlockStarted: events.filter((e) => e.event === "unlock_started").length,
+    referralCreated: events.filter((e) => e.event === "referral_created").length,
+    referralLinkCopied: events.filter((e) => e.event === "referral_link_copied").length,
+    referralShared: events.filter((e) => e.event === "referral_shared").length,
+    referralClaimed: events.filter((e) => e.event === "referral_claimed").length,
+    challengeViewed: events.filter((e) => e.event === "challenge_viewed").length,
+    challengeEntered: events.filter((e) => e.event === "challenge_entered").length,
+    progressComparisonCreated: events.filter((e) => e.event === "progress_comparison_created").length,
+    pwaInstallPageViewed: events.filter((e) => e.event === "pwa_install_page_viewed").length,
+    onboardingStepCompleted: events.filter((e) => e.event === "onboarding_step_completed").length,
   };
 }
 
