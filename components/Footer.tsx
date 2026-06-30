@@ -13,11 +13,12 @@ const footerGroups = [
     ],
   },
   {
-    label: "Account",
+    label: "Support",
     links: [
-      { href: "/audit/new", label: "Start Audit" },
+      { href: "/help", label: "Help & FAQ" },
+      { href: "/privacy-center", label: "Privacy Center" },
+      { href: "/data", label: "Your Local Data" },
       { href: "/dashboard", label: "Dashboard" },
-      { href: "/unlock", label: "Unlock Report" },
     ],
   },
   {

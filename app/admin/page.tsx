@@ -18,6 +18,8 @@ import { getOrCreateReferralProfile, getReferralClaims } from "@/lib/storage/ref
 import { getChallengeEntries } from "@/lib/storage/challengeStore";
 import { CHALLENGES } from "@/config/challenges";
 import { getProgressComparisons, getProgressStats } from "@/lib/storage/progressStore";
+import { getItem, setItem } from "@/lib/storage/localStore";
+import { exportAllData } from "@/lib/data/exportAllData";
 
 const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   draft: "Draft",
@@ -52,7 +54,13 @@ export default function AdminPage() {
   const [challengeEntries] = useState(() => getChallengeEntries());
   const [progressComparisons] = useState(() => getProgressComparisons());
   const [progressStats] = useState(() => getProgressStats());
-  const [activeTab, setActiveTab] = useState<"orders" | "analytics" | "leads" | "funnel" | "growth" | "export">("orders");
+  const [activeTab, setActiveTab] = useState<"orders" | "analytics" | "leads" | "funnel" | "growth" | "export" | "checklist">("orders");
+  const [checklist, setChecklist] = useState<Record<string, boolean>>(() => getItem<Record<string, boolean>>("auracheck:v1:founder_checklist", {}));
+  function toggleChecklistItem(key: string) {
+    const next = { ...checklist, [key]: !checklist[key] };
+    setChecklist(next);
+    setItem("auracheck:v1:founder_checklist", next);
+  }
   const [toast, setToast] = useState<string | null>(null);
 
   function refresh() {
@@ -212,13 +220,13 @@ export default function AdminPage() {
 
         {/* ─── Tabs ─── */}
         <div className="mb-6 flex gap-2">
-          {(["orders", "analytics", "leads", "funnel", "growth", "export"] as const).map((tab) => (
+          {(["orders", "analytics", "leads", "funnel", "growth", "checklist", "export"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`rounded-full px-4 py-1.5 text-xs transition-all ${activeTab === tab ? "bg-purple-500/20 text-purple-300" : "bg-white/5 text-gray-500 hover:text-gray-300"}`}
             >
-              {tab === "orders" ? "Orders" : tab === "analytics" ? "Analytics" : tab === "leads" ? "Leads" : tab === "funnel" ? "Funnel" : tab === "growth" ? "Growth" : "Export"}
+              {tab === "orders" ? "Orders" : tab === "analytics" ? "Analytics" : tab === "leads" ? "Leads" : tab === "funnel" ? "Funnel" : tab === "growth" ? "Growth" : tab === "checklist" ? "Checklist" : "Export"}
             </button>
           ))}
         </div>
@@ -481,6 +489,66 @@ export default function AdminPage() {
                 showToast("Progress CSV downloaded");
               }}>Export Progress Data</Button>
             </div>
+          </>
+        )}
+
+        {/* ─── Founder Launch Checklist ─── */}
+        {activeTab === "checklist" && (
+          <>
+            <Card className="mb-6">
+              <h3 className="mb-4 text-lg font-bold text-white">Founder Launch Checklist</h3>
+              <p className="mb-4 text-xs text-gray-400">Track your pre-launch readiness. Check off items as you complete them.</p>
+              <div className="space-y-2">
+                {[
+                  { key: "upi_id", label: "Set UPI ID in .env (NEXT_PUBLIC_UPI_ID)" },
+                  { key: "support_email", label: "Set support email (NEXT_PUBLIC_SUPPORT_EMAIL)" },
+                  { key: "owner_whatsapp", label: "Set owner WhatsApp (NEXT_PUBLIC_OWNER_WHATSAPP)" },
+                  { key: "admin_code", label: "Set local admin code (NEXT_PUBLIC_LOCAL_ADMIN_CODE)" },
+                  { key: "free_score", label: "Test free score generation" },
+                  { key: "aura_unlock", label: "Test Full Aura Report unlock" },
+                  { key: "dating_unlock", label: "Test Dating Audit unlock" },
+                  { key: "glowup_unlock", label: "Test Glow-Up Plan unlock" },
+                  { key: "offer_codes", label: "Test offer codes on unlock page" },
+                  { key: "order_export", label: "Test order export (CSV/JSON)" },
+                  { key: "data_export", label: "Test data export from /data page" },
+                  { key: "mobile_upload", label: "Test mobile photo upload" },
+                  { key: "share_card", label: "Test share card download" },
+                  { key: "privacy_terms", label: "Review privacy & terms pages" },
+                  { key: "examples_pricing", label: "Review examples & pricing pages" },
+                  { key: "challenges", label: "Review challenges & progress pages" },
+                ].map((item) => (
+                  <label key={item.key} className="flex cursor-pointer items-center gap-3 rounded-lg bg-white/5 px-3 py-2 text-sm transition-colors hover:bg-white/10">
+                    <input type="checkbox" checked={!!checklist[item.key]} onChange={() => toggleChecklistItem(item.key)} className="h-4 w-4 rounded border-white/20 bg-white/5 accent-purple-500" />
+                    <span className={checklist[item.key] ? "text-gray-500 line-through" : "text-gray-300"}>{item.label}</span>
+                  </label>
+                ))}
+              </div>
+              <div className="mt-4 flex items-center gap-2">
+                <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/5">
+                  <div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all" style={{ width: `${(Object.values(checklist).filter(Boolean).length / 16) * 100}%` }} />
+                </div>
+                <span className="text-xs text-gray-500">{Object.values(checklist).filter(Boolean).length}/16</span>
+              </div>
+            </Card>
+
+            <Card>
+              <h3 className="mb-3 text-sm font-semibold text-white">Export Full Admin Snapshot</h3>
+              <p className="mb-4 text-xs text-gray-400">Download a JSON file containing all orders, leads, analytics, challenge entries, progress comparisons, and local stats.</p>
+              <Button variant="outline" size="sm" onClick={() => {
+                const snapshot = {
+                  exportedAt: new Date().toISOString(),
+                  orders: getOrders(),
+                  leads: getLeads(),
+                  events: getEvents(),
+                  challengeEntries: getChallengeEntries(),
+                  progressComparisons: getProgressComparisons(),
+                  analytics: getAnalyticsSummary(),
+                  stats,
+                };
+                downloadJSON(snapshot, `auracheck-admin-snapshot-${Date.now()}.json`);
+                showToast("Admin snapshot downloaded");
+              }}>Export Admin Snapshot</Button>
+            </Card>
           </>
         )}
 
