@@ -2,7 +2,34 @@
 
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { useState } from "react";
+import { getOrders, updateOrder, deleteOrder, getOrderStats } from "@/lib/storage/orderStore";
+import { getAudits } from "@/lib/storage/auditStore";
+import { getAnalyticsSummary, clearAnalytics, getEvents } from "@/lib/storage/analyticsStore";
+import { generateUnlockCode } from "@/lib/payments/unlockCodeGenerator";
+import { downloadCSV } from "@/lib/export/csv";
+import { downloadJSON } from "@/lib/export/downloadJson";
+import type { ManualOrder, OrderStatus } from "@/types/order";
+
+const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  draft: "Draft",
+  payment_pending: "Payment Pending",
+  payment_submitted: "Payment Submitted",
+  code_sent: "Code Sent",
+  unlocked: "Unlocked",
+  cancelled: "Cancelled",
+};
+
+const ORDER_STATUS_VARIANTS: Record<OrderStatus, "default" | "warning" | "success" | "premium" | "danger"> = {
+  draft: "default",
+  payment_pending: "warning",
+  payment_submitted: "success",
+  code_sent: "premium",
+  unlocked: "success",
+  cancelled: "danger",
+};
 
 export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(() => {
@@ -10,6 +37,20 @@ export default function AdminPage() {
     return sessionStorage.getItem("auracheck_admin_auth") === "true";
   });
   const [codeInput, setCodeInput] = useState("");
+  const [orders, setOrders] = useState(() => getOrders());
+  const [audits] = useState(() => getAudits());
+  const [analytics] = useState(() => getAnalyticsSummary());
+  const [activeTab, setActiveTab] = useState<"orders" | "analytics" | "export">("orders");
+  const [toast, setToast] = useState<string | null>(null);
+
+  function refresh() {
+    setOrders(getOrders());
+  }
+
+  function showToast(msg: string) {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2500);
+  }
 
   function handleLogin() {
     const adminCode = process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "ADMINDEMO";
@@ -19,12 +60,94 @@ export default function AdminPage() {
     }
   }
 
+  function handleGenerateCode(order: ManualOrder) {
+    const code = generateUnlockCode(order.auditId, order.productType);
+    updateOrder(order.id, { generatedUnlockCode: code, status: "code_sent" });
+    refresh();
+    showToast(`Code generated: ${code}`);
+  }
+
+  function handleCopyCode(code: string) {
+    navigator.clipboard.writeText(code);
+    showToast("Code copied!");
+  }
+
+  function handleMarkSent(order: ManualOrder) {
+    updateOrder(order.id, { status: "code_sent" });
+    refresh();
+    showToast("Marked as code sent");
+  }
+
+  function handleCancel(order: ManualOrder) {
+    updateOrder(order.id, { status: "cancelled" });
+    refresh();
+    showToast("Order cancelled");
+  }
+
+  function handleDelete(id: string) {
+    if (!confirm("Delete this order permanently?")) return;
+    deleteOrder(id);
+    refresh();
+    showToast("Order deleted");
+  }
+
+  function handleExportOrdersCSV() {
+    const rows = orders.map((o) => ({
+      id: o.id,
+      auditId: o.auditId,
+      product: o.productName,
+      amount: o.amount,
+      status: o.status,
+      customerName: o.customerName || "",
+      customerContact: o.customerContact || "",
+      upiRef: o.upiTransactionRef || "",
+      unlockCode: o.generatedUnlockCode || "",
+      created: o.createdAt,
+      unlockedAt: o.unlockedAt || "",
+    }));
+    downloadCSV(rows, `auracheck-orders-${Date.now()}.csv`);
+    showToast("Orders CSV downloaded");
+  }
+
+  function handleExportOrdersJSON() {
+    downloadJSON(orders, `auracheck-orders-${Date.now()}.json`);
+    showToast("Orders JSON downloaded");
+  }
+
+  function handleExportAuditsCSV() {
+    const rows = audits.map((a) => ({
+      id: a.id,
+      type: a.auditType,
+      goal: a.goal,
+      budget: a.budgetRange,
+      score: a.freeScore ?? "",
+      fullScore: a.fullScore ?? "",
+      status: a.reportStatus,
+      unlockedProducts: (a.unlockedProducts || []).join("; "),
+      created: a.createdAt,
+    }));
+    downloadCSV(rows, `auracheck-audits-${Date.now()}.csv`);
+    showToast("Audits CSV downloaded");
+  }
+
+  function handleExportAnalyticsCSV() {
+    const events = getEvents();
+    const rows = events.map((e) => ({
+      event: e.event,
+      metadata: e.metadata ? JSON.stringify(e.metadata) : "",
+      timestamp: e.timestamp,
+    }));
+    downloadCSV(rows, `auracheck-analytics-${Date.now()}.csv`);
+    showToast("Analytics CSV downloaded");
+  }
+
   if (!authenticated) {
     return (
       <Container className="py-12">
         <div className="mx-auto max-w-sm">
           <Card>
-            <h1 className="mb-4 text-xl font-bold text-white">Admin Access</h1>
+            <h1 className="mb-2 text-xl font-bold text-white">Admin Access</h1>
+            <p className="mb-4 text-xs text-gray-500">Local admin gate is for MVP testing only, not production security.</p>
             <input
               type="password"
               value={codeInput}
@@ -44,12 +167,171 @@ export default function AdminPage() {
     );
   }
 
+  const stats = getOrderStats();
+
   return (
-    <Container className="py-12">
-      <h1 className="mb-8 text-3xl font-bold text-white">Admin Panel</h1>
-      <Card>
-        <p className="text-gray-400">Admin dashboard — orders, analytics, and management will appear here.</p>
-      </Card>
+    <Container className="py-8 sm:py-12">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-white">Admin Panel</h1>
+          <div className="flex items-center gap-3">
+            <button onClick={() => { refresh(); showToast("Refreshed"); }} className="text-xs text-gray-500 hover:text-gray-300">Refresh</button>
+            <button onClick={() => { sessionStorage.removeItem("auracheck_admin_auth"); setAuthenticated(false); }} className="text-xs text-gray-500 hover:text-gray-300">Logout</button>
+          </div>
+        </div>
+
+        {/* ─── Toast ─── */}
+        {toast && (
+          <div className="mb-4 rounded-xl border border-purple-500/20 bg-purple-500/10 px-4 py-2 text-sm text-purple-300">{toast}</div>
+        )}
+
+        {/* ─── Stats ─── */}
+        <div className="mb-8 grid gap-4 sm:grid-cols-4">
+          <Card><div className="text-xs text-gray-500">Total Orders</div><div className="mt-1 text-3xl font-bold text-white">{stats.totalOrders}</div></Card>
+          <Card><div className="text-xs text-gray-500">Payment Submitted</div><div className="mt-1 text-3xl font-bold text-amber-400">{stats.paymentSubmitted}</div></Card>
+          <Card><div className="text-xs text-gray-500">Unlocked</div><div className="mt-1 text-3xl font-bold text-emerald-400">{stats.unlockedOrders}</div></Card>
+          <Card><div className="text-xs text-gray-500">Cancelled</div><div className="mt-1 text-3xl font-bold text-red-400">{stats.cancelledOrders}</div></Card>
+          <Card><div className="text-xs text-gray-500">Expected Revenue</div><div className="mt-1 text-2xl font-bold text-amber-400">₹{stats.totalExpectedRevenue}</div></Card>
+          <Card><div className="text-xs text-gray-500">Unlocked Revenue</div><div className="mt-1 text-2xl font-bold text-emerald-400">₹{stats.totalUnlockedRevenue}</div></Card>
+          <Card><div className="text-xs text-gray-500">Total Audits</div><div className="mt-1 text-3xl font-bold text-white">{audits.length}</div></Card>
+          <Card><div className="text-xs text-gray-500">Unlocked Reports</div><div className="mt-1 text-3xl font-bold text-purple-400">{audits.filter((a) => a.fullReport).length}</div></Card>
+        </div>
+
+        {/* ─── Tabs ─── */}
+        <div className="mb-6 flex gap-2">
+          {(["orders", "analytics", "export"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`rounded-full px-4 py-1.5 text-xs transition-all ${activeTab === tab ? "bg-purple-500/20 text-purple-300" : "bg-white/5 text-gray-500 hover:text-gray-300"}`}
+            >
+              {tab === "orders" ? "Orders" : tab === "analytics" ? "Analytics" : "Export"}
+            </button>
+          ))}
+        </div>
+
+        {/* ─── Orders Tab ─── */}
+        {activeTab === "orders" && (
+          <>
+            {orders.length === 0 ? (
+              <Card><div className="py-8 text-center text-sm text-gray-500">No orders yet.</div></Card>
+            ) : (
+              <div className="space-y-3">
+                {orders.map((order) => (
+                  <Card key={order.id}>
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="text-xs font-mono text-gray-500">{order.id.slice(0, 8)}</span>
+                          <Badge variant={ORDER_STATUS_VARIANTS[order.status]}>{ORDER_STATUS_LABELS[order.status]}</Badge>
+                        </div>
+                        <div className="grid gap-1 text-xs sm:grid-cols-2">
+                          <div><span className="text-gray-500">Audit:</span> <span className="text-purple-300">{order.auditId.slice(0, 8)}...</span></div>
+                          <div><span className="text-gray-500">Product:</span> <span className="text-white">{order.productName}</span></div>
+                          <div><span className="text-gray-500">Amount:</span> <span className="text-amber-400">₹{order.amount}</span></div>
+                          <div><span className="text-gray-500">Customer:</span> <span className="text-gray-300">{order.customerName || "—"}</span></div>
+                          <div><span className="text-gray-500">Contact:</span> <span className="text-gray-300">{order.customerContact || "—"}</span></div>
+                          <div><span className="text-gray-500">UPI Ref:</span> <span className="text-gray-300">{order.upiTransactionRef || "—"}</span></div>
+                          <div><span className="text-gray-500">Code:</span> <span className="font-mono text-purple-300">{order.generatedUnlockCode || "—"}</span></div>
+                          <div><span className="text-gray-500">Created:</span> <span className="text-gray-300">{new Date(order.createdAt).toLocaleDateString("en-IN")}</span></div>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {order.status !== "unlocked" && order.status !== "cancelled" && (
+                          <>
+                            {!order.generatedUnlockCode ? (
+                              <Button size="sm" onClick={() => handleGenerateCode(order)}>Generate Code</Button>
+                            ) : (
+                              <Button size="sm" variant="outline" onClick={() => handleCopyCode(order.generatedUnlockCode!)}>Copy Code</Button>
+                            )}
+                            {order.status !== "code_sent" && (
+                              <Button size="sm" variant="ghost" onClick={() => handleMarkSent(order)}>Mark Sent</Button>
+                            )}
+                            <Button size="sm" variant="ghost" onClick={() => handleCancel(order)}>Cancel</Button>
+                          </>
+                        )}
+                        <Button size="sm" variant="ghost" onClick={() => handleDelete(order.id)}>
+                          <svg className="h-3.5 w-3.5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* ─── Analytics Tab ─── */}
+        {activeTab === "analytics" && (
+          <>
+            <div className="mb-8 grid gap-4 sm:grid-cols-4">
+              <Card><div className="text-xs text-gray-500">Total Events</div><div className="mt-1 text-2xl font-bold text-white">{analytics.totalEvents}</div></Card>
+              <Card><div className="text-xs text-gray-500">Free Scores</div><div className="mt-1 text-2xl font-bold text-white">{analytics.freeScoreGenerated}</div></Card>
+              <Card><div className="text-xs text-gray-500">Unlock Page Views</div><div className="mt-1 text-2xl font-bold text-white">{analytics.unlockPageViewed}</div></Card>
+              <Card><div className="text-xs text-gray-500">Payment Requests</div><div className="mt-1 text-2xl font-bold text-amber-400">{analytics.paymentRequestSaved}</div></Card>
+              <Card><div className="text-xs text-gray-500">Product Unlocks</div><div className="mt-1 text-2xl font-bold text-emerald-400">{analytics.productUnlocked}</div></Card>
+              <Card><div className="text-xs text-gray-500">Share Downloads</div><div className="mt-1 text-2xl font-bold text-white">{analytics.shareCardDownloaded}</div></Card>
+              <Card><div className="text-xs text-gray-500">Affiliate Clicks</div><div className="mt-1 text-2xl font-bold text-white">{analytics.affiliateClicked}</div></Card>
+              <Card><div className="text-xs text-gray-500">Audits Created</div><div className="mt-1 text-2xl font-bold text-white">{analytics.auditCreated}</div></Card>
+            </div>
+            <Card className="mb-8">
+              <h3 className="mb-3 text-sm font-semibold text-white">Conversion Estimate</h3>
+              <div className="grid gap-3 text-xs sm:grid-cols-2">
+                <div className="rounded-lg bg-white/5 p-3">
+                  <div className="text-gray-500">Payment Requests / Free Scores</div>
+                  <div className="mt-1 text-lg font-bold text-white">
+                    {analytics.freeScoreGenerated > 0
+                      ? `${(analytics.paymentRequestSaved / analytics.freeScoreGenerated * 100).toFixed(1)}%`
+                      : "—"}
+                  </div>
+                </div>
+                <div className="rounded-lg bg-white/5 p-3">
+                  <div className="text-gray-500">Unlocks / Payment Requests</div>
+                  <div className="mt-1 text-lg font-bold text-emerald-400">
+                    {analytics.paymentRequestSaved > 0
+                      ? `${(analytics.productUnlocked / analytics.paymentRequestSaved * 100).toFixed(1)}%`
+                      : "—"}
+                  </div>
+                </div>
+              </div>
+            </Card>
+            <div className="flex gap-2">
+              <Button variant="ghost" size="sm" onClick={clearAnalytics}>Clear Analytics</Button>
+            </div>
+          </>
+        )}
+
+        {/* ─── Export Tab ─── */}
+        {activeTab === "export" && (
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Card>
+              <h3 className="mb-3 text-sm font-semibold text-white">Export Orders</h3>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={handleExportOrdersCSV}>CSV</Button>
+                <Button size="sm" variant="outline" onClick={handleExportOrdersJSON}>JSON</Button>
+              </div>
+            </Card>
+            <Card>
+              <h3 className="mb-3 text-sm font-semibold text-white">Export Audits</h3>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={handleExportAuditsCSV}>CSV</Button>
+              </div>
+            </Card>
+            <Card>
+              <h3 className="mb-3 text-sm font-semibold text-white">Export Analytics</h3>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={handleExportAnalyticsCSV}>CSV</Button>
+              </div>
+            </Card>
+          </div>
+        )}
+
+        {/* ─── Footer Note ─── */}
+        <div className="mt-8 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-xs text-gray-600">
+          <p>Local admin panel for MVP testing. Not production-secure. All data stored in browser localStorage.</p>
+        </div>
+      </div>
     </Container>
   );
 }

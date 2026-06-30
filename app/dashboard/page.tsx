@@ -10,6 +10,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { getAudits, deleteAudit } from "@/lib/storage/auditStore";
 import { getUnlockedAuditCount } from "@/lib/storage/unlockStore";
 import { getRecommendationsForAudit } from "@/lib/recommendations/getRecommendations";
+import { getOrdersByAuditId } from "@/lib/storage/orderStore";
 
 const AUDIT_TYPE_LABELS: Record<string, string> = {
   photo: "Photo Aura Check",
@@ -200,6 +201,27 @@ export default function DashboardPage() {
             </div>
           </Card>
         )}
+
+        {/* ─── Payment Request Status (latest audit) ─── */}
+        {audits.length > 0 && audits[0].freeScore !== undefined && (() => {
+          const latest = audits[0];
+          const orders = getOrdersByAuditId(latest.id);
+          const pendingOrder = orders.find((o) => o.status === "payment_submitted" || o.status === "code_sent" || o.status === "payment_pending");
+          if (!pendingOrder) return null;
+          return (
+            <Card className="mb-8 border-amber-500/20">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold text-white">Payment Request for {pendingOrder.productName}</h3>
+                  <p className="text-xs text-gray-400">Status: {pendingOrder.status === "code_sent" ? "Code sent — enter it on the unlock page" : "Payment submitted — awaiting owner response"}</p>
+                </div>
+                <Link href={`/unlock?auditId=${latest.id}&product=${pendingOrder.productType}`}>
+                  <Button size="sm" variant="outline">View</Button>
+                </Link>
+              </div>
+            </Card>
+          );
+        })()}
 
         {/* ─── Audit History ─── */}
         <h2 className="mb-4 text-lg font-semibold text-white">Audit History</h2>
