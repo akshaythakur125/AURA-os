@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { getAudits, deleteAudit } from "@/lib/storage/auditStore";
+import { getUnlockedAuditCount, isAuditUnlocked } from "@/lib/storage/unlockStore";
 
 const AUDIT_TYPE_LABELS: Record<string, string> = {
   photo: "Photo Aura Check",
@@ -47,6 +48,7 @@ export default function DashboardPage() {
   const avgScore = scoredAudits.length > 0
     ? Math.round(scoredAudits.reduce((sum, a) => sum + (a.freeScore ?? 0), 0) / scoredAudits.length)
     : null;
+  const unlockedCount = getUnlockedAuditCount();
 
   return (
     <Container className="py-8 sm:py-12">
@@ -85,8 +87,16 @@ export default function DashboardPage() {
               <div className="mt-1 text-3xl font-bold text-white">{avgScore}</div>
             </Card>
             <Card>
-              <div className="text-xs text-gray-500">Scored Audits</div>
-              <div className="mt-1 text-3xl font-bold text-white">{scoredAudits.length} / {audits.length}</div>
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <div className="text-xs text-gray-500">Scored Audits</div>
+                  <div className="mt-1 text-3xl font-bold text-white">{scoredAudits.length} / {audits.length}</div>
+                </div>
+                <div className="flex-1">
+                  <div className="text-xs text-gray-500">Unlocked</div>
+                  <div className="mt-1 text-3xl font-bold text-purple-400">{unlockedCount}</div>
+                </div>
+              </div>
             </Card>
           </div>
         )}
@@ -146,7 +156,14 @@ export default function DashboardPage() {
                       )}
                     </div>
                     <div className="flex items-center justify-between">
-                      <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
+                        {isAuditUnlocked(audit.id) && (
+                          <svg className="h-3.5 w-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                          </svg>
+                        )}
+                      </div>
                       <div className="flex gap-2">
                         <Link href={`/audit/${audit.id}`}>
                           <Button variant="ghost" size="sm">View</Button>

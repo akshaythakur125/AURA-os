@@ -36,6 +36,8 @@ export interface Audit {
   freeScore?: number;
   freeSummary?: string;
   freeResult?: FreeAuraResult;
+  fullScore?: number;
+  fullReport?: FullAuraReport;
   createdAt: string;
   updatedAt: string;
 }
@@ -93,5 +95,60 @@ export interface FreeAuraResult {
   quickFixes: string[];
   budgetUpgradePlan: BudgetAction[];
   imageMetrics: ImageMetrics;
+  generatedAt: string;
+}
+
+export interface VisualBreakdown {
+  lighting: number;
+  clarity: number;
+  composition: number;
+  backgroundControl: number;
+  colorSignal: number;
+  premiumSignal: number;
+  overallConsistency: number;
+}
+
+export interface BiggestStatusLeak {
+  title: string;
+  explanation: string;
+  fix: string;
+  severity: "low" | "medium" | "high";
+  impactScore: number;
+  estimatedCost: string;
+}
+
+export interface PriorityUpgradeMap {
+  firstPriority: string;
+  secondPriority: string;
+  avoidForNow: string;
+}
+
+export interface BudgetUpgradePlan {
+  immediateFree: string[];
+  under2000: string[];
+  under5000: string[];
+  under10000: string[];
+  under25000: string[];
+}
+
+export interface PhotoGuidance {
+  lighting: string;
+  framing: string;
+  background: string;
+  presentation: string;
+  editing: string;
+}
+
+export interface FullAuraReport {
+  fullScore: number;
+  category: Category;
+  detailedVerdict: string;
+  visualBreakdown: VisualBreakdown;
+  strongestSignals: string[];
+  biggestStatusLeaks: BiggestStatusLeak[];
+  priorityUpgradeMap: PriorityUpgradeMap;
+  budgetUpgradePlan: BudgetUpgradePlan;
+  photoGuidance: PhotoGuidance;
+  finalVerdict: string;
   generatedAt: string;
 }
