@@ -132,29 +132,40 @@ export default function DashboardPage() {
           const best = latestTwin.variants.find((v) => v.id === latestTwin.bestVariantId);
           return (
             <Card className="mb-8 border-purple-500/20">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <h2 className="mb-1 text-sm font-semibold text-white">Aura Twin Simulator</h2>
+              <div className="flex items-center gap-4">
+                {best && (
+                  <div className="hidden h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl bg-white/5 sm:block">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={best.imageDataUrl} alt="" className="h-full w-full object-cover" />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <h2 className="mb-1 text-sm font-semibold text-white">
+                    🔮 Aura Twin Simulator
+                    {best?.scoreDelta ? <Badge variant="success" className="ml-2">+{best.scoreDelta}</Badge> : null}
+                  </h2>
                   <p className="mb-2 text-xs text-gray-400">
-                    Your latest Aura Twin prediction shows a potential improvement of +{best?.scoreDelta ?? 0} points with &ldquo;{best?.title ?? "—"}&rdquo;.
+                    {best
+                      ? `"${best.title}" predicts a +${best.scoreDelta} point improvement. ${best.freeFix}`
+                      : "Simulate what-if visual upgrades before spending."}
                   </p>
                   <div className="flex items-center gap-4 text-xs">
                     <div>
-                      <span className="text-gray-500">Original:</span>{" "}
+                      <span className="text-gray-500">Original</span>{" "}
                       <span className="text-white font-semibold">{latestTwin.originalScore}</span>
                     </div>
                     <div>
-                      <span className="text-gray-500">Best:</span>{" "}
+                      <span className="text-gray-500">→ Best</span>{" "}
                       <span className="text-emerald-400 font-semibold">{best?.score ?? "—"}</span>
                     </div>
                     <div>
-                      <span className="text-gray-500">Best Fix:</span>{" "}
-                      <span className="text-purple-300">{best?.title ?? "—"}</span>
+                      <span className="text-gray-500">Fix</span>{" "}
+                      <span className="text-purple-300 font-medium">{best?.title?.split(" ")[0] ?? "—"}</span>
                     </div>
                   </div>
                 </div>
                 <Link href="/twin-simulator">
-                  <Button size="sm" variant="outline">Open Simulator</Button>
+                  <Button size="sm" variant="outline">Open</Button>
                 </Link>
               </div>
             </Card>
@@ -165,7 +176,7 @@ export default function DashboardPage() {
           <Card className="mb-8 border-purple-500/20">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="mb-1 text-sm font-semibold text-white">Aura Twin Simulator</h2>
+                <h2 className="mb-1 text-sm font-semibold text-white">🔮 Aura Twin Simulator</h2>
                 <p className="text-xs text-gray-400">
                   See which visual upgrade could improve your Aura Score before spending money.
                 </p>

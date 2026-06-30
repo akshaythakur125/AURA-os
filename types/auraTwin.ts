@@ -9,7 +9,8 @@ export type AuraTwinVariantType =
   | "premium_minimal"
   | "creator_bold"
   | "professional_clean"
-  | "warm_dating";
+  | "warm_dating"
+  | "combined_best";
 
 export type TwinGoal =
   | "dating_profile"
@@ -23,6 +24,7 @@ export interface AuraTwinVariant {
   id: string;
   type: AuraTwinVariantType;
   title: string;
+  emoji: string;
   description: string;
   imageDataUrl: string;
   score: number;
@@ -32,6 +34,7 @@ export interface AuraTwinVariant {
   freeFix: string;
   paidFix?: string;
   estimatedCost: string;
+  isFree: boolean;
   caution?: string;
 }
 
@@ -48,65 +51,88 @@ export interface AuraTwinResult {
   statusRoiSummary: string;
   avoidForNow: string;
   finalStrategy: string;
+  actionTiers: { tier: number; label: string; actions: string[] }[];
   goal?: TwinGoal;
   createdAt: string;
   updatedAt: string;
 }
 
-export const TWIN_VARIANT_META: Record<AuraTwinVariantType, { title: string; description: string; isFree: boolean; estimatedCost: string }> = {
+export const TWIN_VARIANT_META: Record<AuraTwinVariantType, {
+  title: string;
+  emoji: string;
+  description: string;
+  isFree: boolean;
+  estimatedCost: string;
+}> = {
   original: {
     title: "Original",
+    emoji: "📸",
     description: "Your current image as-is.",
     isFree: true,
     estimatedCost: "₹0",
   },
   brighter_lighting: {
     title: "Brighter Lighting",
+    emoji: "☀️",
     description: "Increased brightness and slightly boosted contrast for a clearer, well-lit look.",
     isFree: true,
-    estimatedCost: "₹0 — Use natural window light",
+    estimatedCost: "₹0 — Natural window light",
   },
   cleaner_crop: {
     title: "Cleaner Crop",
-    description: "Centered crop with improved framing and composition.",
+    emoji: "✂️",
+    description: "Centered crop with improved framing and composition for profile-readiness.",
     isFree: true,
     estimatedCost: "₹0 — Reframe your shot",
   },
   background_focus: {
     title: "Background Focus",
+    emoji: "🎯",
     description: "Subtle vignette and edge darkening to draw attention to the subject.",
     isFree: true,
-    estimatedCost: "₹0 — Declutter or move to a plain wall",
+    estimatedCost: "₹0 — Declutter or plain wall",
   },
   contrast_balance: {
     title: "Contrast Balance",
-    description: "Normalized contrast and saturation for a balanced, pleasing look.",
+    emoji: "⚖️",
+    description: "Normalized contrast and saturation for a balanced, pleasing visual weight.",
     isFree: true,
-    estimatedCost: "₹0 — Adjust phone camera settings or lighting angle",
+    estimatedCost: "₹0 — Adjust camera settings or angle",
   },
   premium_minimal: {
     title: "Premium Minimal",
+    emoji: "✨",
     description: "Slightly desaturated with improved contrast and a clean, understated tone.",
     isFree: false,
     estimatedCost: "Under ₹1,000 — Simple backdrop or better wall",
   },
   creator_bold: {
     title: "Creator Bold",
+    emoji: "🔥",
     description: "Increased clarity, contrast, and saturation for a punchy creator/Instagram look.",
     isFree: false,
     estimatedCost: "Under ₹1,000 — Ring light or phone tripod",
   },
   professional_clean: {
     title: "Professional Clean",
+    emoji: "💼",
     description: "Balanced brightness, controlled contrast, and neutral color for a polished professional look.",
     isFree: false,
-    estimatedCost: "Under ₹2,000 — Clean shirt or simple backdrop cloth",
+    estimatedCost: "Under ₹2,000 — Clean shirt or backdrop cloth",
   },
   warm_dating: {
     title: "Warm Dating",
+    emoji: "🌅",
     description: "Slight warmth, soft contrast, and natural brightness for an inviting dating profile look.",
     isFree: false,
     estimatedCost: "Under ₹2,000 — Warm lamp or golden-hour window light",
+  },
+  combined_best: {
+    title: "Combined Best",
+    emoji: "🏆",
+    description: "A smart blend of the top two performing free improvements applied together.",
+    isFree: true,
+    estimatedCost: "₹0 — Free fixes combined",
   },
 };
 

@@ -9,16 +9,59 @@ interface TwinVariantCardProps {
   isBest?: boolean;
 }
 
+function MetricBar({ label, value, maxVal = 100 }: { label: string; value: number; maxVal?: number }) {
+  const pct = Math.min(100, Math.max(0, (value / maxVal) * 100));
+  const color =
+    value >= 70 ? "bg-emerald-500" :
+    value >= 50 ? "bg-amber-500" :
+    "bg-red-500/70";
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="w-18 flex-shrink-0 text-[10px] text-gray-500">{label}</span>
+      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
+        <div className={`h-full rounded-full transition-all ${color}`} style={{ width: `${pct}%` }} />
+      </div>
+      <span className="w-7 flex-shrink-0 text-right text-[10px] tabular-nums text-gray-400">{value}</span>
+    </div>
+  );
+}
+
 export function TwinVariantCard({ variant, isBest = false }: TwinVariantCardProps) {
-  const deltaColor = variant.scoreDelta > 0 ? "text-emerald-400" : variant.scoreDelta < 0 ? "text-red-400" : "text-gray-400";
-  const deltaSign = variant.scoreDelta > 0 ? "+" : "";
-  const deltaBg = variant.scoreDelta > 2 ? "border-emerald-500/30" : variant.scoreDelta > 0 ? "border-emerald-500/15" : variant.scoreDelta < 0 ? "border-red-500/15" : "";
+  const deltaColor = variant.scoreDelta >= 5
+    ? "text-emerald-300"
+    : variant.scoreDelta > 0
+      ? "text-emerald-400"
+      : variant.scoreDelta < -2
+        ? "text-red-400"
+        : "text-gray-400";
+
+  const deltaBgClass = variant.scoreDelta >= 3
+    ? "border-emerald-500/30"
+    : variant.scoreDelta > 0
+      ? "border-emerald-500/10"
+      : variant.scoreDelta < 0
+        ? "border-red-500/10"
+        : "";
 
   return (
-    <Card className={`relative overflow-hidden ${isBest ? "border-purple-500/40 bg-purple-500/[0.06] ring-1 ring-purple-500/20" : deltaBg}`}>
+    <Card
+      className={`relative overflow-hidden ${isBest ? "border-purple-500/40 bg-purple-500/[0.06] ring-1 ring-purple-500/20" : deltaBgClass}`}
+    >
       {isBest && (
         <div className="absolute top-3 right-3 z-10">
           <Badge variant="premium">Best Pick</Badge>
+        </div>
+      )}
+
+      {variant.scoreDelta >= 5 && !isBest && (
+        <div className="absolute top-3 right-3 z-10">
+          <Badge variant="success">+{variant.scoreDelta}</Badge>
+        </div>
+      )}
+
+      {variant.scoreDelta < -2 && (
+        <div className="absolute top-3 right-3 z-10">
+          <Badge variant="danger">{variant.scoreDelta}</Badge>
         </div>
       )}
 
@@ -31,8 +74,11 @@ export function TwinVariantCard({ variant, isBest = false }: TwinVariantCardProp
         />
       </div>
 
-      <h3 className="mb-1 text-sm font-semibold text-white">{variant.title}</h3>
-      <p className="mb-2 text-xs text-gray-500">{variant.description}</p>
+      <h3 className="mb-1 text-sm font-semibold text-white">
+        {variant.emoji} {variant.title}
+      </h3>
+
+      <p className="mb-2 text-xs leading-relaxed text-gray-500">{variant.description}</p>
 
       <div className="mb-3 flex items-center gap-3">
         <div className="text-center">
@@ -40,33 +86,26 @@ export function TwinVariantCard({ variant, isBest = false }: TwinVariantCardProp
           <div className="text-[10px] text-gray-600">score</div>
         </div>
         <div className={`text-center ${deltaColor}`}>
-          <div className="text-lg font-bold">
-            {deltaSign}{variant.scoreDelta}
+          <div className="text-lg font-bold tabular-nums">
+            {variant.scoreDelta > 0 ? "+" : ""}{variant.scoreDelta}
           </div>
-          <div className="text-[10px] opacity-70">{variant.scoreDelta > 0 ? "improvement" : "change"}</div>
+          <div className="text-[10px] opacity-70">{variant.scoreDelta > 0 ? "gain" : variant.scoreDelta < 0 ? "loss" : "—"}</div>
+        </div>
+        <div className="ml-auto flex items-center gap-1 text-[10px] text-gray-500">
+          <span className={variant.isFree ? "text-emerald-400" : "text-amber-400"}>
+            {variant.isFree ? "FREE" : "₹"}
+          </span>
         </div>
       </div>
 
-      <div className="mb-2 space-y-1 text-xs text-gray-400">
-        <div className="flex justify-between">
-          <span>Lighting</span>
-          <span className="text-gray-300">{variant.metrics.lightingScore}</span>
-        </div>
-        <div className="flex justify-between">
-          <span>Clarity</span>
-          <span className="text-gray-300">{variant.metrics.clarityScore}</span>
-        </div>
-        <div className="flex justify-between">
-          <span>Composition</span>
-          <span className="text-gray-300">{variant.metrics.compositionScore}</span>
-        </div>
-        <div className="flex justify-between">
-          <span>Bg Control</span>
-          <span className="text-gray-300">{100 - variant.metrics.backgroundComplexityEstimate}</span>
-        </div>
+      <div className="mb-3 space-y-0.5">
+        <MetricBar label="Lighting" value={variant.metrics.lightingScore} />
+        <MetricBar label="Clarity" value={variant.metrics.clarityScore} />
+        <MetricBar label="Composition" value={variant.metrics.compositionScore} />
+        <MetricBar label="Bg control" value={100 - variant.metrics.backgroundComplexityEstimate} />
       </div>
 
-      <div className="mb-2 rounded-lg bg-white/5 px-2.5 py-2 text-xs text-gray-400">
+      <div className="mb-2 rounded-lg bg-white/5 px-2.5 py-2 text-xs leading-relaxed text-gray-400">
         {variant.improvementReason}
       </div>
 
@@ -95,8 +134,9 @@ export function TwinVariantCard({ variant, isBest = false }: TwinVariantCardProp
         </div>
       )}
 
-      <div className="mt-3 rounded-lg bg-white/[0.03] px-2 py-1.5 text-center text-xs text-gray-500">
-        Cost: {variant.estimatedCost}
+      <div className="mt-3 flex items-center justify-between rounded-lg bg-white/[0.03] px-2 py-1.5 text-[10px]">
+        <span className="text-gray-500">{variant.isFree ? "💰 Free" : "💰 Paid"}</span>
+        <span className="text-gray-500">{variant.estimatedCost}</span>
       </div>
     </Card>
   );
