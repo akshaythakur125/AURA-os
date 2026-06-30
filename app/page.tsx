@@ -532,7 +532,82 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ─── 9. Upgrade ROI ─── */}
+      {/* ─── 9. Three Ways to Upgrade ─── */}
+      <section className="border-t border-white/5 py-20">
+        <Container>
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              Three ways to upgrade your signal
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">
+              Choose the depth that fits your goal. All products unlock via manual code.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Full Aura Report</h3>
+              <p className="mb-4 text-sm text-gray-400">Deep visual analysis with upgrade roadmap. Best starter option at ₹99.</p>
+              <Badge variant="premium">Best starter</Badge>
+              <ul className="mt-4 space-y-1.5 text-sm text-gray-400">
+                <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Full score breakdown</li>
+                <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Status leak analysis</li>
+                <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Archetype + mismatch map</li>
+              </ul>
+              <div className="mt-6">
+                <Link href="/pricing"><Button variant="outline" size="sm">Learn More</Button></Link>
+              </div>
+            </Card>
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-red-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Dating/Profile Audit</h3>
+              <p className="mb-4 text-sm text-gray-400">Profile presentation score, bio feedback, and photo strategy at ₹299.</p>
+              <Badge variant="success">Best for profile clarity</Badge>
+              <ul className="mt-4 space-y-1.5 text-sm text-gray-400">
+                <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Text clarity & originality score</li>
+                <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Bio + prompt feedback</li>
+                <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Photo order strategy</li>
+              </ul>
+              <div className="mt-6">
+                <Link href="/pricing"><Button variant="outline" size="sm">Learn More</Button></Link>
+              </div>
+            </Card>
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">30-Day Glow-Up Plan</h3>
+              <p className="mb-4 text-sm text-gray-400">Structured 30-day roadmap with daily missions and systems. Best value at ₹499.</p>
+              <Badge variant="premium">Best value</Badge>
+              <ul className="mt-4 space-y-1.5 text-sm text-gray-400">
+                <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>30 daily missions</li>
+                <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Budget roadmap (₹0–₹25K+)</li>
+                <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Photo/grooming/outfit systems</li>
+              </ul>
+              <div className="mt-6">
+                <Link href="/pricing"><Button variant="outline" size="sm">Learn More</Button></Link>
+              </div>
+            </Card>
+          </div>
+          <div className="mt-10 text-center">
+            <Link href="/audit/new">
+              <Button size="lg">Start Free — ₹0</Button>
+            </Link>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── 10. Upgrade ROI ─── */}
       <section className="border-t border-white/5 py-20">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
@@ -592,14 +667,19 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ─── 10. Safety Note ─── */}
+      {/* ─── 11. Safety Note ─── */}
       <section className="border-t border-white/5 py-12">
         <Container>
           <div className="mx-auto max-w-2xl rounded-xl border border-white/5 bg-white/[0.02] p-6 text-center">
-            <p className="text-sm text-gray-500">
+            <p className="mb-3 text-sm text-gray-500">
               AuraCheck analyzes presentation, not human worth. Scores are
               guidance, not objective truth.
             </p>
+            <div className="space-y-1 text-xs text-gray-600">
+              <p>Profile guidance is for presentation clarity, not dating guarantees.</p>
+              <p>Glow-up plan is self-improvement guidance, not a guarantee of social outcomes.</p>
+              <p>No external AI service is used in this MVP.</p>
+            </div>
           </div>
         </Container>
       </section>

@@ -10,6 +10,8 @@ import { validateImage, processImage } from "@/lib/image/processImage";
 import type { AuditType, Goal, BudgetRange } from "@/types";
 import type { StyleIntent, CurrentSignalItem, BiggestConcern, OccasionContext, SpendComfort, SelfRatedConfidence } from "@/types/personalization";
 import { STYLE_INTENT_LABELS, SIGNAL_ITEM_LABELS, CONCERN_LABELS, OCCASION_LABELS, SPEND_LABELS, CONFIDENCE_LABELS } from "@/types/personalization";
+import type { PreferredTone, AvoidTone } from "@/types/profileAudit";
+import { PREFERRED_TONE_LABELS, AVOID_TONE_LABELS } from "@/types/profileAudit";
 
 const AUDIT_TYPES: { id: AuditType; label: string; desc: string; gradient: string; icon: string }[] = [
   { id: "photo", label: "Photo Aura Check", desc: "Analyze a single photo for expression, lighting, background, and overall visual signal.", gradient: "from-purple-600 to-pink-500", icon: "camera" },
@@ -52,10 +54,24 @@ export default function NewAuditPage() {
   const [selfRatedConfidence, setSelfRatedConfidence] = useState<SelfRatedConfidence | null>(null);
   const [wantsDirectFeedback, setWantsDirectFeedback] = useState(false);
   const [notes, setNotes] = useState("");
+  const [showProfileText, setShowProfileText] = useState(false);
+  const [profileBio, setProfileBio] = useState("");
+  const [profilePrompt1, setProfilePrompt1] = useState("");
+  const [profilePrompt2, setProfilePrompt2] = useState("");
+  const [profilePrompt3, setProfilePrompt3] = useState("");
+  const [profileCaptions, setProfileCaptions] = useState("");
+  const [preferredTone, setPreferredTone] = useState<PreferredTone | null>(null);
+  const [avoidTones, setAvoidTones] = useState<AvoidTone[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  function toggleAvoidTone(tone: AvoidTone) {
+    setAvoidTones((prev) =>
+      prev.includes(tone) ? prev.filter((t) => t !== tone) : [...prev, tone]
+    );
+  }
 
   function toggleSignal(signal: CurrentSignalItem) {
     setCurrentSignals((prev) =>
@@ -110,6 +126,20 @@ export default function NewAuditPage() {
           selfRatedConfidence,
           wantsDirectFeedback,
           notes,
+        };
+      }
+      if (showProfileText && (auditType === "dating" || auditType === "instagram")) {
+        const prompts: string[] = [];
+        if (profilePrompt1.trim()) prompts.push(profilePrompt1.trim());
+        if (profilePrompt2.trim()) prompts.push(profilePrompt2.trim());
+        if (profilePrompt3.trim()) prompts.push(profilePrompt3.trim());
+        data.profileTextInput = {
+          bio: profileBio.trim() || undefined,
+          prompts: prompts.length > 0 ? prompts : undefined,
+          captions: profileCaptions.trim() ? profileCaptions.trim().split("\n").filter(Boolean) : undefined,
+          preferredTone: preferredTone || undefined,
+          avoidTone: avoidTones.length > 0 ? avoidTones : undefined,
+          notes: notes.trim() || undefined,
         };
       }
       const audit = createAudit(data as Parameters<typeof createAudit>[0]);
@@ -425,6 +455,115 @@ export default function NewAuditPage() {
             </Card>
           )}
         </section>
+
+        {/* ─── Profile Text Input ─── */}
+        {(auditType === "dating" || auditType === "instagram") && (
+          <section className="mb-8">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-white">6. Add profile text for deeper audit (optional)</h2>
+              {!showProfileText ? (
+                <Button variant="ghost" size="sm" onClick={() => setShowProfileText(true)}>+ Add Text</Button>
+              ) : (
+                <Button variant="ghost" size="sm" onClick={() => setShowProfileText(false)}>Skip</Button>
+              )}
+            </div>
+            {showProfileText && (
+              <Card>
+                <div className="space-y-5">
+                  <div>
+                    <label className="mb-1 block text-xs text-gray-500">Bio / About text</label>
+                    <textarea
+                      value={profileBio}
+                      onChange={(e) => setProfileBio(e.target.value)}
+                      placeholder="Your bio or about section..."
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none"
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs text-gray-500">Prompt 1 (optional)</label>
+                    <input
+                      type="text"
+                      value={profilePrompt1}
+                      onChange={(e) => setProfilePrompt1(e.target.value)}
+                      placeholder="e.g. My perfect Sunday..."
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs text-gray-500">Prompt 2 (optional)</label>
+                    <input
+                      type="text"
+                      value={profilePrompt2}
+                      onChange={(e) => setProfilePrompt2(e.target.value)}
+                      placeholder="e.g. Two truths and a lie..."
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs text-gray-500">Prompt 3 (optional)</label>
+                    <input
+                      type="text"
+                      value={profilePrompt3}
+                      onChange={(e) => setProfilePrompt3(e.target.value)}
+                      placeholder="e.g. I am looking for..."
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1 block text-xs text-gray-500">Caption examples (one per line, optional)</label>
+                    <textarea
+                      value={profileCaptions}
+                      onChange={(e) => setProfileCaptions(e.target.value)}
+                      placeholder="caption line 1&#10;caption line 2"
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none"
+                      rows={3}
+                    />
+                  </div>
+                  <div>
+                    <div className="mb-2 text-xs text-gray-500">Preferred tone</div>
+                    <div className="flex flex-wrap gap-2">
+                      {(Object.entries(PREFERRED_TONE_LABELS) as [PreferredTone, string][]).map(([key, label]) => (
+                        <button
+                          key={key}
+                          onClick={() => setPreferredTone(key)}
+                          className={`rounded-full border px-3 py-1 text-xs transition-all ${
+                            preferredTone === key
+                              ? "border-purple-500/50 bg-purple-500/10 text-purple-300"
+                              : "border-white/10 text-gray-400 hover:border-white/20"
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="mb-2 text-xs text-gray-500">Things to avoid</div>
+                    <div className="flex flex-wrap gap-2">
+                      {(Object.entries(AVOID_TONE_LABELS) as [AvoidTone, string][]).map(([key, label]) => (
+                        <button
+                          key={key}
+                          onClick={() => toggleAvoidTone(key)}
+                          className={`rounded-full border px-3 py-1 text-xs transition-all ${
+                            avoidTones.includes(key)
+                              ? "border-red-500/50 bg-red-500/10 text-red-300"
+                              : "border-white/10 text-gray-400 hover:border-white/20"
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="rounded-lg bg-amber-500/5 p-3 text-xs text-gray-500">
+                    Profile guidance is for presentation clarity, not dating guarantees. Do not share personal contact information or financial details.
+                  </div>
+                </div>
+              </Card>
+            )}
+          </section>
+        )}
 
         {/* ─── Error ─── */}
         {error && (

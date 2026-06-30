@@ -2,6 +2,7 @@
 
 import { getItem, setItem } from "@/lib/storage/localStore";
 import type { UnlockRecord } from "@/types/payment";
+import type { ProductType } from "@/types";
 
 const UNLOCKS_KEY = "auracheck:unlocks";
 
@@ -11,6 +12,10 @@ export function getUnlocks(): UnlockRecord[] {
 
 export function isAuditUnlocked(auditId: string): boolean {
   return getUnlocks().some((u) => u.auditId === auditId && u.status === "unlocked");
+}
+
+export function isProductUnlocked(auditId: string, product: ProductType): boolean {
+  return getUnlocks().some((u) => u.auditId === auditId && u.product === product && u.status === "unlocked");
 }
 
 export function recordUnlock(auditId: string, product: string, unlockCode: string, transactionRef?: string): UnlockRecord {

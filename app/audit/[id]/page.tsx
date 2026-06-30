@@ -7,10 +7,13 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
+
 import { generateFreeAuraReport, generateFreeReportWithPersonalization } from "@/lib/aura-engine/generateFreeAuraReport";
 import { RecommendationSection } from "@/components/products/RecommendationSection";
-import type { FreeAuraResult, FullAuraReport } from "@/types";
+import type { FreeAuraResult, FullAuraReport, ProductType } from "@/types";
 import type { PersonalizationResult } from "@/types/personalization";
+import type { ProfileAuditResult } from "@/types/profileAudit";
+import type { GlowUpPlan } from "@/types/glowup";
 import { generateGoalStrategy, generateGoalStrategyTitle } from "@/lib/aura-engine/goalStrategy";
 
 const AUDIT_TYPE_LABELS: Record<string, string> = {
@@ -43,6 +46,12 @@ const STATUS_BADGE: Record<string, { label: string; variant: "default" | "warnin
   full_report: { label: "Full Report", variant: "premium" },
 };
 
+const PRODUCT_CTA: { type: ProductType; name: string; price: number; gradient: string; features: string[] }[] = [
+  { type: "aura_report", name: "Full Aura Report", price: 99, gradient: "from-purple-600 to-pink-500", features: ["Full visual breakdown", "Detailed status leak analysis", "Budget upgrade roadmap", "Shareable Aura card", "Product recommendations"] },
+  { type: "dating_audit", name: "Dating/Profile Audit", price: 299, gradient: "from-rose-500 to-red-500", features: ["Profile Presentation Score", "Bio/prompt/caption feedback", "Red-flag cleanup", "Suggested bio versions", "Photo order strategy"] },
+  { type: "glowup_plan", name: "30-Day Glow-Up Plan", price: 499, gradient: "from-amber-500 to-orange-500", features: ["30 daily missions", "4-week structured plan", "Budget roadmap (₹0–₹25K+)", "Photo/grooming/outfit system", "Progress tracker"] },
+];
+
 function ScoreGauge({ score, size = "lg" }: { score: number; size?: "sm" | "lg" }) {
   const dimension = size === "lg" ? "h-3" : "h-2";
   return (
@@ -54,6 +63,341 @@ function ScoreGauge({ score, size = "lg" }: { score: number; size?: "sm" | "lg" 
       <div className={`mt-2 overflow-hidden rounded-full bg-white/5 ${dimension}`}>
         <div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-700" style={{ width: `${score}%` }} />
       </div>
+    </div>
+  );
+}
+
+function DatingAuditSection({ report }: { report: ProfileAuditResult }) {
+  return (
+    <>
+      <Card className="mb-8 border-rose-500/20">
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <Badge variant="premium">Unlocked</Badge>
+            <h2 className="mt-2 text-lg font-bold text-white">Dating/Profile Audit</h2>
+          </div>
+          <div className="text-right">
+            <div className="text-xs text-gray-500">Profile Presentation Score</div>
+            <div className="text-3xl font-bold text-white">{report.profileScore}</div>
+          </div>
+        </div>
+        <p className="mb-4 text-sm text-gray-300">{report.profileFrictionSummary}</p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {([
+            { label: "Clarity", value: report.textMetrics.clarityScore },
+            { label: "Originality", value: report.textMetrics.originalityScore },
+            { label: "Warmth", value: report.textMetrics.warmthScore },
+            { label: "Confidence Signal", value: report.textMetrics.confidenceSignalScore },
+            { label: "Readability", value: report.textMetrics.readabilityScore },
+          ] as const).map((m) => (
+            <div key={m.label}>
+              <div className="mb-1 flex justify-between text-xs"><span className="text-gray-500">{m.label}</span><span className="text-gray-400">{m.value}</span></div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
+                <div className="h-full rounded-full bg-gradient-to-r from-rose-500 to-red-500" style={{ width: `${m.value}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {report.bioFeedback && (
+        <Card className="mb-8">
+          <h3 className="mb-3 text-sm font-semibold text-white">Bio Feedback</h3>
+          <p className="mb-2 text-sm text-gray-300">{report.bioFeedback.overall}</p>
+          <p className="mb-2 text-xs text-gray-500">{report.bioFeedback.lengthAssessment}</p>
+          {report.bioFeedback.strengths.length > 0 && (
+            <div className="mb-2"><div className="mb-1 text-xs text-emerald-400">Strengths</div><ul className="space-y-1">{report.bioFeedback.strengths.map((s) => (<li key={s} className="flex items-start gap-2 text-xs text-gray-300"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-emerald-400" />{s}</li>))}</ul></div>
+          )}
+          {report.bioFeedback.weaknesses.length > 0 && (
+            <div><div className="mb-1 text-xs text-amber-400">Weaknesses</div><ul className="space-y-1">{report.bioFeedback.weaknesses.map((w) => (<li key={w} className="flex items-start gap-2 text-xs text-gray-300"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-amber-400" />{w}</li>))}</ul></div>
+          )}
+        </Card>
+      )}
+
+      {report.promptFeedback.length > 0 && (
+        <Card className="mb-8">
+          <h3 className="mb-3 text-sm font-semibold text-white">Prompt / Caption Feedback</h3>
+          <div className="space-y-3">
+            {report.promptFeedback.map((pf, i) => (
+              <div key={i} className="rounded-lg bg-white/5 p-3">
+                <div className="mb-1 text-xs text-gray-500">Prompt {i + 1}</div>
+                <p className="mb-1 text-sm text-white">{pf.prompt}</p>
+                <p className="mb-1 text-xs text-gray-400">{pf.feedback}</p>
+                <p className="text-xs text-purple-300">{pf.suggestion}</p>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {report.redFlags.length > 0 && (
+        <Card className="mb-8 border-red-500/20">
+          <h3 className="mb-3 text-sm font-semibold text-white">Red Flags</h3>
+          <ul className="space-y-2">
+            {report.redFlags.map((f) => (
+              <li key={f} className="flex items-start gap-2 text-xs text-gray-300">
+                <svg className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+                {f}
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
+      <Card className="mb-8">
+        <h3 className="mb-3 text-sm font-semibold text-white">Suggested Bio Versions</h3>
+        <div className="space-y-2">
+          {report.suggestedBioVersions.map((v, i) => (
+            <div key={i} className="rounded-lg bg-white/5 p-3 text-xs text-gray-300">{v}</div>
+          ))}
+        </div>
+      </Card>
+
+      <Card className="mb-8">
+        <h3 className="mb-3 text-sm font-semibold text-white">Prompt Ideas</h3>
+        <ul className="space-y-1">
+          {report.suggestedPromptIdeas.map((idea) => (
+            <li key={idea} className="flex items-start gap-2 text-xs text-gray-300"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-purple-400" />{idea}</li>
+          ))}
+        </ul>
+      </Card>
+
+      <Card className="mb-8">
+        <h3 className="mb-3 text-sm font-semibold text-white">Photo Order Strategy</h3>
+        <ul className="space-y-1">
+          {report.photoOrderStrategy.map((s) => (
+            <li key={s} className="flex items-start gap-2 text-xs text-gray-300"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-emerald-400" />{s}</li>
+          ))}
+        </ul>
+      </Card>
+
+      <div className="mb-8 grid gap-4 sm:grid-cols-2">
+        <Card className="border-emerald-500/20">
+          <h3 className="mb-2 text-sm font-semibold text-emerald-400">Do This</h3>
+          <ul className="space-y-1">
+            {report.doThis.map((d) => (
+              <li key={d} className="flex items-start gap-2 text-xs text-gray-300"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-emerald-400" />{d}</li>
+            ))}
+          </ul>
+        </Card>
+        <Card className="border-red-500/20">
+          <h3 className="mb-2 text-sm font-semibold text-red-400">Avoid This</h3>
+          <ul className="space-y-1">
+            {report.avoidThis.map((a) => (
+              <li key={a} className="flex items-start gap-2 text-xs text-gray-300"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-red-400" />{a}</li>
+            ))}
+          </ul>
+        </Card>
+      </div>
+
+      <Card className="mb-8 border-purple-500/20">
+        <h3 className="mb-2 text-sm font-semibold text-white">Final Profile Strategy</h3>
+        <p className="text-sm text-gray-300">{report.finalProfileStrategy}</p>
+      </Card>
+    </>
+  );
+}
+
+function GlowUpSection({ plan }: { plan: GlowUpPlan }) {
+  const [weekIndex, setWeekIndex] = useState(0);
+  return (
+    <>
+      <Card className="mb-8 border-amber-500/20">
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <Badge variant="premium">Unlocked</Badge>
+            <h2 className="mt-2 text-lg font-bold text-white">30-Day Glow-Up Plan</h2>
+          </div>
+          <div className="text-right">
+            <div className="text-xs text-gray-500">Plan Score</div>
+            <div className="text-3xl font-bold text-amber-400">{plan.planScore}</div>
+          </div>
+        </div>
+        <h3 className="mb-2 text-sm font-semibold text-white">{plan.planTitle}</h3>
+        <p className="mb-3 text-sm text-gray-300">{plan.startingPointSummary}</p>
+        <div className="rounded-lg bg-amber-500/10 p-3">
+          <div className="mb-1 text-xs text-amber-400">Primary Bottleneck</div>
+          <p className="text-sm text-gray-300">{plan.primaryBottleneck}</p>
+        </div>
+      </Card>
+
+      {/* ─── Weekly Plan ─── */}
+      <div className="mb-8">
+        <div className="mb-4 flex items-center gap-2">
+          {plan.weeklyPlan.map((w) => (
+            <button
+              key={w.weekNumber}
+              onClick={() => setWeekIndex(w.weekNumber - 1)}
+              className={`rounded-full px-3 py-1 text-xs transition-all ${
+                weekIndex === w.weekNumber - 1
+                  ? "bg-amber-500/20 text-amber-300"
+                  : "bg-white/5 text-gray-500 hover:text-gray-300"
+              }`}
+            >
+              W{w.weekNumber}
+            </button>
+          ))}
+        </div>
+        {plan.weeklyPlan[weekIndex] && (
+          <Card>
+            <div className="mb-3 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-white">Week {plan.weeklyPlan[weekIndex].weekNumber}: {plan.weeklyPlan[weekIndex].theme}</h3>
+                <p className="text-xs text-gray-400">{plan.weeklyPlan[weekIndex].objective}</p>
+              </div>
+              <Badge variant="premium">{plan.weeklyPlan[weekIndex].estimatedCost}</Badge>
+            </div>
+            <div className="mb-3 space-y-1">
+              {plan.weeklyPlan[weekIndex].missions.map((m) => (
+                <div key={m.day} className="flex items-start gap-2 text-xs">
+                  <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded bg-white/5 text-[10px] text-gray-500">{m.day.replace("Day ", "")}</span>
+                  <div><span className="text-gray-300">{m.title}</span><p className="text-gray-500">{m.task}</p></div>
+                </div>
+              ))}
+            </div>
+            <details>
+              <summary className="cursor-pointer text-xs text-gray-500 hover:text-gray-300">Checklist</summary>
+              <ul className="mt-2 space-y-1">
+                {plan.weeklyPlan[weekIndex].checklist.map((c) => (
+                  <li key={c} className="flex items-start gap-2 text-xs text-gray-300"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-amber-400" />{c}</li>
+                ))}
+              </ul>
+            </details>
+          </Card>
+        )}
+      </div>
+
+      {/* ─── Daily Missions ─── */}
+      <Card className="mb-8">
+        <h3 className="mb-3 text-sm font-semibold text-white">Daily Missions</h3>
+        <div className="space-y-2">
+          {plan.dailyMissions.map((m) => (
+            <div key={m.day} className="flex items-start gap-3 rounded-lg bg-white/5 p-2.5">
+              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-xs font-bold text-amber-300">{m.day}</span>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-white">{m.title}</span>
+                  <span className="text-[10px] text-gray-600">{m.timeRequired}</span>
+                </div>
+                <p className="mt-0.5 text-xs text-gray-400">{m.task}</p>
+                <p className="mt-0.5 text-[10px] text-gray-600">{m.reason}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* ─── Budget Roadmap ─── */}
+      <Card className="mb-8">
+        <h3 className="mb-3 text-sm font-semibold text-white">Budget Roadmap</h3>
+        <div className="space-y-3">
+          {([
+            { label: "Free — ₹0", key: "free" as const },
+            { label: "Under ₹2,000", key: "under2000" as const },
+            { label: "Under ₹5,000", key: "under5000" as const },
+            { label: "Under ₹10,000", key: "under10000" as const },
+            { label: "Under ₹25,000+", key: "under25000" as const },
+          ]).map((tier) => (
+            <div key={tier.key}>
+              <div className="mb-1 text-xs text-gray-500">{tier.label}</div>
+              <ul className="space-y-1">
+                {plan.budgetRoadmap[tier.key].map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-xs text-gray-300"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-amber-400" />{item}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* ─── Systems ─── */}
+      <div className="mb-8 grid gap-4 sm:grid-cols-2">
+        <Card>
+          <h3 className="mb-2 text-sm font-semibold text-white">Photo System</h3>
+          <div className="space-y-2 text-xs text-gray-400">
+            <div><span className="text-gray-500">Best photo types:</span><ul className="mt-1 space-y-1">{plan.photoSystem.bestPhotoTypes.map((p) => (<li key={p} className="flex items-start gap-2"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-purple-400" />{p}</li>))}</ul></div>
+            <div className="mt-2"><span className="text-gray-500">Lighting:</span> {plan.photoSystem.lightingGuide}</div>
+            <div className="mt-2"><span className="text-gray-500">Framing:</span> {plan.photoSystem.framingGuide}</div>
+          </div>
+        </Card>
+        <Card>
+          <h3 className="mb-2 text-sm font-semibold text-white">Grooming System</h3>
+          <div className="space-y-2 text-xs text-gray-400">
+            <div><span className="text-gray-500">Daily:</span><ul className="mt-1 space-y-1">{plan.groomingSystem.dailyBasics.map((g) => (<li key={g} className="flex items-start gap-2"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-emerald-400" />{g}</li>))}</ul></div>
+            <div className="mt-2"><span className="text-gray-500">Weekly:</span><ul className="mt-1 space-y-1">{plan.groomingSystem.weeklyHabits.map((g) => (<li key={g} className="flex items-start gap-2"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-emerald-400" />{g}</li>))}</ul></div>
+          </div>
+        </Card>
+        <Card>
+          <h3 className="mb-2 text-sm font-semibold text-white">Outfit System</h3>
+          <div className="space-y-2 text-xs text-gray-400">
+            <div><span className="text-gray-500">Capsule wardrobe:</span><ul className="mt-1 space-y-1">{plan.outfitSystem.capsuleWardrobe.map((o) => (<li key={o} className="flex items-start gap-2"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-amber-400" />{o}</li>))}</ul></div>
+            <div className="mt-2"><span className="text-gray-500">Fit tips:</span><ul className="mt-1 space-y-1">{plan.outfitSystem.fitTips.map((o) => (<li key={o} className="flex items-start gap-2"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-amber-400" />{o}</li>))}</ul></div>
+          </div>
+        </Card>
+        <Card>
+          <h3 className="mb-2 text-sm font-semibold text-white">Background System</h3>
+          <div className="space-y-2 text-xs text-gray-400">
+            <div><span className="text-gray-500">Good:</span><ul className="mt-1 space-y-1">{plan.backgroundSystem.goodBackgrounds.map((b) => (<li key={b} className="flex items-start gap-2"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-emerald-400" />{b}</li>))}</ul></div>
+            <div className="mt-2"><span className="text-gray-500">Bad:</span><ul className="mt-1 space-y-1">{plan.backgroundSystem.badBackgrounds.map((b) => (<li key={b} className="flex items-start gap-2"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-red-400" />{b}</li>))}</ul></div>
+          </div>
+        </Card>
+      </div>
+
+      {/* ─── Avoid for Now ─── */}
+      <Card className="mb-8 border-red-500/20">
+        <h3 className="mb-2 text-sm font-semibold text-red-400">Avoid for Now</h3>
+        <ul className="space-y-1">
+          {plan.avoidForNow.map((a) => (
+            <li key={a} className="flex items-start gap-2 text-xs text-gray-300"><span className="mt-1 h-1 w-1 flex-shrink-0 rounded-full bg-red-400" />{a}</li>
+          ))}
+        </ul>
+      </Card>
+
+      {/* ─── Expected Shift ─── */}
+      <Card className="mb-8 border-amber-500/20">
+        <p className="text-sm text-gray-300">{plan.expectedPresentationShift}</p>
+      </Card>
+
+      {/* ─── Final Advice ─── */}
+      <Card className="mb-8 border-purple-500/20">
+        <h3 className="mb-2 text-sm font-semibold text-white">Final Advice</h3>
+        <p className="text-sm text-gray-300">{plan.finalAdvice}</p>
+      </Card>
+    </>
+  );
+}
+
+function ProductCTAButtons({ auditId, unlockedProducts }: { auditId: string; unlockedProducts: ProductType[] }) {
+  return (
+    <div className="mb-8 grid gap-4 sm:grid-cols-3">
+      {PRODUCT_CTA.map((product) => {
+        const isUnlocked = unlockedProducts.includes(product.type);
+        return (
+          <Card key={product.type} className={`flex flex-col border ${isUnlocked ? "border-emerald-500/20" : product.type === "aura_report" ? "border-purple-500/20" : product.type === "dating_audit" ? "border-rose-500/20" : "border-amber-500/20"}`}>
+            <div className="mb-3 flex items-center justify-between">
+              <Badge variant={isUnlocked ? "success" : "default"}>{isUnlocked ? "Unlocked" : "Locked"}</Badge>
+            </div>
+            <h3 className="mb-1 text-sm font-semibold text-white">{product.name}</h3>
+            <ul className="mb-4 space-y-1">
+              {product.features.slice(0, 3).map((f) => (
+                <li key={f} className="flex items-center gap-1.5 text-xs text-gray-400">
+                  <svg className="h-3 w-3 flex-shrink-0 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  {f}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-auto">
+              {isUnlocked ? (
+                <p className="text-xs text-emerald-400">Already unlocked</p>
+              ) : (
+                <Link href={`/unlock?auditId=${auditId}&product=${product.type}`}>
+                  <Button className="w-full" size="sm">Unlock — ₹{product.price}</Button>
+                </Link>
+              )}
+            </div>
+          </Card>
+        );
+      })}
     </div>
   );
 }
@@ -80,6 +424,11 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
   const freeResult: FreeAuraResult | undefined = audit.freeResult;
   const fullReport: FullAuraReport | undefined = audit.fullReport;
   const personalization: PersonalizationResult | undefined = audit.personalization;
+  const datingReport: ProfileAuditResult | undefined = audit.datingProfileReport;
+  const glowupPlan: GlowUpPlan | undefined = audit.glowupPlan;
+  const unlockedProducts: ProductType[] = (audit.unlockedProducts || []).filter((p): p is ProductType =>
+    p === "aura_report" || p === "dating_audit" || p === "glowup_plan"
+  );
 
   async function handleGenerate() {
     if (!audit) return;
@@ -158,7 +507,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
           </div>
         </div>
 
-        {/* ─── Full Report ─── */}
+        {/* ─── Full Report already unlocked ─── */}
         {fullReport ? (
           <>
             <Card className="mb-8">
@@ -326,8 +675,8 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
             <RecommendationSection audit={audit} />
           </>
         ) : freeResult ? (
-          /* ─── Free Score Results + Locked Teaser ─── */
           <>
+            {/* ─── Free Score Results ─── */}
             <Card className="mb-8">
               <div className="mb-6 grid gap-6 sm:grid-cols-2">
                 <div>
@@ -444,20 +793,8 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
             {/* ─── Recommendations ─── */}
             <RecommendationSection audit={audit} />
 
-            {/* ─── Locked Teaser ─── */}
-            <Card className="mb-8 border-purple-500/20">
-              <h3 className="mb-3 text-sm font-semibold text-white">Unlock Full Aura Report</h3>
-              <ul className="mb-4 space-y-1.5 text-sm text-gray-400">
-                {["Full visual breakdown", "Detailed status leak analysis", "Budget upgrade roadmap", "Shareable Aura card", "Product recommendations"].map((item) => (
-                  <li key={item} className="flex items-center gap-2">
-                    <svg className="h-3.5 w-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <Link href={`/unlock?auditId=${audit.id}&product=aura_report`}><Button className="w-full" size="sm">Unlock Full Aura Report — ₹99</Button></Link>
-              <p className="mt-2 text-center text-xs text-gray-600">Manual UPI payment — unlock via code</p>
-            </Card>
+            {/* ─── Product CTAs ─── */}
+            <ProductCTAButtons auditId={audit.id} unlockedProducts={unlockedProducts} />
           </>
         ) : (
           /* ─── Generate Button ─── */
@@ -470,12 +807,20 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
           </Card>
         )}
 
+        {/* ─── Dating Profile Audit Section (if unlocked) ─── */}
+        {datingReport && <DatingAuditSection report={datingReport} />}
+
+        {/* ─── Glow-Up Plan Section (if unlocked) ─── */}
+        {glowupPlan && <GlowUpSection plan={glowupPlan} />}
+
         {/* ─── Disclaimers ─── */}
         <div className="mb-8 space-y-2 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-xs text-gray-600">
           <p>AuraCheck analyzes presentation signals using local browser-based rules. This is guidance, not objective truth.</p>
           <p>No image is sent to an external AI service in this MVP.</p>
           <p>AuraCheck analyzes presentation, not human worth.</p>
           {fullReport && <p>This report was generated locally. No external AI or payment verification was involved.</p>}
+          {datingReport && <p>Profile guidance is for presentation clarity, not dating guarantees.</p>}
+          {glowupPlan && <p>Glow-up plan is self-improvement guidance, not a guarantee of social outcomes.</p>}
         </div>
 
         <div className="flex items-center justify-between">

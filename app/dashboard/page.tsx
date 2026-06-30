@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { getAudits, deleteAudit } from "@/lib/storage/auditStore";
-import { getUnlockedAuditCount, isAuditUnlocked } from "@/lib/storage/unlockStore";
+import { getUnlockedAuditCount } from "@/lib/storage/unlockStore";
 import { getRecommendationsForAudit } from "@/lib/recommendations/getRecommendations";
 
 const AUDIT_TYPE_LABELS: Record<string, string> = {
@@ -156,6 +156,32 @@ export default function DashboardPage() {
           );
         })()}
 
+        {/* ─── Latest Audit Product CTAs ─── */}
+        {audits.length > 0 && audits[0].freeScore !== undefined && (() => {
+          const latest = audits[0];
+          const hasDating = !!latest.datingProfileReport;
+          const hasGlowup = !!latest.glowupPlan;
+          if (!hasDating && !hasGlowup) return null;
+          return (
+            <Card className="mb-8 border-emerald-500/20">
+              <div className="flex flex-wrap items-center gap-4">
+                {hasGlowup && (
+                  <Link href={`/audit/${latest.id}`} className="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300">
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                    Continue your 30-day plan
+                  </Link>
+                )}
+                {hasDating && (
+                  <Link href={`/audit/${latest.id}`} className="flex items-center gap-2 text-sm text-rose-400 hover:text-rose-300">
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    Profile strategy ready
+                  </Link>
+                )}
+              </div>
+            </Card>
+          );
+        })()}
+
         {/* ─── Repeated Pattern ─── */}
         {repeatedLeak && (
           <Card className="mb-8 border-amber-500/20">
@@ -235,9 +261,19 @@ export default function DashboardPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Badge variant={statusInfo.variant}>{statusInfo.label}</Badge>
-                        {isAuditUnlocked(audit.id) && (
-                          <svg className="h-3.5 w-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        {audit.fullReport && (
+                          <svg className="h-3.5 w-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><title>Full Report</title>
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                          </svg>
+                        )}
+                        {audit.datingProfileReport && (
+                          <svg className="h-3.5 w-3.5 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><title>Dating Audit</title>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        )}
+                        {audit.glowupPlan && (
+                          <svg className="h-3.5 w-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><title>Glow-Up Plan</title>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                           </svg>
                         )}
                       </div>

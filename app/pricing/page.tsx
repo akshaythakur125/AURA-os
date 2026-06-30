@@ -35,34 +35,41 @@ const plans = [
     ],
     href: "/products/aura-report",
     highlighted: true,
+    badgeText: "Best starter",
   },
   {
     name: "Dating / Profile Audit",
     price: "299",
     tagline: "Optimize how you present yourself on dating apps and social profiles.",
     features: [
-      "Profile screenshot analysis",
-      "Bio and prompt guidance",
-      "Photo order strategy",
-      "Red-flag cleanup suggestions",
-      "Platform-specific tips (Hinge, Bumble, Instagram)",
+      "Profile Presentation Score",
+      "Bio and prompt feedback with suggestions",
+      "Photo order strategy for maximum impact",
+      "Red-flag presentation cleanup",
+      "3 suggested bio versions and 5 prompt ideas",
+      "Text metrics (clarity, originality, warmth)",
+      "Cliche detection and originality scoring",
     ],
     href: "/products/dating-audit",
-    disclaimer: "No dating guarantees. AuraCheck analyzes presentation, not outcomes.",
+    badgeText: "Best for profile clarity",
+    disclaimer: "Profile guidance is for presentation clarity, not dating guarantees.",
   },
   {
     name: "30-Day Glow-Up Plan",
     price: "499",
     tagline: "A structured month-long roadmap for your visual upgrade.",
     features: [
-      "4-week plan with weekly focus areas",
-      "Daily missions and habit trackers",
-      "Budget roadmap from free to high-impact",
-      "Full presentation system",
-      "Before/after comparison support",
+      "4-week plan with weekly focus areas and checklist",
+      "30 daily missions with practical actionable tasks",
+      "Budget roadmap from ₹0 to ₹25,000+",
+      "Photo, grooming, outfit, and background systems",
+      "Avoid-for-now guidance to prevent waste",
+      "Progress tracking with check-ins",
+      "Shopping and action list",
     ],
     href: "/products/glowup-plan",
-    disclaimer: "No transformation guarantees. Results depend on individual effort and consistency.",
+    badgeText: "Best value",
+    disclaimer: "Glow-up plan is self-improvement guidance, not a guarantee of social outcomes.",
   },
 ];
 
@@ -105,9 +112,9 @@ export default function PricingPage() {
             key={plan.name}
             className={`relative flex flex-col ${plan.highlighted ? "border-purple-500/30 ring-1 ring-purple-500/20" : ""}`}
           >
-            {plan.highlighted && (
-              <Badge variant="premium" className="absolute -top-2 right-4">
-                Popular
+            {plan.badgeText && (
+              <Badge variant={plan.highlighted ? "premium" : "success"} className="absolute -top-2 right-4">
+                {plan.badgeText}
               </Badge>
             )}
             <div className="mb-1 text-xs text-gray-500">one-time</div>

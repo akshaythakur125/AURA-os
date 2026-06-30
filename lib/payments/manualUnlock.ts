@@ -1,7 +1,10 @@
-export function generateAuditSpecificCode(auditId: string): string {
+export type ProductCodeType = "aura_report" | "dating_audit" | "glowup_plan";
+
+export function generateAuditSpecificCode(auditId: string, product: ProductCodeType = "aura_report"): string {
   const raw = auditId.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
   const suffix = raw.slice(-6);
-  return `AURA-${suffix}`;
+  const prefix = product === "dating_audit" ? "DATE" : product === "glowup_plan" ? "GLOW" : "AURA";
+  return `${prefix}-${suffix}`;
 }
 
 export function getDemoCode(): string {
@@ -18,10 +21,10 @@ export function getUpiiId(): string {
   return "your-upi-id@upi";
 }
 
-export function validateUnlockCode(inputCode: string, auditId: string): boolean {
+export function validateUnlockCode(inputCode: string, auditId: string, product: ProductCodeType = "aura_report"): boolean {
   const trimmed = inputCode.trim();
   if (!trimmed) return false;
   if (trimmed === getDemoCode()) return true;
-  if (trimmed === generateAuditSpecificCode(auditId)) return true;
+  if (trimmed === generateAuditSpecificCode(auditId, product)) return true;
   return false;
 }

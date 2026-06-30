@@ -1,4 +1,6 @@
 import type { DeepAuditInput, PersonalizationResult } from "@/types/personalization";
+import type { ProfileTextInput, ProfileAuditResult } from "@/types/profileAudit";
+import type { GlowUpPlan } from "@/types/glowup";
 
 export type AuditType =
   | "photo"
@@ -25,6 +27,8 @@ export interface ImageMeta {
   height: number;
 }
 
+export type ProductType = "aura_report" | "dating_audit" | "glowup_plan";
+
 export type ReportStatus = "draft" | "free_generated" | "full_report";
 
 export interface Audit {
@@ -42,6 +46,10 @@ export interface Audit {
   fullReport?: FullAuraReport;
   deepInput?: DeepAuditInput;
   personalization?: PersonalizationResult;
+  profileTextInput?: ProfileTextInput;
+  datingProfileReport?: ProfileAuditResult;
+  glowupPlan?: GlowUpPlan;
+  unlockedProducts?: ProductType[];
   createdAt: string;
   updatedAt: string;
 }
