@@ -3,7 +3,7 @@
 import { getItem, setItem } from "@/lib/storage/localStore";
 import type { Audit } from "@/types";
 
-const AUDITS_KEY = "auracheck:audits";
+const AUDITS_KEY = "auracheck:v1:audits";
 
 function generateId(): string {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
@@ -12,7 +12,27 @@ function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
+// Migrate from old key if needed
+const OLD_KEY = "auracheck:audits";
+function migrateIfNeeded() {
+  if (typeof window !== "undefined") {
+    try {
+      const old = localStorage.getItem(OLD_KEY);
+      if (old) {
+        const existing = localStorage.getItem(AUDITS_KEY);
+        if (!existing) {
+          localStorage.setItem(AUDITS_KEY, old);
+        }
+        localStorage.removeItem(OLD_KEY);
+      }
+    } catch {
+      // skip migration errors
+    }
+  }
+}
+
 export function getAudits(): Audit[] {
+  migrateIfNeeded();
   return getItem<Audit[]>(AUDITS_KEY, []);
 }
 

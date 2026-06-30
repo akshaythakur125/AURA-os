@@ -1,5 +1,3 @@
-import { getItem, setItem } from "@/lib/storage/localStore";
-
 export interface StorageHealthResult {
   localStorageAvailable: boolean;
   estimatedUsage: number;

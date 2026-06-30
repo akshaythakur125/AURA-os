@@ -1,5 +1,3 @@
-import { getItem, setItem } from "@/lib/storage/localStore";
-
 export interface StorageSummaryEntry {
   key: string;
   label: string;
@@ -29,17 +27,6 @@ const STORE_CONFIGS: { key: string; label: string }[] = [
   { key: "auracheck:v1:onboarding", label: "Onboarding State" },
   { key: "auracheck:v1:founder_checklist", label: "Founder Checklist" },
 ];
-
-function getRawItem(key: string): unknown {
-  try {
-    if (typeof window === "undefined") return null;
-    const raw = localStorage.getItem(key);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
 
 export function getStorageSummary(): StorageSummary {
   const available = typeof window !== "undefined" && typeof localStorage !== "undefined";

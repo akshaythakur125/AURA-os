@@ -15,30 +15,7 @@ import type { PersonalizationResult } from "@/types/personalization";
 import type { ProfileAuditResult } from "@/types/profileAudit";
 import type { GlowUpPlan } from "@/types/glowup";
 import { generateGoalStrategy, generateGoalStrategyTitle } from "@/lib/aura-engine/goalStrategy";
-
-const AUDIT_TYPE_LABELS: Record<string, string> = {
-  photo: "Photo Aura Check",
-  instagram: "Instagram Profile Audit",
-  dating: "Dating Profile Audit",
-  outfit: "Outfit Audit",
-  background: "Room / Background Audit",
-};
-
-const GOAL_LABELS: Record<string, string> = {
-  dating: "Dating",
-  instagram: "Instagram",
-  college: "College",
-  office: "Office",
-  glowup: "General Glow-Up",
-};
-
-const BUDGET_LABELS: Record<string, string> = {
-  "0": "₹0 — Free only",
-  "2000": "₹2,000",
-  "5000": "₹5,000",
-  "10000": "₹10,000",
-  "25000": "₹25,000+",
-};
+import { AUDIT_TYPE_LABELS, GOAL_LABELS, BUDGET_LABELS } from "@/lib/audit/auditUtils";
 
 const STATUS_BADGE: Record<string, { label: string; variant: "default" | "warning" | "success" | "premium" }> = {
   draft: { label: "Draft", variant: "default" },

@@ -16,22 +16,7 @@ import { getOrCreateReferralProfile, getReferralStats } from "@/lib/storage/refe
 import { getProgressComparisons } from "@/lib/storage/progressStore";
 import { copyInviteLink, copyInviteMessage, nativeShare, incrementInviteCount } from "@/lib/referrals/referralUtils";
 import { trackEvent } from "@/lib/storage/analyticsStore";
-
-const AUDIT_TYPE_LABELS: Record<string, string> = {
-  photo: "Photo Aura Check",
-  instagram: "Instagram Profile Audit",
-  dating: "Dating Profile Audit",
-  outfit: "Outfit Audit",
-  background: "Room / Background Audit",
-};
-
-const GOAL_LABELS: Record<string, string> = {
-  dating: "Dating",
-  instagram: "Instagram",
-  college: "College",
-  office: "Office",
-  glowup: "General Glow-Up",
-};
+import { AUDIT_TYPE_LABELS, GOAL_LABELS } from "@/lib/audit/auditUtils";
 
 const STATUS_BADGE: Record<string, { label: string; variant: "default" | "warning" | "success" | "premium" }> = {
   draft: { label: "Draft", variant: "default" },

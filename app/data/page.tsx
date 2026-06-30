@@ -4,15 +4,24 @@ import { useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { ErrorState } from "@/components/ui/ErrorState";
 import { getStorageSummary, formatBytes } from "@/lib/data/getStorageSummary";
 import { downloadSnapshot, validateSnapshot, importAllData } from "@/lib/data/exportAllData";
 import type { DataSnapshot } from "@/lib/data/exportAllData";
 import { clearLocalData } from "@/lib/data/clearLocalData";
 import type { ClearTarget } from "@/lib/data/clearLocalData";
-import { getStorageHealth } from "@/lib/storage/storageHealth";
+import { getStorageHealth, repairKnownStores } from "@/lib/storage/storageHealth";
+
+const CLEAR_ITEMS: { target: ClearTarget; label: string; require?: string }[] = [
+  { target: "all", label: "Clear All Data", require: "DELETE" },
+  { target: "audits", label: "Clear Audits Only" },
+  { target: "orders", label: "Clear Orders Only" },
+  { target: "analytics", label: "Clear Analytics Only" },
+  { target: "leads", label: "Clear Leads Only" },
+  { target: "referral", label: "Clear Referral Data" },
+  { target: "challenges", label: "Clear Challenge Entries" },
+  { target: "progress", label: "Clear Progress Data" },
+];
 
 export default function DataPage() {
   const [summary] = useState(() => getStorageSummary());
@@ -95,7 +104,7 @@ export default function DataPage() {
               <div className="text-xs text-gray-500">Corrupt Stores</div>
               <div className="mt-1 text-sm text-white">{health.corruptStores.length > 0 ? `${health.corruptStores.length} found` : "None"}</div>
               {health.corruptStores.length > 0 && (
-                <Button size="sm" variant="ghost" onClick={() => { const { repaired } = window.__repairStores?.() ?? { repaired: 0 }; setStatus(`Repaired stores.`); }} className="mt-2">Repair</Button>
+                <Button size="sm" variant="ghost" onClick={() => { const { repaired } = repairKnownStores(); setStatus(`Repaired ${repaired} store(s).`); }} className="mt-2">Repair</Button>
               )}
             </div>
           </div>
@@ -168,16 +177,7 @@ export default function DataPage() {
         <Card className="mb-8 border-red-500/20">
           <h3 className="mb-4 text-sm font-semibold text-white">Clear Data</h3>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {([
-              { target: "all" as ClearTarget, label: "Clear All Data", require: "DELETE" },
-              { target: "audits" as ClearTarget, label: "Clear Audits Only" },
-              { target: "orders" as ClearTarget, label: "Clear Orders Only" },
-              { target: "analytics" as ClearTarget, label: "Clear Analytics Only" },
-              { target: "leads" as ClearTarget, label: "Clear Leads Only" },
-              { target: "referral" as ClearTarget, label: "Clear Referral Data" },
-              { target: "challenges" as ClearTarget, label: "Clear Challenge Entries" },
-              { target: "progress" as ClearTarget, label: "Clear Progress Data" },
-            ].map((item) => (
+            {CLEAR_ITEMS.map((item) => (
               <div key={item.target}>
                 {clearTarget === item.target ? (
                   <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-3">

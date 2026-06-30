@@ -4,9 +4,27 @@ import { getItem, setItem } from "@/lib/storage/localStore";
 import type { UnlockRecord } from "@/types/payment";
 import type { ProductType } from "@/types";
 
-const UNLOCKS_KEY = "auracheck:unlocks";
+const UNLOCKS_KEY = "auracheck:v1:unlocks";
+const OLD_UNLOCKS_KEY = "auracheck:unlocks";
+function migrateUnlocksIfNeeded() {
+  if (typeof window !== "undefined") {
+    try {
+      const old = localStorage.getItem(OLD_UNLOCKS_KEY);
+      if (old) {
+        const existing = localStorage.getItem(UNLOCKS_KEY);
+        if (!existing) {
+          localStorage.setItem(UNLOCKS_KEY, old);
+        }
+        localStorage.removeItem(OLD_UNLOCKS_KEY);
+      }
+    } catch {
+      // skip
+    }
+  }
+}
 
 export function getUnlocks(): UnlockRecord[] {
+  migrateUnlocksIfNeeded();
   return getItem<UnlockRecord[]>(UNLOCKS_KEY, []);
 }
 

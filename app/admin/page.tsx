@@ -19,7 +19,6 @@ import { getChallengeEntries } from "@/lib/storage/challengeStore";
 import { CHALLENGES } from "@/config/challenges";
 import { getProgressComparisons, getProgressStats } from "@/lib/storage/progressStore";
 import { getItem, setItem } from "@/lib/storage/localStore";
-import { exportAllData } from "@/lib/data/exportAllData";
 
 const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   draft: "Draft",

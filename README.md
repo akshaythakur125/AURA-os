@@ -4,91 +4,197 @@ First-impression intelligence for the modern age.
 
 AuraCheck analyzes photos, profiles, outfits, and visual presentation to identify status leaks and provide upgrade paths — all in your browser with no external APIs.
 
+## What AuraCheck Is
+
+AuraCheck is a **local-only MVP** for testing demand around first-impression analysis. It provides:
+
+- Free Aura Score based on image analysis
+- ₹99 Full Aura Report with detailed visual breakdown
+- ₹299 Dating/Profile Audit with bio and prompt feedback
+- ₹499 30-Day Glow-Up Plan with weekly missions
+- Marketplace recommendations based on detected status leaks
+- Referral, challenge, and progress tracking features
+
+## Local-Only Architecture
+
+All logic runs exclusively in the browser:
+
+- **Image analysis** — Canvas pixel analysis for brightness, contrast, saturation, sharpness
+- **Data storage** — Browser localStorage
+- **Payments** — Manual UPI flow (no Razorpay/Stripe)
+- **No external APIs** — No Supabase, OpenAI, Gemini, or any server-side processing
+- **No external database** — No MongoDB, PostgreSQL, or similar
+- **No external authentication** — No Auth0, Clerk, or similar
+- **Image/data never leaves the browser**
+
 ## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm
+
+### Install
 
 ```bash
 npm install
+```
+
+### Environment Variables
+
+Copy `.env.example` to `.env.local`:
+
+```env
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_MANUAL_UPI_ID=your-upi-id@upi
+NEXT_PUBLIC_SUPPORT_EMAIL=support@example.com
+NEXT_PUBLIC_OWNER_WHATSAPP=+919999999999
+NEXT_PUBLIC_DEMO_UNLOCK_CODE=DEMO123
+NEXT_PUBLIC_LOCAL_ADMIN_CODE=your-admin-code
+```
+
+### Run
+
+```bash
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Tech Stack
+### Build for Production
 
-- Next.js 16 App Router
-- TypeScript
-- Tailwind CSS v4
-- ESLint
+```bash
+npm run build
+npm run start
+```
 
-## Architecture
+## npm Scripts
 
-- All logic runs client-side
-- localStorage for data persistence
-- No external APIs, databases, or authentication
-- Manual UPI payment flow (MVP)
+| Script | Description |
+|---|---|
+| `npm run dev` | Start development server |
+| `npm run build` | Create production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run TypeScript type checking |
 
 ## Routes
 
-- `/` — Homepage
-- `/dashboard` — User dashboard
-- `/audit/new` — New aura check
-- `/pricing` — Pricing & products
-- `/unlock` — Unlock purchased report
-- `/admin` — Admin panel
-- `/privacy` — Privacy policy
-- `/terms` — Terms of service
+| Route | Description |
+|---|---|
+| `/` | Homepage |
+| `/dashboard` | User dashboard with audits, referrals, progress |
+| `/audit/new` | Create a new aura check |
+| `/audit/[id]` | Audit detail — score, report, management |
+| `/pricing` | Pricing & comparison |
+| `/unlock` | Unlock purchased report with code |
+| `/admin` | Admin panel — orders, analytics, founder checklist |
+| `/privacy` | Privacy policy |
+| `/terms` | Terms of service |
+| `/privacy-center` | User-facing privacy information hub |
+| `/data` | Data control — export, import, clear |
+| `/help` | Help & FAQ |
+| `/install` | PWA install instructions |
+| `/shop` | Marketplace recommendations |
+| `/examples` | Sample reports and insights |
+| `/products/aura-report` | ₹99 Full Aura Report product page |
+| `/products/dating-audit` | ₹299 Dating/Profile Audit product page |
+| `/products/glowup-plan` | ₹499 30-Day Glow-Up Plan product page |
+| `/challenges` | Community challenges |
+| `/challenges/[slug]` | Individual challenge detail |
+| `/progress` | Before/after progress tracker |
 
-## Environment Variables
+## Manual Monetization Flow
 
-Copy `.env.example` to `.env.local` and fill in as needed. Most features work without configuration.
+AuraCheck uses a **manual UPI payment flow** — no payment API integration.
 
-## Manual Monetization (MVP)
-
-AuraCheck uses a **manual UPI payment flow** — no Razorpay, no Stripe, no payment API.
-
-### How it works
-
-1. User clicks "Unlock" on a product (₹99 / ₹299 / ₹499).
-2. User sees UPI payment instructions with the owner's UPI ID.
-3. User copies UPI details, opens their UPI app, and pays.
-4. User submits payment details (name, contact, UPI ref) via the unlock page.
-5. A local order is saved in the browser's localStorage.
-6. User sends the payment summary to the owner/admin via WhatsApp or manually.
-7. Admin (via `/admin`) sees the order, generates an unlock code, and shares it.
-8. User enters the unlock code on the unlock page.
-9. Product unlocks — report/audit/plan is generated locally.
+1. User unlocks a product (₹99 / ₹299 / ₹499)
+2. User sees UPI payment instructions with the owner's UPI ID
+3. User pays manually via their UPI app
+4. User submits payment details on the unlock page
+5. A local order is saved in localStorage
+6. User sends payment summary to the owner/admin
+7. Admin (at `/admin`) generates an unlock code
+8. User enters the unlock code on the unlock page
+9. Product is unlocked — report/audit/plan is generated locally
 
 ### Products
 
 | Product | Price | Code Prefix |
 |---|---|---|
-| Full Aura Report | ₹99 | AURA-XXXXXX |
-| Dating/Profile Audit | ₹299 | DATE-XXXXXX |
-| 30-Day Glow-Up Plan | ₹499 | GLOW-XXXXXX |
+| Full Aura Report | ₹99 | AURA |
+| Dating/Profile Audit | ₹299 | DATE |
+| 30-Day Glow-Up Plan | ₹499 | GLOW |
 
-### Admin panel
+## Admin Unlock Code Flow
 
-- URL: `/admin`
-- Gate code: `ADMINDEMO` (configurable via `NEXT_PUBLIC_LOCAL_ADMIN_CODE`)
-- Shows all orders, analytics, and export tools
-- Generate unlock codes per order
-- Copy codes and mark statuses
+1. Go to `/admin` and enter the gate code
+2. Open the **Orders** tab
+3. Find a submitted order
+4. Click **Generate Code** (auto-generates product-prefixed code)
+5. Click **Copy Code** to share with the user
+6. Click **Mark Unlocked** after confirming payment
 
-### Important notes
+## Export / Import Data
 
-- **No automatic payment verification.** UPI payments are not verified by this app. Users pay manually and share the summary with the owner.
-- **No Razorpay or payment API.** This is a manual MVP flow for demand testing.
-- **Not production-secure.** The admin gate uses a hardcoded code and sessionStorage. Do not use this as a real admin authentication system.
-- **All data stays local.** Orders, audits, analytics — all stored in browser localStorage.
-- **Scores are guidance, not objective truth.**
-- **AuraCheck analyzes presentation, not human worth.**
-- **No external AI service is used in this MVP.**
+Users can export all their data from `/data`:
+
+- **Export** — Downloads a JSON backup of all localStorage stores
+- **Import** — Upload a previous export in merge or replace mode
+- **Clear** — Clear specific data types or all data (with "DELETE" confirmation)
+
+Admin can also export a full snapshot from the **Checklist** tab in `/admin`.
+
+## How to Test All Three Paid Products
+
+1. **Free Aura Score** — Create an audit → Generate Free Aura Score
+2. **₹99 Full Aura Report** — Use demo unlock code: `DEMO123` on `/unlock`
+3. **₹299 Dating/Profile Audit** — Create a dating-type audit → unlock with `DEMO123`
+4. **₹499 30-Day Glow-Up Plan** — Unlock on any scored audit → enter `DEMO123`
+
+## Tech Stack
+
+- **Next.js 16** App Router (Turbopack)
+- **TypeScript** — Strict mode
+- **Tailwind CSS v4** — Dark premium theme
+- **ESLint** — Flat config
+- **localStorage** — All data persistence
+
+## Known Limitations
+
+- Private/incognito browsing may clear localStorage
+- No real payment verification — manual UPI flow only
+- Admin gate uses a shared code in sessionStorage
+- Image analysis is rule-based, not AI-powered
+- Referral tracking is per-browser only
+- No multi-device sync or user accounts
+- PWA icons require actual PNG files at `/public/icon-192.png` and `/icon-512.png`
+
+## Production Upgrade Path
+
+For a production-ready version, consider:
+
+- **Authentication** — Add backend auth (Supabase Auth, Clerk, NextAuth)
+- **Database** — PostgreSQL/MySQL for data persistence across devices
+- **Real Payment Verification** — Razorpay/Stripe webhook integration
+- **Secure File Storage** — Cloudinary/S3 for uploaded images
+- **External AI** — OpenAI/Gemini API for richer analysis (optional)
+- **Legal & Privacy Review** — Consult a lawyer for regulatory compliance
+- **Server-Side Admin** — Proper admin authentication and dashboard
+- **Email/Notifications** — Transactional emails for payment and unlock flows
 
 ## Safety & Trust
 
-- Do not claim automatic payment verification.
-- Do not claim guaranteed dating, social, or career outcomes.
+- AuraCheck analyzes presentation signals, not human worth.
+- Scores are guidance, not objective truth.
+- No external AI service is used in this MVP.
+- Your image stays in this browser in the local-only MVP.
+- Do not upload someone else's private image without permission.
+- AuraCheck does not infer caste, religion, ethnicity, sexuality, health, exact income, or protected traits.
+- Manual payment is not automatically verified.
 - Profile guidance is for presentation clarity, not dating guarantees.
 - Glow-up plan is self-improvement guidance, not a guarantee of social outcomes.
-- No protected attributes (caste, religion, ethnicity, sexuality, health details, exact income) are collected.
-- No body shaming. Archetypes describe presentation style, not identity or worth.
+
+## License
+
+Private — All rights reserved.
