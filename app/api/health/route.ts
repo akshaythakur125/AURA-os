@@ -14,6 +14,17 @@ export async function GET() {
   const refreshSecret = !!process.env.COMMERCE_REFRESH_SECRET;
   const affiliateDisclosure = process.env.NEXT_PUBLIC_AFFILIATE_DISCLOSURE_ENABLED !== "false";
 
+  // Determine host mode
+  let hostMode = "unknown";
+  try {
+    const url = new URL(appUrl);
+    const host = url.hostname.toLowerCase();
+    if (host === "localhost" || host === "127.0.0.1") hostMode = "local";
+    else if (host.includes("vercel.app")) hostMode = "preview";
+    else if (host.includes("fixmyaura.shop")) hostMode = "production";
+    else hostMode = "custom";
+  } catch { hostMode = "unknown"; }
+
   return NextResponse.json(
     {
       status: "ok",
@@ -25,6 +36,7 @@ export async function GET() {
       razorpayWebhookConfigured,
       commerceRefreshConfigured: refreshSecret,
       affiliateDisclosureEnabled: affiliateDisclosure,
+      hostMode,
       timestamp: new Date().toISOString(),
       appUrl,
     },

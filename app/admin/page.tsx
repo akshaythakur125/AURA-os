@@ -699,6 +699,9 @@ export default function AdminPage() {
               <Link href="/admin/security">
                 <Button variant="outline" className="w-full border-red-500/30 text-red-300">Security &rarr;</Button>
               </Link>
+              <Link href="/admin/deployment">
+                <Button variant="outline" className="w-full border-blue-500/30 text-blue-300">Deployment &rarr;</Button>
+              </Link>
             </div>
             <div className="flex gap-2">
               <Button variant="ghost" size="sm" onClick={() => {

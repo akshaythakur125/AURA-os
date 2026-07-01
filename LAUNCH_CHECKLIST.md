@@ -3,7 +3,9 @@
 Use this checklist before sharing AuraCheck with real users for the first time.
 
 **Launch Control Center available at `/admin/launch`** — automated readiness score, smoke tests, and environment checks.  
-**System Health page at `/admin/system`** — service status, storage mode, configuration overview.
+**System Health page at `/admin/system`** — service status, storage mode, configuration overview.  
+**Deployment Center at `/admin/deployment`** — Vercel deployment readiness, env checklist, domain status, and post-deploy smoke tests.  
+**Full deployment guide in `DEPLOYMENT.md`** — step-by-step instructions for Vercel, Supabase, Razorpay, and domain setup.
 
 ## 1. Environment Variables
 
