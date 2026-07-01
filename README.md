@@ -398,6 +398,69 @@ Myntra, AJIO, Amazon Fashion, Flipkart Fashion, Tata CLiQ, Nykaa Fashion, Meesho
 - Prices are "Best listed price in AuraCheck catalog" — verify on store before buying
 - Discounts are only shown when mathematically true (mrp and price both exist)
 - Sponsored products get max 3% boost but only if already relevant — never rank first solely because sponsored
+
+## Aura Commerce Search Engine
+
+AuraCheck's search engine provides normalized product search across Indian shopping stores using an internal product index.
+
+### Routes
+
+| Route | Description |
+|---|---|
+| `/wardrobe/search` | Public product search — query by style, budget, aura leak |
+| `/admin/commerce/search` | Admin search console — test ranking, import feeds, manage index |
+
+### Architecture
+
+```
+Store feeds/CSV/Admin catalog → normalizeProduct → buildSearchIndex → searchCommerceIndex → rank by aura + price + freshness → group comparable items → show store comparison
+```
+
+### Search Ranking Formula
+| Factor | Weight |
+|---|---|
+| Aura leak match | 30% |
+| Style/goal match | 25% |
+| Category priority | 15% |
+| Budget fit | 15% |
+| Price value | 10% |
+| Freshness/availability | 5% |
+| Sponsored boost | Max 3% (only if relevance ≥ 0.3) |
+
+### Price Freshness
+| Status | Condition | UI Label |
+|---|---|---|
+| Fresh | Checked within 24h | "Recently checked" |
+| Recent | Checked within 7 days | "Verify before buying" |
+| Stale | Older than 7 days | "Price may be outdated" |
+| Manual | Manually entered | "Manual MVP price" |
+| Unknown | No timestamp | "Verify on store" |
+
+### Comparable Product Grouping
+Products are grouped by: `category:color_family:style_direction:use_case:fit`
+- Black overshirt + Black overshirt from different stores → same group
+- Black overshirt + Hoodie → different groups
+
+### Best Value Score (for price comparison)
+| Factor | Weight |
+|---|---|
+| Price score | 35% |
+| Aura match | 25% |
+| Store trust | 15% |
+| Price freshness | 15% |
+| Availability | 10% |
+
+### Connector Stubs
+Amazon Fashion, Flipkart Fashion, Myntra, AJIO, Nykaa Fashion use connector stubs that document future API/feed requirements without scraping or calling external APIs.
+
+### Key Principles
+- AuraCheck searches its own product index, not live websites
+- Prices may change — verify on the store before buying
+- Best listed price means best price in AuraCheck's current catalog
+- Sponsored items do not automatically rank first
+- AuraCheck may earn affiliate commission from some links
+- No scraping is used
+- No external AI (OpenAI, Gemini) is used
 - No fake discount claims, fake scarcity, or fake testimonials
 - Recommendations are based on presentation goals and visual signal, not human worth
 - Click tracking fails safely if commerce_clicks Supabase table does not exist

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -126,6 +127,11 @@ export default function ShopPage() {
           <p className="mx-auto max-w-xl text-sm text-gray-400">
             Without wasting money. Every recommendation targets a specific status leak identified by your Aura Check.
           </p>
+          <div className="mt-4 flex justify-center gap-3">
+            <Link href="/wardrobe/search">
+              <Button size="sm" variant="outline">Search All Products &rarr;</Button>
+            </Link>
+          </div>
         </div>
 
         {/* ─── Tabs ─── */}

@@ -266,3 +266,74 @@ create or replace trigger set_commerce_products_updated_at
 create or replace trigger set_commerce_offers_updated_at
   before update on public.commerce_offers
   for each row execute function public.set_updated_at();
+
+-- ============================================================
+-- Commerce Search Index (Part of Commerce Search Engine)
+-- ============================================================
+
+create table if not exists public.commerce_search_index (
+  id text primary key,
+  source_product_id text not null,
+  normalized_title text not null,
+  original_title text not null,
+  category text not null,
+  sub_category text,
+  store_key text not null,
+  store_name text not null,
+  brand text,
+  color_tags text[] default '{}',
+  style_tags text[] default '{}',
+  aura_leak_tags text[] default '{}',
+  goal_tags text[] default '{}',
+  fit_tags text[] default '{}',
+  material_tags text[] default '{}',
+  gender_presentation_tags text[] default '{}',
+  price int not null,
+  mrp int,
+  discount_percent int,
+  currency text default 'INR',
+  product_url text not null,
+  affiliate_url text,
+  image_url text,
+  availability_status text default 'unknown',
+  source_type text not null,
+  source_name text not null,
+  price_freshness text default 'unknown',
+  last_checked_at timestamptz,
+  last_checked_text text default 'Verify on store',
+  confidence_score int default 50,
+  search_tokens text[] default '{}',
+  comparable_group_key text not null,
+  is_sponsored boolean default false,
+  is_affiliate boolean default false,
+  is_active boolean default true,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists idx_commerce_search_category on public.commerce_search_index(category);
+create index if not exists idx_commerce_search_store_key on public.commerce_search_index(store_key);
+create index if not exists idx_commerce_search_price on public.commerce_search_index(price);
+create index if not exists idx_commerce_search_comparable_group on public.commerce_search_index(comparable_group_key);
+create index if not exists idx_commerce_search_freshness on public.commerce_search_index(price_freshness);
+-- For GIN index on search_tokens (text[]), uncomment if your Supabase project supports it:
+-- create index if not exists idx_commerce_search_tokens on public.commerce_search_index using gin(search_tokens);
+
+create table if not exists public.commerce_import_runs (
+  id uuid primary key default gen_random_uuid(),
+  connector_key text not null,
+  source_type text not null,
+  imported_count int default 0,
+  invalid_count int default 0,
+  warnings jsonb default '[]'::jsonb,
+  status text not null default 'pending',
+  error text,
+  created_at timestamptz default now()
+);
+
+create index if not exists idx_commerce_import_runs_connector on public.commerce_import_runs(connector_key);
+create index if not exists idx_commerce_import_runs_status on public.commerce_import_runs(status);
+
+create or replace trigger set_commerce_search_index_updated_at
+  before update on public.commerce_search_index
+  for each row execute function public.set_updated_at();

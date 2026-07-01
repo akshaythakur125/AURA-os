@@ -1,4 +1,4 @@
-import type { CommerceClickEvent, StoreKey } from "@/types/commerce";
+import type { StoreKey } from "@/types/commerce";
 import type { ExtendedClickEvent } from "@/lib/storage/commerceClickStore";
 import { addClick } from "@/lib/storage/commerceClickStore";
 import { shouldUseSupabase } from "@/lib/storage/storageMode";

@@ -168,6 +168,34 @@ export default function AuditWardrobePage({ params }: { params: Promise<{ auditI
           ))}
         </div>
 
+        {/* Search-based Recommendations */}
+        {plan && (
+          <Card className="mb-6 border-blue-500/20">
+            <h2 className="mb-2 text-lg font-bold text-white">Best aura-matching clothes from search</h2>
+            <p className="mb-3 text-xs text-gray-400">
+              Products ranked by aura impact, price value, and freshness from AuraCheck&rsquo;s product index.
+            </p>
+            <div className="mb-3 flex flex-wrap gap-2">
+              <Link href={`/wardrobe/search?style=${plan.diagnosis.styleDirection}&leak=${plan.diagnosis.primaryAuraLeak}`}>
+                <Button size="sm">Search {plan.diagnosis.styleDirection.replace(/_/g, " ")} products</Button>
+              </Link>
+              {plan.cheapestUsefulUpgrade && (
+                <Link href={`/wardrobe/search?maxBudget=${plan.cheapestUsefulUpgrade.cheapestOffer.price + 500}&category=${plan.cheapestUsefulUpgrade.product.category}`}>
+                  <Button size="sm" variant="outline">Cheapest similar options</Button>
+                </Link>
+              )}
+              <Link href={`/wardrobe/search?sort=best_value`}>
+                <Button size="sm" variant="outline">Best value options</Button>
+              </Link>
+            </div>
+            {plan.whatNotToBuy.length > 0 && (
+              <p className="text-[10px] text-red-400">
+                ⚠ What not to buy yet: {plan.whatNotToBuy.slice(0, 3).map((w) => w.product.title).join(", ")}
+              </p>
+            )}
+          </Card>
+        )}
+
         {/* Outfit Bundles */}
         <h2 className="mb-4 text-xl font-bold text-white">Outfit Bundles</h2>
         <div className="mb-8 space-y-4">

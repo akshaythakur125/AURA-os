@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -7,10 +8,10 @@ import { Badge } from "@/components/ui/Badge";
 import { useState, useEffect } from "react";
 import { isSupabaseConfigured, getStorageMode } from "@/lib/storage/storageMode";
 import { WARDROBE_CATALOG } from "@/config/auraWardrobeCatalog";
-import type { CommerceProduct, ProductOffer, WardrobeCategory, AuraStyleDirection, AuraLeakTag, StoreKey } from "@/types/commerce";
-import type { ValidationWarning, StorePerformance, ProductAnalytics, CommerceSettings } from "@/types/commerceAdmin";
-import { validateProduct, validateCatalog } from "@/lib/commerce/catalogValidation";
-import { getAdminCatalog, saveAdminCatalog, getEffectiveCatalog, getCatalogSource, deleteProductFromAdmin, setProductActive, addProductToAdmin, updateProductInAdmin } from "@/lib/storage/commerceCatalogStore";
+import type { CommerceProduct, WardrobeCategory, AuraStyleDirection, AuraLeakTag, StoreKey } from "@/types/commerce";
+import type { ValidationWarning, CommerceSettings } from "@/types/commerceAdmin";
+import { validateCatalog } from "@/lib/commerce/catalogValidation";
+import { getAdminCatalog, getCatalogSource, deleteProductFromAdmin, setProductActive, addProductToAdmin } from "@/lib/storage/commerceCatalogStore";
 import { getCommerceClicks, getCommerceAnalytics, getStorePerformance, getProductClickDetails, type ExtendedClickEvent } from "@/lib/storage/commerceClickStore";
 import { getAffiliateLinks, getCommerceSettings, saveCommerceSettings } from "@/lib/commerce/affiliateManager";
 import { formatStoreName } from "@/config/storeDirectory";
@@ -40,10 +41,12 @@ export default function CommerceAdminPage() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const auth = sessionStorage.getItem("auracheck_admin_auth") === "true";
-    setAuthenticated(auth);
-    setProducts(getAdminCatalog());
-    setValidationWarnings(validateCatalog(getAdminCatalog()));
+    Promise.resolve().then(() => {
+      setAuthenticated(sessionStorage.getItem("auracheck_admin_auth") === "true");
+      const catalog = getAdminCatalog();
+      setProducts(catalog);
+      setValidationWarnings(validateCatalog(catalog));
+    });
   }, []);
 
   function showToast(msg: string) {
@@ -133,6 +136,11 @@ export default function CommerceAdminPage() {
               {tab === "overview" ? "Overview" : tab === "add" ? "Add Product" : tab === "import" ? "Import" : tab === "export" ? "Export" : tab === "affiliate" ? "Affiliate" : tab === "sponsored" ? "Sponsored" : tab === "performance" ? "Performance" : tab === "analytics" ? "Analytics" : "Validation"}
             </button>
           ))}
+          <Link href="/admin/commerce/search">
+            <button className="rounded-full bg-purple-500/20 px-4 py-1.5 text-xs text-purple-300">
+              Search Admin &rarr;
+            </button>
+          </Link>
         </div>
 
         {/* ─── Overview Tab ─── */}
@@ -309,7 +317,7 @@ export default function CommerceAdminPage() {
         {activeTab === "sponsored" && (
           <Card>
             <h3 className="mb-4 text-sm font-semibold text-white">Sponsored Listings ({sponsoredProducts.length})</h3>
-            <p className="mb-4 text-xs text-gray-500">Sponsored products get a small ranking boost (max 3%) but only if they match the user's style/leak/goal. They never automatically rank first.</p>
+            <p className="mb-4 text-xs text-gray-500">Sponsored products get a small ranking boost (max 3%) but only if they match the user&apos;s style/leak/goal. They never automatically rank first.</p>
             {sponsoredProducts.length === 0 ? (
               <div className="py-6 text-center text-xs text-gray-500">No sponsored products. Mark a product as sponsored in its offers to appear here.</div>
             ) : (
@@ -341,7 +349,7 @@ export default function CommerceAdminPage() {
               </div>
             )}
             <div className="mt-4 rounded-lg bg-purple-500/5 p-3 text-xs text-gray-400">
-              <strong className="text-purple-300">Rules:</strong> Sponsored items do not automatically rank first. They must be relevant to user's style/leaks/goals. Irrelevant sponsored products are excluded from top recommendations.
+              <strong className="text-purple-300">Rules:</strong> Sponsored items do not automatically rank first. They must be relevant to user&apos;s style/leaks/goals. Irrelevant sponsored products are excluded from top recommendations.
             </div>
           </Card>
         )}
@@ -474,7 +482,7 @@ export default function CommerceAdminPage() {
         )}
 
         <div className="mt-8 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-xs text-gray-600">
-          <p>Commerce Admin Panel. All data stored in localStorage with Supabase fallback. No scraping. No fake discounts. Prices are "Best listed price in AuraCheck catalog" — verify prices on store.</p>
+          <p>Commerce Admin Panel. All data stored in localStorage with Supabase fallback. No scraping. No fake discounts. Prices are &quot;Best listed price in AuraCheck catalog&quot; &mdash; verify prices on store.</p>
         </div>
       </div>
     </Container>

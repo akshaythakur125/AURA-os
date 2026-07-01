@@ -1,4 +1,4 @@
-import type { CommerceProduct, ProductOffer } from "@/types/commerce";
+import type { CommerceProduct } from "@/types/commerce";
 import type { CommerceSettings } from "@/types/commerceAdmin";
 import { getItem, setItem } from "@/lib/storage/localStore";
 

@@ -4,7 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getOrders, updateOrder, deleteOrder, getOrderStats } from "@/lib/storage/orderStore";
 import { getAudits } from "@/lib/storage/auditStore";
 import { getAnalyticsSummary, clearAnalytics, getEvents } from "@/lib/storage/analyticsStore";
@@ -247,10 +247,16 @@ export default function AdminPage() {
                   <div><span className="text-gray-500">Top Store</span><div className="font-bold text-purple-300">{getCommerceAnalytics().topClickedStores[0]?.store || "—"}</div></div>
                   <div><span className="text-gray-500">Est. Revenue (5%)</span><div className="font-bold text-emerald-400">~₹{Math.round(getCommerceClicks().reduce((s, c) => s + c.productPrice, 0) * 0.05)}</div></div>
                 </div>
+                <CommerceSearchStats />
               </div>
-              <a href="/admin/commerce" className="rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:from-purple-500 hover:to-pink-400">
-                Open Commerce Admin
-              </a>
+              <div className="flex flex-col gap-2">
+                <a href="/admin/commerce" className="rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:from-purple-500 hover:to-pink-400">
+                  Open Commerce Admin
+                </a>
+                <a href="/admin/commerce/search" className="rounded-xl border border-white/10 px-5 py-2.5 text-sm font-medium text-gray-300 transition-all hover:border-purple-500/30">
+                  Search Admin &rarr;
+                </a>
+              </div>
             </div>
           </Card>
         </div>
@@ -795,5 +801,33 @@ export default function AdminPage() {
         </div>
       </div>
     </Container>
+  );
+}
+
+function CommerceSearchStats() {
+  const [stats, setStats] = useState<{ indexedCount: number; staleCount: number; source: string } | null>(null);
+
+  useEffect(() => {
+    import("@/lib/storage/commerceSearchStore").then((m) => {
+      const index = m.getSearchIndex();
+      const meta = m.getSearchIndexMeta();
+      if (index.length > 0) {
+        setStats({
+          indexedCount: meta?.indexedCount || index.length,
+          staleCount: index.filter((i) => i.priceFreshness === "stale" || i.priceFreshness === "unknown").length,
+          source: meta?.catalogSource || "local",
+        });
+      }
+    });
+  }, []);
+
+  if (!stats) return null;
+
+  return (
+    <div className="mt-2 flex gap-3 text-[10px] text-gray-500">
+      <span>{stats.indexedCount} indexed products</span>
+      <span className="text-red-400">{stats.staleCount} stale prices</span>
+      <span>Source: {stats.source}</span>
+    </div>
   );
 }

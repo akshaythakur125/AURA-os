@@ -62,6 +62,9 @@ export default function WardrobePage() {
           <Link href="/audit/new">
             <Button>Start Free Aura Check</Button>
           </Link>
+          <Link href="/wardrobe/search">
+            <Button variant="outline">Search All Products</Button>
+          </Link>
           {latestScored && (
             <Link href={`/wardrobe/${latestScored.id}`}>
               <Button variant="outline">Open from latest audit</Button>
