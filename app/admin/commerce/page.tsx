@@ -138,7 +138,17 @@ export default function CommerceAdminPage() {
           ))}
           <Link href="/admin/commerce/search">
             <button className="rounded-full bg-purple-500/20 px-4 py-1.5 text-xs text-purple-300">
-              Search Admin &rarr;
+              Search &rarr;
+            </button>
+          </Link>
+          <Link href="/admin/commerce/feeds">
+            <button className="rounded-full bg-emerald-500/20 px-4 py-1.5 text-xs text-emerald-300">
+              Feeds &rarr;
+            </button>
+          </Link>
+          <Link href="/admin/commerce/quality">
+            <button className="rounded-full bg-amber-500/20 px-4 py-1.5 text-xs text-amber-300">
+              Quality &rarr;
             </button>
           </Link>
         </div>

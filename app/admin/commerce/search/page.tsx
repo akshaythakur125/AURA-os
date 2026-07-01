@@ -5,6 +5,14 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ConnectorStatusCard } from "@/components/commerce/ConnectorStatusCard";
+interface ConnectorStatus {
+  connectorKey: string; displayName: string; sourceType: string;
+  isConfigured: boolean; isActive: boolean;
+  lastImportAt: string | null; lastImportCount: number | null;
+  indexedProductCount: number;
+  supportsLiveApi: boolean; supportsFeedImport: boolean; supportsAffiliateLinks: boolean;
+  notes: string;
+}
 import { PriceFreshnessBadge } from "@/components/commerce/PriceFreshnessBadge";
 import type { CommerceSearchInput, CommerceSearchSort } from "@/types/commerceSearch";
 import type { WardrobeCategory, StoreKey, AuraStyleDirection, AuraLeakTag } from "@/types/commerce";
@@ -414,7 +422,7 @@ export default function AdminCommerceSearchPage() {
             {connectors ? (
               <div className="grid gap-3 sm:grid-cols-2">
                 {(connectors as Record<string, unknown>[]).map((conn) => (
-                  <ConnectorStatusCard key={conn.connectorKey as string} connector={conn as any} />
+                  <ConnectorStatusCard key={conn.connectorKey as string} connector={conn as unknown as ConnectorStatus} />
                 ))}
               </div>
             ) : (

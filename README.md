@@ -465,6 +465,81 @@ Amazon Fashion, Flipkart Fashion, Myntra, AJIO, Nykaa Fashion use connector stub
 - Recommendations are based on presentation goals and visual signal, not human worth
 - Click tracking fails safely if commerce_clicks Supabase table does not exist
 
+## Commerce Feed Import and Price Freshness
+
+AuraCheck maintains product prices by importing official/manual affiliate feeds, validating prices, storing price snapshots, detecting stale prices, and rebuilding the searchable product index.
+
+### How It Works
+```
+Affiliate/API/manual feed → normalize products → validate prices →
+save catalog → save price snapshots → rebuild search index →
+show freshness and confidence → compare prices safely
+```
+
+### Supported Import Sources
+| Source | Status |
+|---|---|
+| Manual CSV upload | Working |
+| Manual JSON upload | Working |
+| Generic affiliate feed CSV | Working |
+| Generic affiliate feed JSON | Working |
+| Amazon PA-API | Placeholder (documented) |
+| Flipkart Affiliate API | Placeholder (documented) |
+| Myntra affiliate feed | Placeholder (documented) |
+| AJIO affiliate feed | Placeholder (documented) |
+| Cuelinks/Admitad feed | Placeholder (documented) |
+
+### Price Freshness Labels
+| Status | Condition | UI Label |
+|---|---|---|
+| Fresh | Checked within 24h | "Recently checked" |
+| Recent | Checked within 7 days | "Verify before buying" |
+| Stale | Older than 7 days | "Price may be outdated" |
+| Manual | Manually entered | "Manual MVP price" |
+| Unknown | No timestamp | "Verify on store" |
+
+### Price Confidence Score (0-100)
+| Source | Last Checked | Score Range |
+|---|---|---|
+| Official API | < 24h | 90–100 |
+| Affiliate feed | < 24h | 80–90 |
+| Affiliate feed | < 7 days | 65–80 |
+| Manual CSV/JSON | — | 40–60 |
+| Stale/unknown | — | 20–40 |
+
+### Admin Routes
+| Route | Description |
+|---|---|
+| `/admin/commerce/feeds` | Import wizard — upload CSV/JSON, preview mapping, validate, import, rebuild index |
+| `/admin/commerce/quality` | Data quality dashboard — freshness, anomalies, warnings, export |
+
+### API Routes
+| Route | Method | Description |
+|---|---|---|
+| `/api/commerce/feed/import` | POST | Import CSV/JSON feed (admin-gated) |
+| `/api/commerce/feed/history` | GET | Import history and stats |
+| `/api/commerce/feed/template` | GET | Download CSV/JSON template |
+| `/api/commerce/price-refresh` | POST | Refresh all price freshness labels |
+| `/api/commerce/price-snapshots` | GET | Price snapshot history |
+| `/api/commerce/data-quality` | GET | Quality summary and anomaly details |
+
+### Key Principles
+- AuraCheck does not scrape stores
+- Use official APIs, affiliate feeds, CSV/JSON imports, or manual admin catalog
+- Prices are stored in AuraCheck product index
+- Price freshness labels are shown on all search results
+- Admin can import feeds and review anomalies
+- Public users must verify prices on the final store
+- No scraping, no fake discounts, no guaranteed cheapest claims
+
+### Future Connectors (Placeholder)
+- Amazon PA-API connector — requires `amazon_access_key`, `amazon_secret_key`, `amazon_associate_tag`
+- Flipkart Affiliate connector — requires `flipkart_affiliate_id`, `flipkart_affiliate_token`
+- Cuelinks/Admitad feed connector — requires feed URL and format
+- Scheduled daily price refresh
+- Webhook/feed sync endpoint
+- Merchant dashboard
+
 ### Future Upgrade Path
 - Official affiliate API integrations for Myntra, AJIO, Amazon
 - Product feed import for live prices

@@ -337,3 +337,68 @@ create index if not exists idx_commerce_import_runs_status on public.commerce_im
 create or replace trigger set_commerce_search_index_updated_at
   before update on public.commerce_search_index
   for each row execute function public.set_updated_at();
+
+-- ============================================================
+-- Commerce Feed Imports
+-- ============================================================
+
+create table if not exists public.commerce_feed_imports (
+  id uuid primary key default gen_random_uuid(),
+  source_type text not null,
+  source_name text not null,
+  store_key text,
+  file_name text,
+  status text not null default 'pending',
+  imported_count int default 0,
+  updated_count int default 0,
+  skipped_count int default 0,
+  invalid_count int default 0,
+  warnings jsonb default '[]'::jsonb,
+  errors jsonb default '[]'::jsonb,
+  created_at timestamptz default now(),
+  completed_at timestamptz
+);
+
+create index if not exists idx_commerce_feed_imports_created on public.commerce_feed_imports(created_at);
+
+-- ============================================================
+-- Commerce Price Snapshots
+-- ============================================================
+
+create table if not exists public.commerce_price_snapshots (
+  id uuid primary key default gen_random_uuid(),
+  product_id text not null,
+  offer_id text,
+  store_key text not null,
+  price int not null,
+  mrp int,
+  discount_percent int,
+  source_type text,
+  source_name text,
+  freshness text default 'unknown',
+  confidence_score int default 50,
+  checked_at timestamptz default now()
+);
+
+create index if not exists idx_commerce_price_snapshots_product on public.commerce_price_snapshots(product_id);
+create index if not exists idx_commerce_price_snapshots_store on public.commerce_price_snapshots(store_key);
+create index if not exists idx_commerce_price_snapshots_checked on public.commerce_price_snapshots(checked_at);
+
+-- ============================================================
+-- Commerce Quality Warnings
+-- ============================================================
+
+create table if not exists public.commerce_quality_warnings (
+  id uuid primary key default gen_random_uuid(),
+  product_id text not null,
+  offer_id text,
+  warning_type text not null,
+  severity text not null default 'info',
+  message text not null,
+  metadata jsonb default '{}'::jsonb,
+  created_at timestamptz default now(),
+  resolved_at timestamptz
+);
+
+create index if not exists idx_commerce_quality_warnings_type on public.commerce_quality_warnings(warning_type);
+create index if not exists idx_commerce_quality_warnings_severity on public.commerce_quality_warnings(severity);
