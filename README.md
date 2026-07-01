@@ -81,13 +81,59 @@ Add the same env vars to your Vercel project dashboard → Settings → Environm
 | Yes | supabase | Server repos use Supabase. Client can use browser client. |
 | No (or partial) | local | Everything uses localStorage. No crashes. |
 
+## Razorpay Online Payments
+
+AuraCheck supports **Razorpay** for instant online payments with automatic product unlock after server-side signature verification.
+
+### Prerequisites
+
+1. **Create a Razorpay account** at [razorpay.com](https://razorpay.com)
+2. Go to Settings → API Keys and generate Key ID and Key Secret
+3. Use **test mode** first (toggle in Razorpay dashboard)
+
+### Environment Variables
+
+Add these to `.env.local`:
+
+| Variable | Description | Required |
+|---|---|---|
+| `NEXT_PUBLIC_RAZORPAY_KEY_ID` | Razorpay public key (used in browser checkout) | For online payments |
+| `RAZORPAY_KEY_ID` | Razorpay key ID (server-only) | For online payments |
+| `RAZORPAY_KEY_SECRET` | Razorpay secret key (server-only) | For online payments |
+
+### How It Works
+
+1. User clicks **"Pay with Razorpay"** on the unlock page
+2. Client calls `/api/payments/create-order` — server creates a Razorpay order + Supabase order row
+3. Razorpay Checkout modal opens in the browser
+4. User completes payment (test or live)
+5. Client callback sends payment details to `/api/payments/verify`
+6. Server verifies the HMAC SHA256 signature
+7. If valid — order is marked as unlocked, the correct paid report is generated, audit is updated, and `product_unlocks` row is created
+8. If invalid — order is marked `payment_verification_failed`, no unlock happens
+
+### Important Security Rules
+
+- **Never expose `RAZORPAY_KEY_SECRET`** — server-only env var
+- **Never trust the client amount** — server always calculates from the product catalog
+- **Unlock only after signature verification** — the client callback alone is not trusted
+- **Use test mode before going live** — toggle in Razorpay dashboard
+
+### Fallback Behavior
+
+| Razorpay env vars | Supabase configured | Payment option shown |
+|---|---|---|
+| Yes | Yes | Razorpay checkout (primary) + manual UPI (fallback) |
+| No | — | Manual UPI only |
+| — | No | Manual UPI only (Supabase needed for order tracking) |
+
 ## Local-Only Architecture
 
 All logic runs exclusively in the browser:
 
 - **Image analysis** — Canvas pixel analysis for brightness, contrast, saturation, sharpness
 - **Data storage** — Browser localStorage
-- **Payments** — Manual UPI flow (no Razorpay/Stripe)
+- **Payments** — Manual UPI flow with optional Razorpay online payments
 - **No external APIs** — No Supabase, OpenAI, Gemini, or any server-side processing
 - **No external database** — No MongoDB, PostgreSQL, or similar
 - **No external authentication** — No Auth0, Clerk, or similar
@@ -145,7 +191,13 @@ This project is ready for Vercel deployment:
    | Variable | Example | Required |
    |---|---|---|
    | `NEXT_PUBLIC_APP_URL` | `https://auracheck.vercel.app` | Yes |
-   | `NEXT_PUBLIC_MANUAL_UPI_ID` | `your-upi@upi` | Yes |
+   | `NEXT_PUBLIC_MANUAL_UPI_ID` | `your-upi@upi` | For UPI payments |
+   | `NEXT_PUBLIC_RAZORPAY_KEY_ID` | `rzp_test_xxxx` | For Razorpay |
+   | `RAZORPAY_KEY_ID` | `rzp_test_xxxx` | For Razorpay (server-only) |
+   | `RAZORPAY_KEY_SECRET` | `your_secret` | For Razorpay (server-only) |
+   | `NEXT_PUBLIC_SUPABASE_URL` | `https://xxxx.supabase.co` | For Supabase |
+   | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `your_anon_key` | For Supabase |
+   | `SUPABASE_SERVICE_ROLE_KEY` | `your_service_role_key` | For Supabase (server-only) |
    | `NEXT_PUBLIC_SUPPORT_EMAIL` | `support@example.com` | No |
    | `NEXT_PUBLIC_OWNER_WHATSAPP` | `919999999999` | No |
    | `NEXT_PUBLIC_DEMO_UNLOCK_CODE` | `AURADEMO` | No (defaults to AURADEMO) |

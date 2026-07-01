@@ -24,6 +24,8 @@ import { applyOffer } from "@/lib/offers/applyOffer";
 import type { OfferApplyResult } from "@/types/offer";
 import { BeforeAfterCard } from "@/components/proof/BeforeAfterCard";
 import { PROOF_EXAMPLES } from "@/config/proofExamples";
+import { RazorpayCheckoutButton } from "@/components/payments/RazorpayCheckoutButton";
+import { getPublicRazorpayKeyId } from "@/lib/razorpay/env";
 
 const PRODUCT_INFO: Record<ProductType, { name: string; price: number; desc: string }> = {
   quick_fix: { name: "Quick Aura Fix", price: 49, desc: "Your biggest status leak and the fastest fix path." },
@@ -89,6 +91,7 @@ function UnlockContent() {
     : "payment";
   const [stage, setStage] = useState<Stage>(initialStage);
   const [existingOrder, setExistingOrder] = useState<ManualOrder | undefined>(foundExisting);
+  const razorpayAvailable = !!getPublicRazorpayKeyId();
 
   if (!auditId || !audit) {
     return (
@@ -166,6 +169,45 @@ function UnlockContent() {
       setError("Failed to save payment request.");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleRazorpaySuccess() {
+    if (!auditId || !audit) return;
+    setUnlocking(true);
+    try {
+      const existingProducts = (audit.unlockedProducts || []) as ProductType[];
+      if (existingProducts.includes(product)) { return; }
+
+      const newUnlocked = [...new Set([...existingProducts, product])];
+      const updateData: Record<string, unknown> = { unlockedProducts: newUnlocked };
+
+      if (product === "aura_report") {
+        const report = await generateFullAuraReport(audit.imageDataUrl, audit.freeResult, audit);
+        let personalization = audit.personalization;
+        if (!personalization && audit.freeResult) personalization = generateStatusArchetype(audit, audit.freeResult.imageMetrics);
+        updateData.fullReport = report;
+        updateData.fullScore = report.fullScore;
+        updateData.personalization = personalization;
+        updateData.reportStatus = "full_report";
+      } else if (product === "dating_audit" && audit.freeResult) {
+        updateData.datingProfileReport = generateDatingProfileAudit(audit);
+      } else if (product === "glowup_plan" && audit.freeResult) {
+        updateData.glowupPlan = generateGlowUpPlan(audit, audit.freeResult.imageMetrics);
+      } else if (product === "quick_fix" && audit.freeResult) {
+        updateData.quickFixReport = generateQuickAuraFix(auditId, audit.freeResult, audit.fullReport, audit.freeResult.imageMetrics);
+      }
+
+      recordUnlock(auditId, product, "razorpay_auto");
+      updateAudit(auditId, updateData);
+      trackEvent("product_unlocked", { product, auditId, method: "razorpay" });
+      if (product === "quick_fix") trackEvent("quick_fix_unlocked", { auditId });
+      setSuccess(`${productInfo.name} unlocked successfully!`);
+      setTimeout(() => router.push(`/audit/${auditId}`), 1500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Auto-unlock failed. Go to audit page to check.");
+    } finally {
+      setUnlocking(false);
     }
   }
 
@@ -313,8 +355,24 @@ function UnlockContent() {
         {/* ─── Stage 1: Payment ─── */}
         {stage === "payment" && (
           <>
+            {razorpayAvailable && (
+              <Card className="mb-6 border-purple-500/20">
+                <h3 className="mb-4 text-sm font-semibold text-purple-400">Pay Online (Instant Unlock)</h3>
+                <RazorpayCheckoutButton
+                  auditId={auditId}
+                  productType={product}
+                  productName={productInfo.name}
+                  amount={finalAmount}
+                  offerCode={offerResult?.valid ? offerResult.offer?.code : undefined}
+                  customerName={customerName}
+                  customerContact={customerContact}
+                  onSuccess={handleRazorpaySuccess}
+                  onError={(msg) => setError(msg)}
+                />
+              </Card>
+            )}
             <Card className="mb-6">
-              <h3 className="mb-4 text-sm font-semibold text-white">1. Pay via UPI</h3>
+              <h3 className="mb-4 text-sm font-semibold text-white">{razorpayAvailable ? "Manual UPI Fallback" : "1. Pay via UPI"}</h3>
               <div className="mb-4 rounded-xl bg-white/5 p-4 text-center">
                 <div className="mb-1 text-xs text-gray-500">Pay to this UPI ID</div>
                 <div className="text-lg font-bold text-purple-300">{upiId}</div>

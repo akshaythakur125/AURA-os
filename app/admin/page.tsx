@@ -262,6 +262,8 @@ export default function AdminPage() {
                           <div><span className="text-gray-500">Customer:</span> <span className="text-gray-300">{order.customerName || "—"}</span></div>
                           <div><span className="text-gray-500">Contact:</span> <span className="text-gray-300">{order.customerContact || "—"}</span></div>
                           <div><span className="text-gray-500">UPI Ref:</span> <span className="text-gray-300">{order.upiTransactionRef || "—"}</span></div>
+                          <div><span className="text-gray-500">Method:</span> <span className="text-gray-300">{order.razorpayPaymentId ? "Razorpay" : order.upiId ? "Manual UPI" : "—"}</span></div>
+                          {order.razorpayPaymentId && <div><span className="text-gray-500">Razorpay ID:</span> <span className="font-mono text-xs text-purple-300">{order.razorpayPaymentId.slice(0, 20)}...</span></div>}
                           <div><span className="text-gray-500">Code:</span> <span className="font-mono text-purple-300">{order.generatedUnlockCode || "—"}</span></div>
                           <div><span className="text-gray-500">Created:</span> <span className="text-gray-300">{new Date(order.createdAt).toLocaleDateString("en-IN")}</span></div>
                         </div>

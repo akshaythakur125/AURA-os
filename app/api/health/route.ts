@@ -1,10 +1,12 @@
 import { NextResponse } from "next/server";
 import { isSupabaseConfigured, getStorageMode } from "@/lib/storage/storageMode";
+import { isRazorpayConfigured } from "@/lib/razorpay/env";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   const supabaseConfigured = isSupabaseConfigured();
+  const razorpayConfigured = isRazorpayConfigured();
   const storageMode = getStorageMode();
   const appUrl =
     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -15,6 +17,7 @@ export async function GET() {
       app: "AuraCheck",
       storageMode,
       supabaseConfigured,
+      razorpayConfigured,
       timestamp: new Date().toISOString(),
       appUrl,
     },

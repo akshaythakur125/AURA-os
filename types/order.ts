@@ -23,6 +23,9 @@ export interface ManualOrder {
   customerContact?: string;
   upiId: string;
   upiTransactionRef?: string;
+  razorpayPaymentId?: string;
+  razorpayOrderId?: string;
+  paymentMethod?: "upi" | "razorpay";
   userNote?: string;
   generatedUnlockCode?: string;
   createdAt: string;
