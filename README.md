@@ -15,6 +15,72 @@ AuraCheck is a **local-only MVP** for testing demand around first-impression ana
 - Marketplace recommendations based on detected status leaks
 - Referral, challenge, and progress tracking features
 
+## Production Backend Setup
+
+AuraCheck includes Supabase integration for production deployment. The app falls back to localStorage if Supabase env vars are missing.
+
+### 1. Create a Supabase Project
+
+Go to [supabase.com](https://supabase.com) and create a new project. Note your project URL and anon key.
+
+### 2. Run the Schema
+
+Open your Supabase SQL Editor and run:
+
+- First: `supabase/schema.sql` — creates all tables, indexes, and triggers
+- Then: `supabase/rls.sql` — enables Row Level Security and sets up service role policies
+
+### 3. Create the Storage Bucket
+
+In Supabase Dashboard → Storage → Create a private bucket named `audit-images`.
+
+SQL equivalent:
+```sql
+insert into storage.buckets (id, name, public) values ('audit-images', 'audit-images', false);
+```
+
+Image uploads are handled through server actions / API routes in production. For the MVP, images stay in the browser.
+
+### 4. Environment Variables
+
+Copy `.env.example` to `.env.local` and add your Supabase credentials:
+
+| Variable | Description | Required |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL | For Supabase mode |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key | For Supabase mode |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase service role key (server-only) | For admin operations |
+| `NEXT_PUBLIC_APP_URL` | Your app URL | Yes |
+
+**Never expose `SUPABASE_SERVICE_ROLE_KEY` to the browser.** It is only used in server-side files (`lib/supabase/admin.ts`, `lib/server/` repos, API routes).
+
+### 5. Verify
+
+After setup, visit `/api/health` to confirm:
+
+```json
+{
+  "status": "ok",
+  "app": "AuraCheck",
+  "storageMode": "supabase",
+  "supabaseConfigured": true,
+  "timestamp": "..."
+}
+```
+
+If Supabase env vars are missing, the app continues in localStorage mode with no errors.
+
+### 6. Deploy to Vercel
+
+Add the same env vars to your Vercel project dashboard → Settings → Environment Variables.
+
+### Storage Mode Behavior
+
+| Env vars set | Storage mode | Behavior |
+|---|---|---|
+| Yes | supabase | Server repos use Supabase. Client can use browser client. |
+| No (or partial) | local | Everything uses localStorage. No crashes. |
+
 ## Local-Only Architecture
 
 All logic runs exclusively in the browser:
