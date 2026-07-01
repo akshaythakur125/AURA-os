@@ -437,6 +437,64 @@ The demo code unlocks any product for any audit. Change it via `NEXT_PUBLIC_DEMO
 - **ESLint** — Flat config
 - **localStorage** — All data persistence
 
+## Commerce Admin
+
+AuraCheck includes a full commerce administration system for managing the product catalog, affiliate links, sponsored listings, and click analytics.
+
+### Features
+
+- **Manual Product Catalog** — Add, edit, deactivate, and delete wardrobe products through the admin UI at `/admin/commerce`
+- **CSV/JSON Import** — Bulk import products from CSV or JSON files with preview, validation, and merge support
+- **CSV/JSON Export** — Export full catalog, affiliate links, sponsored listings, and click analytics
+- **Affiliate Link Manager** — Track all affiliate links across products and stores; set assumed commission rate
+- **Sponsored Listing Controls** — Mark products as sponsored; sponsored products get max 3% ranking boost only if relevant
+- **Click Analytics** — Track clicks by store, category, product; show affiliate vs organic clicks; estimated revenue
+- **Validation Warnings** — Auto-detect missing fields, invalid URLs, price > MRP, missing relevance tags
+- **Store Performance Dashboard** — Top clicked stores, products with no clicks, broken links, inactive products
+
+### Catalog Sources
+
+The commerce engine loads products in this order:
+1. **Supabase** — If configured, loads from `commerce_products` + `commerce_offers` tables
+2. **Local admin catalog** — Products added/imported via `/admin/commerce` stored in localStorage
+3. **Static config fallback** — Built-in catalog at `config/auraWardrobeCatalog.ts` (72 products)
+
+### Rules
+
+- **No scraping** — All product links are manually entered; no automatic scraping of Myntra, AJIO, Amazon, Flipkart, or any store
+- **No fake discounts** — `discountPercent` is calculated automatically from price and MRP; admin cannot type fake discount percent
+- **Best listed price** — Prices labelled "Best listed price in AuraCheck catalog"; prices may change on store
+- **Sponsored items do not automatically rank first** — Max 3% boost, only if relevant to user's style/leak/goal
+- **AuraCheck may earn affiliate commission** — Clearly disclosed on all affiliate links
+- **No guarantee of cheapest** — "Verify price on store" label shown on all product offers
+- **Manual MVP catalog prices may change** — Last checked text shows "Listed in AuraCheck catalog" or import date
+
+### How to Add Affiliate Links
+
+1. Go to **/admin/commerce** → **Add Product** tab
+2. In the offer section, check the **Affiliate** checkbox and enter your **Affiliate URL**
+3. The affiliate URL will be used for outbound clicks instead of the normal URL
+4. Export affiliate links CSV from the **Export** tab to share with affiliate partners
+
+### How to Add Myntra/AJIO/Amazon/Flipkart Links
+
+1. Go to the product page on the store
+2. Copy the product URL
+3. In AuraCheck admin, add/edit an offer for the product with:
+   - **Store Key** — Select the correct store (myntra, ajio, amazon_fashion, flipkart_fashion, etc.)
+   - **URL** — Paste the product page URL
+   - **Price** — Enter the current listed price on the store
+   - **MRP** — Optional; enter the maximum retail price shown on the store
+
+### Future Upgrade Path (Commerce)
+
+- **Official Affiliate APIs** — Direct API integrations with affiliate networks (e.g., Myntra affiliate, Amazon affiliate)
+- **Product Feeds** — Automated product feed import from CSV/API
+- **Scheduled Price Refresh** — Periodic price updates via cron jobs
+- **Inventory Checks** — Real-time availability status
+- **Sponsored Dashboard** — Full sponsored campaign management
+- **Auto Discount Calculation** — Live price comparison across stores
+
 ## Known Limitations
 
 - Private/incognito browsing may clear localStorage

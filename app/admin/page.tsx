@@ -23,6 +23,8 @@ import { getHabitStats } from "@/lib/storage/habitStore";
 import { getItem, setItem } from "@/lib/storage/localStore";
 import { isSupabaseConfigured } from "@/lib/storage/storageMode";
 import { getCommerceAnalytics, getCommerceClicks } from "@/lib/storage/commerceClickStore";
+import { getEffectiveCatalog } from "@/lib/storage/commerceCatalogStore";
+import { getAffiliateLinks } from "@/lib/commerce/affiliateManager";
 
 const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   draft: "Draft",
@@ -230,6 +232,27 @@ export default function AdminPage() {
           <Card><div className="text-xs text-gray-500">Habit Completions</div><div className="mt-1 text-2xl font-bold text-white">{habitStats.totalCompletions}</div></Card>
           <Card><div className="text-xs text-gray-500">Current Streak</div><div className="mt-1 text-2xl font-bold text-amber-400">🔥 {habitStats.currentStreak}</div></Card>
           <Card><div className="text-xs text-gray-500">Longest Streak</div><div className="mt-1 text-2xl font-bold text-emerald-400">{habitStats.longestStreak}</div></Card>
+        </div>
+
+        {/* ─── Aura Commerce Card ─── */}
+        <div className="mb-8">
+          <Card className="border-purple-500/20">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h3 className="text-sm font-semibold text-white">Aura Commerce</h3>
+                <div className="mt-2 grid gap-2 text-xs sm:grid-cols-5">
+                  <div><span className="text-gray-500">Active Products</span><div className="font-bold text-white">{getEffectiveCatalog().filter(p => p.isActive).length}</div></div>
+                  <div><span className="text-gray-500">Affiliate Links</span><div className="font-bold text-amber-400">{getAffiliateLinks(getEffectiveCatalog()).length}</div></div>
+                  <div><span className="text-gray-500">Store Clicks</span><div className="font-bold text-white">{getCommerceClicks().length}</div></div>
+                  <div><span className="text-gray-500">Top Store</span><div className="font-bold text-purple-300">{getCommerceAnalytics().topClickedStores[0]?.store || "—"}</div></div>
+                  <div><span className="text-gray-500">Est. Revenue (5%)</span><div className="font-bold text-emerald-400">~₹{Math.round(getCommerceClicks().reduce((s, c) => s + c.productPrice, 0) * 0.05)}</div></div>
+                </div>
+              </div>
+              <a href="/admin/commerce" className="rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:from-purple-500 hover:to-pink-400">
+                Open Commerce Admin
+              </a>
+            </div>
+          </Card>
         </div>
 
         {/* ─── Tabs ─── */}

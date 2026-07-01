@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { productId, offerId, storeKey, auditId, source, productPrice, affiliateUsed, clickedAt } = body;
+    const { productId, offerId, storeKey, auditId, source, productPrice, affiliateUsed, isSponsored, clickedAt } = body;
 
     if (!productId || !storeKey) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
         source: source || "unknown",
         price: typeof productPrice === "number" ? productPrice : 0,
         affiliate_used: !!affiliateUsed,
+        is_sponsored: !!isSponsored,
         metadata: { clicked_at: clickedAt || new Date().toISOString() },
       } as never);
     } catch {

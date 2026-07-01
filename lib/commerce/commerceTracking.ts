@@ -1,17 +1,18 @@
 import type { CommerceClickEvent, StoreKey } from "@/types/commerce";
+import type { ExtendedClickEvent } from "@/lib/storage/commerceClickStore";
 import { addClick } from "@/lib/storage/commerceClickStore";
 import { shouldUseSupabase } from "@/lib/storage/storageMode";
+import { formatStoreName } from "@/config/storeDirectory";
 
-export function trackCommerceClick(event: Omit<CommerceClickEvent, "clickedAt">): void {
-  const full: CommerceClickEvent = {
+export function trackCommerceClick(event: ExtendedClickEvent): void {
+  const full: ExtendedClickEvent = {
     ...event,
-    clickedAt: new Date().toISOString(),
+    clickedAt: event.clickedAt || new Date().toISOString(),
+    storeName: event.storeName || formatStoreName(event.storeKey),
   };
 
-  // Always save locally
   addClick(full);
 
-  // If Supabase is configured, send to API (fire-and-forget)
   if (shouldUseSupabase()) {
     try {
       fetch("/api/commerce/click", {
@@ -32,7 +33,10 @@ export function trackStoreClick(
   price: number,
   isAffiliate: boolean,
   source: string,
-  auditId?: string
+  auditId?: string,
+  category?: string,
+  isSponsored?: boolean,
+  storeName?: string,
 ): void {
   trackCommerceClick({
     productId,
@@ -42,5 +46,8 @@ export function trackStoreClick(
     source,
     productPrice: price,
     affiliateUsed: isAffiliate,
+    category,
+    isSponsored,
+    storeName,
   });
 }

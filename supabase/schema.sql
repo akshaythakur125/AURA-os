@@ -186,3 +186,83 @@ create or replace trigger set_audits_updated_at
 create or replace trigger set_orders_updated_at
   before update on public.orders
   for each row execute function public.set_updated_at();
+
+-- ============================================================
+-- Commerce Engine Tables
+-- ============================================================
+
+create table if not exists public.commerce_products (
+  id text primary key,
+  title text not null,
+  category text not null default 'tshirt',
+  style_directions text[] default '{}',
+  aura_leak_tags text[] default '{}',
+  goal_tags text[] default '{}',
+  color_tags text[] default '{}',
+  fit_tags text[] default '{}',
+  description text default '',
+  why_it_improves_aura text default '',
+  styling_tip text default '',
+  avoid_if text,
+  priority_score int default 50,
+  is_sponsored boolean default false,
+  is_active boolean default true,
+  metadata jsonb default '{}'::jsonb,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists idx_commerce_products_category on public.commerce_products(category);
+create index if not exists idx_commerce_products_active on public.commerce_products(is_active);
+create index if not exists idx_commerce_products_sponsored on public.commerce_products(is_sponsored);
+
+create table if not exists public.commerce_offers (
+  id text primary key,
+  product_id text not null references public.commerce_products(id) on delete cascade,
+  store_key text not null,
+  store_name text not null,
+  product_name text not null,
+  price int not null,
+  mrp int,
+  discount_percent int,
+  url text default '#',
+  affiliate_url text,
+  availability_status text default 'available',
+  size_notes text,
+  color_notes text,
+  last_checked_text text default 'Listed in AuraCheck catalog',
+  is_affiliate boolean default false,
+  is_sponsored boolean default false,
+  updated_at timestamptz default now()
+);
+
+create index if not exists idx_commerce_offers_product_id on public.commerce_offers(product_id);
+create index if not exists idx_commerce_offers_store_key on public.commerce_offers(store_key);
+create index if not exists idx_commerce_offers_affiliate on public.commerce_offers(is_affiliate);
+
+create table if not exists public.commerce_clicks (
+  id uuid primary key default gen_random_uuid(),
+  product_id text not null,
+  offer_id text,
+  store_key text not null,
+  audit_id uuid,
+  anonymous_id text,
+  source text not null default 'unknown',
+  price int default 0,
+  affiliate_used boolean default false,
+  is_sponsored boolean default false,
+  metadata jsonb default '{}'::jsonb,
+  clicked_at timestamptz default now()
+);
+
+create index if not exists idx_commerce_clicks_product_id on public.commerce_clicks(product_id);
+create index if not exists idx_commerce_clicks_store_key on public.commerce_clicks(store_key);
+create index if not exists idx_commerce_clicks_clicked_at on public.commerce_clicks(clicked_at);
+
+create or replace trigger set_commerce_products_updated_at
+  before update on public.commerce_products
+  for each row execute function public.set_updated_at();
+
+create or replace trigger set_commerce_offers_updated_at
+  before update on public.commerce_offers
+  for each row execute function public.set_updated_at();
