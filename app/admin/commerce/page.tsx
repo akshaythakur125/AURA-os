@@ -151,6 +151,16 @@ export default function CommerceAdminPage() {
               Quality &rarr;
             </button>
           </Link>
+          <Link href="/admin/commerce/connectors">
+            <button className="rounded-full bg-blue-500/20 px-4 py-1.5 text-xs text-blue-300">
+              Connectors &rarr;
+            </button>
+          </Link>
+          <Link href="/admin/commerce/refresh">
+            <button className="rounded-full bg-purple-500/20 px-4 py-1.5 text-xs text-purple-300">
+              Refresh &rarr;
+            </button>
+          </Link>
         </div>
 
         {/* ─── Overview Tab ─── */}

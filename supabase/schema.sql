@@ -402,3 +402,53 @@ create table if not exists public.commerce_quality_warnings (
 
 create index if not exists idx_commerce_quality_warnings_type on public.commerce_quality_warnings(warning_type);
 create index if not exists idx_commerce_quality_warnings_severity on public.commerce_quality_warnings(severity);
+
+-- ============================================================
+-- Commerce Connector Runs (scheduled refresh tracking)
+-- ============================================================
+
+create table if not exists public.commerce_connector_runs (
+  id uuid primary key default gen_random_uuid(),
+  connector_key text not null,
+  provider text,
+  source_type text,
+  status text not null default 'pending',
+  imported_count int default 0,
+  updated_count int default 0,
+  skipped_count int default 0,
+  invalid_count int default 0,
+  price_changes_count int default 0,
+  warnings jsonb default '[]'::jsonb,
+  errors jsonb default '[]'::jsonb,
+  started_at timestamptz,
+  completed_at timestamptz,
+  created_at timestamptz default now()
+);
+
+create index if not exists idx_commerce_connector_runs_key on public.commerce_connector_runs(connector_key);
+create index if not exists idx_commerce_connector_runs_created on public.commerce_connector_runs(created_at);
+create index if not exists idx_commerce_connector_runs_status on public.commerce_connector_runs(status);
+
+-- ============================================================
+-- Commerce Refresh Locks
+-- ============================================================
+
+create table if not exists public.commerce_refresh_locks (
+  connector_key text primary key,
+  locked_at timestamptz not null default now(),
+  expires_at timestamptz not null,
+  metadata jsonb default '{}'::jsonb
+);
+
+-- ============================================================
+-- Commerce Connector Settings
+-- ============================================================
+
+create table if not exists public.commerce_connector_settings (
+  connector_key text primary key,
+  is_enabled boolean default false,
+  refresh_interval_hours int default 24,
+  last_manual_run_at timestamptz,
+  metadata jsonb default '{}'::jsonb,
+  updated_at timestamptz default now()
+);
