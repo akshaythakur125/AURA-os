@@ -17,6 +17,7 @@ import type { FreeAuraResult, FullAuraReport, ProductType } from "@/types";
 import type { PersonalizationResult } from "@/types/personalization";
 import type { ProfileAuditResult } from "@/types/profileAudit";
 import type { GlowUpPlan } from "@/types/glowup";
+import type { QuickAuraFixReport } from "@/types/quickFix";
 import { generateGoalStrategy, generateGoalStrategyTitle } from "@/lib/aura-engine/goalStrategy";
 import { AUDIT_TYPE_LABELS, GOAL_LABELS, BUDGET_LABELS } from "@/lib/audit/auditUtils";
 
@@ -27,6 +28,7 @@ const STATUS_BADGE: Record<string, { label: string; variant: "default" | "warnin
 };
 
 const PRODUCT_CTA: { type: ProductType; name: string; price: number; gradient: string; features: string[] }[] = [
+  { type: "quick_fix", name: "Quick Aura Fix", price: 49, gradient: "from-emerald-500 to-teal-500", features: ["Biggest status leak", "Fastest free fix path", "Under ₹500 fix", "Under ₹2,000 fix", "Avoid wasting money"] },
   { type: "aura_report", name: "Full Aura Report", price: 99, gradient: "from-purple-600 to-pink-500", features: ["Full visual breakdown", "Detailed status leak analysis", "Budget upgrade roadmap", "Shareable Aura card", "Product recommendations"] },
   { type: "dating_audit", name: "Dating/Profile Audit", price: 299, gradient: "from-rose-500 to-red-500", features: ["Profile Presentation Score", "Bio/prompt/caption feedback", "Red-flag cleanup", "Suggested bio versions", "Photo order strategy"] },
   { type: "glowup_plan", name: "30-Day Glow-Up Plan", price: 499, gradient: "from-amber-500 to-orange-500", features: ["30 daily missions", "4-week structured plan", "Budget roadmap (₹0–₹25K+)", "Photo/grooming/outfit system", "Progress tracker"] },
@@ -461,6 +463,75 @@ function GlowUpSection({ plan, auditId }: { plan: GlowUpPlan; auditId: string })
   );
 }
 
+function QuickFixSection({ report }: { report: QuickAuraFixReport }) {
+  return (
+    <>
+      <div className="mb-4 flex items-center gap-3">
+        <Badge variant="premium">₹49 Quick Aura Fix</Badge>
+      </div>
+      <div className="mb-8 grid gap-4 sm:grid-cols-2">
+        <Card className="border-emerald-500/20">
+          <div className="text-xs text-gray-500">Quick Fix Score</div>
+          <div className="mt-1 text-3xl font-bold text-emerald-400">{report.quickFixScore}</div>
+        </Card>
+        <Card className="border-emerald-500/20">
+          <div className="text-xs text-gray-500">Upgrade Priority</div>
+          <div className="mt-1 text-lg font-semibold capitalize text-white">{report.upgradePriority}</div>
+        </Card>
+      </div>
+
+      <Card className="mb-4 border-emerald-500/20">
+        <h3 className="mb-3 text-sm font-semibold text-white">Biggest Status Leak</h3>
+        <p className="mb-1 text-base font-medium text-white">{report.biggestLeak}</p>
+        <p className="mb-2 text-sm text-gray-400">{report.leakExplanation}</p>
+        <p className="text-xs text-gray-500">{report.whyItMatters}</p>
+      </Card>
+
+      <div className="mb-8 grid gap-4 sm:grid-cols-3">
+        <Card className="border-emerald-500/20">
+          <Badge variant="success">Free</Badge>
+          <p className="mt-2 text-xs font-semibold text-white">Fastest Free Fix</p>
+          <p className="mt-1 text-xs text-gray-400">{report.fastestFreeFix}</p>
+        </Card>
+        <Card className="border-emerald-500/20">
+          <Badge variant="warning">Under ₹500</Badge>
+          <p className="mt-2 text-xs font-semibold text-white">Low-Cost Fix</p>
+          <p className="mt-1 text-xs text-gray-400">{report.under500Fix}</p>
+        </Card>
+        <Card className="border-emerald-500/20">
+          <Badge variant="default">Under ₹2,000</Badge>
+          <p className="mt-2 text-xs font-semibold text-white">Smart Investment</p>
+          <p className="mt-1 text-xs text-gray-400">{report.under2000Fix}</p>
+        </Card>
+      </div>
+
+      <Card className="mb-4 border-red-500/20">
+        <div className="flex items-center gap-2">
+          <svg className="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+          <span className="text-sm font-semibold text-red-400">Avoid For Now</span>
+        </div>
+        <p className="mt-2 text-xs text-gray-400">{report.avoidForNow}</p>
+      </Card>
+
+      <Card className="mb-4 border-emerald-500/20">
+        <h3 className="mb-3 text-sm font-semibold text-white">3-Step Action Plan</h3>
+        <ol className="space-y-2">
+          {report.threeStepActionPlan.map((step, i) => (
+            <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20 text-xs font-bold text-emerald-400">{i + 1}</span>
+              {step}
+            </li>
+          ))}
+        </ol>
+      </Card>
+
+      <Card className="mb-8 border-emerald-500/20">
+        <p className="text-sm text-emerald-300">{report.finalOneLineAdvice}</p>
+      </Card>
+    </>
+  );
+}
+
 function ProductCTAButtons({ auditId, unlockedProducts }: { auditId: string; unlockedProducts: ProductType[] }) {
   return (
     <div className="mb-8 grid gap-4 sm:grid-cols-3">
@@ -520,8 +591,9 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
   const personalization: PersonalizationResult | undefined = audit.personalization;
   const datingReport: ProfileAuditResult | undefined = audit.datingProfileReport;
   const glowupPlan: GlowUpPlan | undefined = audit.glowupPlan;
+  const quickFixReport = audit.quickFixReport;
   const unlockedProducts: ProductType[] = (audit.unlockedProducts || []).filter((p): p is ProductType =>
-    p === "aura_report" || p === "dating_audit" || p === "glowup_plan"
+    p === "quick_fix" || p === "aura_report" || p === "dating_audit" || p === "glowup_plan"
   );
 
   async function handleGenerate() {
@@ -726,7 +798,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
 
             {/* ─── Priority Upgrade Map ─── */}
             <h2 className="mb-4 text-lg font-semibold text-white">Priority Upgrade Map</h2>
-            <div className="mb-8 grid gap-4 sm:grid-cols-3">
+    <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <Card className="border-emerald-500/20"><div className="text-xs text-emerald-400 mb-1">First Priority</div><p className="text-sm text-white">{fullReport.priorityUpgradeMap.firstPriority}</p></Card>
               <Card className="border-amber-500/20"><div className="text-xs text-amber-400 mb-1">Second Priority</div><p className="text-sm text-white">{fullReport.priorityUpgradeMap.secondPriority}</p></Card>
               <Card className="border-red-500/20"><div className="text-xs text-red-400 mb-1">Avoid for Now</div><p className="text-sm text-white">{fullReport.priorityUpgradeMap.avoidForNow}</p></Card>
@@ -965,6 +1037,9 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
           </Card>
         )}
 
+        {/* ─── Quick Aura Fix Section (if unlocked) ─── */}
+        {quickFixReport && <QuickFixSection report={quickFixReport} />}
+
         {/* ─── Dating Profile Audit Section (if unlocked) ─── */}
         {datingReport && <DatingAuditSection report={datingReport} />}
 
@@ -987,6 +1062,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
           <p>No image is sent to an external AI service in this MVP.</p>
           <p>AuraCheck analyzes presentation, not human worth.</p>
           {fullReport && <p>This report was generated locally. No external AI or payment verification was involved.</p>}
+          {quickFixReport && <p>Quick Fix provides targeted advice for the biggest presentation leak.</p>}
           {datingReport && <p>Profile guidance is for presentation clarity, not dating guarantees.</p>}
           {glowupPlan && <p>Glow-up plan is self-improvement guidance, not a guarantee of social outcomes.</p>}
         </div>
@@ -996,9 +1072,11 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
           <span className="text-xs text-gray-600">
             {fullReport
               ? `Unlocked ${new Date(fullReport.generatedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`
-              : freeResult
-                ? `Generated ${new Date(freeResult.generatedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`
-                : ""}
+              : quickFixReport
+                ? `Quick Fix ${new Date(quickFixReport.generatedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`
+                : freeResult
+                  ? `Generated ${new Date(freeResult.generatedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`
+                  : ""}
           </span>
         </div>
       </div>

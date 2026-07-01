@@ -17,12 +17,14 @@ import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { generateDatingProfileAudit } from "@/lib/aura-engine/generateDatingProfileAudit";
 import { generateGlowUpPlan } from "@/lib/aura-engine/generateGlowUpPlan";
+import { generateQuickAuraFix } from "@/lib/aura-engine/generateQuickAuraFix";
 import type { ProductType } from "@/types";
 import type { ManualOrder } from "@/types/order";
 import { applyOffer } from "@/lib/offers/applyOffer";
 import type { OfferApplyResult } from "@/types/offer";
 
 const PRODUCT_INFO: Record<ProductType, { name: string; price: number; desc: string }> = {
+  quick_fix: { name: "Quick Aura Fix", price: 49, desc: "Your biggest status leak and the fastest fix path." },
   aura_report: { name: "Full Aura Report", price: 99, desc: "Deep visual analysis with upgrade roadmap." },
   dating_audit: { name: "Dating/Profile Audit", price: 299, desc: "Profile presentation score, bio feedback, and photo order strategy." },
   glowup_plan: { name: "30-Day Glow-Up Plan", price: 499, desc: "Structured 30-day roadmap with daily missions and budget roadmap." },
@@ -183,6 +185,8 @@ function UnlockContent() {
         updateData.datingProfileReport = generateDatingProfileAudit(audit);
       } else if (product === "glowup_plan" && audit.freeResult) {
         updateData.glowupPlan = generateGlowUpPlan(audit, audit.freeResult.imageMetrics);
+      } else if (product === "quick_fix" && audit.freeResult) {
+        updateData.quickFixReport = generateQuickAuraFix(auditId, audit.freeResult, audit.fullReport, audit.freeResult.imageMetrics);
       }
 
       recordUnlock(auditId, product, unlockCode.trim());

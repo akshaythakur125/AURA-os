@@ -1,15 +1,11 @@
 "use client";
 
-"use client";
-
-"use client";
-
 import { useMemo } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { Card } from "@/components/ui/Card";
 import { getAudits } from "@/lib/storage/auditStore";
 import { getTwinStats } from "@/lib/storage/auraTwinStore";
 import { ReferralBanner } from "@/components/marketing/ReferralBanner";
@@ -55,6 +51,14 @@ const products = [
     features: ["Single photo scan", "Basic aura score", "3 leak insights"],
     bestFor: "Quick check",
     href: "/audit/new",
+  },
+  {
+    name: "Quick Aura Fix",
+    price: "49",
+    desc: "Biggest leak and fastest fix path.",
+    features: ["Biggest status leak", "Fastest free fix", "Under ₹500 fix", "Avoid wasting money"],
+    bestFor: "Impulse fix",
+    href: "/unlock?product=quick_fix",
   },
   {
     name: "Full Aura Report",
@@ -379,6 +383,26 @@ export default function HomePage() {
           <div className="mt-12 rounded-xl border border-purple-500/10 bg-purple-500/5 p-4 text-center text-sm text-gray-400">
             The current MVP uses local rule-based AI-style logic. No image is
             sent to any external server.
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── 5.5. Quick Fix Teaser ─── */}
+      <section className="border-t border-white/5 py-16">
+        <Container>
+          <div className="mx-auto max-w-2xl text-center">
+            <Badge variant="premium" className="mb-4">₹49 — Quick Aura Fix</Badge>
+            <h2 className="mb-4 bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-300 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
+              Start with a ₹49 quick fix
+            </h2>
+            <p className="mb-8 text-base text-gray-400">
+              Not ready for the full report? Unlock the fastest fix path for your biggest status leak.
+            </p>
+            <Link href="/unlock?product=quick_fix">
+              <Button variant="outline" size="lg" className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10">
+                Get Quick Aura Fix — ₹49
+              </Button>
+            </Link>
           </div>
         </Container>
       </section>

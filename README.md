@@ -144,6 +144,7 @@ AuraCheck uses a **manual UPI payment flow** — no payment API integration.
 
 | Product | Price | Code Prefix |
 |---|---|---|
+| Quick Aura Fix | ₹49 | FIX |
 | Full Aura Report | ₹99 | AURA |
 | Dating/Profile Audit | ₹299 | DATE |
 | 30-Day Glow-Up Plan | ₹499 | GLOW |
@@ -167,12 +168,13 @@ Users can export all their data from `/data`:
 
 Admin can also export a full snapshot from the **Checklist** tab in `/admin`.
 
-## How to Test All Three Paid Products
+## How to Test All Four Paid Products
 
 1. **Free Aura Score** — Create an audit → Generate Free Aura Score
-2. **₹99 Full Aura Report** — Use demo unlock code: `AURADEMO` on `/unlock`
-3. **₹299 Dating/Profile Audit** — Create a dating-type audit → unlock with `AURADEMO`
-4. **₹499 30-Day Glow-Up Plan** — Unlock on any scored audit → enter `AURADEMO`
+2. **₹49 Quick Aura Fix** — From a scored audit, click "Quick Aura Fix" → unlock with `AURADEMO`
+3. **₹99 Full Aura Report** — Use demo unlock code: `AURADEMO` on `/unlock`
+4. **₹299 Dating/Profile Audit** — Create a dating-type audit → unlock with `AURADEMO`
+5. **₹499 30-Day Glow-Up Plan** — Unlock on any scored audit → enter `AURADEMO`
 
 The demo code unlocks any product for any audit. Change it via `NEXT_PUBLIC_DEMO_UNLOCK_CODE`.
 

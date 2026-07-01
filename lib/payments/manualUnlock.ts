@@ -1,9 +1,9 @@
-export type ProductCodeType = "aura_report" | "dating_audit" | "glowup_plan";
+export type ProductCodeType = "quick_fix" | "aura_report" | "dating_audit" | "glowup_plan";
 
 export function generateAuditSpecificCode(auditId: string, product: ProductCodeType = "aura_report"): string {
   const raw = auditId.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
   const suffix = raw.slice(-6);
-  const prefix = product === "dating_audit" ? "DATE" : product === "glowup_plan" ? "GLOW" : "AURA";
+  const prefix = product === "quick_fix" ? "FIX" : product === "dating_audit" ? "DATE" : product === "glowup_plan" ? "GLOW" : "AURA";
   return `${prefix}-${suffix}`;
 }
 

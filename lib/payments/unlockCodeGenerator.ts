@@ -2,6 +2,7 @@ import type { ProductType } from "@/types";
 
 export function getProductPrefix(product: ProductType): string {
   switch (product) {
+    case "quick_fix": return "FIX";
     case "dating_audit": return "DATE";
     case "glowup_plan": return "GLOW";
     default: return "AURA";

@@ -313,12 +313,32 @@ export default function DashboardPage() {
         {/* ─── Latest Audit Product CTAs ─── */}
         {audits.length > 0 && audits[0].freeScore !== undefined && (() => {
           const latest = audits[0];
+          const hasQuickFix = !!latest.quickFixReport;
           const hasDating = !!latest.datingProfileReport;
           const hasGlowup = !!latest.glowupPlan;
-          if (!hasDating && !hasGlowup) return null;
+          const hasAny = hasQuickFix || hasDating || hasGlowup;
+          if (!hasAny) return (
+            <Card className="mb-8 border-emerald-500/20">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold text-white">Unlock Quick Aura Fix</h3>
+                  <p className="text-xs text-gray-400">Get your biggest status leak and the fastest fix path for ₹49.</p>
+                </div>
+                <Link href={`/unlock?auditId=${latest.id}&product=quick_fix`}>
+                  <Button size="sm" variant="outline" className="border-emerald-500/50 text-emerald-400">Unlock — ₹49</Button>
+                </Link>
+              </div>
+            </Card>
+          );
           return (
             <Card className="mb-8 border-emerald-500/20">
               <div className="flex flex-wrap items-center gap-4">
+                {hasQuickFix && (
+                  <Link href={`/audit/${latest.id}`} className="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300">
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                    Quick Aura Fix ready
+                  </Link>
+                )}
                 {hasGlowup && (
                   <Link href={`/audit/${latest.id}`} className="flex items-center gap-2 text-sm text-emerald-400 hover:text-emerald-300">
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
@@ -439,6 +459,11 @@ export default function DashboardPage() {
                         {audit.fullReport && (
                           <svg className="h-3.5 w-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><title>Full Report</title>
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+                          </svg>
+                        )}
+                        {audit.quickFixReport && (
+                          <svg className="h-3.5 w-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><title>Quick Aura Fix</title>
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                           </svg>
                         )}
                         {audit.datingProfileReport && (

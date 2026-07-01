@@ -9,6 +9,7 @@ function isExpired(offer: OfferCode): boolean {
 
 function getProductPrice(productType: ProductType): number {
   switch (productType) {
+    case "quick_fix": return 49;
     case "aura_report": return 99;
     case "dating_audit": return 299;
     case "glowup_plan": return 499;

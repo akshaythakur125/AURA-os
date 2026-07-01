@@ -19,6 +19,22 @@ const plans = [
     href: "/audit/new",
   },
   {
+    name: "Quick Aura Fix",
+    price: "49",
+    tagline: "Get your biggest status leak and the fastest fix path.",
+    features: [
+      "Biggest status leak identified",
+      "Fastest free fix for immediate improvement",
+      "Under ₹500 low-cost fix",
+      "Under ₹2,000 smart investment",
+      "Avoid wasting money on wrong fixes",
+      "3-step action plan",
+      "All processing is local — zero server upload",
+    ],
+    href: "/products/aura-report",
+    badgeText: "Best impulse upgrade",
+  },
+  {
     name: "Full Aura Report",
     price: "99",
     tagline: "Deep analysis with a clear upgrade roadmap.",

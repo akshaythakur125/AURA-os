@@ -6,12 +6,9 @@ import { Button } from "@/components/ui/Button";
 import { createLead } from "@/lib/storage/leadStore";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 import type { ProductType } from "@/types";
+import { PRODUCT_LABELS, PRODUCT_PRICES } from "@/lib/audit/auditUtils";
 
-const PRODUCT_NAMES: Record<ProductType, string> = {
-  aura_report: "Full Aura Report",
-  dating_audit: "Dating/Profile Audit",
-  glowup_plan: "30-Day Glow-Up Plan",
-};
+const PRODUCT_NAMES = PRODUCT_LABELS;
 
 interface LeadCaptureCardProps {
   source: string;
@@ -79,7 +76,7 @@ export function LeadCaptureCard({ source, defaultProduct }: LeadCaptureCardProps
           <select value={interestProduct} onChange={(e) => setInterestProduct(e.target.value as ProductType)} className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none">
             <option value="">Select product</option>
             {(Object.entries(PRODUCT_NAMES) as [ProductType, string][]).map(([key, label]) => (
-              <option key={key} value={key}>{label} — ₹{key === "aura_report" ? 99 : key === "dating_audit" ? 299 : 499}</option>
+              <option key={key} value={key}>{label} — ₹{PRODUCT_PRICES[key]}</option>
             ))}
           </select>
         </div>

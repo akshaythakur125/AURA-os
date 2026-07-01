@@ -376,8 +376,8 @@ export default function AdminPage() {
         {/* ─── Funnel Tab ─── */}
         {activeTab === "funnel" && (
           <>
-            <div className="mb-6 grid gap-4 sm:grid-cols-3">
-              {(["aura_report", "dating_audit", "glowup_plan"] as const).map((pt) => {
+            <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {(["quick_fix", "aura_report", "dating_audit", "glowup_plan"] as const).map((pt) => {
                 const productOrders = orders.filter((o) => o.productType === pt);
                 const productUnlocks = productOrders.filter((o) => o.status === "unlocked");
                 const productPayments = productOrders.filter((o) => o.status === "payment_submitted" || o.status === "code_sent");
@@ -514,6 +514,7 @@ export default function AdminPage() {
                   { key: "owner_whatsapp", label: "Set owner WhatsApp (NEXT_PUBLIC_OWNER_WHATSAPP)" },
                   { key: "admin_code", label: "Set local admin code (NEXT_PUBLIC_LOCAL_ADMIN_CODE)" },
                   { key: "free_score", label: "Test free score generation" },
+                  { key: "quickfix_unlock", label: "Test Quick Aura Fix unlock" },
                   { key: "aura_unlock", label: "Test Full Aura Report unlock" },
                   { key: "dating_unlock", label: "Test Dating Audit unlock" },
                   { key: "glowup_unlock", label: "Test Glow-Up Plan unlock" },
@@ -534,9 +535,9 @@ export default function AdminPage() {
               </div>
               <div className="mt-4 flex items-center gap-2">
                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-white/5">
-                  <div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all" style={{ width: `${(Object.values(checklist).filter(Boolean).length / 16) * 100}%` }} />
+                  <div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all" style={{ width: `${(Object.values(checklist).filter(Boolean).length / 17) * 100}%` }} />
                 </div>
-                <span className="text-xs text-gray-500">{Object.values(checklist).filter(Boolean).length}/16</span>
+                <span className="text-xs text-gray-500">{Object.values(checklist).filter(Boolean).length}/17</span>
               </div>
             </Card>
 
