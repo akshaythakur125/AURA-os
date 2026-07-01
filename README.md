@@ -532,6 +532,54 @@ show freshness and confidence → compare prices safely
 - Public users must verify prices on the final store
 - No scraping, no fake discounts, no guaranteed cheapest claims
 
+## Visual Wardrobe Diagnosis Engine
+
+AuraCheck includes a browser-based visual wardrobe diagnosis engine that analyzes uploaded photos to identify wardrobe gaps and recommend clothing improvements — all locally, with no external AI or server uploads.
+
+### How It Works
+```
+Upload photo → extract dominant colors → estimate outfit region →
+analyze color harmony → detect wardrobe gaps → build palette advice →
+generate commerce search intents → save diagnosis
+```
+
+### Analysis Signals
+| Signal | Description |
+|---|---|
+| Dominant Colors | 6 primary colors extracted via canvas pixel sampling (16 color families) |
+| Outfit Region | Estimated center/upper-body color region (heuristic, not body detection) |
+| Background Region | Edge-sampled background colors for contrast analysis |
+| Color Harmony | Palette consistency, saturation balance, neutral balance (0-100 score) |
+| Wardrobe Gaps | 13 gap types detected from visual heuristics (dull_palette, too_plain, etc.) |
+| Style Direction | Recommended direction (premium_minimal, dating_warm, corporate_sharp, etc.) |
+
+### Wardrobe Gap Types
+| Gap | Fix |
+|---|---|
+| dull_palette | Add white/black/navy/beige layer for contrast |
+| too_plain | Add structured layer like overshirt or jacket |
+| too_busy | Stick to 2-3 solid colors, replace loud patterns |
+| low_contrast | Choose lighter top or better lighting |
+| background_outfit_clash | Contrasting topwear or cleaner backdrop |
+| weak_premium_signal | Neutral palette (black/white/navy/grey/beige) |
+| weak_professional_signal | Oxford shirt, chinos, neutral palette |
+| weak_dating_warmth | Warm neutrals (beige, soft brown, olive) |
+| weak_creator_energy | Controlled bold layer with neutral base |
+| color_mismatch | Choose warm OR cool direction, not both |
+
+### Routes
+| Route | Description |
+|---|---|
+| `/wardrobe/diagnosis` | Upload photo and run full visual diagnosis |
+| `/wardrobe/diagnosis/[auditId]` | Run diagnosis from existing audit photo |
+
+### Safety
+- No face recognition, body rating, or protected trait inference
+- All analysis runs locally in the browser using canvas
+- "Estimated outfit region" — not "detected body"
+- "AuraCheck analyzes presentation, not human worth"
+- No image data is sent to any server
+
 ### Future Connectors (Placeholder)
 - Amazon PA-API connector — requires `amazon_access_key`, `amazon_secret_key`, `amazon_associate_tag`
 - Flipkart Affiliate connector — requires `flipkart_affiliate_id`, `flipkart_affiliate_token`

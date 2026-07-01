@@ -452,3 +452,23 @@ create table if not exists public.commerce_connector_settings (
   metadata jsonb default '{}'::jsonb,
   updated_at timestamptz default now()
 );
+
+-- ============================================================
+-- Visual Wardrobe Diagnoses
+-- ============================================================
+
+create table if not exists public.visual_wardrobe_diagnoses (
+  id text primary key,
+  audit_id uuid references public.audits(id) on delete set null,
+  anonymous_id text,
+  source_image_id text,
+  diagnosis jsonb not null default '{}'::jsonb,
+  palette_type text,
+  color_harmony_score int,
+  recommended_style_direction text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists idx_visual_wardrobe_diagnoses_audit on public.visual_wardrobe_diagnoses(audit_id);
+create index if not exists idx_visual_wardrobe_diagnoses_palette on public.visual_wardrobe_diagnoses(palette_type);
