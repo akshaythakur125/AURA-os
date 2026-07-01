@@ -1112,6 +1112,14 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                   <Button variant="outline" className="w-full">Open Wardrobe Finder</Button>
                 </Link>
               </div>
+              <div className="mb-4 grid gap-3 sm:grid-cols-2">
+                <Link href={`/wardrobe/diagnosis/${audit.id}`}>
+                  <Button variant="outline" className="w-full">Visual Wardrobe Diagnosis</Button>
+                </Link>
+                <Link href={`/wardrobe/search?auditId=${audit.id}`}>
+                  <Button variant="outline" className="w-full">Search by Diagnosis</Button>
+                </Link>
+              </div>
               <p className="text-xs text-gray-500">
                 Prices are from AuraCheck&rsquo;s MVP catalog and may not be live. Verify on store before buying.
                 AuraCheck may earn affiliate commission from some links. Sponsored items do not automatically rank first.

@@ -65,6 +65,9 @@ export default function WardrobePage() {
           <Link href="/wardrobe/search">
             <Button variant="outline">Search All Products</Button>
           </Link>
+          <Link href="/wardrobe/diagnosis">
+            <Button variant="outline">Visual Wardrobe Diagnosis</Button>
+          </Link>
           {latestScored && (
             <Link href={`/wardrobe/${latestScored.id}`}>
               <Button variant="outline">Open from latest audit</Button>
