@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
@@ -70,6 +70,10 @@ function UnlockContent() {
   const [offerCodeInput, setOfferCodeInput] = useState("");
   const [offerResult, setOfferResult] = useState<OfferApplyResult | null>(null);
   const [offerError, setOfferError] = useState<string | null>(null);
+  const [checkingPaymentStatus, setCheckingPaymentStatus] = useState(false);
+  const [paymentStatusResult, setPaymentStatusResult] = useState<string | null>(null);
+  const [recovering, setRecovering] = useState(false);
+  const [recoveryResult, setRecoveryResult] = useState<string | null>(null);
 
   useEffect(() => {
     if (product === "quick_fix") trackEvent("quick_fix_unlock_started", { auditId });
@@ -92,6 +96,60 @@ function UnlockContent() {
   const [stage, setStage] = useState<Stage>(initialStage);
   const [existingOrder, setExistingOrder] = useState<ManualOrder | undefined>(foundExisting);
   const razorpayAvailable = !!getPublicRazorpayKeyId();
+
+  const checkPaymentStatus = useCallback(async () => {
+    if (!auditId || !audit) return;
+    setCheckingPaymentStatus(true);
+    setPaymentStatusResult(null);
+    try {
+      const res = await fetch("/api/payments/status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ auditId, productType: product }),
+      });
+      const data = await res.json();
+      if (data.unlocked) {
+        setPaymentStatusResult("Payment verified and product unlocked! Redirecting...");
+        setTimeout(() => router.push(`/audit/${auditId}`), 1500);
+      } else if (data.status === "payment_failed") {
+        setPaymentStatusResult("Payment failed. Please try manual UPI or contact support.");
+      } else if (data.status === "amount_mismatch") {
+        setPaymentStatusResult("Payment amount mismatch detected. Contact support.");
+      } else if (data.status === "paid_pending_recovery") {
+        setPaymentStatusResult("Payment needs recovery. Click &lsquo;Recover payment&rsquo; below.");
+      } else {
+        setPaymentStatusResult("Payment not yet verified. If money was deducted, use the recovery option below.");
+      }
+    } catch {
+      setPaymentStatusResult("Could not check payment status.");
+    } finally {
+      setCheckingPaymentStatus(false);
+    }
+  }, [auditId, product, audit, router]);
+
+  const handleRecoverPayment = useCallback(async () => {
+    if (!auditId || !audit) return;
+    setRecovering(true);
+    setRecoveryResult(null);
+    try {
+      const res = await fetch("/api/payments/recover", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ auditId, productType: product }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setRecoveryResult("Payment recovered and product unlocked! Redirecting...");
+        setTimeout(() => router.push(`/audit/${auditId}`), 1500);
+      } else {
+        setRecoveryResult(data.message || "Could not recover payment. Contact support with your payment ID.");
+      }
+    } catch {
+      setRecoveryResult("Recovery failed. Contact support with your payment ID.");
+    } finally {
+      setRecovering(false);
+    }
+  }, [auditId, product, audit, router]);
 
   if (!auditId || !audit) {
     return (
@@ -516,9 +574,63 @@ function UnlockContent() {
           </>
         )}
 
+        {/* ─── Payment Recovery ─── */}
+        {razorpayAvailable && (
+          <Card className="mb-6 border-amber-500/20">
+            <h3 className="mb-3 text-sm font-semibold text-amber-400">Payment Recovery</h3>
+            <p className="mb-3 text-xs text-gray-400">
+              If you paid via Razorpay but the product didn&rsquo;t unlock (e.g., browser closed before redirect), check payment status or recover your payment.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={checkPaymentStatus}
+                disabled={checkingPaymentStatus}
+              >
+                {checkingPaymentStatus ? "Checking..." : "Check Payment Status"}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-emerald-500/50 text-emerald-400"
+                onClick={handleRecoverPayment}
+                disabled={recovering}
+              >
+                {recovering ? "Recovering..." : "Recover Payment / Check Again"}
+              </Button>
+            </div>
+            {checkingPaymentStatus && (
+              <p className="mt-2 text-xs text-gray-500">Checking payment status...</p>
+            )}
+            {paymentStatusResult && (
+              <div className={`mt-2 rounded-lg px-3 py-2 text-xs ${
+                paymentStatusResult.includes("unlocked") || paymentStatusResult.includes("verified")
+                  ? "bg-emerald-500/10 text-emerald-300"
+                  : "bg-amber-500/10 text-amber-300"
+              }`}>
+                {paymentStatusResult}
+              </div>
+            )}
+            {recoveryResult && (
+              <div className={`mt-2 rounded-lg px-3 py-2 text-xs ${
+                recoveryResult.includes("unlocked")
+                  ? "bg-emerald-500/10 text-emerald-300"
+                  : "bg-amber-500/10 text-amber-300"
+              }`}>
+                {recoveryResult}
+              </div>
+            )}
+            <p className="mt-3 text-xs text-gray-500">
+              If money was deducted and recovery doesn&rsquo;t work, send your Razorpay payment ID and order ID to support.
+            </p>
+          </Card>
+        )}
+
         {/* ─── Footer ─── */}
         <div className="mt-6 space-y-2 text-center text-xs text-gray-600">
-          <p>Manual MVP payment. Payment is not automatically verified.</p>
+          <p>Online payments unlock automatically after verification. If checkout closes after payment, AuraCheck can recover verified payments.</p>
+          <p>Manual payments still require owner/admin verification.</p>
           <p>Your image stays in this browser.</p>
           <p>No external AI service is used.</p>
           <p className="text-gray-500">AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth. No guaranteed dating, social, career, or financial outcomes.</p>

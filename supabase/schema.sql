@@ -61,6 +61,8 @@ create table if not exists public.orders (
   razorpay_payment_id text,
   razorpay_signature text,
   generated_unlock_code text,
+  recovery_state text,
+  webhook_verified boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   unlocked_at timestamptz

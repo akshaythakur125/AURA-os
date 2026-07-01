@@ -266,8 +266,9 @@ export default function AdminPage() {
                           <div><span className="text-gray-500">Customer:</span> <span className="text-gray-300">{order.customerName || "—"}</span></div>
                           <div><span className="text-gray-500">Contact:</span> <span className="text-gray-300">{order.customerContact || "—"}</span></div>
                           <div><span className="text-gray-500">UPI Ref:</span> <span className="text-gray-300">{order.upiTransactionRef || "—"}</span></div>
-                          <div><span className="text-gray-500">Method:</span> <span className="text-gray-300">{order.razorpayPaymentId ? "Razorpay" : order.upiId ? "Manual UPI" : "—"}</span></div>
-                          {order.razorpayPaymentId && <div><span className="text-gray-500">Razorpay ID:</span> <span className="font-mono text-xs text-purple-300">{order.razorpayPaymentId.slice(0, 20)}...</span></div>}
+                          <div><span className="text-gray-500">Method:</span> <span className="text-gray-300">{order.razorpayPaymentId || order.razorpayOrderId ? "Razorpay" : order.upiId ? "Manual UPI" : "—"}</span></div>
+                          {order.razorpayPaymentId && <div><span className="text-gray-500">Verification:</span> <span className="text-emerald-400">{order.razorpayPaymentId ? "checkout_verify" : "—"}</span></div>}
+                          {order.razorpayOrderId && <div><span className="text-gray-500">Razorpay Order:</span> <span className="font-mono text-xs text-purple-300">{order.razorpayOrderId.slice(0, 20)}...</span></div>}
                           <div><span className="text-gray-500">Code:</span> <span className="font-mono text-purple-300">{order.generatedUnlockCode || "—"}</span></div>
                           <div><span className="text-gray-500">Created:</span> <span className="text-gray-300">{new Date(order.createdAt).toLocaleDateString("en-IN")}</span></div>
                         </div>
@@ -311,6 +312,27 @@ export default function AdminPage() {
               <Card><div className="text-xs text-gray-500">Affiliate Clicks</div><div className="mt-1 text-2xl font-bold text-white">{analytics.affiliateClicked}</div></Card>
               <Card><div className="text-xs text-gray-500">Audits Created</div><div className="mt-1 text-2xl font-bold text-white">{analytics.auditCreated}</div></Card>
             </div>
+            <Card className="mb-8 border-amber-500/20">
+              <h3 className="mb-3 text-sm font-semibold text-amber-400">Payment Reliability</h3>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div>
+                  <div className="text-xs text-gray-500">Razorpay Orders Created</div>
+                  <div className="mt-1 text-2xl font-bold text-white">{orders.filter(o => o.razorpayPaymentId || o.razorpayOrderId).length}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Checkout Verify Unlocks</div>
+                  <div className="mt-1 text-2xl font-bold text-emerald-400">{orders.filter(o => o.razorpayPaymentId && o.status === "unlocked").length}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Manual / Founder Unlocks</div>
+                  <div className="mt-1 text-2xl font-bold text-white">{orders.filter(o => !o.razorpayPaymentId && o.status === "unlocked").length}</div>
+                </div>
+              </div>
+              <div className="mt-4 rounded-lg bg-amber-500/5 p-3 text-xs text-gray-400">
+                Webhook, recovery, and zero-amount order stats are available in Supabase mode via /api/health. This panel shows localStorage-only data.
+              </div>
+            </Card>
+
             <Card className="mb-8">
               <h3 className="mb-3 text-sm font-semibold text-white">Conversion Estimate</h3>
               <div className="grid gap-3 text-xs sm:grid-cols-2">

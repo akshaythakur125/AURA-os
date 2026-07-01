@@ -118,14 +118,59 @@ Add these to `.env.local`:
 - **Never trust the client amount** — server always calculates from the product catalog
 - **Unlock only after signature verification** — the client callback alone is not trusted
 - **Use test mode before going live** — toggle in Razorpay dashboard
+- **Webhook secret must stay server-side** — never expose to the browser
+- **Verify amount and currency before unlocking via webhook**
+
+### Razorpay Webhook Setup
+
+Webhooks ensure successful payments unlock products even if the user closes the browser or the redirect fails after payment.
+
+1. **Add `RAZORPAY_WEBHOOK_SECRET`** to `.env.local` and Vercel environment variables
+2. **In Razorpay Dashboard** → Settings → Webhooks → Add webhook endpoint:
+   - URL: `https://yourdomain.com/api/webhooks/razorpay`
+   - Select events: `payment.captured`, `payment.failed`, `order.paid`
+   - Enter your webhook secret
+3. **Test** in Razorpay test mode — complete a payment and verify the product unlocks even if the verify callback is skipped
+4. **Confirm** `/admin` shows the webhook verification source on order cards
+
+The webhook endpoint:
+- Verifies the HMAC SHA256 signature using `RAZORPAY_WEBHOOK_SECRET`
+- Handles `payment.captured` — validates amount/currency, updates order, unlocks product
+- Handles `payment.failed` — marks order as failed for admin visibility
+- Handles `order.paid` — marks order for recovery if payment details are still pending
+- Returns 200 for all events (including unsupported) to prevent Razorpay retries
+
+### Payment Recovery
+
+If a payment is captured but the verify callback or webhook failed to unlock the product:
+
+1. User visits `/unlock` with their audit ID and product type
+2. After Razorpay checkout closes, the page polls `/api/payments/status`
+3. If status shows pending/failed, user can click **"Recover payment / Check again"**
+4. The `/api/payments/recover` endpoint fetches payment status from Razorpay server-side
+5. If payment is captured and amount matches, it updates the order and unlocks the product
+6. If unrecoverable, user is shown contact-support instructions with their payment ID
+
+### Payment Status API
+
+`POST /api/payments/status` — Check payment status by `appOrderId` or `razorpayOrderId`.
+
+Returns: order found, status, unlocked boolean, product type, audit ID.
+
+### Payment Recovery API
+
+`POST /api/payments/recover` — Attempt to recover a payment by checking Razorpay server-side.
+
+Requires: `appOrderId` or `razorpayOrderId`, `auditId`, `productType`.
 
 ### Fallback Behavior
 
-| Razorpay env vars | Supabase configured | Payment option shown |
-|---|---|---|
-| Yes | Yes | Razorpay checkout (primary) + manual UPI (fallback) |
-| No | — | Manual UPI only |
-| — | No | Manual UPI only (Supabase needed for order tracking) |
+| Razorpay env vars | Razorpay webhook env | Supabase configured | Payment option shown |
+|---|---|---|---|
+| Yes | — | Yes | Razorpay checkout (primary) + manual UPI (fallback) |
+| Yes | Yes | Yes | Razorpay checkout (webhook recovery enabled) + manual UPI |
+| No | — | — | Manual UPI only |
+| — | — | No | Manual UPI only (Supabase needed for order tracking) |
 
 ## Supabase Persistence Mode
 
@@ -179,6 +224,7 @@ And for Razorpay:
 - `NEXT_PUBLIC_RAZORPAY_KEY_ID`
 - `RAZORPAY_KEY_ID`
 - `RAZORPAY_KEY_SECRET`
+- `RAZORPAY_WEBHOOK_SECRET`
 
 **Service role key must never be exposed to the browser.**
 
@@ -253,6 +299,7 @@ This project is ready for Vercel deployment:
    | `NEXT_PUBLIC_SUPABASE_URL` | `https://xxxx.supabase.co` | For Supabase |
    | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `your_anon_key` | For Supabase |
    | `SUPABASE_SERVICE_ROLE_KEY` | `your_service_role_key` | For Supabase (server-only) |
+   | `RAZORPAY_WEBHOOK_SECRET` | `your_webhook_secret` | For Razorpay webhooks (server-only) |
    | `NEXT_PUBLIC_SUPPORT_EMAIL` | `support@example.com` | No |
    | `NEXT_PUBLIC_OWNER_WHATSAPP` | `919999999999` | No |
    | `NEXT_PUBLIC_DEMO_UNLOCK_CODE` | `AURADEMO` | No (defaults to AURADEMO) |

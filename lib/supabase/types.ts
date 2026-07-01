@@ -184,6 +184,8 @@ export interface OrderRow {
   razorpay_payment_id: string | null;
   razorpay_signature: string | null;
   generated_unlock_code: string | null;
+  recovery_state: string | null;
+  webhook_verified: boolean;
   created_at: string;
   updated_at: string;
   unlocked_at: string | null;
@@ -207,6 +209,8 @@ export interface OrderInsert {
   razorpay_payment_id?: string | null;
   razorpay_signature?: string | null;
   generated_unlock_code?: string | null;
+  recovery_state?: string | null;
+  webhook_verified?: boolean;
   created_at?: string;
   updated_at?: string;
   unlocked_at?: string | null;
@@ -227,6 +231,8 @@ export interface OrderUpdate {
   razorpay_payment_id?: string | null;
   razorpay_signature?: string | null;
   generated_unlock_code?: string | null;
+  recovery_state?: string | null;
+  webhook_verified?: boolean;
   updated_at?: string;
   unlocked_at?: string | null;
 }

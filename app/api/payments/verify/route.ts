@@ -3,7 +3,7 @@ import { isSupabaseConfigured } from "@/lib/storage/storageMode";
 import { getSupabaseAdmin } from "@/lib/supabase/admin";
 import { getRazorpaySecret } from "@/lib/razorpay/env";
 import { verifyRazorpaySignature } from "@/lib/payments/verifyRazorpaySignature";
-import { generatePaidProductForAudit } from "@/lib/payments/generatePaidProduct";
+import { unlockPaidProduct } from "@/lib/payments/unlockPaidProduct";
 import { isValidProductType } from "@/lib/payments/productCatalog";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +25,6 @@ export async function POST(request: NextRequest) {
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
-      reportData,
     } = body;
 
     if (!appOrderId || !auditId || !productType || !razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -100,105 +99,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Signature valid — proceed with unlock
-    const now = new Date().toISOString();
-
-    // Update order with payment details
+    // Update order with payment details before unlocking
     await supabase
       .from("orders")
       .update({
         razorpay_payment_id,
         razorpay_signature,
-        status: "unlocked",
-        unlocked_at: now,
+        status: "paid_verified",
       } as never)
       .eq("id", appOrderId);
 
-    // Load audit
-    const { data: audit, error: auditError } = await supabase
-      .from("audits")
-      .select("*")
-      .eq("id", auditId)
-      .single();
+    // Use central unlock service
+    const result = await unlockPaidProduct({
+      auditId,
+      orderId: appOrderId,
+      productType,
+      unlockMethod: "razorpay_verify",
+      paymentId: razorpay_payment_id,
+      razorpayOrderId: razorpay_order_id,
+    });
 
-    if (auditError || !audit) {
-      return NextResponse.json({ error: "Audit not found" }, { status: 404 });
-    }
-
-    const auditRow = audit as Record<string, unknown>;
-    const unlockedProducts: string[] = (auditRow.unlocked_products as string[]) || [];
-
-    // Avoid duplicate product in unlocked_products
-    if (!unlockedProducts.includes(productType)) {
-      unlockedProducts.push(productType);
-    }
-
-    // Generate or use pre-generated report
-    let report: Record<string, unknown>;
-    if (reportData) {
-      report = reportData;
-    } else {
-      try {
-        report = generatePaidProductForAudit(audit as never, productType);
-      } catch {
-        report = { type: productType, generatedAt: now, note: "Report generated after payment verification" };
-      }
-    }
-
-    // Update audit with unlocked product and report
-    const auditUpdate: Record<string, unknown> = {
-      unlocked_products: unlockedProducts,
-      unlock_status: "unlocked",
-      report_status: productType === "quick_fix" ? "quick_fix_ready" : "complete",
-      updated_at: now,
-    };
-
-    // Save report to correct field
-    switch (productType) {
-      case "quick_fix":
-        auditUpdate.quick_fix_report = report;
-        break;
-      case "aura_report":
-        auditUpdate.full_report = report;
-        break;
-      case "dating_audit":
-        auditUpdate.dating_profile_report = report;
-        break;
-      case "glowup_plan":
-        auditUpdate.glowup_plan = report;
-        break;
-    }
-
-    const { error: auditUpdateError } = await supabase
-      .from("audits")
-      .update(auditUpdate as never)
-      .eq("id", auditId);
-
-    if (auditUpdateError) {
-      return NextResponse.json(
-        { error: "Failed to update audit" },
-        { status: 500 }
-      );
-    }
-
-    // Create product_unlocks row
-    await supabase.from("product_unlocks").insert({
+    // Track analytics event
+    await supabase.from("analytics_events").insert({
+      event_name: "razorpay_payment_verified",
       audit_id: auditId,
       order_id: appOrderId,
       product_type: productType,
-      unlock_method: "razorpay",
-      unlocked_at: now,
+      metadata: { razorpay_order_id },
     } as never);
-
-    // Track analytics event
-    await supabase.from("analytics_events").insert([
-      { event_name: "razorpay_payment_verified", audit_id: auditId, order_id: appOrderId, product_type: productType, metadata: { razorpay_order_id } },
-      { event_name: "product_unlocked", audit_id: auditId, order_id: appOrderId, product_type: productType, metadata: { method: "razorpay" } },
-    ] as never);
 
     return NextResponse.json({
       success: true,
-      alreadyUnlocked: false,
+      alreadyUnlocked: result.alreadyUnlocked,
       productType,
       productName: productType,
     });
