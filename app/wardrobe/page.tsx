@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
@@ -39,12 +39,9 @@ export default function WardrobePage() {
     }
   }
 
-  useEffect(() => {
-    if (scoredAudits.length > 0 && !plan) {
-      generatePlan();
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  if (typeof window !== "undefined" && scoredAudits.length > 0 && !plan && !loading) {
+    generatePlan();
+  }
 
   const stores = getActiveStores();
 

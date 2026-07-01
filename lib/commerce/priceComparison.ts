@@ -1,5 +1,5 @@
-import type { CommerceProduct, ProductOffer, AuraCommerceRecommendation, StoreKey } from "@/types/commerce";
-import { compareOfferPrices, formatPrice, calculateDiscountPercent } from "./dealScoring";
+import type { CommerceProduct, ProductOffer, AuraCommerceRecommendation, AuraLeakTag } from "@/types/commerce";
+import { compareOfferPrices, formatPrice } from "./dealScoring";
 import { getStoreTrustWeight } from "./storeDirectory";
 
 export interface ComparisonResult {
@@ -62,7 +62,7 @@ export function buildRecommendation(
     priceValueScore,
     dealScore,
     reason,
-    linkedAuraLeak: linkedAuraLeak as any,
+    linkedAuraLeak: linkedAuraLeak as AuraLeakTag | undefined,
     stylingTip: product.stylingTip,
     buyPriority: buyPriority || "buy_later",
     avoidReason: buyPriority === "avoid_for_now" ? product.avoidIf : undefined,

@@ -22,6 +22,7 @@ import { getTwinStats } from "@/lib/storage/auraTwinStore";
 import { getHabitStats } from "@/lib/storage/habitStore";
 import { getItem, setItem } from "@/lib/storage/localStore";
 import { isSupabaseConfigured } from "@/lib/storage/storageMode";
+import { getCommerceAnalytics, getCommerceClicks } from "@/lib/storage/commerceClickStore";
 
 const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   draft: "Draft",
@@ -58,7 +59,7 @@ export default function AdminPage() {
   const [progressStats] = useState(() => getProgressStats());
   const [twinStats] = useState(() => getTwinStats());
   const [habitStats] = useState(() => getHabitStats());
-  const [activeTab, setActiveTab] = useState<"orders" | "analytics" | "leads" | "funnel" | "growth" | "export" | "checklist">("orders");
+  const [activeTab, setActiveTab] = useState<"orders" | "analytics" | "leads" | "funnel" | "commerce" | "growth" | "export" | "checklist">("orders");
   const [checklist, setChecklist] = useState<Record<string, boolean>>(() => getItem<Record<string, boolean>>("auracheck:v1:founder_checklist", {}));
   function toggleChecklistItem(key: string) {
     const next = { ...checklist, [key]: !checklist[key] };
@@ -233,13 +234,13 @@ export default function AdminPage() {
 
         {/* ─── Tabs ─── */}
         <div className="mb-6 flex gap-2">
-          {(["orders", "analytics", "leads", "funnel", "growth", "checklist", "export"] as const).map((tab) => (
+          {(["orders", "analytics", "leads", "funnel", "commerce", "growth", "checklist", "export"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`rounded-full px-4 py-1.5 text-xs transition-all ${activeTab === tab ? "bg-purple-500/20 text-purple-300" : "bg-white/5 text-gray-500 hover:text-gray-300"}`}
             >
-              {tab === "orders" ? "Orders" : tab === "analytics" ? "Analytics" : tab === "leads" ? "Leads" : tab === "funnel" ? "Funnel" : tab === "growth" ? "Growth" : tab === "checklist" ? "Checklist" : "Export"}
+              {tab === "orders" ? "Orders" : tab === "analytics" ? "Analytics" : tab === "leads" ? "Leads" : tab === "funnel" ? "Funnel" : tab === "commerce" ? "Commerce" : tab === "growth" ? "Growth" : tab === "checklist" ? "Checklist" : "Export"}
             </button>
           ))}
         </div>
@@ -539,6 +540,65 @@ export default function AdminPage() {
                 </div>
               )}
             </Card>
+          </>
+        )}
+
+        {/* ─── Commerce Tab ─── */}
+        {activeTab === "commerce" && (
+          <>
+            {(() => {
+              const ca = getCommerceAnalytics();
+              const clicks = getCommerceClicks();
+              return (
+                <>
+                  <div className="mb-6 grid gap-4 sm:grid-cols-4">
+                    <Card><div className="text-xs text-gray-500">Recommendation Views</div><div className="mt-1 text-2xl font-bold text-white">{ca.totalRecommendationViews}</div></Card>
+                    <Card><div className="text-xs text-gray-500">Product Clicks</div><div className="mt-1 text-2xl font-bold text-white">{ca.totalProductClicks}</div></Card>
+                    <Card><div className="text-xs text-gray-500">Affiliate Clicks</div><div className="mt-1 text-2xl font-bold text-amber-400">{ca.affiliateClicks}</div></Card>
+                    <Card><div className="text-xs text-gray-500">Sponsored Clicks</div><div className="mt-1 text-2xl font-bold text-purple-300">{ca.sponsoredClicks}</div></Card>
+                  </div>
+                  <div className="mb-6 grid gap-4 sm:grid-cols-3">
+                    <Card>
+                      <h3 className="mb-3 text-sm font-semibold text-white">Top Clicked Stores</h3>
+                      {ca.topClickedStores.length === 0 ? <div className="text-xs text-gray-500">No data yet.</div> : (
+                        <div className="space-y-2">{ca.topClickedStores.map((s) => (
+                          <div key={s.store} className="flex items-center justify-between text-xs"><span className="text-gray-300">{s.store}</span><span className="text-white">{s.count}</span></div>
+                        ))}</div>
+                      )}
+                    </Card>
+                    <Card>
+                      <h3 className="mb-3 text-sm font-semibold text-white">Top Clicked Categories</h3>
+                      {ca.topClickedCategories.length === 0 ? <div className="text-xs text-gray-500">No data yet.</div> : (
+                        <div className="space-y-2">{ca.topClickedCategories.map((c) => (
+                          <div key={c.category} className="flex items-center justify-between text-xs"><span className="text-gray-300">{c.category}</span><span className="text-white">{c.count}</span></div>
+                        ))}</div>
+                      )}
+                    </Card>
+                    <Card>
+                      <h3 className="mb-3 text-sm font-semibold text-white">Top Clicked Products</h3>
+                      {ca.topClickedProducts.length === 0 ? <div className="text-xs text-gray-500">No data yet.</div> : (
+                        <div className="space-y-2">{ca.topClickedProducts.map((p) => (
+                          <div key={p.productId} className="flex items-center justify-between text-xs"><span className="text-gray-300 truncate max-w-[200px]">{p.title}</span><span className="text-white">{p.count}</span></div>
+                        ))}</div>
+                      )}
+                    </Card>
+                  </div>
+                  {clicks.length > 0 && (
+                    <Card>
+                      <h3 className="mb-3 text-sm font-semibold text-white">Recent Clicks ({clicks.length} total)</h3>
+                      <div className="max-h-64 space-y-1 overflow-y-auto">
+                        {clicks.slice(-20).reverse().map((c, i) => (
+                          <div key={i} className="flex items-center justify-between rounded bg-white/5 px-2 py-1 text-xs">
+                            <span className="text-gray-300 truncate max-w-[200px]">{c.productId}</span>
+                            <span className="text-gray-500">{c.storeKey} — {c.source}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  )}
+                </>
+              );
+            })()}
           </>
         )}
 

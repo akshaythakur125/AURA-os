@@ -835,7 +835,65 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ─── 11. Growth Features ─── */}
+      {/* ─── 11. Commerce Engine ─── */}
+      <section className="border-t border-white/5 py-20">
+        <Container>
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              Know what to wear before you buy
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">
+              AuraCheck does not just score your photo. It tells you which clothes, colors, and accessories are likely to
+              improve your visual signal, then compares options across Indian stores.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Diagnose outfit gap</h3>
+              <p className="text-sm text-gray-400">AuraCheck identifies your biggest visual/status leak and tells you which clothing category to fix first.</p>
+            </Card>
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Match style direction</h3>
+              <p className="text-sm text-gray-400">Your photo determines whether clean basic, premium minimal, dating warm, or creator bold suits you best.</p>
+            </Card>
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-green-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Compare prices</h3>
+              <p className="text-sm text-gray-400">See the best listed prices across Myntra, AJIO, Amazon Fashion, Flipkart Fashion, and more Indian stores.</p>
+            </Card>
+            <Card hover>
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-red-500 to-rose-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Avoid wasting money</h3>
+              <p className="text-sm text-gray-400">Know what not to buy right now. Avoid-for-now advice prevents spending on items that won&rsquo;t fix your actual gap.</p>
+            </Card>
+          </div>
+          <div className="mt-10 text-center">
+            <Link href="/wardrobe">
+              <Button size="lg">Try Aura Wardrobe Finder</Button>
+            </Link>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── 12. Growth Features ─── */}
       <section className="border-t border-white/5 py-20">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">

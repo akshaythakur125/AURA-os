@@ -1,4 +1,4 @@
-import type { CommerceClickEvent, CommerceAnalytics, StoreKey, WardrobeCategory } from "@/types/commerce";
+import type { CommerceClickEvent, CommerceAnalytics } from "@/types/commerce";
 import { getItem, setItem } from "./localStore";
 
 const CLICKS_KEY = "auracheck:v1:commerce_clicks";

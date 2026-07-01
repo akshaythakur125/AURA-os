@@ -71,7 +71,9 @@ export type WardrobeCategory =
   | "perfume"
   | "grooming"
   | "background_item"
-  | "photo_accessory";
+  | "photo_accessory"
+  | "jewellery"
+  | "wallet";
 
 export type AvailabilityStatus = "available" | "unknown" | "out_of_stock";
 

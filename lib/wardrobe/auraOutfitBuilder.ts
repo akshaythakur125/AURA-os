@@ -1,12 +1,8 @@
 import type {
   AuraOutfitBundle,
   AuraCommerceRecommendation,
-  AuraStyleDirection,
-  AuraLeakTag,
-  StoreKey,
   WardrobeCategory,
 } from "@/types/commerce";
-import { matchProductsToAura } from "./auraProductMatcher";
 import type { StyleDiagnosisResult } from "@/types/commerce";
 
 interface BuildBundlesOptions {
@@ -93,12 +89,6 @@ function buildBundle(
   auditId?: string
 ): AuraOutfitBundle {
   // Pick top items for each category
-  const categoryOrder: WardrobeCategory[] = [
-    "tshirt", "shirt", "overshirt", "jeans", "chinos", "trousers",
-    "sneakers", "watch", "belt", "jacket", "hoodie", "sunglasses",
-    "kurta", "perfume", "grooming", "photo_accessory", "background_item",
-  ];
-
   const selected: AuraCommerceRecommendation[] = [];
   const usedCategories = new Set<WardrobeCategory>();
 

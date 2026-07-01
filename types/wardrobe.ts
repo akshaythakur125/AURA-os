@@ -1,5 +1,4 @@
 import type {
-  AuraLeakTag,
   AuraStyleDirection,
   WardrobeCategory,
   CommerceProduct,

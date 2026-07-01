@@ -1095,6 +1095,29 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               );
             })()}
 
+            {/* ─── Aura Wardrobe Direction ─── */}
+            <Card className="mb-8 border-purple-500/20">
+              <div className="mb-4">
+                <Badge variant="premium" className="mb-2">Aura Wardrobe Direction</Badge>
+                <h3 className="text-lg font-bold text-white">What to wear based on your analysis</h3>
+                <p className="mt-1 text-sm text-gray-400">
+                  Your Aura Check identified visual signals that clothing choices can improve. Compare options across Indian stores.
+                </p>
+              </div>
+              <div className="mb-4 grid gap-3 sm:grid-cols-2">
+                <Link href={`/wardrobe/${audit.id}`}>
+                  <Button className="w-full">Compare clothes across Indian stores</Button>
+                </Link>
+                <Link href="/wardrobe">
+                  <Button variant="outline" className="w-full">Open Wardrobe Finder</Button>
+                </Link>
+              </div>
+              <p className="text-xs text-gray-500">
+                Prices are from AuraCheck&rsquo;s MVP catalog and may not be live. Verify on store before buying.
+                AuraCheck may earn affiliate commission from some links. Sponsored items do not automatically rank first.
+              </p>
+            </Card>
+
             {/* ─── ₹49 Paywall (if Quick Fix not unlocked) ─── */}
             {!unlockedProducts.includes("quick_fix") && (
               <Card className="mb-8 border-emerald-500/30 ring-1 ring-emerald-500/20">

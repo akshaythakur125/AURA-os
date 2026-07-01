@@ -1,12 +1,9 @@
 import type {
   CommerceProduct,
   AuraCommerceRecommendation,
-  AuraLeakTag,
-  AuraStyleDirection,
-  WardrobeCategory,
   StyleDiagnosisResult,
 } from "@/types/commerce";
-import { WARDROBE_CATALOG, getProductsByCategory, getProductsByLeakTag, getProductsByStyleDirection } from "@/config/auraWardrobeCatalog";
+import { WARDROBE_CATALOG } from "@/config/auraWardrobeCatalog";
 import { buildRecommendation } from "@/lib/commerce/priceComparison";
 
 export interface MatchOptions {

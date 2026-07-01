@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { WARDROBE_CATALOG } from "@/config/auraWardrobeCatalog";
+import type { AuraStyleDirection, AuraLeakTag } from "@/types/commerce";
 
 export const dynamic = "force-dynamic";
 
@@ -17,10 +18,10 @@ export async function GET(request: Request) {
     products = products.filter((p) => p.category === category);
   }
   if (style) {
-    products = products.filter((p) => p.styleDirections.includes(style as any));
+    products = products.filter((p) => p.styleDirections.includes(style as AuraStyleDirection));
   }
   if (leak) {
-    products = products.filter((p) => p.auraLeakTags.includes(leak as any));
+    products = products.filter((p) => p.auraLeakTags.includes(leak as AuraLeakTag));
   }
   if (maxBudget) {
     const budget = parseInt(maxBudget, 10);

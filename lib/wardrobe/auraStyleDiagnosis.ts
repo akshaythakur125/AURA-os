@@ -1,6 +1,5 @@
 import type { AuraLeakTag, AuraStyleDirection, WardrobeCategory, StyleDiagnosisResult } from "@/types/commerce";
 import { getRuleForLeak } from "@/config/auraOutfitRules";
-import type { AuditRow } from "@/lib/supabase/types";
 
 export interface DiagnosisInput {
   freeResult?: Record<string, unknown> | null;
@@ -56,9 +55,10 @@ function inferLeakFromSignals(freeResult?: Record<string, unknown> | null): Aura
     for (const [key, tag] of Object.entries(leakMap)) {
       if (label.includes(key)) return tag;
     }
-    if ((signal as any).type?.toLowerCase().includes("outfit")) return "outfit_inconsistency";
-    if ((signal as any).type?.toLowerCase().includes("lighting")) return "weak_lighting";
-    if ((signal as any).type?.toLowerCase().includes("background")) return "busy_background";
+    const sigType = ((signal as Record<string, unknown>).type as string) || "";
+    if (sigType.toLowerCase().includes("outfit")) return "outfit_inconsistency";
+    if (sigType.toLowerCase().includes("lighting")) return "weak_lighting";
+    if (sigType.toLowerCase().includes("background")) return "busy_background";
   }
 
   return null;

@@ -10,7 +10,7 @@ import { getAuditById } from "@/lib/storage/auditStore";
 import { buildAuraCommercePlan } from "@/lib/wardrobe/auraCommerceEngine";
 import { formatPrice } from "@/lib/commerce/dealScoring";
 import { trackStoreClick } from "@/lib/commerce/commerceTracking";
-import type { AuraCommercePlan } from "@/types/commerce";
+import type { AuraCommercePlan, StoreKey } from "@/types/commerce";
 
 export default function AuditWardrobePage({ params }: { params: Promise<{ auditId: string }> }) {
   const { auditId } = use(params);
@@ -68,7 +68,7 @@ export default function AuditWardrobePage({ params }: { params: Promise<{ auditI
   }
 
   function handleStoreClick(url: string, storeKey: string, productId: string, offerId: string, price: number, isAffiliate: boolean) {
-    trackStoreClick(storeKey as any, productId, offerId, price, isAffiliate, "wardrobe_audit", auditId);
+    trackStoreClick(storeKey as StoreKey, productId, offerId, price, isAffiliate, "wardrobe_audit", auditId);
     window.open(url, "_blank");
   }
 

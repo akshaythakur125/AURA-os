@@ -378,6 +378,37 @@ AuraCheck uses a **manual UPI payment flow** — no payment API integration.
 5. Click **Copy Code** to share with the user
 6. Click **Mark Unlocked** after confirming payment
 
+## Aura Commerce Engine
+
+AuraCheck's commerce engine analyzes your photo, identifies your biggest visual/status leak, and recommends clothing/accessory upgrades with Indian store price comparison.
+
+### Features
+- **Style Diagnosis** — Maps your photo analysis to 12 style directions (clean basic, premium minimal, dating warm, etc.) and 13 aura leak tags
+- **Product Matching** — 70+ manually curated products across 18 categories, scored by leak match (30%), style match (25%), category priority (20%), budget fit (15%), and price value (10%)
+- **Price Comparison** — Each product has 2–5 offers from different Indian stores. Best value scoring considers price (40%), store trust (30%), discount (20%), and availability (10%)
+- **Outfit Bundles** — ₹0 Fix, Under ₹500, Under ₹2,000, Under ₹5,000, Under ₹10,000, and Premium bundles
+- **Affiliate Link Support** — Store links with click tracking, affiliate commission support
+- **LocalStorage + Supabase** — Click tracking stored locally and optionally persisted via `/api/commerce/click`
+
+### Supported Stores
+Myntra, AJIO, Amazon Fashion, Flipkart Fashion, Tata CLiQ, Nykaa Fashion, Meesho, Snitch, The Souled Store, Bewakoof, H&M India, and manual/custom store placeholders.
+
+### Important Notes
+- All product data is manually curated — no scraping of any store
+- Prices are "Best listed price in AuraCheck catalog" — verify on store before buying
+- Discounts are only shown when mathematically true (mrp and price both exist)
+- Sponsored products get max 3% boost but only if already relevant — never rank first solely because sponsored
+- No fake discount claims, fake scarcity, or fake testimonials
+- Recommendations are based on presentation goals and visual signal, not human worth
+- Click tracking fails safely if commerce_clicks Supabase table does not exist
+
+### Future Upgrade Path
+- Official affiliate API integrations for Myntra, AJIO, Amazon
+- Product feed import for live prices
+- Price refresh jobs
+- Sponsored listing dashboard
+- Real inventory checks
+
 ## Export / Import Data
 
 Users can export all their data from `/data`:
