@@ -76,6 +76,18 @@ export default function PrivacyPage() {
           </Card>
         </div>
 
+        {/* ─── Commerce & Affiliate ─── */}
+        <h2 className="mb-3 mt-8 text-lg font-bold text-white">Commerce &amp; Affiliate Links</h2>
+        <p className="mb-3 text-sm text-gray-300">
+          AuraCheck provides product recommendations and price comparisons from its internal product catalog.
+        </p>
+        <ul className="mb-4 list-inside list-disc space-y-1 text-sm text-gray-400">
+          <li>Saved products and deal alerts may be stored locally in your browser or in Supabase if configured.</li>
+          <li>Outbound shopping clicks to store websites may be tracked for analytics and affiliate reporting.</li>
+          <li>AuraCheck may earn affiliate commission from some outbound links at no extra cost to you.</li>
+          <li>No payment data from external stores is collected or tracked by AuraCheck.</li>
+          <li>All product data comes from AuraCheck&rsquo;s internal catalog and feed imports. No websites are scraped.</li>
+        </ul>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link href="/privacy-center" className="text-sm text-purple-400 hover:underline">View Privacy Center &rarr;</Link>
         </div>

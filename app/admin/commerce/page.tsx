@@ -161,6 +161,11 @@ export default function CommerceAdminPage() {
               Refresh &rarr;
             </button>
           </Link>
+          <Link href="/admin/commerce/deals">
+            <button className="rounded-full bg-emerald-500/20 px-4 py-1.5 text-xs text-emerald-300">
+              Deals &rarr;
+            </button>
+          </Link>
         </div>
 
         {/* ─── Overview Tab ─── */}

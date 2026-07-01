@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
@@ -310,6 +310,9 @@ export default function DashboardPage() {
           );
         })()}
 
+        {/* ─── Saved Wardrobe & Deals ─── */}
+        <SavedWardrobeDashboardCard />
+
         {/* ─── Latest Audit Product CTAs ─── */}
         {audits.length > 0 && audits[0].freeScore !== undefined && (() => {
           const latest = audits[0];
@@ -513,5 +516,50 @@ export default function DashboardPage() {
         />
       </div>
     </Container>
+  );
+}
+
+function SavedWardrobeDashboardCard() {
+  const [data, setData] = useState<{ items: number; drops: number; alerts: number } | null>(null);
+
+  useEffect(() => {
+    Promise.resolve().then(async () => {
+      try {
+        const [{ getWishlistItems }, { getDealAlerts }] = await Promise.all([
+          import("@/lib/commerce/wishlist/wishlistStore"),
+          import("@/lib/commerce/deals/dealAlertEngine"),
+        ]);
+        const items = getWishlistItems();
+        const alerts = getDealAlerts();
+        const drops = items.filter((i: { currentPrice?: number; savedPrice: number }) => i.currentPrice !== undefined && i.currentPrice < i.savedPrice).length;
+        setData({ items: items.length, drops, alerts: alerts.length });
+      } catch { /* no-op */ }
+    });
+  }, []);
+
+  if (!data || data.items === 0) return null;
+
+  return (
+    <Card className="mb-8 border-purple-500/20">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-semibold text-white">Saved Wardrobe &amp; Deals</h2>
+          <p className="text-xs text-gray-400">
+            {data.items} saved product{data.items > 1 ? "s" : ""}
+            {data.drops > 0 ? ` · ${data.drops} price drop${data.drops > 1 ? "s" : ""}` : ""}
+            {data.alerts > 0 ? ` · ${data.alerts} alert${data.alerts > 1 ? "s" : ""}` : ""}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Link href="/wardrobe/saved"><Button size="sm" variant="outline">Saved Wardrobe</Button></Link>
+          <Link href="/deals"><Button size="sm" variant="outline">View Deals</Button></Link>
+        </div>
+      </div>
+      {data.items > 0 && (
+        <div className="mt-3 text-[10px] text-gray-500">
+          Save your recommended clothes from wardrobe finder to track price drops.
+        </div>
+      )}
+    </Card>
   );
 }

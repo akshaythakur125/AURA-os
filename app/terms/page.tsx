@@ -81,6 +81,18 @@ export default function TermsPage() {
           </Card>
 
           <Card>
+            <h2 className="mb-3 text-lg font-semibold text-white">Commerce &amp; Affiliate Links</h2>
+            <p className="text-sm text-gray-300">
+              Product prices and availability shown are from AuraCheck&rsquo;s internal product catalog and may not reflect real-time prices.
+              Prices may change. Verify on the store before purchasing.
+            </p>
+            <p className="mt-2 text-sm text-gray-300">
+              AuraCheck may earn affiliate commission from some outbound links at no extra cost to you.
+              Deal alerts are informational and not guaranteed.
+            </p>
+          </Card>
+
+          <Card>
             <h2 className="mb-3 text-lg font-semibold text-white">Changes</h2>
             <p className="text-sm text-gray-300">
               These terms may be updated at any time. Continued use after changes constitutes acceptance of the new terms.
