@@ -690,6 +690,12 @@ export default function AdminPage() {
               <Link href="/admin/revenue">
                 <Button variant="outline" className="w-full">Revenue Dashboard &rarr;</Button>
               </Link>
+              <Link href="/admin/launch">
+                <Button variant="outline" className="w-full">Launch Control Center &rarr;</Button>
+              </Link>
+              <Link href="/admin/system">
+                <Button variant="outline" className="w-full">System Health &rarr;</Button>
+              </Link>
             </div>
             <div className="flex gap-2">
               <Button variant="ghost" size="sm" onClick={() => {

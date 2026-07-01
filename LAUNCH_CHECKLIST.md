@@ -2,6 +2,9 @@
 
 Use this checklist before sharing AuraCheck with real users for the first time.
 
+**Launch Control Center available at `/admin/launch`** — automated readiness score, smoke tests, and environment checks.  
+**System Health page at `/admin/system`** — service status, storage mode, configuration overview.
+
 ## 1. Environment Variables
 
 - [ ] Set `NEXT_PUBLIC_APP_URL` to your deployed URL

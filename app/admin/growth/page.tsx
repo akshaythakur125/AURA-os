@@ -105,21 +105,21 @@ export default function AdminGrowthPage() {
 
             {/* Product funnels + Sources row */}
             <div className="mb-8 grid gap-6 lg:grid-cols-2">
-              <ProductConversionCard funnels={(d.productFunnels || []) as any} />
-              <SourceBreakdownCard sources={(d.sources || []) as any} title="Revenue by Source" />
+              <ProductConversionCard funnels={((d.productFunnels || []) as unknown) as React.ComponentProps<typeof ProductConversionCard>["funnels"]} />
+              <SourceBreakdownCard sources={((d.sources || []) as unknown) as React.ComponentProps<typeof SourceBreakdownCard>["sources"]} title="Revenue by Source" />
             </div>
 
             {/* Funnel leaks */}
             {d.leaks && (
               <div className="mb-8">
-                <FunnelLeakCard leaks={d.leaks as any} />
+                <FunnelLeakCard leaks={(d.leaks as unknown) as React.ComponentProps<typeof FunnelLeakCard>["leaks"]} />
               </div>
             )}
 
             {/* SEO + Commerce row */}
             <div className="mb-8 grid gap-6 lg:grid-cols-2">
-              <SeoPagePerformanceCard seoFunnel={(d.seoFunnel || {}) as any} />
-              <CommerceIntentPanel commerceFunnel={(d.commerceFunnel || {}) as any} />
+              <SeoPagePerformanceCard seoFunnel={((d.seoFunnel || {}) as unknown) as React.ComponentProps<typeof SeoPagePerformanceCard>["seoFunnel"]} />
+              <CommerceIntentPanel commerceFunnel={((d.commerceFunnel || {}) as unknown) as React.ComponentProps<typeof CommerceIntentPanel>["commerceFunnel"]} />
             </div>
 
             {/* Total events */}
