@@ -20,6 +20,8 @@ import type { GlowUpPlan } from "@/types/glowup";
 import type { QuickAuraFixReport } from "@/types/quickFix";
 import { generateGoalStrategy, generateGoalStrategyTitle } from "@/lib/aura-engine/goalStrategy";
 import { AUDIT_TYPE_LABELS, GOAL_LABELS, BUDGET_LABELS } from "@/lib/audit/auditUtils";
+import { BeforeAfterCard } from "@/components/proof/BeforeAfterCard";
+import { PROOF_EXAMPLES } from "@/config/proofExamples";
 
 const STATUS_BADGE: Record<string, { label: string; variant: "default" | "warning" | "success" | "premium" }> = {
   draft: { label: "Draft", variant: "default" },
@@ -1039,6 +1041,29 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
 
             {/* ─── Recommendations ─── */}
             <RecommendationSection audit={audit} />
+
+            {/* ─── Personalized Proof Suggestion ─── */}
+            {!unlockedProducts.includes("quick_fix") && (() => {
+              const firstLeak = freeResult.statusLeaks[0]?.title?.toLowerCase() || "";
+              const match = PROOF_EXAMPLES.find((e) =>
+                firstLeak.includes("lighting") ? e.id === "lighting-fix-01"
+                : firstLeak.includes("background") ? e.id === "background-fix-01"
+                : firstLeak.includes("clarity") || firstLeak.includes("crop") || firstLeak.includes("framing") ? e.id === "crop-framing-01"
+                : firstLeak.includes("composition") ? e.id === "crop-framing-01"
+                : e.id === "lighting-fix-01"
+              ) || PROOF_EXAMPLES[0];
+              return (
+                <Card className="mb-8 border-emerald-500/20">
+                  <div className="mb-3">
+                    <Badge variant="success" className="mb-2">Before/After Example</Badge>
+                    <p className="text-sm text-gray-400">
+                      Users usually waste money because they fix the wrong thing first. Your leak looks closest to this example.
+                    </p>
+                  </div>
+                  <BeforeAfterCard example={match} compact />
+                </Card>
+              );
+            })()}
 
             {/* ─── ₹49 Paywall (if Quick Fix not unlocked) ─── */}
             {!unlockedProducts.includes("quick_fix") && (

@@ -6,6 +6,7 @@ import { ReportComparison } from "@/components/examples/ReportComparison";
 import { InsightPreview } from "@/components/examples/InsightPreview";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 import { useEffectOnce } from "@/lib/utils/effectOnce";
+import Link from "next/link";
 
 export default function ExamplesPage() {
   useEffectOnce(() => {
@@ -52,6 +53,13 @@ export default function ExamplesPage() {
               Day 3: Take 20 self-portraits in natural window light. Delete 18. Pick your best expression and lighting combo.
             </InsightPreview>
           </div>
+        </div>
+
+        {/* ─── Before/After Link ─── */}
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-2xl font-bold text-white">See before/after examples</h2>
+          <p className="mb-6 text-gray-400">Realistic demo examples showing how much a single fix can change a presentation.</p>
+          <Link href="/before-after"><Button variant="outline" size="lg">View Before/After Gallery</Button></Link>
         </div>
 
         {/* ─── CTA ─── */}

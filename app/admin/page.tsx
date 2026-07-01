@@ -458,6 +458,33 @@ export default function AdminPage() {
               </div>
             </Card>
 
+            {/* ─── Proof Funnel Metrics ─── */}
+            <Card className="mb-6 border-purple-500/20">
+              <h3 className="mb-3 text-sm font-semibold text-purple-400">Before/After Proof — Funnel</h3>
+              <div className="grid gap-4 sm:grid-cols-5">
+                <div>
+                  <div className="text-xs text-gray-500">Page Views</div>
+                  <div className="mt-1 text-2xl font-bold text-white">{analytics.beforeAfterPageViewed}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Card Views</div>
+                  <div className="mt-1 text-2xl font-bold text-white">{analytics.proofCardViewed}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">CTA Clicks</div>
+                  <div className="mt-1 text-2xl font-bold text-amber-400">{analytics.proofCtaClicked}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Quick Fix Clicks</div>
+                  <div className="mt-1 text-2xl font-bold text-emerald-400">{analytics.proofQuickFixClicked}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Pricing Clicks</div>
+                  <div className="mt-1 text-2xl font-bold text-purple-300">{analytics.proofPricingClicked}</div>
+                </div>
+              </div>
+            </Card>
+
             {/* ─── Offer Usage ─── */}
             <Card>
               <h3 className="mb-3 text-sm font-semibold text-white">Offer Usage</h3>

@@ -12,6 +12,8 @@ import { getBestAuditForUpsell } from "@/lib/audits/getBestAuditForUpsell";
 import { isProductUnlocked } from "@/lib/storage/unlockStore";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 import { useEffectOnce } from "@/lib/utils/effectOnce";
+import { BeforeAfterCard } from "@/components/proof/BeforeAfterCard";
+import { PROOF_EXAMPLES } from "@/config/proofExamples";
 
 export default function GlowUpPlanPage() {
   const [upsell, setUpsell] = useState<{ auditId: string; auditType: string } | null>(null);
@@ -118,6 +120,14 @@ export default function GlowUpPlanPage() {
             ))}
           </div>
           <p className="mt-6 text-xs text-gray-500">Glow-up plan is self-improvement guidance, not a guarantee of social outcomes.</p>
+        </Card>
+
+        {/* ─── Proof Example ─── */}
+        <Card className="mb-8">
+          <h2 className="mb-6 text-xl font-bold text-white">Example 30-day presentation shift</h2>
+          <div className="mx-auto max-w-md">
+            <BeforeAfterCard example={PROOF_EXAMPLES[6]} compact />
+          </div>
         </Card>
 
         {/* ─── Comparison ─── */}

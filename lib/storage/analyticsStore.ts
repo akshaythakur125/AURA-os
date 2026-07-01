@@ -40,7 +40,12 @@ export type AnalyticsEvent =
   | "quick_fix_payment_request_saved"
   | "quick_fix_unlocked"
   | "quick_fix_upsell_full_report_clicked"
-  | "quick_fix_upsell_glowup_clicked";
+  | "quick_fix_upsell_glowup_clicked"
+  | "before_after_page_viewed"
+  | "proof_card_viewed"
+  | "proof_cta_clicked"
+  | "proof_quick_fix_clicked"
+  | "proof_pricing_clicked";
 
 export interface AnalyticsRecord {
   id: string;
@@ -108,6 +113,11 @@ export function getAnalyticsSummary(): Record<string, number> {
     quickFixUnlocked: events.filter((e) => e.event === "quick_fix_unlocked").length,
     quickFixUpsellFullReportClicked: events.filter((e) => e.event === "quick_fix_upsell_full_report_clicked").length,
     quickFixUpsellGlowupClicked: events.filter((e) => e.event === "quick_fix_upsell_glowup_clicked").length,
+    beforeAfterPageViewed: events.filter((e) => e.event === "before_after_page_viewed").length,
+    proofCardViewed: events.filter((e) => e.event === "proof_card_viewed").length,
+    proofCtaClicked: events.filter((e) => e.event === "proof_cta_clicked").length,
+    proofQuickFixClicked: events.filter((e) => e.event === "proof_quick_fix_clicked").length,
+    proofPricingClicked: events.filter((e) => e.event === "proof_pricing_clicked").length,
   };
 }
 

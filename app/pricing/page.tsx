@@ -4,6 +4,8 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ComparisonTable } from "@/components/marketing/ComparisonTable";
+import { BeforeAfterCard } from "@/components/proof/BeforeAfterCard";
+import { PROOF_EXAMPLES } from "@/config/proofExamples";
 
 const plans = [
   {
@@ -120,6 +122,38 @@ export default function PricingPage() {
         <p className="text-lg text-gray-400">
           Start free. Go deeper when you are ready. All prices are one-time.
         </p>
+      </div>
+
+      {/* ─── Proof Strip ─── */}
+      <div className="mx-auto mb-10 max-w-4xl">
+        <div className="mb-6 text-center">
+          <h2 className="mb-2 text-xl font-bold text-white">See why the ₹49 fix comes first.</h2>
+          <p className="text-sm text-gray-400">Fix leaks in order of impact. Start small, go deep later.</p>
+        </div>
+        <div className="grid gap-3 text-center text-xs sm:grid-cols-4">
+          <div className="rounded-lg border border-emerald-500/10 bg-emerald-500/[0.03] p-3">
+            <div className="font-semibold text-emerald-400">1. Free Score</div>
+            <div className="mt-1 text-gray-500">Finds the leak</div>
+          </div>
+          <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3 ring-1 ring-emerald-500/20">
+            <div className="font-semibold text-emerald-300">2. ₹49 Quick Fix</div>
+            <div className="mt-1 text-emerald-300/70">Gives the first move</div>
+          </div>
+          <div className="rounded-lg border border-purple-500/10 bg-purple-500/[0.03] p-3">
+            <div className="font-semibold text-purple-400">3. ₹99 Full Report</div>
+            <div className="mt-1 text-purple-300/70">Explains the full reason</div>
+          </div>
+          <div className="rounded-lg border border-amber-500/10 bg-amber-500/[0.03] p-3">
+            <div className="font-semibold text-amber-400">4. ₹499 Glow-Up Plan</div>
+            <div className="mt-1 text-amber-300/70">Gives the system</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Proof examples */}
+      <div className="mx-auto mb-10 grid max-w-4xl gap-6 sm:grid-cols-2">
+        <BeforeAfterCard example={PROOF_EXAMPLES[0]} compact />
+        <BeforeAfterCard example={PROOF_EXAMPLES[1]} compact />
       </div>
 
       {/* ─── Plans Grid ─── */}

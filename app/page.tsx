@@ -9,6 +9,8 @@ import { Card } from "@/components/ui/Card";
 import { getAudits } from "@/lib/storage/auditStore";
 import { getTwinStats } from "@/lib/storage/auraTwinStore";
 import { ReferralBanner } from "@/components/marketing/ReferralBanner";
+import { trackEvent } from "@/lib/storage/analyticsStore";
+import { PROOF_EXAMPLES } from "@/config/proofExamples";
 
 const statusLeaks = [
   {
@@ -504,7 +506,57 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ─── 7. Sample Report Preview ─── */}
+      {/* ─── 7. Small Fixes Beat Expensive Upgrades ─── */}
+      <section className="border-t border-white/5 py-20">
+        <Container>
+          <div className="mx-auto mb-10 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-300 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              Small fixes can beat expensive upgrades.
+            </h2>
+            <p className="mt-4 text-lg text-gray-400">
+              You do not need to spend thousands. Fix the right thing first.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              { example: PROOF_EXAMPLES[0], label: "Lighting Fix" },
+              { example: PROOF_EXAMPLES[1], label: "Background Fix" },
+              { example: PROOF_EXAMPLES[7], label: "Avoid Waste" },
+            ].map(({ example, label }) => (
+              <Card key={example.id} className="border-white/5 p-3">
+                <div className="mb-2 flex items-center justify-between">
+                  <Badge variant="success">{label}</Badge>
+                  <span className="text-xs text-emerald-400">+{example.scoreDelta} pts</span>
+                </div>
+                <div className="mb-2 grid grid-cols-2 gap-2">
+                  <div className="rounded-lg bg-red-950/30 p-2 text-center">
+                    <div className="text-[10px] text-red-400">Before</div>
+                    <div className="text-lg font-bold text-red-400">{example.beforeScore}</div>
+                  </div>
+                  <div className="rounded-lg bg-emerald-950/30 p-2 text-center">
+                    <div className="text-[10px] text-emerald-400">After</div>
+                    <div className="text-lg font-bold text-emerald-400">{example.afterScore}</div>
+                  </div>
+                </div>
+                <div className="text-xs text-gray-400">{example.biggestLeak} → {example.fixApplied}</div>
+                <div className="mt-1 text-xs text-emerald-500">{example.costLabel}</div>
+              </Card>
+            ))}
+          </div>
+          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <Link href="/before-after">
+              <Button variant="outline" size="lg" onClick={() => trackEvent("proof_pricing_clicked", { source: "homepage" })}>
+                See Before/After Examples
+              </Button>
+            </Link>
+            <Link href="/audit/new">
+              <Button size="lg">Start Free Aura Check</Button>
+            </Link>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── 8. Sample Report Preview ─── */}
       <section className="border-t border-white/5 py-20">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">

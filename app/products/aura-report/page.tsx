@@ -12,6 +12,8 @@ import { getBestAuditForUpsell } from "@/lib/audits/getBestAuditForUpsell";
 import { isProductUnlocked } from "@/lib/storage/unlockStore";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 import { useEffectOnce } from "@/lib/utils/effectOnce";
+import { BeforeAfterCard } from "@/components/proof/BeforeAfterCard";
+import { PROOF_EXAMPLES } from "@/config/proofExamples";
 
 export default function AuraReportPage() {
   const [upsell, setUpsell] = useState<{ auditId: string; auditType: string } | null>(null);
@@ -99,6 +101,16 @@ export default function AuraReportPage() {
                 <p className="text-xs text-gray-400">{s.desc}</p>
               </div>
             ))}
+          </div>
+        </Card>
+
+        {/* ─── Proof Examples ─── */}
+        <Card className="mb-8">
+          <h2 className="mb-6 text-xl font-bold text-white">Example insight from a Full Aura Report</h2>
+          <div className="grid gap-6 sm:grid-cols-3">
+            <BeforeAfterCard example={PROOF_EXAMPLES[3]} compact />
+            <BeforeAfterCard example={PROOF_EXAMPLES[1]} compact />
+            <BeforeAfterCard example={PROOF_EXAMPLES[2]} compact />
           </div>
         </Card>
 

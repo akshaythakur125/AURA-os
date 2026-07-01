@@ -22,6 +22,8 @@ import type { ProductType } from "@/types";
 import type { ManualOrder } from "@/types/order";
 import { applyOffer } from "@/lib/offers/applyOffer";
 import type { OfferApplyResult } from "@/types/offer";
+import { BeforeAfterCard } from "@/components/proof/BeforeAfterCard";
+import { PROOF_EXAMPLES } from "@/config/proofExamples";
 
 const PRODUCT_INFO: Record<ProductType, { name: string; price: number; desc: string }> = {
   quick_fix: { name: "Quick Aura Fix", price: 49, desc: "Your biggest status leak and the fastest fix path." },
@@ -292,6 +294,21 @@ function UnlockContent() {
             </div>
           )}
         </Card>
+
+        {/* ─── Proof Card ─── */}
+        {stage === "payment" && (() => {
+          let proofExample = PROOF_EXAMPLES[0];
+          if (product === "quick_fix") proofExample = PROOF_EXAMPLES[0];
+          else if (product === "aura_report") proofExample = PROOF_EXAMPLES[3];
+          else if (product === "dating_audit") proofExample = PROOF_EXAMPLES[4];
+          else if (product === "glowup_plan") proofExample = PROOF_EXAMPLES[6];
+          return (
+            <div className="mb-6">
+              <p className="mb-2 text-xs text-gray-500">Before paying, see what this product is designed to solve.</p>
+              <BeforeAfterCard example={proofExample} compact />
+            </div>
+          );
+        })()}
 
         {/* ─── Stage 1: Payment ─── */}
         {stage === "payment" && (
