@@ -33,7 +33,14 @@ export type AnalyticsEvent =
   | "aura_twin_generated"
   | "aura_twin_saved"
   | "aura_twin_audit_created"
-  | "aura_twin_strategy_copied";
+  | "aura_twin_strategy_copied"
+  | "quick_fix_paywall_viewed"
+  | "quick_fix_cta_clicked"
+  | "quick_fix_unlock_started"
+  | "quick_fix_payment_request_saved"
+  | "quick_fix_unlocked"
+  | "quick_fix_upsell_full_report_clicked"
+  | "quick_fix_upsell_glowup_clicked";
 
 export interface AnalyticsRecord {
   id: string;
@@ -94,6 +101,13 @@ export function getAnalyticsSummary(): Record<string, number> {
     auraTwinSaved: events.filter((e) => e.event === "aura_twin_saved").length,
     auraTwinAuditCreated: events.filter((e) => e.event === "aura_twin_audit_created").length,
     auraTwinStrategyCopied: events.filter((e) => e.event === "aura_twin_strategy_copied").length,
+    quickFixPaywallViewed: events.filter((e) => e.event === "quick_fix_paywall_viewed").length,
+    quickFixCtaClicked: events.filter((e) => e.event === "quick_fix_cta_clicked").length,
+    quickFixUnlockStarted: events.filter((e) => e.event === "quick_fix_unlock_started").length,
+    quickFixPaymentRequestSaved: events.filter((e) => e.event === "quick_fix_payment_request_saved").length,
+    quickFixUnlocked: events.filter((e) => e.event === "quick_fix_unlocked").length,
+    quickFixUpsellFullReportClicked: events.filter((e) => e.event === "quick_fix_upsell_full_report_clicked").length,
+    quickFixUpsellGlowupClicked: events.filter((e) => e.event === "quick_fix_upsell_glowup_clicked").length,
   };
 }
 

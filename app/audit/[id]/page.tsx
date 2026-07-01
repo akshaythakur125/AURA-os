@@ -27,11 +27,11 @@ const STATUS_BADGE: Record<string, { label: string; variant: "default" | "warnin
   full_report: { label: "Full Report", variant: "premium" },
 };
 
-const PRODUCT_CTA: { type: ProductType; name: string; price: number; gradient: string; features: string[] }[] = [
-  { type: "quick_fix", name: "Quick Aura Fix", price: 49, gradient: "from-emerald-500 to-teal-500", features: ["Biggest status leak", "Fastest free fix path", "Under ₹500 fix", "Under ₹2,000 fix", "Avoid wasting money"] },
-  { type: "aura_report", name: "Full Aura Report", price: 99, gradient: "from-purple-600 to-pink-500", features: ["Full visual breakdown", "Detailed status leak analysis", "Budget upgrade roadmap", "Shareable Aura card", "Product recommendations"] },
+const PRODUCT_CTA: { type: ProductType; name: string; price: number; gradient: string; features: string[]; badge?: string }[] = [
+  { type: "quick_fix", name: "Quick Aura Fix", price: 49, gradient: "from-emerald-500 to-teal-500", features: ["Biggest status leak", "Fastest free fix path", "Under ₹500 fix", "Under ₹2,000 fix", "Avoid wasting money"], badge: "Best first unlock" },
+  { type: "aura_report", name: "Full Aura Report", price: 99, gradient: "from-purple-600 to-pink-500", features: ["Full visual breakdown", "Detailed status leak analysis", "Budget upgrade roadmap", "Shareable Aura card", "Product recommendations"], badge: "Most popular" },
   { type: "dating_audit", name: "Dating/Profile Audit", price: 299, gradient: "from-rose-500 to-red-500", features: ["Profile Presentation Score", "Bio/prompt/caption feedback", "Red-flag cleanup", "Suggested bio versions", "Photo order strategy"] },
-  { type: "glowup_plan", name: "30-Day Glow-Up Plan", price: 499, gradient: "from-amber-500 to-orange-500", features: ["30 daily missions", "4-week structured plan", "Budget roadmap (₹0–₹25K+)", "Photo/grooming/outfit system", "Progress tracker"] },
+  { type: "glowup_plan", name: "30-Day Glow-Up Plan", price: 499, gradient: "from-amber-500 to-orange-500", features: ["30 daily missions", "4-week structured plan", "Budget roadmap (₹0–₹25K+)", "Photo/grooming/outfit system", "Progress tracker"], badge: "Best value" },
 ];
 
 function ScoreGauge({ score, size = "lg", animate = true }: { score: number; size?: "sm" | "lg"; animate?: boolean }) {
@@ -534,13 +534,24 @@ function QuickFixSection({ report }: { report: QuickAuraFixReport }) {
 
 function ProductCTAButtons({ auditId, unlockedProducts }: { auditId: string; unlockedProducts: ProductType[] }) {
   return (
-    <div className="mb-8 grid gap-4 sm:grid-cols-3">
+    <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {PRODUCT_CTA.map((product) => {
         const isUnlocked = unlockedProducts.includes(product.type);
+        const borderColor = isUnlocked ? "border-emerald-500/20"
+          : product.type === "quick_fix" ? "border-emerald-500/30"
+          : product.type === "aura_report" ? "border-purple-500/20"
+          : product.type === "dating_audit" ? "border-rose-500/20"
+          : "border-amber-500/20";
         return (
-          <Card key={product.type} className={`flex flex-col border ${isUnlocked ? "border-emerald-500/20" : product.type === "aura_report" ? "border-purple-500/20" : product.type === "dating_audit" ? "border-rose-500/20" : "border-amber-500/20"}`}>
+          <Card key={product.type} className={`relative flex flex-col border ${borderColor} ${product.type === "quick_fix" && !isUnlocked ? "ring-1 ring-emerald-500/20" : ""}`}>
+            {product.badge && !isUnlocked && (
+              <Badge variant={product.type === "quick_fix" ? "success" : product.type === "glowup_plan" ? "premium" : "warning"} className="absolute -top-2 right-4">
+                {product.badge}
+              </Badge>
+            )}
             <div className="mb-3 flex items-center justify-between">
               <Badge variant={isUnlocked ? "success" : "default"}>{isUnlocked ? "Unlocked" : "Locked"}</Badge>
+              <span className="text-lg font-bold text-white">₹{product.price}</span>
             </div>
             <h3 className="mb-1 text-sm font-semibold text-white">{product.name}</h3>
             <ul className="mb-4 space-y-1">
@@ -572,6 +583,13 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
   const [audit, setAudit] = useState(() => getAuditById(id) || null);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (audit?.freeResult && !(audit.unlockedProducts || []).includes("quick_fix")) {
+      trackEvent("quick_fix_paywall_viewed", { auditId: audit.id });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!audit) {
     return (
@@ -851,6 +869,21 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
 
             {/* ─── Premium Recommendations ─── */}
             <RecommendationSection audit={audit} />
+
+            {/* ─── Upsell: Full Report → Glow-Up Plan ─── */}
+            {!unlockedProducts.includes("glowup_plan") && (
+              <Card className="mb-8 border-amber-500/20">
+                <h3 className="mb-2 text-lg font-bold text-white">Want a 30-day action system?</h3>
+                <p className="mb-4 text-sm text-gray-400">
+                  The Full Report shows what to fix. The Glow-Up Plan shows how to fix it — day by day, step by step.
+                </p>
+                <Link href={`/unlock?auditId=${audit.id}&product=glowup_plan`}>
+                  <Button variant="outline" size="sm" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10">
+                    Unlock 30-Day Glow-Up Plan — ₹499
+                  </Button>
+                </Link>
+              </Card>
+            )}
           </>
         ) : freeResult ? (
           <>
@@ -1007,6 +1040,51 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
             {/* ─── Recommendations ─── */}
             <RecommendationSection audit={audit} />
 
+            {/* ─── ₹49 Paywall (if Quick Fix not unlocked) ─── */}
+            {!unlockedProducts.includes("quick_fix") && (
+              <Card className="mb-8 border-emerald-500/30 ring-1 ring-emerald-500/20">
+                <div className="mb-4">
+                  <Badge variant="success" className="mb-3">₹49 — Quick Aura Fix</Badge>
+                  <h3 className="text-xl font-bold text-white">Your biggest status leak is visible.</h3>
+                  <p className="mt-2 text-sm text-gray-400">Unlock the fastest fix path for ₹49 before spending money on the wrong upgrade.</p>
+                </div>
+                <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3 text-center">
+                    <div className="text-xs text-gray-500">Your free score shows the problem.</div>
+                  </div>
+                  <div className="rounded-lg border border-emerald-500/10 bg-emerald-500/[0.03] p-3 text-center">
+                    <div className="text-xs text-emerald-400">The ₹49 Quick Fix shows the exact first move.</div>
+                  </div>
+                  <div className="rounded-lg border border-amber-500/10 bg-amber-500/[0.03] p-3 text-center">
+                    <div className="text-xs text-amber-400">Avoid wasting money on upgrades that will not fix your main leak.</div>
+                  </div>
+                  <div className="rounded-lg border border-red-500/10 bg-red-500/[0.03] p-3 text-center">
+                    <div className="text-xs text-red-400">Fix the right thing first — or nothing else will matter.</div>
+                  </div>
+                </div>
+                <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3">
+                    <div className="text-xs text-gray-500">🔍 Biggest leak detected</div>
+                  </div>
+                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3">
+                    <div className="text-xs text-gray-500">⚡ Fastest free fix</div>
+                  </div>
+                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3">
+                    <div className="text-xs text-gray-500">💰 Under ₹500 fix</div>
+                  </div>
+                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3">
+                    <div className="text-xs text-gray-500">🚫 What not to buy right now</div>
+                  </div>
+                </div>
+                <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`} onClick={() => trackEvent("quick_fix_cta_clicked", { auditId: audit.id })}>
+                  <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-400 hover:to-teal-400" size="lg">
+                    Unlock Quick Aura Fix — ₹49
+                  </Button>
+                </Link>
+                <p className="mt-3 text-xs text-gray-500 text-center">AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
+              </Card>
+            )}
+
             {/* ─── Product CTAs ─── */}
             <ProductCTAButtons auditId={audit.id} unlockedProducts={unlockedProducts} />
           </>
@@ -1038,7 +1116,36 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
         )}
 
         {/* ─── Quick Aura Fix Section (if unlocked) ─── */}
-        {quickFixReport && <QuickFixSection report={quickFixReport} />}
+        {quickFixReport && (
+          <>
+            <QuickFixSection report={quickFixReport} />
+
+            {/* ─── Micro-upsell after Quick Fix ─── */}
+            <Card className="mb-8 border-purple-500/20 ring-1 ring-purple-500/20">
+              <h3 className="mb-2 text-lg font-bold text-white">Want the full reason behind this fix?</h3>
+              <p className="mb-4 text-sm text-gray-400">
+                The ₹49 Quick Fix tells you the fastest move. The ₹99 Full Aura Report gives the full visual breakdown, archetype, mismatch map, and budget upgrade plan.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {!unlockedProducts.includes("aura_report") && (
+                  <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} onClick={() => trackEvent("quick_fix_upsell_full_report_clicked", { auditId: audit.id })}>
+                    <Button className="bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-500 hover:to-pink-400" size="sm">
+                      Upgrade to Full Aura Report — ₹99
+                    </Button>
+                  </Link>
+                )}
+                {!unlockedProducts.includes("glowup_plan") && (
+                  <Link href={`/unlock?auditId=${audit.id}&product=glowup_plan`} onClick={() => trackEvent("quick_fix_upsell_glowup_clicked", { auditId: audit.id })}>
+                    <Button variant="outline" size="sm" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10">
+                      Start 30-Day Glow-Up Plan — ₹499
+                    </Button>
+                  </Link>
+                )}
+              </div>
+              <p className="mt-3 text-[10px] text-gray-600">No external AI service is used in this MVP. Manual payment is not automatically verified.</p>
+            </Card>
+          </>
+        )}
 
         {/* ─── Dating Profile Audit Section (if unlocked) ─── */}
         {datingReport && <DatingAuditSection report={datingReport} />}
@@ -1058,9 +1165,9 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
 
         {/* ─── Disclaimers ─── */}
         <div className="mb-8 space-y-2 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-xs text-gray-600">
-          <p>AuraCheck analyzes presentation signals using local browser-based rules. This is guidance, not objective truth.</p>
-          <p>No image is sent to an external AI service in this MVP.</p>
-          <p>AuraCheck analyzes presentation, not human worth.</p>
+          <p>AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
+          <p>No image is sent to an external AI service in this MVP. Manual payment is not automatically verified.</p>
+          <p>No guaranteed dating, social, career, or financial outcomes.</p>
           {fullReport && <p>This report was generated locally. No external AI or payment verification was involved.</p>}
           {quickFixReport && <p>Quick Fix provides targeted advice for the biggest presentation leak.</p>}
           {datingReport && <p>Profile guidance is for presentation clarity, not dating guarantees.</p>}

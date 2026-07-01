@@ -32,7 +32,7 @@ const plans = [
       "All processing is local — zero server upload",
     ],
     href: "/products/aura-report",
-    badgeText: "Best impulse upgrade",
+    badgeText: "Best first unlock",
   },
   {
     name: "Full Aura Report",
@@ -52,7 +52,7 @@ const plans = [
     ],
     href: "/products/aura-report",
     highlighted: true,
-    badgeText: "Best starter",
+    badgeText: "Most popular",
   },
   {
     name: "Dating / Profile Audit",
@@ -184,6 +184,32 @@ export default function PricingPage() {
           </Card>
         ))}
       </div>
+
+        {/* ─── Comparison Line ─── */}
+        <div className="mx-auto mb-8 max-w-3xl">
+          <div className="grid gap-3 text-center text-xs sm:grid-cols-5">
+            <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3">
+              <div className="font-semibold text-gray-400">Free</div>
+              <div className="mt-1 text-gray-500">Shows score only</div>
+            </div>
+            <div className="rounded-lg border border-emerald-500/10 bg-emerald-500/[0.03] p-3">
+              <div className="font-semibold text-emerald-400">₹49</div>
+              <div className="mt-1 text-emerald-300/70">Shows fastest fix</div>
+            </div>
+            <div className="rounded-lg border border-purple-500/10 bg-purple-500/[0.03] p-3">
+              <div className="font-semibold text-purple-400">₹99</div>
+              <div className="mt-1 text-purple-300/70">Explains full reason</div>
+            </div>
+            <div className="rounded-lg border border-rose-500/10 bg-rose-500/[0.03] p-3">
+              <div className="font-semibold text-rose-400">₹299</div>
+              <div className="mt-1 text-rose-300/70">Fixes profile friction</div>
+            </div>
+            <div className="rounded-lg border border-amber-500/10 bg-amber-500/[0.03] p-3">
+              <div className="font-semibold text-amber-400">₹499</div>
+              <div className="mt-1 text-amber-300/70">Gives 30-day system</div>
+            </div>
+          </div>
+        </div>
 
         {/* ─── Comparison Table ─── */}
         <div className="mx-auto mb-16 max-w-4xl">

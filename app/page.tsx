@@ -57,8 +57,9 @@ const products = [
     price: "49",
     desc: "Biggest leak and fastest fix path.",
     features: ["Biggest status leak", "Fastest free fix", "Under ₹500 fix", "Avoid wasting money"],
-    bestFor: "Impulse fix",
+    bestFor: "Best first unlock",
     href: "/unlock?product=quick_fix",
+    badgeText: "Best first unlock",
   },
   {
     name: "Full Aura Report",
@@ -97,8 +98,9 @@ const products = [
       "Progress tracking",
       "Priority support",
     ],
-    bestFor: "Maximum impact",
+    bestFor: "Best value",
     href: "/products/glowup-plan",
+    badgeText: "Best value",
   },
 ];
 
@@ -387,22 +389,56 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ─── 5.5. Quick Fix Teaser ─── */}
-      <section className="border-t border-white/5 py-16">
+      {/* ─── 5.5. Start Small — Fix the Biggest Leak First ─── */}
+      <section className="border-t border-white/5 py-20">
         <Container>
-          <div className="mx-auto max-w-2xl text-center">
-            <Badge variant="premium" className="mb-4">₹49 — Quick Aura Fix</Badge>
-            <h2 className="mb-4 bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-300 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
-              Start with a ₹49 quick fix
+          <div className="mx-auto mb-14 max-w-2xl text-center">
+            <h2 className="bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-300 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              Start small. Fix the biggest leak first.
             </h2>
-            <p className="mb-8 text-base text-gray-400">
-              Not ready for the full report? Unlock the fastest fix path for your biggest status leak.
+            <p className="mt-4 text-lg text-gray-400">
+              Not every upgrade costs thousands. Start with one step and go deeper when you are ready.
             </p>
-            <Link href="/unlock?product=quick_fix">
-              <Button variant="outline" size="lg" className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10">
-                Get Quick Aura Fix — ₹49
-              </Button>
-            </Link>
+          </div>
+          <div className="grid gap-6 md:grid-cols-4">
+            <Card hover>
+              <Badge variant="success" className="mb-3">₹0 — Free</Badge>
+              <h3 className="mb-2 text-lg font-semibold text-white">Free Score</h3>
+              <p className="text-sm text-gray-400">Find your Aura Score.</p>
+              <div className="mt-6">
+                <Link href="/audit/new"><Button size="sm" variant="outline" className="w-full">Start Free</Button></Link>
+              </div>
+            </Card>
+            <Card hover className="border-emerald-500/30 ring-1 ring-emerald-500/20">
+              <Badge variant="success" className="absolute -top-2 right-4">Best first unlock</Badge>
+              <Badge variant="premium" className="mb-3">₹49 — Quick Fix</Badge>
+              <h3 className="mb-2 text-lg font-semibold text-white">Quick Aura Fix</h3>
+              <p className="text-sm text-gray-400">Know exactly what to fix first.</p>
+              <div className="mt-6">
+                <Link href="/unlock?product=quick_fix"><Button size="sm" className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-400 hover:to-teal-400">See ₹49 Quick Fix</Button></Link>
+              </div>
+            </Card>
+            <Card hover>
+              <Badge variant="premium" className="mb-3">₹99 — Full Report</Badge>
+              <h3 className="mb-2 text-lg font-semibold text-white">Full Aura Report</h3>
+              <p className="text-sm text-gray-400">Understand the full reason.</p>
+              <div className="mt-6">
+                <Link href="/products/aura-report"><Button size="sm" variant="outline" className="w-full">Learn More</Button></Link>
+              </div>
+            </Card>
+            <Card hover className="border-amber-500/20">
+              <Badge variant="premium" className="absolute -top-2 right-4">Best value</Badge>
+              <Badge variant="premium" className="mb-3">₹499 — Glow-Up</Badge>
+              <h3 className="mb-2 text-lg font-semibold text-white">30-Day Glow-Up Plan</h3>
+              <p className="text-sm text-gray-400">Follow a 30-day upgrade system.</p>
+              <div className="mt-6">
+                <Link href="/products/glowup-plan"><Button size="sm" variant="outline" className="w-full">Learn More</Button></Link>
+              </div>
+            </Card>
+          </div>
+          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <Link href="/audit/new"><Button size="lg">Start Free Aura Check</Button></Link>
+            <Link href="/unlock?product=quick_fix"><Button variant="outline" size="lg" className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10">See ₹49 Quick Fix</Button></Link>
           </div>
         </Container>
       </section>
@@ -424,9 +460,9 @@ export default function HomePage() {
                 key={product.name}
                 className={`relative flex flex-col ${product.highlighted ? "border-purple-500/30 ring-1 ring-purple-500/20" : ""}`}
               >
-                {product.highlighted && (
-                  <Badge variant="premium" className="absolute -top-2 right-4">
-                    Popular
+                {product.badgeText && (
+                  <Badge variant={product.badgeText === "Best first unlock" ? "success" : "premium"} className="absolute -top-2 right-4">
+                    {product.badgeText}
                   </Badge>
                 )}
                 <div className="mb-1 text-xs text-gray-500">{product.bestFor}</div>
@@ -594,18 +630,36 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ─── 9. Three Ways to Upgrade ─── */}
+      {/* ─── 9. Four Ways to Upgrade ─── */}
       <section className="border-t border-white/5 py-20">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
-              Three ways to upgrade your signal
+              Four ways to upgrade your signal
             </h2>
             <p className="mt-4 text-lg text-gray-400">
-              Choose the depth that fits your goal. All products unlock via manual code.
+              Start with a ₹49 fix. Go deeper when you are ready.
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <Card hover className="border-emerald-500/20">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <h3 className="mb-2 text-lg font-semibold text-white">Quick Aura Fix</h3>
+              <p className="mb-4 text-sm text-gray-400">Find your biggest leak and the fastest fix. Best first unlock at ₹49.</p>
+              <Badge variant="success">Best first unlock</Badge>
+              <ul className="mt-4 space-y-1.5 text-sm text-gray-400">
+                <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Biggest status leak</li>
+                <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Fastest free fix path</li>
+                <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Under ₹500 fix</li>
+              </ul>
+              <div className="mt-6">
+                <Link href="/unlock?product=quick_fix"><Button variant="outline" size="sm" className="border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10">Get Quick Fix — ₹49</Button></Link>
+              </div>
+            </Card>
             <Card hover>
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500">
                 <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -613,8 +667,8 @@ export default function HomePage() {
                 </svg>
               </div>
               <h3 className="mb-2 text-lg font-semibold text-white">Full Aura Report</h3>
-              <p className="mb-4 text-sm text-gray-400">Deep visual analysis with upgrade roadmap. Best starter option at ₹99.</p>
-              <Badge variant="premium">Best starter</Badge>
+              <p className="mb-4 text-sm text-gray-400">Deep visual analysis with upgrade roadmap. Most popular at ₹99.</p>
+              <Badge variant="premium">Most popular</Badge>
               <ul className="mt-4 space-y-1.5 text-sm text-gray-400">
                 <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Full score breakdown</li>
                 <li className="flex items-center gap-2"><svg className="h-3.5 w-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>Status leak analysis</li>

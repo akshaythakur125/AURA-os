@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
@@ -51,7 +51,8 @@ function UnlockContent() {
   const searchParams = useSearchParams();
   const auditId = searchParams.get("auditId") || "";
   const productParam = searchParams.get("product") || "aura_report";
-  const product = (productParam === "dating_audit" || productParam === "glowup_plan" ? productParam : "aura_report") as ProductType;
+  const validProducts: ProductType[] = ["quick_fix", "aura_report", "dating_audit", "glowup_plan"];
+  const product = (validProducts.includes(productParam as ProductType) ? productParam : "aura_report") as ProductType;
 
   const [customerName, setCustomerName] = useState("");
   const [customerContact, setCustomerContact] = useState("");
@@ -65,6 +66,11 @@ function UnlockContent() {
   const [offerCodeInput, setOfferCodeInput] = useState("");
   const [offerResult, setOfferResult] = useState<OfferApplyResult | null>(null);
   const [offerError, setOfferError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (product === "quick_fix") trackEvent("quick_fix_unlock_started", { auditId });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const audit = auditId ? getAuditById(auditId) : undefined;
   const upiId = getUpiiId();
@@ -152,6 +158,7 @@ function UnlockContent() {
       });
       setExistingOrder(order);
       trackEvent("payment_request_saved", { product, auditId });
+      if (product === "quick_fix") trackEvent("quick_fix_payment_request_saved", { auditId });
       setStage("unlock");
     } catch {
       setError("Failed to save payment request.");
@@ -193,6 +200,7 @@ function UnlockContent() {
       updateAudit(auditId, updateData);
       if (existingOrder) updateOrder(existingOrder.id, { status: "unlocked", unlockedAt: new Date().toISOString() });
       trackEvent("product_unlocked", { product, auditId });
+      if (product === "quick_fix") trackEvent("quick_fix_unlocked", { auditId });
       setSuccess(`${productInfo.name} unlocked successfully!`);
       setTimeout(() => router.push(`/audit/${auditId}`), 1500);
     } catch (err) {
@@ -202,15 +210,39 @@ function UnlockContent() {
   }
 
   const upiDeepLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=AuraCheck&am=${finalAmount}&cu=INR&tn=AuraCheck%20${encodeURIComponent(productInfo.name)}%20${encodeURIComponent(auditId.slice(0, 8))}`;
-  const paymentSummary = `AuraCheck Payment Request\nProduct: ${productInfo.name}\nAmount: ₹${finalAmount}${offerResult?.valid ? ` (original ₹${productInfo.price}, saved ₹${offerResult.discountAmount})` : ""}\nAudit: ${auditId}\nCustomer: ${customerName || "—"}\nContact: ${customerContact || "—"}\nUPI Ref: ${upiTransactionRef || "—"}\nStatus: Payment Submitted`;
+  const paymentSummary = [
+    `I have paid ₹${finalAmount} for ${productInfo.name}.`,
+    `Audit ID: ${auditId}`,
+    `${customerName ? `Name: ${customerName}` : ""}`,
+    `${customerContact ? `Contact: ${customerContact}` : ""}`,
+    `${upiTransactionRef ? `UPI Ref: ${upiTransactionRef}` : ""}`,
+    `${userNote ? `Note: ${userNote}` : ""}`,
+    "Please send my unlock code.",
+  ].filter(Boolean).join("\n");
+  const copySummary = [
+    `AuraCheck Payment Request`,
+    `Product: ${productInfo.name}`,
+    `Amount: ₹${finalAmount}${offerResult?.valid ? ` (original ₹${productInfo.price}, saved ₹${offerResult.discountAmount})` : ""}`,
+    `Audit: ${auditId}`,
+    `Customer: ${customerName || "—"}`,
+    `Contact: ${customerContact || "—"}`,
+    `UPI Ref: ${upiTransactionRef || "—"}`,
+    `Status: Payment Submitted`,
+  ].join("\n");
   const ownerWhatsApp = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_OWNER_WHATSAPP : "";
   const waUrl = ownerWhatsApp ? `https://wa.me/${ownerWhatsApp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(paymentSummary)}` : "";
 
   return (
     <Container className="py-8 sm:py-12">
       <div className="mx-auto max-w-lg">
-        <h1 className="mb-2 text-center text-3xl font-bold text-white">Unlock {productInfo.name}</h1>
-        <p className="mb-8 text-center text-sm text-gray-400">Manual UPI payment — MVP demo flow</p>
+        <h1 className="mb-2 text-center text-3xl font-bold text-white">
+          {product === "quick_fix" ? "Unlock your fastest Aura fix." : `Unlock ${productInfo.name}`}
+        </h1>
+        <p className="mb-8 text-center text-sm text-gray-400">
+          {product === "quick_fix"
+            ? "Pay ₹49 manually via UPI and enter your unlock code to reveal the exact fix path."
+            : "Manual UPI payment — MVP demo flow"}
+        </p>
 
         {/* ─── Stage Indicator ─── */}
         <div className="mb-8 flex items-center justify-center gap-2">
@@ -246,6 +278,19 @@ function UnlockContent() {
             </div>
           </div>
           <p className="mt-2 text-xs text-gray-400">{productInfo.desc}</p>
+          {product === "quick_fix" && (
+            <div className="mt-4 border-t border-white/5 pt-4">
+              <div className="mb-2 text-xs font-semibold text-gray-400">What you get:</div>
+              <div className="grid grid-cols-2 gap-1 text-xs text-gray-500">
+                <span className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Biggest status leak</span>
+                <span className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Fastest free fix</span>
+                <span className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Under ₹500 fix</span>
+                <span className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Under ₹2,000 fix</span>
+                <span className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Avoid-for-now advice</span>
+                <span className="flex items-center gap-1"><span className="text-emerald-400">✓</span> 3-step action plan</span>
+              </div>
+            </div>
+          )}
         </Card>
 
         {/* ─── Stage 1: Payment ─── */}
@@ -347,10 +392,16 @@ function UnlockContent() {
             </Card>
 
             <div className="mb-6 grid grid-cols-2 gap-2">
-              <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(paymentSummary)}>Copy Summary</Button>
+              <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(copySummary)}>Copy Payment Summary</Button>
               <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(auditId)}>Copy Audit ID</Button>
               <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(auditCode)}>Copy Product Code</Button>
-              {waUrl && <a href={waUrl} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="sm" className="w-full">Send via WhatsApp</Button></a>}
+              {waUrl ? (
+                <a href={waUrl} target="_blank" rel="noopener noreferrer" className="col-span-2 sm:col-span-1">
+                  <Button variant="outline" size="sm" className="w-full border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10">Send Payment Request on WhatsApp</Button>
+                </a>
+              ) : (
+                <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(paymentSummary)}>Copy Payment Summary</Button>
+              )}
             </div>
 
             <Button onClick={() => setStage("unlock")} variant="outline" className="mb-4 w-full">I Have an Unlock Code — Continue</Button>
@@ -392,9 +443,10 @@ function UnlockContent() {
 
         {/* ─── Footer ─── */}
         <div className="mt-6 space-y-2 text-center text-xs text-gray-600">
-          <p>Manual MVP payment flow. No automatic payment verification.</p>
-          <p>All data stays local in your browser.</p>
-          <p className="text-gray-500">Profile guidance is for presentation clarity, not dating guarantees. Glow-up plan is self-improvement guidance, not a guarantee of social outcomes.</p>
+          <p>Manual MVP payment. Payment is not automatically verified.</p>
+          <p>Your image stays in this browser.</p>
+          <p>No external AI service is used.</p>
+          <p className="text-gray-500">AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth. No guaranteed dating, social, career, or financial outcomes.</p>
           <Link href={`/audit/${auditId}`} className="block text-purple-400 hover:underline">&larr; Back to audit</Link>
         </div>
       </div>

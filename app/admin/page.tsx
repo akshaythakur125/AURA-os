@@ -401,6 +401,63 @@ export default function AdminPage() {
               })}
             </div>
 
+            {/* ─── Quick Fix Funnel Metrics ─── */}
+            <Card className="mb-6 border-emerald-500/20">
+              <h3 className="mb-4 text-sm font-semibold text-emerald-400">Quick Aura Fix — Funnel Metrics</h3>
+              <div className="grid gap-4 sm:grid-cols-4">
+                <div>
+                  <div className="text-xs text-gray-500">Free Scores Generated</div>
+                  <div className="mt-1 text-2xl font-bold text-white">{analytics.freeScoreGenerated}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Paywall Views</div>
+                  <div className="mt-1 text-2xl font-bold text-white">{analytics.quickFixPaywallViewed}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">CTA Clicks</div>
+                  <div className="mt-1 text-2xl font-bold text-amber-400">{analytics.quickFixCtaClicked}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Unlock Started</div>
+                  <div className="mt-1 text-2xl font-bold text-amber-400">{analytics.quickFixUnlockStarted}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Payment Requests</div>
+                  <div className="mt-1 text-2xl font-bold text-amber-400">{analytics.quickFixPaymentRequestSaved}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Unlocked</div>
+                  <div className="mt-1 text-2xl font-bold text-emerald-400">{analytics.quickFixUnlocked}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Est. Revenue</div>
+                  <div className="mt-1 text-2xl font-bold text-emerald-400">₹{analytics.quickFixUnlocked * 49}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-500">Upsell Full Report</div>
+                  <div className="mt-1 text-2xl font-bold text-purple-300">{analytics.quickFixUpsellFullReportClicked}</div>
+                </div>
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-lg bg-white/5 p-3">
+                  <div className="text-xs text-gray-500">Payment Requests / Free Scores</div>
+                  <div className="mt-1 text-lg font-bold text-white">
+                    {analytics.freeScoreGenerated > 0
+                      ? `${(analytics.quickFixPaymentRequestSaved / analytics.freeScoreGenerated * 100).toFixed(1)}%`
+                      : "—"}
+                  </div>
+                </div>
+                <div className="rounded-lg bg-white/5 p-3">
+                  <div className="text-xs text-gray-500">Unlocks / Payment Requests</div>
+                  <div className="mt-1 text-lg font-bold text-emerald-400">
+                    {analytics.quickFixPaymentRequestSaved > 0
+                      ? `${(analytics.quickFixUnlocked / analytics.quickFixPaymentRequestSaved * 100).toFixed(1)}%`
+                      : "—"}
+                  </div>
+                </div>
+              </div>
+            </Card>
+
             {/* ─── Offer Usage ─── */}
             <Card>
               <h3 className="mb-3 text-sm font-semibold text-white">Offer Usage</h3>
