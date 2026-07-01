@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -682,6 +683,14 @@ export default function AdminPage() {
               })()}
             </Card>
 
+            <div className="mb-4 grid gap-3 sm:grid-cols-2">
+              <Link href="/admin/growth">
+                <Button className="w-full">Growth Dashboard &rarr;</Button>
+              </Link>
+              <Link href="/admin/revenue">
+                <Button variant="outline" className="w-full">Revenue Dashboard &rarr;</Button>
+              </Link>
+            </div>
             <div className="flex gap-2">
               <Button variant="ghost" size="sm" onClick={() => {
                 const rows = referralClaims.map((c) => ({ code: c.referralCode, source: c.source || "", claimedAt: c.claimedAt }));

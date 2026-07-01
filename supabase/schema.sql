@@ -472,3 +472,32 @@ create table if not exists public.visual_wardrobe_diagnoses (
 
 create index if not exists idx_visual_wardrobe_diagnoses_audit on public.visual_wardrobe_diagnoses(audit_id);
 create index if not exists idx_visual_wardrobe_diagnoses_palette on public.visual_wardrobe_diagnoses(palette_type);
+
+-- ============================================================
+-- Funnel Events (analytics tracking)
+-- ============================================================
+
+create table if not exists public.funnel_events (
+  id uuid primary key default gen_random_uuid(),
+  event_name text not null,
+  anonymous_id text,
+  user_id uuid,
+  session_id text,
+  audit_id uuid,
+  order_id uuid,
+  product_type text,
+  source_page text,
+  landing_page text,
+  referrer text,
+  utm_source text,
+  utm_campaign text,
+  metadata jsonb default '{}'::jsonb,
+  created_at timestamptz default now()
+);
+
+create index if not exists idx_funnel_events_name on public.funnel_events(event_name);
+create index if not exists idx_funnel_events_anonymous on public.funnel_events(anonymous_id);
+create index if not exists idx_funnel_events_session on public.funnel_events(session_id);
+create index if not exists idx_funnel_events_product on public.funnel_events(product_type);
+create index if not exists idx_funnel_events_source on public.funnel_events(utm_source);
+create index if not exists idx_funnel_events_created on public.funnel_events(created_at);
