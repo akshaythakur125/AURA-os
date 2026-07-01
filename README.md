@@ -127,6 +127,61 @@ Add these to `.env.local`:
 | No | — | Manual UPI only |
 | — | No | Manual UPI only (Supabase needed for order tracking) |
 
+## Supabase Persistence Mode
+
+When Supabase environment variables are configured, AuraCheck stores all data in Supabase tables and Storage. When not configured, the app falls back to browser localStorage.
+
+### How It Works
+
+| Feature | LocalStorage mode | Supabase mode |
+|---|---|---|
+| Audit storage | `auracheck:v1:audits` localStorage | `public.audits` table |
+| Orders | `auracheck:v1:orders` localStorage | `public.orders` table |
+| Leads | `auracheck:v1:leads` localStorage | `public.leads` table |
+| Analytics | `auracheck:v1:analytics` localStorage | `public.analytics_events` table |
+| Images | Browser memory (data URL) | `audit-images` private bucket |
+| Image access | Direct data URL | Signed URL (60 min expiry) |
+| Unlocks | `auracheck:v1:unlocks` localStorage | `public.product_unlocks` table |
+
+### Data Flow
+
+1. **Create audit** → saved to both localStorage (synchronous) and Supabase (async, fire-and-forget)
+2. **Generate free score** → saved to localStorage + PATCH to Supabase via `/api/audits/[id]`
+3. **Pay with Razorpay** → `/api/payments/create-order` creates Supabase order row + Razorpay order, verification via `/api/payments/verify`
+4. **Manual UPI unlock** → creates local order + Supabase order if configured
+5. **Admin panel** → reads localStorage; shows storage mode badge; future: reads Supabase
+6. **Data page** → shows local data summary + migration card to copy data to cloud
+
+### Image Storage
+
+- Images are uploaded to the `audit-images` private bucket in Supabase Storage
+- Path format: `anonymous/<anonymousId>/<timestamp>-<safeFileName>.ext`
+- Images are **never public** — only accessible via signed URLs (60-minute expiry)
+- Local fallback: images stay as `imageDataUrl` in localStorage audit records
+
+### Local-to-Cloud Migration
+
+Visit `/data` → **"Move local data to cloud database"** card appears when Supabase is configured:
+- Shows preview of local audits, orders, leads, and analytics to migrate
+- Uploads images to Supabase Storage
+- Creates audit rows in Supabase
+- Local data is preserved (not deleted)
+- Duplicate audits (same ID) are skipped
+
+### Vercel Environment Variables
+
+For Supabase mode on Vercel, add:
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+And for Razorpay:
+- `NEXT_PUBLIC_RAZORPAY_KEY_ID`
+- `RAZORPAY_KEY_ID`
+- `RAZORPAY_KEY_SECRET`
+
+**Service role key must never be exposed to the browser.**
+
 ## Local-Only Architecture
 
 All logic runs exclusively in the browser:

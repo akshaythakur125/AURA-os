@@ -18,6 +18,7 @@ export async function GET() {
       storageMode,
       supabaseConfigured,
       razorpayConfigured,
+      storageBucketConfigured: supabaseConfigured,
       timestamp: new Date().toISOString(),
       appUrl,
     },

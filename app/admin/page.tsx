@@ -21,6 +21,7 @@ import { getProgressComparisons, getProgressStats } from "@/lib/storage/progress
 import { getTwinStats } from "@/lib/storage/auraTwinStore";
 import { getHabitStats } from "@/lib/storage/habitStore";
 import { getItem, setItem } from "@/lib/storage/localStore";
+import { isSupabaseConfigured } from "@/lib/storage/storageMode";
 
 const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   draft: "Draft",
@@ -199,6 +200,9 @@ export default function AdminPage() {
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-white">Admin Panel</h1>
           <div className="flex items-center gap-3">
+            <Badge variant={isSupabaseConfigured() ? "success" : "default"}>
+              {isSupabaseConfigured() ? "Storage: Supabase" : "Storage: Local browser"}
+            </Badge>
             <button onClick={() => { refresh(); showToast("Refreshed"); }} className="text-xs text-gray-500 hover:text-gray-300">Refresh</button>
             <button onClick={() => { sessionStorage.removeItem("auracheck_admin_auth"); setAuthenticated(false); }} className="text-xs text-gray-500 hover:text-gray-300">Logout</button>
           </div>

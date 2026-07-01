@@ -11,6 +11,7 @@ import type { DataSnapshot } from "@/lib/data/exportAllData";
 import { clearLocalData } from "@/lib/data/clearLocalData";
 import type { ClearTarget } from "@/lib/data/clearLocalData";
 import { getStorageHealth, repairKnownStores } from "@/lib/storage/storageHealth";
+import { MigrateLocalToCloudCard } from "@/components/data/MigrateLocalToCloudCard";
 
 const CLEAR_ITEMS: { target: ClearTarget; label: string; require?: string }[] = [
   { target: "all", label: "Clear All Data", require: "DELETE" },
@@ -139,6 +140,11 @@ export default function DataPage() {
             <div className="text-2xl font-bold text-white">{formatBytes(summary.totalEstimatedBytes)}</div>
             <div className="mt-1 text-[10px] text-gray-600">{activeEntries.length} store(s) with data</div>
           </Card>
+        </div>
+
+        {/* ─── Export / Import ─── */}
+        <div className="mb-8">
+          <MigrateLocalToCloudCard />
         </div>
 
         {/* ─── Export / Import ─── */}

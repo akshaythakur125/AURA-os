@@ -7,6 +7,9 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { createAudit } from "@/lib/storage/auditStore";
 import { validateImage, processImage } from "@/lib/image/processImage";
+import { shouldUseSupabase } from "@/lib/storage/storageMode";
+import { auditDataSource } from "@/lib/storage/auditDataSource";
+import { trackEvent } from "@/lib/storage/analyticsStore";
 import type { AuditType, Goal, BudgetRange } from "@/types";
 import type { StyleIntent, CurrentSignalItem, BiggestConcern, OccasionContext, SpendComfort, SelfRatedConfidence } from "@/types/personalization";
 import { STYLE_INTENT_LABELS, SIGNAL_ITEM_LABELS, CONCERN_LABELS, OCCASION_LABELS, SPEND_LABELS, CONFIDENCE_LABELS } from "@/types/personalization";
@@ -143,6 +146,15 @@ export default function NewAuditPage() {
         };
       }
       const audit = createAudit(data as Parameters<typeof createAudit>[0]);
+
+      // If Supabase mode, also save to cloud (fire-and-forget)
+      if (shouldUseSupabase()) {
+        auditDataSource.createAudit(data).catch(() => {
+          // Non-blocking; local save already succeeded
+        });
+      }
+
+      trackEvent("audit_created", { auditType, id: audit.id });
       router.push(`/audit/${audit.id}`);
     } catch {
       setError("Failed to save audit. Please try again.");
@@ -590,8 +602,9 @@ export default function NewAuditPage() {
 
         {/* ─── Privacy Note ─── */}
         <div className="mb-8 rounded-xl border border-purple-500/10 bg-purple-500/5 px-4 py-3 text-xs text-gray-500">
-          Local-only MVP: your image is processed and stored in this browser.
-          It is not uploaded to a server.
+          {shouldUseSupabase()
+            ? "In cloud mode, reports and image paths are stored in Supabase. Images are stored in a private bucket."
+            : "Local-only MVP: your image is processed and stored in this browser. It is not uploaded to a server."}
         </div>
 
         {/* ─── Submit ─── */}

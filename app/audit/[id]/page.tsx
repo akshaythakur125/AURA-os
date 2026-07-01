@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
+import { shouldUseSupabase } from "@/lib/storage/storageMode";
 
 import { generateFreeAuraReport, generateFreeReportWithPersonalization } from "@/lib/aura-engine/generateFreeAuraReport";
 import { RecommendationSection } from "@/components/products/RecommendationSection";
@@ -586,6 +587,19 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Try loading from Supabase if not found locally
+  useEffect(() => {
+    if (!audit && shouldUseSupabase()) {
+      fetch(`/api/audits/${id}`)
+        .then((res) => res.ok ? res.json() : null)
+        .then((data) => {
+          if (data?.audit) setAudit(data.audit);
+        })
+        .catch(() => {});
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
   useEffect(() => {
     if (audit?.freeResult && !(audit.unlockedProducts || []).includes("quick_fix")) {
       trackEvent("quick_fix_paywall_viewed", { auditId: audit.id });
@@ -624,22 +638,38 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
     try {
       if (currentAudit.deepInput) {
         const { freeResult, personalization } = await generateFreeReportWithPersonalization(currentAudit);
-        const updated = updateAudit(currentAudit.id, {
+        const updates: Record<string, unknown> = {
           reportStatus: "free_generated",
           freeScore: freeResult.auraScore,
           freeSummary: freeResult.oneLineVerdict,
           freeResult,
           personalization,
-        });
+        };
+        const updated = updateAudit(currentAudit.id, updates);
+        if (shouldUseSupabase()) {
+          fetch(`/api/audits/${currentAudit.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updates),
+          }).catch(() => {});
+        }
         if (updated) setAudit(updated);
       } else {
         const freeResult = await generateFreeAuraReport(currentAudit.imageDataUrl, currentAudit.budgetRange);
-        const updated = updateAudit(currentAudit.id, {
+        const updates: Record<string, unknown> = {
           reportStatus: "free_generated",
           freeScore: freeResult.auraScore,
           freeSummary: freeResult.oneLineVerdict,
           freeResult,
-        });
+        };
+        const updated = updateAudit(currentAudit.id, updates);
+        if (shouldUseSupabase()) {
+          fetch(`/api/audits/${currentAudit.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updates),
+          }).catch(() => {});
+        }
         if (updated) setAudit(updated);
       }
     } catch (err) {
