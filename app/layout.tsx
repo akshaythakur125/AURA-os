@@ -1,11 +1,17 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Manrope, Space_Grotesk } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const manrope = Manrope({
+  variable: "--font-manrope-sans",
+  subsets: ["latin"],
+});
+
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-space-grotesk",
   subsets: ["latin"],
 });
 
@@ -15,17 +21,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AuraCheck — Find Your Biggest Status Leak",
+  title: "AuraCheck | First-Impression Intelligence",
   description:
-    "AI-style first-impression audit for photos, profiles, outfits, and lifestyle presentation.",
+    "Premium first-impression audit for photos, profiles, outfits, and visual presence.",
   manifest: "/manifest.json",
   other: {
     "mobile-web-app-capable": "yes",
   },
 };
 
-export const viewport = {
-  themeColor: "#0a0a0f",
+export const viewport: Viewport = {
+  themeColor: "#07111f",
 };
 
 export default function RootLayout({
@@ -36,11 +42,14 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${manrope.variable} ${spaceGrotesk.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-black text-white">
+      <body className="relative flex min-h-full flex-col overflow-x-hidden">
+        <div className="mesh-glow floating-orb left-[-8rem] top-20 h-72 w-72 bg-sky-400/20" />
+        <div className="mesh-glow floating-orb right-[-10rem] top-32 h-80 w-80 bg-orange-400/15" />
+        <div className="mesh-glow floating-orb bottom-0 left-1/3 h-96 w-96 bg-blue-500/12" />
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="relative z-10 flex-1">{children}</main>
         <Footer />
       </body>
     </html>
