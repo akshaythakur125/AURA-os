@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/Badge";
 import { CATEGORY_LABELS, CATEGORY_GRADIENTS, type ProductCategory } from "@/types/product";
 import type { RecommendedProduct } from "@/types/product";
 import { recordAffiliateClick } from "@/lib/storage/affiliateStore";
+import { getProductExternalUrl } from "@/lib/utils/externalLinks";
 
 function getCategoryGradient(category: string): string {
   return CATEGORY_GRADIENTS[category as ProductCategory] || "from-gray-600 to-slate-500";
@@ -21,16 +22,14 @@ export function ProductCard({
 }) {
   const { product, reason, priority } = recommendation;
   const gradient = getCategoryGradient(product.category);
+  const externalUrl = getProductExternalUrl(product);
 
   function handleClick() {
-    if (product.affiliateUrl && product.affiliateUrl !== "#") {
-      recordAffiliateClick({
-        productId: product.id,
-        auditId,
-        source,
-      });
-      window.open(product.affiliateUrl, "_blank", "noopener,noreferrer");
-    }
+    recordAffiliateClick({
+      productId: product.id,
+      auditId,
+      source,
+    });
   }
 
   const priorityColors: Record<string, string> = {
@@ -78,13 +77,16 @@ export function ProductCard({
           <span className={`text-[10px] ${priorityColors[priority] || "text-gray-500"}`}>
             Match: {recommendation.matchScore}%
           </span>
-          {product.affiliateUrl && product.affiliateUrl !== "#" ? (
-            <button
+          {externalUrl ? (
+            <a
+              href={externalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={handleClick}
               className="rounded-lg bg-purple-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-purple-500"
             >
               View Upgrade
-            </button>
+            </a>
           ) : (
             <span className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-gray-500">
               Coming soon

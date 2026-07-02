@@ -7,20 +7,21 @@ interface BadgeProps {
 }
 
 const variants = {
-  default: "bg-white/10 text-gray-300",
-  success: "bg-emerald-500/10 text-emerald-400",
-  warning: "bg-amber-500/10 text-amber-400",
-  danger: "bg-red-500/10 text-red-400",
-  premium: "bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300",
+  default: "border border-white/12 bg-white/8 text-white/72",
+  success: "border border-emerald-300/20 bg-emerald-300/10 text-emerald-200",
+  warning: "border border-orange-300/20 bg-orange-300/10 text-orange-200",
+  danger: "border border-rose-300/20 bg-rose-300/10 text-rose-200",
+  premium:
+    "border border-sky-200/20 bg-[linear-gradient(135deg,rgba(125,211,252,0.18),rgba(249,115,22,0.14))] text-sky-100",
 };
 
 export function Badge({ children, variant = "default", className }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.2em]",
         variants[variant],
-        className
+        className,
       )}
     >
       {children}

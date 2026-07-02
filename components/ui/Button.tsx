@@ -1,25 +1,28 @@
+import { cloneElement, isValidElement } from "react";
 import { cn } from "@/lib/utils/cn";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost" | "outline";
   size?: "sm" | "md" | "lg";
   children: React.ReactNode;
+  asChild?: boolean;
 }
 
 const variants = {
   primary:
-    "bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-500 hover:to-pink-400 shadow-lg shadow-purple-500/25",
+    "border border-white/15 bg-[linear-gradient(135deg,rgba(125,211,252,0.95),rgba(59,130,246,0.92)_45%,rgba(249,115,22,0.84))] text-slate-950 shadow-[0_18px_48px_rgba(56,189,248,0.22)] hover:-translate-y-0.5 hover:shadow-[0_24px_60px_rgba(249,115,22,0.22)]",
   secondary:
-    "bg-white/10 text-white hover:bg-white/20 border border-white/10",
-  ghost: "text-gray-400 hover:text-white hover:bg-white/5",
+    "border border-white/15 bg-white/10 text-white shadow-[0_14px_32px_rgba(0,0,0,0.18)] hover:-translate-y-0.5 hover:bg-white/14",
+  ghost:
+    "border border-transparent text-white/72 hover:-translate-y-0.5 hover:border-white/10 hover:bg-white/6 hover:text-white",
   outline:
-    "border border-purple-500/50 text-purple-400 hover:bg-purple-500/10",
+    "border border-sky-300/30 bg-sky-300/8 text-sky-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-0.5 hover:border-sky-200/50 hover:bg-sky-300/12",
 };
 
 const sizes = {
-  sm: "px-3 py-1.5 text-sm",
-  md: "px-5 py-2.5 text-sm",
-  lg: "px-8 py-3 text-base",
+  sm: "min-h-10 px-4 text-sm",
+  md: "min-h-11 px-5 text-sm",
+  lg: "min-h-13 px-7 text-base",
 };
 
 export function Button({
@@ -27,16 +30,28 @@ export function Button({
   size = "md",
   className,
   children,
+  asChild = false,
   ...props
 }: ButtonProps) {
+  const buttonClassName = cn(
+    "inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-[-0.02em] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300/45 focus:ring-offset-2 focus:ring-offset-slate-950 disabled:pointer-events-none disabled:opacity-50",
+    variants[variant],
+    sizes[size],
+    className,
+  );
+
+  if (asChild && isValidElement(children)) {
+    const child = children as React.ReactElement<Record<string, unknown> & { className?: string }>;
+
+    return cloneElement(child, {
+      ...props,
+      className: cn(child.props.className, buttonClassName),
+    });
+  }
+
   return (
     <button
-      className={cn(
-        "inline-flex items-center justify-center rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500/50 disabled:opacity-50 disabled:pointer-events-none",
-        variants[variant],
-        sizes[size],
-        className
-      )}
+      className={buttonClassName}
       {...props}
     >
       {children}

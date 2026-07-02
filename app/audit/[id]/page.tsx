@@ -569,9 +569,9 @@ function ProductCTAButtons({ auditId, unlockedProducts }: { auditId: string; unl
               {isUnlocked ? (
                 <p className="text-xs text-emerald-400">Already unlocked</p>
               ) : (
-                <Link href={`/unlock?auditId=${auditId}&product=${product.type}`}>
-                  <Button className="w-full" size="sm">Unlock — ₹{product.price}</Button>
-                </Link>
+                <Button asChild className="w-full" size="sm">
+                  <Link href={`/unlock?auditId=${auditId}&product=${product.type}`}>Unlock — ₹{product.price}</Link>
+                </Button>
               )}
             </div>
           </Card>
@@ -613,7 +613,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
         <div className="mx-auto max-w-md text-center">
           <h1 className="mb-4 text-2xl font-bold text-white">Audit not found</h1>
           <p className="mb-6 text-sm text-gray-400">This audit does not exist or may have been deleted.</p>
-          <Link href="/dashboard"><Button variant="outline">Go to Dashboard</Button></Link>
+          <Button asChild variant="outline"><Link href="/dashboard">Go to Dashboard</Link></Button>
         </div>
       </Container>
     );
@@ -747,8 +747,8 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                   );
                   trackEvent("share_card_downloaded");
                 }}>📤 Share Aura Card</Button>
-                <Link href="/progress"><Button size="sm" variant="ghost">📊 Compare Progress</Button></Link>
-                <Link href="/twin-simulator"><Button size="sm" variant="ghost">🔮 Aura Twin</Button></Link>
+                <Button asChild size="sm" variant="ghost"><Link href="/progress">📊 Compare Progress</Link></Button>
+                <Button asChild size="sm" variant="ghost"><Link href="/twin-simulator">🔮 Aura Twin</Link></Button>
               </div>
             </Card>
 
@@ -909,11 +909,11 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                 <p className="mb-4 text-sm text-gray-400">
                   The Full Report shows what to fix. The Glow-Up Plan shows how to fix it — day by day, step by step.
                 </p>
-                <Link href={`/unlock?auditId=${audit.id}&product=glowup_plan`}>
-                  <Button variant="outline" size="sm" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10">
+                <Button asChild variant="outline" size="sm" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10">
+                  <Link href={`/unlock?auditId=${audit.id}&product=glowup_plan`}>
                     Unlock 30-Day Glow-Up Plan — ₹499
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </Card>
             )}
           </>
@@ -941,8 +941,8 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                   );
                   trackEvent("share_card_downloaded");
                 }}>📤 Share Aura Card</Button>
-                <Link href="/progress"><Button size="sm" variant="ghost">📊 Compare Progress</Button></Link>
-                <Link href="/twin-simulator"><Button size="sm" variant="ghost">🔮 Aura Twin</Button></Link>
+                <Button asChild size="sm" variant="ghost"><Link href="/progress">📊 Compare Progress</Link></Button>
+                <Button asChild size="sm" variant="ghost"><Link href="/twin-simulator">🔮 Aura Twin</Link></Button>
               </div>
             </Card>
 
@@ -1105,20 +1105,12 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                 </p>
               </div>
               <div className="mb-4 grid gap-3 sm:grid-cols-2">
-                <Link href={`/wardrobe/${audit.id}`}>
-                  <Button className="w-full">Compare clothes across Indian stores</Button>
-                </Link>
-                <Link href="/wardrobe">
-                  <Button variant="outline" className="w-full">Open Wardrobe Finder</Button>
-                </Link>
+                <Button asChild className="w-full"><Link href={`/wardrobe/${audit.id}`}>Compare clothes across Indian stores</Link></Button>
+                <Button asChild variant="outline" className="w-full"><Link href="/wardrobe">Open Wardrobe Finder</Link></Button>
               </div>
               <div className="mb-4 grid gap-3 sm:grid-cols-2">
-                <Link href={`/wardrobe/diagnosis/${audit.id}`}>
-                  <Button variant="outline" className="w-full">Visual Wardrobe Diagnosis</Button>
-                </Link>
-                <Link href={`/wardrobe/search?auditId=${audit.id}`}>
-                  <Button variant="outline" className="w-full">Search by Diagnosis</Button>
-                </Link>
+                <Button asChild variant="outline" className="w-full"><Link href={`/wardrobe/diagnosis/${audit.id}`}>Visual Wardrobe Diagnosis</Link></Button>
+                <Button asChild variant="outline" className="w-full"><Link href={`/wardrobe/search?auditId=${audit.id}`}>Search by Diagnosis</Link></Button>
               </div>
               <p className="text-xs text-gray-500">
                 Prices are from AuraCheck&rsquo;s MVP catalog and may not be live. Verify on store before buying.
@@ -1261,7 +1253,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
         </div>
 
         <div className="flex items-center justify-between">
-          <Link href="/dashboard"><Button variant="ghost" size="sm">&larr; Back to Dashboard</Button></Link>
+          <Button asChild variant="ghost" size="sm"><Link href="/dashboard">&larr; Back to Dashboard</Link></Button>
           <span className="text-xs text-gray-600">
             {fullReport
               ? `Unlocked ${new Date(fullReport.generatedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`

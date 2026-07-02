@@ -684,24 +684,12 @@ export default function AdminPage() {
             </Card>
 
             <div className="mb-4 grid gap-3 sm:grid-cols-2">
-              <Link href="/admin/growth">
-                <Button className="w-full">Growth Dashboard &rarr;</Button>
-              </Link>
-              <Link href="/admin/revenue">
-                <Button variant="outline" className="w-full">Revenue Dashboard &rarr;</Button>
-              </Link>
-              <Link href="/admin/launch">
-                <Button variant="outline" className="w-full">Launch Control Center &rarr;</Button>
-              </Link>
-              <Link href="/admin/system">
-                <Button variant="outline" className="w-full">System Health &rarr;</Button>
-              </Link>
-              <Link href="/admin/security">
-                <Button variant="outline" className="w-full border-red-500/30 text-red-300">Security &rarr;</Button>
-              </Link>
-              <Link href="/admin/deployment">
-                <Button variant="outline" className="w-full border-blue-500/30 text-blue-300">Deployment &rarr;</Button>
-              </Link>
+              <Button asChild className="w-full"><Link href="/admin/growth">Growth Dashboard &rarr;</Link></Button>
+              <Button asChild variant="outline" className="w-full"><Link href="/admin/revenue">Revenue Dashboard &rarr;</Link></Button>
+              <Button asChild variant="outline" className="w-full"><Link href="/admin/launch">Launch Control Center &rarr;</Link></Button>
+              <Button asChild variant="outline" className="w-full"><Link href="/admin/system">System Health &rarr;</Link></Button>
+              <Button asChild variant="outline" className="w-full border-red-500/30 text-red-300"><Link href="/admin/security">Security &rarr;</Link></Button>
+              <Button asChild variant="outline" className="w-full border-blue-500/30 text-blue-300"><Link href="/admin/deployment">Deployment &rarr;</Link></Button>
             </div>
             <div className="flex gap-2">
               <Button variant="ghost" size="sm" onClick={() => {

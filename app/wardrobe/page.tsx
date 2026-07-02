@@ -59,19 +59,11 @@ export default function WardrobePage() {
 
         {/* ─── CTAs ─── */}
         <div className="mb-8 flex flex-wrap justify-center gap-3">
-          <Link href="/audit/new">
-            <Button>Start Free Aura Check</Button>
-          </Link>
-          <Link href="/wardrobe/search">
-            <Button variant="outline">Search All Products</Button>
-          </Link>
-          <Link href="/wardrobe/diagnosis">
-            <Button variant="outline">Visual Wardrobe Diagnosis</Button>
-          </Link>
+          <Button asChild><Link href="/audit/new">Start Free Aura Check</Link></Button>
+          <Button asChild variant="outline"><Link href="/wardrobe/search">Search All Products</Link></Button>
+          <Button asChild variant="outline"><Link href="/wardrobe/diagnosis">Visual Wardrobe Diagnosis</Link></Button>
           {latestScored && (
-            <Link href={`/wardrobe/${latestScored.id}`}>
-              <Button variant="outline">Open from latest audit</Button>
-            </Link>
+            <Button asChild variant="outline"><Link href={`/wardrobe/${latestScored.id}`}>Open from latest audit</Link></Button>
           )}
         </div>
 

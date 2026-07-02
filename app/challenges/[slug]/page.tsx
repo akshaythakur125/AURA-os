@@ -26,7 +26,7 @@ export default function ChallengeDetailPage() {
         <div className="mx-auto max-w-md text-center">
           <h1 className="mb-4 text-2xl font-bold text-white">Challenge Not Found</h1>
           <p className="mb-6 text-sm text-gray-400">This challenge does not exist or has ended.</p>
-          <Link href="/challenges"><Button>Back to Challenges</Button></Link>
+          <Button asChild><Link href="/challenges">Back to Challenges</Link></Button>
         </div>
       </Container>
     );
@@ -82,8 +82,8 @@ export default function ChallengeDetailPage() {
             <div className="text-sm font-semibold text-emerald-400">You entered this challenge!</div>
             <p className="mt-2 text-xs text-gray-400">Your entry is saved locally. Check the leaderboard to see your rank.</p>
             <div className="mt-4 flex gap-2">
-              <Link href="/challenges"><Button variant="outline" size="sm">View Leaderboard</Button></Link>
-              <Link href="/audit/new"><Button size="sm">Create New Audit</Button></Link>
+              <Button asChild variant="outline" size="sm"><Link href="/challenges">View Leaderboard</Link></Button>
+              <Button asChild size="sm"><Link href="/audit/new">Create New Audit</Link></Button>
             </div>
           </Card>
         ) : (
@@ -97,9 +97,9 @@ export default function ChallengeDetailPage() {
                 You need a compatible audit to enter this challenge.
               </div>
             )}
-            <Link href="/audit/new">
-              <Button variant="outline" size="sm" className="w-full">Start New Audit</Button>
-            </Link>
+            <Button asChild variant="outline" size="sm" className="w-full">
+              <Link href="/audit/new">Start New Audit</Link>
+            </Button>
           </div>
         )}
 

@@ -41,21 +41,21 @@ export default function GlowUpPlanPage() {
           <div className="mb-8 text-5xl font-bold text-amber-400">&#8377;499</div>
           <div className="flex flex-wrap justify-center gap-3">
             {upsell && !alreadyUnlocked ? (
-              <Link href={`/unlock?auditId=${upsell.auditId}&product=glowup_plan`}>
-                <Button size="lg" onClick={() => trackEvent("pricing_cta_clicked", { product: "glowup_plan", target: "unlock" })}>
+              <Button asChild size="lg">
+                <Link href={`/unlock?auditId=${upsell.auditId}&product=glowup_plan`} onClick={() => trackEvent("pricing_cta_clicked", { product: "glowup_plan", target: "unlock" })}>
                   Unlock for Latest Audit
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             ) : upsell && alreadyUnlocked ? (
-              <Link href={`/audit/${upsell.auditId}`}>
-                <Button size="lg">View Your Plan</Button>
-              </Link>
+              <Button asChild size="lg">
+                <Link href={`/audit/${upsell.auditId}`}>View Your Plan</Link>
+              </Button>
             ) : (
-              <Link href="/audit/new">
-                <Button size="lg" onClick={() => trackEvent("pricing_cta_clicked", { product: "glowup_plan", target: "new_audit" })}>
+              <Button asChild size="lg">
+                <Link href="/audit/new" onClick={() => trackEvent("pricing_cta_clicked", { product: "glowup_plan", target: "new_audit" })}>
                   Start Free Aura Check
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             )}
           </div>
         </div>
@@ -161,9 +161,9 @@ export default function GlowUpPlanPage() {
           <h2 className="mb-4 text-2xl font-bold text-white">Ready for your 30-day transformation?</h2>
           <p className="mb-6 text-gray-400">Get a personalized roadmap with daily missions to level up your presence.</p>
           {upsell && !alreadyUnlocked ? (
-            <Link href={`/unlock?auditId=${upsell.auditId}&product=glowup_plan`}><Button size="lg">Unlock Now — ₹499</Button></Link>
+            <Button asChild size="lg"><Link href={`/unlock?auditId=${upsell.auditId}&product=glowup_plan`}>Unlock Now — ₹499</Link></Button>
           ) : (
-            <Link href="/audit/new"><Button size="lg">Start Free Aura Check</Button></Link>
+            <Button asChild size="lg"><Link href="/audit/new">Start Free Aura Check</Link></Button>
           )}
         </div>
       </div>

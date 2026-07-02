@@ -68,7 +68,7 @@ export default function SavedWardrobePage() {
                 <div className="py-12 text-center">
                   <p className="mb-2 text-sm text-gray-400">No saved products yet.</p>
                   <p className="mb-4 text-xs text-gray-500">Save aura-improving clothes to watch price changes before buying.</p>
-                  <Link href="/wardrobe/search"><Button>Browse Products</Button></Link>
+                  <Button asChild><Link href="/wardrobe/search">Browse Products</Link></Button>
                 </div>
               </Card>
             ) : (

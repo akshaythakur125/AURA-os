@@ -157,7 +157,7 @@ function UnlockContent() {
         <div className="mx-auto max-w-md text-center">
           <h1 className="mb-4 text-2xl font-bold text-white">Unlock Report</h1>
           <p className="mb-6 text-sm text-gray-400">No audit specified or audit not found. Create an audit and generate a free score first.</p>
-          <Link href="/audit/new"><Button>Start Aura Check</Button></Link>
+          <Button asChild><Link href="/audit/new">Start Aura Check</Link></Button>
         </div>
       </Container>
     );
@@ -169,7 +169,7 @@ function UnlockContent() {
         <div className="mx-auto max-w-md text-center">
           <h1 className="mb-4 text-2xl font-bold text-white">Unlock {productInfo.name}</h1>
           <p className="mb-6 text-sm text-gray-400">Generate a free Aura Score first before unlocking products.</p>
-          <Link href={`/audit/${auditId}`}><Button>Back to Audit</Button></Link>
+          <Button asChild><Link href={`/audit/${auditId}`}>Back to Audit</Link></Button>
         </div>
       </Container>
     );
@@ -182,7 +182,7 @@ function UnlockContent() {
         <div className="mx-auto max-w-md text-center">
           <h1 className="mb-4 text-2xl font-bold text-white">Already Unlocked</h1>
           <p className="mb-6 text-sm text-gray-400">This product is already unlocked.</p>
-          <Link href={`/audit/${auditId}`}><Button>View Audit</Button></Link>
+          <Button asChild><Link href={`/audit/${auditId}`}>View Audit</Link></Button>
         </div>
       </Container>
     );
