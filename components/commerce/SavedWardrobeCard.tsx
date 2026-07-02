@@ -10,6 +10,9 @@ import { BestTimeToBuyBadge } from "./BestTimeToBuyBadge";
 import { evaluateBestTimeToBuy } from "@/lib/commerce/deals/bestTimeToBuy";
 import { formatPrice } from "@/lib/commerce/dealScoring";
 import { removeWishlistItem } from "@/lib/commerce/wishlist/wishlistStore";
+import { getEffectiveCatalog } from "@/lib/storage/commerceCatalogStore";
+import { formatStoreName, getStoreInfo } from "@/config/storeDirectory";
+import type { StoreKey } from "@/types/commerce";
 
 interface Props {
   item: WishlistItem;
@@ -29,7 +32,28 @@ export function SavedWardrobeCard({ item, catalogItem, onRemove }: Props) {
   }
 
   function handleViewStore() {
-    window.open(`/api/out?url=${encodeURIComponent(item.productId)}`, "_blank");
+    const catalog = getEffectiveCatalog();
+    const product = catalog.find((p) => p.id === item.productId);
+    if (!product || !product.offers || product.offers.length === 0) {
+      const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(item.productTitle + " buy online India")}`;
+      window.open(searchUrl, "_blank");
+      return;
+    }
+    const offer = item.storeKey
+      ? product.offers.find((o) => o.storeKey === item.storeKey) || product.offers[0]
+      : product.offers[0];
+    const url = offer.affiliateUrl || offer.url;
+    if (url && url !== "#") {
+      window.open(url, "_blank");
+    } else if (item.storeKey) {
+      const info = getStoreInfo(item.storeKey as StoreKey);
+      const storeUrl = info?.homepageUrl || formatStoreName(item.storeKey as StoreKey);
+      const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(item.productTitle + " " + storeUrl)}`;
+      window.open(searchUrl, "_blank");
+    } else {
+      const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(item.productTitle + " buy online India")}`;
+      window.open(searchUrl, "_blank");
+    }
   }
 
   return (
