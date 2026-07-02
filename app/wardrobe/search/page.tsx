@@ -11,6 +11,7 @@ import { PriceComparisonCard } from "@/components/commerce/PriceComparisonCard";
 import type { CommerceSearchInput, CommerceSearchSort, CommerceSearchResponse } from "@/types/commerceSearch";
 import type { WardrobeCategory, StoreKey, AuraStyleDirection, AuraLeakTag } from "@/types/commerce";
 import { CELEBRITY_TREND_PRESETS } from "@/config/celebrityTrendPresets";
+import { getRotatingPresets } from "@/lib/marketing/rotatingPresets";
 
 function WardrobeSearchContent() {
   const searchParams = useSearchParams();
@@ -165,7 +166,7 @@ function WardrobeSearchContent() {
             </div>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {CELEBRITY_TREND_PRESETS.map((preset) => (
+            {getRotatingPresets().map((preset) => (
               <Card key={preset.id} className="flex flex-col gap-4">
                 <div className="flex items-center justify-between gap-3">
                   <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-white/55">
