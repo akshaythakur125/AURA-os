@@ -4,6 +4,8 @@ export interface CelebrityTrendPreset {
   id: string;
   label: string;
   celebrity: string;
+  avatarLabel: string;
+  avatarGradient: string;
   region: "India" | "Global";
   trendDateLabel: string;
   sourceLabel: string;
@@ -22,6 +24,8 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
     id: "ananya-sporty-luxe",
     label: "Sporty Luxe Reset",
     celebrity: "Ananya Panday-inspired",
+    avatarLabel: "AP",
+    avatarGradient: "from-fuchsia-400 via-rose-300 to-orange-200",
     region: "India",
     trendDateLabel: "June 2026",
     sourceLabel: "Vogue India sportswear staples",
@@ -38,6 +42,8 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
     id: "priyanka-soft-power",
     label: "Soft Power Tailoring",
     celebrity: "Priyanka Chopra-style",
+    avatarLabel: "PC",
+    avatarGradient: "from-amber-300 via-orange-300 to-rose-300",
     region: "India",
     trendDateLabel: "January 2026",
     sourceLabel: "Vogue India best dressed list",
@@ -54,6 +60,8 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
     id: "kendall-hailey-track",
     label: "Off-Duty Track Energy",
     celebrity: "Kendall + Hailey off-duty",
+    avatarLabel: "KH",
+    avatarGradient: "from-sky-300 via-cyan-300 to-blue-400",
     region: "Global",
     trendDateLabel: "April 2026",
     sourceLabel: "Vogue sporty celebrity outfits",
@@ -70,6 +78,8 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
     id: "oscars-wide-leg-tailoring",
     label: "Relaxed Red Carpet Tailoring",
     celebrity: "Michael B. Jordan / Oscars 2026",
+    avatarLabel: "MB",
+    avatarGradient: "from-slate-200 via-zinc-300 to-amber-200",
     region: "Global",
     trendDateLabel: "March 2026",
     sourceLabel: "GQ Oscars 2026 best-dressed",

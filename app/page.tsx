@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
+import { CELEBRITY_TREND_PRESETS } from "@/config/celebrityTrendPresets";
 import { ReferralBanner } from "@/components/marketing/ReferralBanner";
 import { PROOF_EXAMPLES } from "@/config/proofExamples";
 import { getAudits } from "@/lib/storage/auditStore";
@@ -94,6 +95,8 @@ const journeySteps = [
   },
 ];
 
+const marqueeStyles = [...CELEBRITY_TREND_PRESETS, ...CELEBRITY_TREND_PRESETS];
+
 export default function HomePage() {
   const stats = useMemo(
     () => ({
@@ -111,6 +114,49 @@ export default function HomePage() {
       <section className="relative overflow-hidden pb-18 pt-10 sm:pb-24 sm:pt-14">
         <div className="hero-grid absolute inset-x-0 top-0 h-[44rem]" />
         <Container className="relative">
+          <div className="mb-8 overflow-hidden rounded-[30px] border border-white/10 bg-white/[0.03] p-4 sm:p-5">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <div className="text-xs uppercase tracking-[0.22em] text-white/45">latest celebrity style board</div>
+                <h2 className="display-font mt-2 text-2xl font-bold text-white sm:text-3xl">
+                  See what is trending before you shop the look.
+                </h2>
+              </div>
+              <Link href="/wardrobe/search">
+                <Button size="sm" variant="outline">Open style search</Button>
+              </Link>
+            </div>
+
+            <div className="overflow-hidden">
+              <div className="marquee-track gap-4 pr-4">
+                {marqueeStyles.map((preset, index) => (
+                  <Link
+                    key={`${preset.id}-${index}`}
+                    href={`/wardrobe/search?preset=${preset.id}&sort=cheapest`}
+                    className="glass-card flex w-[300px] min-w-[300px] gap-4 rounded-[28px] p-4 hover:-translate-y-1"
+                  >
+                    <div className={`celeb-portrait flex h-24 w-20 shrink-0 items-end justify-center rounded-[22px] bg-gradient-to-br ${preset.avatarGradient}`}>
+                      <div className="mb-3 rounded-full border border-white/25 bg-slate-950/30 px-2.5 py-1 text-xs font-bold tracking-[0.2em] text-white">
+                        {preset.avatarLabel}
+                      </div>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] text-white/50">
+                          {preset.region}
+                        </span>
+                        <span className="text-[10px] text-white/35">{preset.trendDateLabel}</span>
+                      </div>
+                      <h3 className="mt-2 text-base font-semibold text-white">{preset.celebrity}</h3>
+                      <p className="mt-1 text-xs text-sky-200">{preset.label}</p>
+                      <p className="mt-2 line-clamp-3 text-xs leading-5 text-white/58">{preset.summary}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+
           <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="max-w-3xl">
               <Badge variant="premium" className="mb-5">
@@ -122,19 +168,30 @@ export default function HomePage() {
               <p className="mt-6 max-w-2xl text-base leading-8 text-white/68 sm:text-lg">
                 AuraCheck helps people understand how they come across online. It finds the visual leaks hurting first impression, explains how those leaks affect perception, and gives a clearer upgrade path so users stop guessing what to fix.
               </p>
-              <div className="mt-6 grid max-w-2xl gap-3 sm:grid-cols-3">
+              <div className="mt-6 grid max-w-3xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="rounded-[22px] border border-white/10 bg-white/[0.04] px-4 py-4">
+                  <div className="text-xs uppercase tracking-[0.22em] text-white/40">What it is</div>
+                  <div className="mt-2 text-sm text-white/72">An online first-impression audit for photos and profiles</div>
+                </div>
+                <div className="rounded-[22px] border border-white/10 bg-white/[0.04] px-4 py-4">
+                  <div className="text-xs uppercase tracking-[0.22em] text-white/40">Who it helps</div>
+                  <div className="mt-2 text-sm text-white/72">People improving dating, social, creator, or professional image</div>
+                </div>
                 <div className="rounded-[22px] border border-white/10 bg-white/[0.04] px-4 py-4">
                   <div className="text-xs uppercase tracking-[0.22em] text-white/40">Free tier</div>
                   <div className="mt-2 text-sm text-white/72">Score + biggest leak</div>
                 </div>
                 <div className="rounded-[22px] border border-white/10 bg-white/[0.04] px-4 py-4">
                   <div className="text-xs uppercase tracking-[0.22em] text-white/40">Paid tier</div>
-                  <div className="mt-2 text-sm text-white/72">Deeper analysis + action plan</div>
+                  <div className="mt-2 text-sm text-white/72">Deeper analysis, shopping guidance, and action plan</div>
                 </div>
-                <div className="rounded-[22px] border border-white/10 bg-white/[0.04] px-4 py-4">
-                  <div className="text-xs uppercase tracking-[0.22em] text-white/40">Main outcome</div>
-                  <div className="mt-2 text-sm text-white/72">Better photos, profile, and spend decisions</div>
-                </div>
+              </div>
+
+              <div className="mt-6 rounded-[24px] border border-sky-300/12 bg-sky-300/[0.06] p-4">
+                <div className="text-xs uppercase tracking-[0.22em] text-sky-100/70">In one line</div>
+                <p className="mt-2 text-sm leading-7 text-white/72">
+                  Upload a photo, see what weakens your image, understand why it matters, and get a better fix path or trend-matched shopping options before you spend.
+                </p>
               </div>
 
               <div className="mt-8 flex flex-col gap-4 sm:flex-row">
