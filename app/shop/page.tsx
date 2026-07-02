@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { WARDROBE_CATALOG } from "@/config/auraWardrobeCatalog";
-import { CELEBRITY_TREND_PRESETS } from "@/config/celebrityTrendPresets";
+import { getRotatingPresets } from "@/lib/marketing/rotatingPresets";
 import { getActiveStores } from "@/config/storeDirectory";
 import { getButtonLabel, getClickUrl } from "@/lib/commerce/affiliateLinks";
 import { trackStoreClick } from "@/lib/commerce/commerceTracking";
@@ -156,7 +156,7 @@ export default function ShopPage() {
             </p>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {CELEBRITY_TREND_PRESETS.map((preset) => (
+            {getRotatingPresets().map((preset) => (
               <div key={preset.id} className="prism-panel float-card overflow-hidden rounded-[28px] p-3">
                 <div className="overflow-hidden rounded-[22px]">
                   <Image

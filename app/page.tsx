@@ -6,12 +6,12 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
-import { CELEBRITY_TREND_PRESETS } from "@/config/celebrityTrendPresets";
 import { ReferralBanner } from "@/components/marketing/ReferralBanner";
 import { getAudits } from "@/lib/storage/auditStore";
 import { getTwinStats } from "@/lib/storage/auraTwinStore";
+import { getMarqueePresets } from "@/lib/marketing/rotatingPresets";
 
-const marqueeStyles = [...CELEBRITY_TREND_PRESETS, ...CELEBRITY_TREND_PRESETS];
+const marqueeStyles = getMarqueePresets();
 
 const quickExplain = [
   {
