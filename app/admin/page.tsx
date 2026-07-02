@@ -5,7 +5,7 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { getOrders, updateOrder, deleteOrder, getOrderStats } from "@/lib/storage/orderStore";
 import { getAudits } from "@/lib/storage/auditStore";
 import { getAnalyticsSummary, clearAnalytics, getEvents } from "@/lib/storage/analyticsStore";
@@ -46,10 +46,9 @@ const ORDER_STATUS_VARIANTS: Record<OrderStatus, "default" | "warning" | "succes
 };
 
 export default function AdminPage() {
-  const [authenticated, setAuthenticated] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return sessionStorage.getItem("auracheck_admin_auth") === "true";
-  });
+  const [authenticated, setAuthenticated] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [devModeWarning, setDevModeWarning] = useState<string | null>(null);
   const [codeInput, setCodeInput] = useState("");
   const [orders, setOrders] = useState(() => getOrders());
   const [audits] = useState(() => getAudits());
@@ -70,10 +69,71 @@ export default function AdminPage() {
     setItem("auracheck:v1:founder_checklist", next);
   }
   const [toast, setToast] = useState<string | null>(null);
+  const [remoteOrders, setRemoteOrders] = useState<ManualOrder[]>([]);
+  const [loadingRemote, setLoadingRemote] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/admin/auth")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.authenticated) {
+          setAuthenticated(true);
+          if (data.devModeWarning) setDevModeWarning(data.devModeWarning);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setCheckingAuth(false));
+  }, []);
+
+  async function login(code: string) {
+    const res = await fetch("/api/admin/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      if (data.devModeWarning) setDevModeWarning(data.devModeWarning);
+      setAuthenticated(true);
+    }
+    return data;
+  }
+
+  async function logout() {
+    await fetch("/api/admin/auth", { method: "DELETE" });
+    setAuthenticated(false);
+    setDevModeWarning(null);
+  }
+
+  async function fetchRemoteOrders() {
+    setLoadingRemote(true);
+    try {
+      const res = await fetch("/api/admin/orders");
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.success && Array.isArray(data.orders)) {
+        setRemoteOrders(data.orders);
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setLoadingRemote(false);
+    }
+  }
+
+  useEffect(() => {
+    if (authenticated && isSupabaseConfigured()) {
+      fetchRemoteOrders();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authenticated]);
 
   function refresh() {
     setOrders(getOrders());
     setLeads(getLeads());
+    if (isSupabaseConfigured()) {
+      fetchRemoteOrders();
+    }
   }
 
   function showToast(msg: string) {
@@ -82,11 +142,7 @@ export default function AdminPage() {
   }
 
   function handleLogin() {
-    const adminCode = process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "ADMINDEMO";
-    if (codeInput === adminCode) {
-      sessionStorage.setItem("auracheck_admin_auth", "true");
-      setAuthenticated(true);
-    }
+    login(codeInput);
   }
 
   function handleGenerateCode(order: ManualOrder) {
@@ -121,7 +177,7 @@ export default function AdminPage() {
   }
 
   function handleExportOrdersCSV() {
-    const rows = orders.map((o) => ({
+    const rows = mergedOrders.map((o) => ({
       id: o.id,
       auditId: o.auditId,
       product: o.productName,
@@ -139,7 +195,7 @@ export default function AdminPage() {
   }
 
   function handleExportOrdersJSON() {
-    downloadJSON(orders, `auracheck-orders-${Date.now()}.json`);
+    downloadJSON(mergedOrders, `auracheck-orders-${Date.now()}.json`);
     showToast("Orders JSON downloaded");
   }
 
@@ -170,17 +226,33 @@ export default function AdminPage() {
     showToast("Analytics CSV downloaded");
   }
 
+  if (checkingAuth) {
+    return (
+      <Container className="py-12">
+        <div className="mx-auto max-w-sm text-center">
+          <div className="text-sm text-gray-500">Checking session...</div>
+        </div>
+      </Container>
+    );
+  }
+
   if (!authenticated) {
     return (
       <Container className="py-12">
         <div className="mx-auto max-w-sm">
           <Card>
             <h1 className="mb-2 text-xl font-bold text-white">Admin Access</h1>
-            <p className="mb-4 text-xs text-gray-500">Local admin gate is for MVP testing only, not production security.</p>
+            <p className="mb-4 text-xs text-gray-500">Enter the admin access code to continue.</p>
+            {devModeWarning && (
+              <div className="mb-4 rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
+                {devModeWarning}
+              </div>
+            )}
             <input
               type="password"
               value={codeInput}
               onChange={(e) => setCodeInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleLogin()}
               placeholder="Enter admin code"
               className="mb-4 w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none"
             />
@@ -196,7 +268,26 @@ export default function AdminPage() {
     );
   }
 
-  const stats = getOrderStats();
+  const mergedOrders = useMemo(() => {
+    if (remoteOrders.length === 0) return orders;
+    const localIds = new Set(orders.map((o) => o.id));
+    return [...orders, ...remoteOrders.filter((r) => !localIds.has(r.id))];
+  }, [orders, remoteOrders]);
+
+  function computeStats(list: ManualOrder[]) {
+    return {
+      totalOrders: list.length,
+      paymentPending: list.filter((o) => o.status === "payment_pending").length,
+      paymentSubmitted: list.filter((o) => o.status === "payment_submitted").length,
+      unlockedOrders: list.filter((o) => o.status === "unlocked").length,
+      cancelledOrders: list.filter((o) => o.status === "cancelled").length,
+      totalExpectedRevenue: list.reduce((sum, o) => sum + (o.status !== "cancelled" ? (o.finalAmount ?? o.amount) : 0), 0),
+      totalUnlockedRevenue: list.filter((o) => o.status === "unlocked").reduce((sum, o) => sum + (o.finalAmount ?? o.amount), 0),
+      latestOrderDate: list.length > 0 ? list[0].createdAt : null,
+    };
+  }
+
+  const stats = computeStats(mergedOrders);
 
   return (
     <Container className="py-8 sm:py-12">
@@ -208,9 +299,16 @@ export default function AdminPage() {
               {isSupabaseConfigured() ? "Storage: Supabase" : "Storage: Local browser"}
             </Badge>
             <button onClick={() => { refresh(); showToast("Refreshed"); }} className="text-xs text-gray-500 hover:text-gray-300">Refresh</button>
-            <button onClick={() => { sessionStorage.removeItem("auracheck_admin_auth"); setAuthenticated(false); }} className="text-xs text-gray-500 hover:text-gray-300">Logout</button>
+            <button onClick={logout} className="text-xs text-gray-500 hover:text-gray-300">Logout</button>
           </div>
         </div>
+
+        {/* ─── Dev Mode Warning ─── */}
+        {devModeWarning && (
+          <div className="mb-4 rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-2 text-xs text-amber-300">
+            {devModeWarning}
+          </div>
+        )}
 
         {/* ─── Toast ─── */}
         {toast && (
@@ -278,11 +376,21 @@ export default function AdminPage() {
         {/* ─── Orders Tab ─── */}
         {activeTab === "orders" && (
           <>
-            {orders.length === 0 ? (
+            {loadingRemote && (
+              <div className="mb-4 rounded-xl border border-purple-500/20 bg-purple-500/5 px-4 py-2 text-sm text-purple-300">
+                Fetching remote orders...
+              </div>
+            )}
+            {remoteOrders.length > 0 && (
+              <div className="mb-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-2 text-sm text-emerald-300">
+                Showing {orders.length} local + {remoteOrders.length} remote orders ({mergedOrders.length} total)
+              </div>
+            )}
+            {mergedOrders.length === 0 ? (
               <Card><div className="py-8 text-center text-sm text-gray-500">No orders yet.</div></Card>
             ) : (
               <div className="space-y-3">
-                {orders.map((order) => (
+                {mergedOrders.map((order) => (
                   <Card key={order.id}>
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div className="flex-1">
@@ -348,15 +456,15 @@ export default function AdminPage() {
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
                   <div className="text-xs text-gray-500">Razorpay Orders Created</div>
-                  <div className="mt-1 text-2xl font-bold text-white">{orders.filter(o => o.razorpayPaymentId || o.razorpayOrderId).length}</div>
+                  <div className="mt-1 text-2xl font-bold text-white">{mergedOrders.filter(o => o.razorpayPaymentId || o.razorpayOrderId).length}</div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-500">Checkout Verify Unlocks</div>
-                  <div className="mt-1 text-2xl font-bold text-emerald-400">{orders.filter(o => o.razorpayPaymentId && o.status === "unlocked").length}</div>
+                  <div className="mt-1 text-2xl font-bold text-emerald-400">{mergedOrders.filter(o => o.razorpayPaymentId && o.status === "unlocked").length}</div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-500">Manual / Founder Unlocks</div>
-                  <div className="mt-1 text-2xl font-bold text-white">{orders.filter(o => !o.razorpayPaymentId && o.status === "unlocked").length}</div>
+                  <div className="mt-1 text-2xl font-bold text-white">{mergedOrders.filter(o => !o.razorpayPaymentId && o.status === "unlocked").length}</div>
                 </div>
               </div>
               <div className="mt-4 rounded-lg bg-amber-500/5 p-3 text-xs text-gray-400">
@@ -437,7 +545,7 @@ export default function AdminPage() {
           <>
             <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {(["quick_fix", "aura_report", "dating_audit", "glowup_plan"] as const).map((pt) => {
-                const productOrders = orders.filter((o) => o.productType === pt);
+                const productOrders = mergedOrders.filter((o) => o.productType === pt);
                 const productUnlocks = productOrders.filter((o) => o.status === "unlocked");
                 const productPayments = productOrders.filter((o) => o.status === "payment_submitted" || o.status === "code_sent");
                 const pageViews = analytics.productPageViewed || 0;
@@ -547,13 +655,13 @@ export default function AdminPage() {
             {/* ─── Offer Usage ─── */}
             <Card>
               <h3 className="mb-3 text-sm font-semibold text-white">Offer Usage</h3>
-              {orders.filter((o) => o.discountCode).length === 0 ? (
+              {mergedOrders.filter((o) => o.discountCode).length === 0 ? (
                 <div className="py-4 text-center text-xs text-gray-500">No offers applied yet.</div>
               ) : (
                 <div className="space-y-2">
-                  {OFFERS.filter((o) => orders.some((order) => order.discountCode === o.code)).map((offer) => {
-                    const usageCount = orders.filter((o) => o.discountCode === offer.code).length;
-                    const revenue = orders.filter((o) => o.discountCode === offer.code).reduce((sum, o) => sum + (o.finalAmount || o.amount), 0);
+                  {OFFERS.filter((o) => mergedOrders.some((order) => order.discountCode === o.code)).map((offer) => {
+                    const usageCount = mergedOrders.filter((o) => o.discountCode === offer.code).length;
+                    const revenue = mergedOrders.filter((o) => o.discountCode === offer.code).reduce((sum, o) => sum + (o.finalAmount || o.amount), 0);
                     return (
                       <div key={offer.code} className="flex items-center justify-between rounded-lg bg-white/5 px-3 py-2 text-xs">
                         <div>
