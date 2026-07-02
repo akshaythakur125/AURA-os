@@ -103,8 +103,8 @@ export default function DealsPage() {
               <p className="mb-2 text-sm text-gray-400">No deal alerts yet.</p>
               <p className="mb-4 text-xs text-gray-500">Save products from the Wardrobe Finder or Search to start tracking price changes.</p>
               <div className="flex justify-center gap-3">
-                <Link href="/wardrobe/search"><Button>Find Products</Button></Link>
-                <Link href="/wardrobe"><Button variant="outline">Wardrobe Finder</Button></Link>
+                <Button asChild><Link href="/wardrobe/search">Find Products</Link></Button>
+                <Button asChild variant="outline"><Link href="/wardrobe">Wardrobe Finder</Link></Button>
               </div>
             </div>
           </Card>

@@ -39,7 +39,7 @@ export default function AuditWardrobePage({ params }: { params: Promise<{ auditI
         <div className="mx-auto max-w-md text-center">
           <h1 className="mb-4 text-2xl font-bold text-white">Audit not found</h1>
           <p className="mb-6 text-sm text-gray-400">Create an aura check first to get personalized wardrobe recommendations.</p>
-          <Link href="/audit/new"><Button>Start Aura Check</Button></Link>
+          <Button asChild><Link href="/audit/new">Start Aura Check</Link></Button>
         </div>
       </Container>
     );
@@ -51,7 +51,7 @@ export default function AuditWardrobePage({ params }: { params: Promise<{ auditI
         <div className="mx-auto max-w-md text-center">
           <h1 className="mb-4 text-2xl font-bold text-white">Generate your free score first</h1>
           <p className="mb-6 text-sm text-gray-400">Generate your free Aura Score first to personalize wardrobe recommendations.</p>
-          <Link href={`/audit/${auditId}`}><Button>Back to Audit</Button></Link>
+          <Button asChild><Link href={`/audit/${auditId}`}>Back to Audit</Link></Button>
         </div>
       </Container>
     );
@@ -176,17 +176,17 @@ export default function AuditWardrobePage({ params }: { params: Promise<{ auditI
               Products ranked by aura impact, price value, and freshness from AuraCheck&rsquo;s product index.
             </p>
             <div className="mb-3 flex flex-wrap gap-2">
-              <Link href={`/wardrobe/search?style=${plan.diagnosis.styleDirection}&leak=${plan.diagnosis.primaryAuraLeak}`}>
-                <Button size="sm">Search {plan.diagnosis.styleDirection.replace(/_/g, " ")} products</Button>
-              </Link>
+              <Button asChild size="sm">
+                <Link href={`/wardrobe/search?style=${plan.diagnosis.styleDirection}&leak=${plan.diagnosis.primaryAuraLeak}`}>Search {plan.diagnosis.styleDirection.replace(/_/g, " ")} products</Link>
+              </Button>
               {plan.cheapestUsefulUpgrade && (
-                <Link href={`/wardrobe/search?maxBudget=${plan.cheapestUsefulUpgrade.cheapestOffer.price + 500}&category=${plan.cheapestUsefulUpgrade.product.category}`}>
-                  <Button size="sm" variant="outline">Cheapest similar options</Button>
-                </Link>
+                <Button asChild size="sm" variant="outline">
+                  <Link href={`/wardrobe/search?maxBudget=${plan.cheapestUsefulUpgrade.cheapestOffer.price + 500}&category=${plan.cheapestUsefulUpgrade.product.category}`}>Cheapest similar options</Link>
+                </Button>
               )}
-              <Link href={`/wardrobe/search?sort=best_value`}>
-                <Button size="sm" variant="outline">Best value options</Button>
-              </Link>
+              <Button asChild size="sm" variant="outline">
+                <Link href={`/wardrobe/search?sort=best_value`}>Best value options</Link>
+              </Button>
             </div>
             {plan.whatNotToBuy.length > 0 && (
               <p className="text-[10px] text-red-400">

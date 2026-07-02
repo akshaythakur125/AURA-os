@@ -41,21 +41,21 @@ export default function AuraReportPage() {
           <div className="mb-8 text-5xl font-bold text-amber-400">&#8377;99</div>
           <div className="flex flex-wrap justify-center gap-3">
             {upsell && !alreadyUnlocked ? (
-              <Link href={`/unlock?auditId=${upsell.auditId}&product=aura_report`}>
-                <Button size="lg" onClick={() => trackEvent("pricing_cta_clicked", { product: "aura_report", target: "unlock" })}>
+              <Button asChild size="lg">
+                <Link href={`/unlock?auditId=${upsell.auditId}&product=aura_report`} onClick={() => trackEvent("pricing_cta_clicked", { product: "aura_report", target: "unlock" })}>
                   Unlock for Latest Audit
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             ) : upsell && alreadyUnlocked ? (
-              <Link href={`/audit/${upsell.auditId}`}>
-                <Button size="lg">View Your Report</Button>
-              </Link>
+              <Button asChild size="lg">
+                <Link href={`/audit/${upsell.auditId}`}>View Your Report</Link>
+              </Button>
             ) : (
-              <Link href="/audit/new">
-                <Button size="lg" onClick={() => trackEvent("pricing_cta_clicked", { product: "aura_report", target: "new_audit" })}>
+              <Button asChild size="lg">
+                <Link href="/audit/new" onClick={() => trackEvent("pricing_cta_clicked", { product: "aura_report", target: "new_audit" })}>
                   Start Free Aura Check
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             )}
           </div>
         </div>
@@ -145,9 +145,9 @@ export default function AuraReportPage() {
           <h2 className="mb-4 text-2xl font-bold text-white">Ready for your full breakdown?</h2>
           <p className="mb-6 text-gray-400">Get your personalized upgrade roadmap in minutes.</p>
           {upsell && !alreadyUnlocked ? (
-            <Link href={`/unlock?auditId=${upsell.auditId}&product=aura_report`}><Button size="lg">Unlock Now — ₹99</Button></Link>
+            <Button asChild size="lg"><Link href={`/unlock?auditId=${upsell.auditId}&product=aura_report`}>Unlock Now — ₹99</Link></Button>
           ) : (
-            <Link href="/audit/new"><Button size="lg">Start Free Aura Check</Button></Link>
+            <Button asChild size="lg"><Link href="/audit/new">Start Free Aura Check</Link></Button>
           )}
         </div>
       </div>

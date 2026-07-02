@@ -76,7 +76,7 @@ export default function HelpPage() {
             <h2 className="mb-3 text-lg font-semibold text-white">How to Install the App on Your Phone</h2>
             <p className="text-sm text-gray-300">AuraCheck can be installed as a Progressive Web App (PWA) on your phone or desktop for a dedicated app-like experience.</p>
             <div className="mt-3">
-              <Link href="/install"><Button variant="outline" size="sm">View Install Instructions</Button></Link>
+              <Button asChild variant="outline" size="sm"><Link href="/install">View Install Instructions</Link></Button>
             </div>
           </Card>
 
@@ -116,7 +116,7 @@ export default function HelpPage() {
             <div className="flex flex-wrap gap-3">
               {supportEmail && <a href={`mailto:${supportEmail}`}><Button variant="outline" size="sm">Email Support</Button></a>}
               {ownerWhatsApp && <a href={`https://wa.me/${ownerWhatsApp.replace(/[^0-9]/g, "")}`} target="_blank" rel="noopener noreferrer"><Button variant="outline" size="sm">WhatsApp</Button></a>}
-              <Link href="/privacy-center"><Button variant="ghost" size="sm">Privacy Center</Button></Link>
+              <Button asChild variant="ghost" size="sm"><Link href="/privacy-center">Privacy Center</Link></Button>
             </div>
           </Card>
         </div>

@@ -79,9 +79,9 @@ export default function DashboardPage() {
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-          <Link href="/audit/new">
-            <Button size="sm">New Audit</Button>
-          </Link>
+          <Button asChild size="sm">
+            <Link href="/audit/new">New Audit</Link>
+          </Button>
         </div>
 
         {/* ─── Stats ─── */}
@@ -195,9 +195,9 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 </div>
-                <Link href="/twin-simulator">
-                  <Button size="sm" variant="outline">Open</Button>
-                </Link>
+                <Button asChild size="sm" variant="outline">
+                  <Link href="/twin-simulator">Open</Link>
+                </Button>
               </div>
             </Card>
           );
@@ -212,9 +212,9 @@ export default function DashboardPage() {
                   See which visual upgrade could improve your Aura Score before spending money.
                 </p>
               </div>
-              <Link href="/twin-simulator">
-                <Button size="sm">Try Aura Twin</Button>
-              </Link>
+              <Button asChild size="sm">
+                <Link href="/twin-simulator">Try Aura Twin</Link>
+              </Button>
             </div>
           </Card>
         )}
@@ -274,7 +274,7 @@ export default function DashboardPage() {
                 <h2 className="text-sm font-semibold text-white">Track Your Improvement</h2>
                 <p className="text-xs text-gray-400">{progressComparisons.length} comparison{progressComparisons.length > 1 ? "s" : ""} saved. Latest delta: {progressComparisons[0].scoreDelta >= 0 ? "+" : ""}{progressComparisons[0].scoreDelta}</p>
               </div>
-              <Link href="/progress"><Button size="sm" variant="outline">View Progress</Button></Link>
+              <Button asChild size="sm" variant="outline"><Link href="/progress">View Progress</Link></Button>
             </div>
           </Card>
         )}
@@ -301,9 +301,9 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <div className="flex-shrink-0">
-                  <Link href={`/audit/${audits[0].id}`}>
-                    <Button size="sm" variant="outline">View Path</Button>
-                  </Link>
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={`/audit/${audits[0].id}`}>View Path</Link>
+                  </Button>
                 </div>
               </div>
             </Card>
@@ -327,9 +327,9 @@ export default function DashboardPage() {
                   <h3 className="text-sm font-semibold text-white">Unlock Quick Aura Fix</h3>
                   <p className="text-xs text-gray-400">Get your biggest status leak and the fastest fix path for ₹49.</p>
                 </div>
-                <Link href={`/unlock?auditId=${latest.id}&product=quick_fix`}>
-                  <Button size="sm" variant="outline" className="border-emerald-500/50 text-emerald-400">Unlock — ₹49</Button>
-                </Link>
+                <Button asChild size="sm" variant="outline" className="border-emerald-500/50 text-emerald-400">
+                  <Link href={`/unlock?auditId=${latest.id}&product=quick_fix`}>Unlock — ₹49</Link>
+                </Button>
               </div>
             </Card>
           );
@@ -391,9 +391,9 @@ export default function DashboardPage() {
                   <h3 className="text-sm font-semibold text-white">Payment Request for {pendingOrder.productName}</h3>
                   <p className="text-xs text-gray-400">Status: {pendingOrder.status === "code_sent" ? "Code sent — enter it on the unlock page" : "Payment submitted — awaiting owner response"}</p>
                 </div>
-                <Link href={`/unlock?auditId=${latest.id}&product=${pendingOrder.productType}`}>
-                  <Button size="sm" variant="outline">View</Button>
-                </Link>
+                <Button asChild size="sm" variant="outline">
+                  <Link href={`/unlock?auditId=${latest.id}&product=${pendingOrder.productType}`}>View</Link>
+                </Button>
               </div>
             </Card>
           );
@@ -414,9 +414,9 @@ export default function DashboardPage() {
               <p className="mb-4 text-xs text-gray-500">
                 Create your first Aura Check to get started.
               </p>
-              <Link href="/audit/new">
-                <Button size="sm">Start Aura Check</Button>
-              </Link>
+              <Button asChild size="sm">
+                <Link href="/audit/new">Start Aura Check</Link>
+              </Button>
             </div>
           </Card>
         ) : (
@@ -481,9 +481,9 @@ export default function DashboardPage() {
                         )}
                       </div>
                       <div className="flex gap-2">
-                        <Link href={`/audit/${audit.id}`}>
-                          <Button variant="ghost" size="sm">View</Button>
-                        </Link>
+                        <Button asChild variant="ghost" size="sm">
+                          <Link href={`/audit/${audit.id}`}>View</Link>
+                        </Button>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -551,8 +551,8 @@ function SavedWardrobeDashboardCard() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href="/wardrobe/saved"><Button size="sm" variant="outline">Saved Wardrobe</Button></Link>
-          <Link href="/deals"><Button size="sm" variant="outline">View Deals</Button></Link>
+          <Button asChild size="sm" variant="outline"><Link href="/wardrobe/saved">Saved Wardrobe</Link></Button>
+          <Button asChild size="sm" variant="outline"><Link href="/deals">View Deals</Link></Button>
         </div>
       </div>
       {data.items > 0 && (

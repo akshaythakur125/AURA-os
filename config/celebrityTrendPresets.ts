@@ -4,6 +4,7 @@ export interface CelebrityTrendPreset {
   id: string;
   label: string;
   celebrity: string;
+  imageSrc: string;
   avatarLabel: string;
   avatarGradient: string;
   region: "India" | "Global";
@@ -24,6 +25,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
     id: "ananya-sporty-luxe",
     label: "Sporty Luxe Reset",
     celebrity: "Ananya Panday-inspired",
+    imageSrc: "/celebs/ananya-sporty-luxe.svg",
     avatarLabel: "AP",
     avatarGradient: "from-fuchsia-400 via-rose-300 to-orange-200",
     region: "India",
@@ -42,6 +44,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
     id: "priyanka-soft-power",
     label: "Soft Power Tailoring",
     celebrity: "Priyanka Chopra-style",
+    imageSrc: "/celebs/priyanka-soft-power.svg",
     avatarLabel: "PC",
     avatarGradient: "from-amber-300 via-orange-300 to-rose-300",
     region: "India",
@@ -60,6 +63,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
     id: "kendall-hailey-track",
     label: "Off-Duty Track Energy",
     celebrity: "Kendall + Hailey off-duty",
+    imageSrc: "/celebs/kendall-hailey-track.svg",
     avatarLabel: "KH",
     avatarGradient: "from-sky-300 via-cyan-300 to-blue-400",
     region: "Global",
@@ -78,6 +82,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
     id: "oscars-wide-leg-tailoring",
     label: "Relaxed Red Carpet Tailoring",
     celebrity: "Michael B. Jordan / Oscars 2026",
+    imageSrc: "/celebs/oscars-wide-leg-tailoring.svg",
     avatarLabel: "MB",
     avatarGradient: "from-slate-200 via-zinc-300 to-amber-200",
     region: "Global",

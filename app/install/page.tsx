@@ -60,9 +60,9 @@ export default function InstallPage() {
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/">
-            <Button size="lg">Back to Home</Button>
-          </Link>
+          <Button asChild size="lg">
+            <Link href="/">Back to Home</Link>
+          </Button>
         </div>
       </div>
     </Container>

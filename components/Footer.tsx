@@ -35,11 +35,11 @@ const footerGroups = [
 export function Footer() {
   return (
     <footer className="relative z-10 mt-20 px-3 pb-4 sm:px-4">
-      <Container className="glass-panel rounded-[32px] px-6 py-10 sm:px-8">
+      <Container className="glass-panel glow-frame rounded-[32px] px-6 py-10 sm:px-8">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_repeat(3,1fr)]">
           <div className="max-w-sm">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-[linear-gradient(145deg,rgba(125,211,252,0.95),rgba(59,130,246,0.78),rgba(249,115,22,0.7))] text-sm font-black text-slate-950">
+              <div className="shine-sweep relative flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-[linear-gradient(145deg,rgba(125,211,252,0.95),rgba(59,130,246,0.78),rgba(249,115,22,0.7))] text-sm font-black text-slate-950">
                 <span className="display-font">A</span>
               </div>
               <div>

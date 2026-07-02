@@ -120,7 +120,7 @@ const faqs = [
 export default function PricingPage() {
   return (
     <Container className="py-12">
-      <div className="mx-auto mb-12 max-w-3xl text-center">
+      <div className="prism-panel glow-frame shine-sweep mx-auto mb-12 max-w-4xl rounded-[34px] px-6 py-10 text-center sm:px-10">
         <h1 className="mb-4 text-4xl font-bold text-white">Choose your audit depth</h1>
         <p className="text-lg text-gray-400">
           AuraCheck helps users understand what their photos and profile are communicating, what is hurting first impression, and what to fix first. Start free to see the problem. Pay only when you want deeper clarity and stronger execution help.
@@ -128,19 +128,19 @@ export default function PricingPage() {
       </div>
 
       <div className="mx-auto mb-10 grid max-w-5xl gap-4 sm:grid-cols-3">
-        <div className="rounded-lg border border-white/8 bg-white/[0.03] p-4">
+        <div className="prism-panel float-card rounded-[24px] p-4">
           <div className="text-xs uppercase tracking-[0.2em] text-gray-500">what it offers</div>
           <p className="mt-2 text-sm text-gray-300">
             A first-impression audit for photos, profiles, outfit direction, and visual presentation.
           </p>
         </div>
-        <div className="rounded-lg border border-white/8 bg-white/[0.03] p-4">
+        <div className="prism-panel float-card rounded-[24px] p-4">
           <div className="text-xs uppercase tracking-[0.2em] text-gray-500">how it helps</div>
           <p className="mt-2 text-sm text-gray-300">
             It shows the biggest leak, the best fix order, and the smartest use of budget instead of random trial and error.
           </p>
         </div>
-        <div className="rounded-lg border border-white/8 bg-white/[0.03] p-4">
+        <div className="prism-panel float-card rounded-[24px] p-4">
           <div className="text-xs uppercase tracking-[0.2em] text-gray-500">why people pay</div>
           <p className="mt-2 text-sm text-gray-300">
             Paid features add more reasoning, more personalization, and more complete action plans than the free starter view.
@@ -156,19 +156,19 @@ export default function PricingPage() {
           </p>
         </div>
         <div className="grid gap-3 text-center text-xs sm:grid-cols-4">
-          <div className="rounded-lg border border-emerald-500/10 bg-emerald-500/[0.03] p-3">
+          <div className="float-card rounded-lg border border-emerald-500/10 bg-emerald-500/[0.03] p-3">
             <div className="font-semibold text-emerald-400">1. Free Score</div>
             <div className="mt-1 text-gray-500">Shows the problem</div>
           </div>
-          <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3 ring-1 ring-emerald-500/20">
+          <div className="float-card rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3 ring-1 ring-emerald-500/20">
             <div className="font-semibold text-emerald-300">2. Rs 49 Quick Fix</div>
             <div className="mt-1 text-emerald-300/70">Gives the fastest first move</div>
           </div>
-          <div className="rounded-lg border border-purple-500/10 bg-purple-500/[0.03] p-3">
+          <div className="float-card rounded-lg border border-purple-500/10 bg-purple-500/[0.03] p-3">
             <div className="font-semibold text-purple-400">3. Rs 99 Full Report</div>
             <div className="mt-1 text-purple-300/70">Explains the full reason and roadmap</div>
           </div>
-          <div className="rounded-lg border border-amber-500/10 bg-amber-500/[0.03] p-3">
+          <div className="float-card rounded-lg border border-amber-500/10 bg-amber-500/[0.03] p-3">
             <div className="font-semibold text-amber-400">4. Rs 499 Glow-Up Plan</div>
             <div className="mt-1 text-amber-300/70">Gives the long-term system</div>
           </div>
@@ -184,7 +184,7 @@ export default function PricingPage() {
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            className={`relative flex flex-col ${plan.highlighted ? "border-purple-500/30 ring-1 ring-purple-500/20" : ""}`}
+            className={`float-card relative flex flex-col ${plan.highlighted ? "border-purple-500/30 ring-1 ring-purple-500/20" : ""}`}
           >
             {plan.badgeText ? (
               <Badge variant={plan.highlighted ? "premium" : "success"} className="absolute -top-2 right-4">
@@ -218,15 +218,14 @@ export default function PricingPage() {
               <p className="mt-3 text-[10px] leading-relaxed text-gray-600">{plan.disclaimer}</p>
             ) : null}
             <div className="mt-6">
-              <Link href={plan.href}>
-                <Button
-                  variant={plan.highlighted ? "primary" : "outline"}
-                  className="w-full text-xs"
-                  size="sm"
-                >
-                  {plan.price === "0" ? "Start Free" : "Learn More"}
-                </Button>
-              </Link>
+              <Button
+                asChild
+                variant={plan.highlighted ? "primary" : "outline"}
+                className="w-full text-xs"
+                size="sm"
+              >
+                <Link href={plan.href}>{plan.price === "0" ? "Start Free" : "Learn More"}</Link>
+              </Button>
             </div>
           </Card>
         ))}
@@ -259,7 +258,7 @@ export default function PricingPage() {
 
       <div className="mx-auto mb-16 max-w-4xl">
         <h2 className="mb-8 text-center text-2xl font-bold text-white">Compare what you get</h2>
-        <div className="overflow-hidden rounded-2xl border border-white/5 p-4">
+        <div className="glow-frame overflow-hidden rounded-2xl border border-white/5 p-4">
           <ComparisonTable />
         </div>
       </div>
@@ -281,9 +280,9 @@ export default function PricingPage() {
         <p className="mb-6 text-gray-400">
           Start with the free Aura Score. It is the fastest way to understand your biggest leak before deciding if you want deeper paid help.
         </p>
-        <Link href="/audit/new">
-          <Button size="lg">Start Free Aura Check</Button>
-        </Link>
+        <Button asChild size="lg">
+          <Link href="/audit/new">Start Free Aura Check</Link>
+        </Button>
       </div>
     </Container>
   );
