@@ -28,35 +28,42 @@ const signalLeaks = [
 
 const featurePillars = [
   {
-    title: "Read the visual signal",
-    body: "AuraCheck spots the mismatch between what you own and what your photos actually communicate.",
-    stat: "Signal audit",
+    title: "See what is hurting your first impression",
+    body: "AuraCheck reads your photo, profile, and presentation details to find the exact visual leaks lowering your impact.",
+    stat: "What it does",
   },
   {
-    title: "Show the upgrade path",
-    body: "You get the next move, not vague motivation: better lighting, tighter crop, clearer outfit direction, stronger image order.",
-    stat: "Action map",
+    title: "Get clear fixes instead of vague advice",
+    body: "You do not just get a score. You get the next move: better crop, better light, stronger outfit direction, and smarter photo order.",
+    stat: "How it helps",
   },
   {
-    title: "Make the spend smarter",
-    body: "The app surfaces what to buy later and what to fix first so your money compounds instead of disappearing into random upgrades.",
-    stat: "Budget logic",
+    title: "Pay only when you want deeper execution",
+    body: "Free shows the problem. Paid tiers go deeper with full breakdowns, budget-aware upgrade paths, and done-for-you strategy.",
+    stat: "Why paid exists",
   },
 ];
 
 const offerCards = [
   {
+    name: "Free Aura Check",
+    price: "Free",
+    caption: "Start here",
+    description: "Best for new visitors. Get a baseline score, your biggest leak, and a quick idea of what to fix first.",
+    href: "/audit/new",
+  },
+  {
     name: "Quick Fix",
     price: "Rs 49",
     caption: "Fastest ROI",
-    description: "One-screen diagnosis for the single biggest leak killing your first impression.",
+    description: "Pay when you want the fastest action plan: your biggest leak, the fastest free fix, and the smartest low-cost upgrade.",
     href: "/unlock?product=quick_fix",
   },
   {
     name: "Full Aura Report",
     price: "Rs 99",
     caption: "Most popular",
-    description: "Deep score breakdown, signal mismatch map, and a premium-looking upgrade roadmap.",
+    description: "Pay for the full reasoning layer: deeper analysis, full signal breakdown, mismatch map, and a personalized upgrade roadmap.",
     href: "/products/aura-report",
     featured: true,
   },
@@ -66,6 +73,24 @@ const offerCards = [
     caption: "System play",
     description: "A structured plan for improving grooming, outfit choices, photo quality, and consistency over time.",
     href: "/products/glowup-plan",
+  },
+];
+
+const journeySteps = [
+  {
+    label: "1. Start free",
+    title: "Find the problem first",
+    body: "A visitor uploads a photo or screenshot and gets a baseline score plus the biggest leak hurting their image.",
+  },
+  {
+    label: "2. Upgrade if needed",
+    title: "Pay for deeper clarity",
+    body: "If they want more than a teaser, paid features explain why the leak exists and what exactly to do next.",
+  },
+  {
+    label: "3. Use the plan",
+    title: "Improve faster, waste less",
+    body: "The paid tiers save time and money by telling users what to fix now, what to buy later, and what to avoid.",
   },
 ];
 
@@ -89,14 +114,28 @@ export default function HomePage() {
           <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="max-w-3xl">
               <Badge variant="premium" className="mb-5">
-                premium gen-z first-impression engine
+                premium first-impression audit
               </Badge>
               <h1 className="display-font max-w-4xl text-5xl font-bold leading-[0.95] text-white sm:text-6xl lg:text-7xl">
-                Make the site feel like a luxury product before the first click even lands.
+                Know what your photos and profile are saying before other people decide for you.
               </h1>
               <p className="mt-6 max-w-2xl text-base leading-8 text-white/68 sm:text-lg">
-                AuraCheck reads the hidden leaks in your photos, profile, and style choices. The product should look just as sharp: cinematic, trend-aware, and premium enough to feel like a real brand instead of a useful tool.
+                AuraCheck helps people understand how they come across online. It finds the visual leaks hurting first impression, explains how those leaks affect perception, and gives a clearer upgrade path so users stop guessing what to fix.
               </p>
+              <div className="mt-6 grid max-w-2xl gap-3 sm:grid-cols-3">
+                <div className="rounded-[22px] border border-white/10 bg-white/[0.04] px-4 py-4">
+                  <div className="text-xs uppercase tracking-[0.22em] text-white/40">Free tier</div>
+                  <div className="mt-2 text-sm text-white/72">Score + biggest leak</div>
+                </div>
+                <div className="rounded-[22px] border border-white/10 bg-white/[0.04] px-4 py-4">
+                  <div className="text-xs uppercase tracking-[0.22em] text-white/40">Paid tier</div>
+                  <div className="mt-2 text-sm text-white/72">Deeper analysis + action plan</div>
+                </div>
+                <div className="rounded-[22px] border border-white/10 bg-white/[0.04] px-4 py-4">
+                  <div className="text-xs uppercase tracking-[0.22em] text-white/40">Main outcome</div>
+                  <div className="mt-2 text-sm text-white/72">Better photos, profile, and spend decisions</div>
+                </div>
+              </div>
 
               <div className="mt-8 flex flex-col gap-4 sm:flex-row">
                 <Link href="/audit/new">
@@ -213,12 +252,12 @@ export default function HomePage() {
       <section className="pb-18">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="default">what makes this feel premium</Badge>
+            <Badge variant="default">what aura check offers</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              The UI should communicate the same taste the product is trying to teach.
+              A visitor should understand the product in under 10 seconds.
             </h2>
             <p className="mt-5 text-base leading-8 text-white/62 sm:text-lg">
-              Not generic SaaS. Not neon chaos. A calmer, richer visual language with depth, light, and enough motion to feel current without becoming gimmicky.
+              AuraCheck is not selling “confidence vibes.” It is a practical audit product that shows what is wrong, how to fix it, and which upgrade is worth paying for.
             </p>
           </div>
 
@@ -241,56 +280,50 @@ export default function HomePage() {
         <Container>
           <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
             <Card className="p-7" hover>
-              <Badge variant="premium">proof examples</Badge>
-              <h2 className="display-font mt-4 text-4xl font-bold text-white">Real upgrade energy, not fake hype.</h2>
+              <Badge variant="premium">why people pay</Badge>
+              <h2 className="display-font mt-4 text-4xl font-bold text-white">Free reveals the issue. Paid removes the guesswork.</h2>
               <p className="mt-4 text-sm leading-7 text-white/62">
-                The product already has strong proof data. The interface should frame it with confidence: cleaner hierarchy, stronger contrast, and showcase cards that feel collectible.
+                Most users do not pay for “another score.” They pay because they want the reasoning, the priority order, and the cheapest high-impact fix without wasting time or money.
               </p>
               <div className="mt-8 space-y-4">
-                {PROOF_EXAMPLES.slice(0, 3).map((example) => (
+                {[
+                  "Free tier: find the biggest leak and get a quick sense of where the problem is.",
+                  "Quick Fix: pay for the fastest next step when you want immediate improvement.",
+                  "Full Report: pay for the detailed why, the full breakdown, and the personalized roadmap.",
+                  "Glow-Up Plan: pay for structure when you want a system, not a one-off tip.",
+                ].map((point) => (
                   <div
-                    key={example.id}
+                    key={point}
                     className="rounded-[24px] border border-white/10 bg-white/[0.04] p-4"
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="display-font text-2xl font-bold text-white">{example.title}</div>
-                      <div className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">
-                        +{example.scoreDelta}
-                      </div>
-                    </div>
-                    <p className="mt-2 text-sm text-white/56">{example.fixApplied}</p>
+                    <p className="text-sm leading-7 text-white/68">{point}</p>
                   </div>
                 ))}
               </div>
             </Card>
 
             <div className="grid gap-6 sm:grid-cols-2">
+              {journeySteps.map((step) => (
+                <Card key={step.label} hover className="sm:col-span-2">
+                  <div className="text-xs uppercase tracking-[0.2em] text-white/40">{step.label}</div>
+                  <h3 className="display-font mt-3 text-3xl font-bold text-white">{step.title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-white/60">
+                    {step.body}
+                  </p>
+                </Card>
+              ))}
               <Card hover>
-                <div className="text-xs uppercase tracking-[0.2em] text-white/40">step 01</div>
-                <h3 className="display-font mt-3 text-3xl font-bold text-white">Upload</h3>
+                <div className="text-xs uppercase tracking-[0.2em] text-white/40">proof</div>
+                <h3 className="display-font mt-3 text-3xl font-bold text-white">Results feel real</h3>
                 <p className="mt-3 text-sm leading-7 text-white/60">
-                  Start with a photo or screenshot that actually represents how you show up online.
+                  Example fixes already show visible score lifts, so paid upgrades feel justified instead of arbitrary.
                 </p>
               </Card>
               <Card hover>
-                <div className="text-xs uppercase tracking-[0.2em] text-white/40">step 02</div>
-                <h3 className="display-font mt-3 text-3xl font-bold text-white">Diagnose</h3>
+                <div className="text-xs uppercase tracking-[0.2em] text-white/40">privacy</div>
+                <h3 className="display-font mt-3 text-3xl font-bold text-white">Safe to try</h3>
                 <p className="mt-3 text-sm leading-7 text-white/60">
-                  The engine identifies the strongest and weakest signals in the frame, then ranks the leaks.
-                </p>
-              </Card>
-              <Card hover>
-                <div className="text-xs uppercase tracking-[0.2em] text-white/40">step 03</div>
-                <h3 className="display-font mt-3 text-3xl font-bold text-white">Upgrade</h3>
-                <p className="mt-3 text-sm leading-7 text-white/60">
-                  You see the cheapest fix with the biggest visible payoff before spending on the wrong thing.
-                </p>
-              </Card>
-              <Card hover>
-                <div className="text-xs uppercase tracking-[0.2em] text-white/40">step 04</div>
-                <h3 className="display-font mt-3 text-3xl font-bold text-white">Track</h3>
-                <p className="mt-3 text-sm leading-7 text-white/60">
-                  Recheck the signal after changes, compare progress, and build consistency instead of random bursts.
+                  Local-first processing lowers friction. Visitors can try the value before deciding whether deeper paid guidance is worth it.
                 </p>
               </Card>
             </div>
@@ -303,11 +336,14 @@ export default function HomePage() {
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="default">pricing architecture</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              Premium enough to convert, simple enough to trust.
+              Clear payment logic, not random upsells.
             </h2>
+            <p className="mt-5 text-base leading-8 text-white/62 sm:text-lg">
+              Each tier is paying for more certainty and more execution depth. The price goes up only when the help gets more detailed and more personalized.
+            </p>
           </div>
 
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
+          <div className="mt-10 grid gap-6 lg:grid-cols-4">
             {offerCards.map((offer) => (
               <Card
                 key={offer.name}
