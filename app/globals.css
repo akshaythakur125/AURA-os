@@ -132,6 +132,32 @@ button {
   background: linear-gradient(90deg, transparent, rgba(125, 211, 252, 0.35), rgba(249, 115, 22, 0.24), transparent);
 }
 
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 34s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+.celeb-portrait {
+  position: relative;
+  overflow: hidden;
+}
+
+.celeb-portrait::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.34), transparent 22%),
+    radial-gradient(circle at 50% 40%, rgba(15, 23, 42, 0.24), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 26%);
+  pointer-events: none;
+}
+
 @keyframes float-orb {
   0%,
   100% {
@@ -158,6 +184,15 @@ button {
   }
   50% {
     opacity: 1;
+  }
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
   }
 }
 
