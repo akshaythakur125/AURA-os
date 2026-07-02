@@ -123,7 +123,7 @@ export default function AdminCommerceSearchPage() {
     setLoading(true);
     try {
       const { rebuildSearchIndex } = await import("@/lib/commerce/search/buildSearchIndex");
-      const result = await rebuildSearchIndex("aura-admin-internal");
+      const result = await rebuildSearchIndex();
       alert(`Index rebuilt: ${result.indexedCount} products indexed, ${result.warnings.length} warnings`);
       loadHealth();
     } catch (err) {

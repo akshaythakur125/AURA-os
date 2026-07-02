@@ -18,10 +18,10 @@ export default function AdminRefreshPage() {
   const [running, setRunning] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    Promise.resolve().then(() => {
-      setAuthenticated(sessionStorage.getItem("auracheck_admin_auth") === "true");
-    });
+    fetch("/api/admin/auth")
+      .then((r) => r.json())
+      .then((data) => setAuthenticated(!!data.authenticated))
+      .catch(() => {});
   }, []);
 
   const loadData = useCallback(async () => {
@@ -46,12 +46,14 @@ export default function AdminRefreshPage() {
     if (authenticated) Promise.resolve().then(loadData);
   }, [authenticated, loadData]);
 
-  function handleGate() {
-    const envCode = (typeof process !== "undefined" ? process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE : null) || "ADMINDEMO";
-    if (gateInput === envCode || gateInput === "ADMINDEMO") {
-      sessionStorage.setItem("auracheck_admin_auth", "true");
-      setAuthenticated(true);
-    }
+  async function handleGate() {
+    const res = await fetch("/api/admin/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: gateInput }),
+    });
+    const data = await res.json();
+    if (data.success) setAuthenticated(true);
   }
 
   async function handleRunAll() {
@@ -59,7 +61,7 @@ export default function AdminRefreshPage() {
     try {
       const res = await fetch("/api/commerce/refresh/run", {
         method: "POST",
-        headers: { "x-admin-code": "aura-admin-internal", "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
       });
       const data = await res.json();

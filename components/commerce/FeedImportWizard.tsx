@@ -46,7 +46,6 @@ export function FeedImportWizard({ onImportComplete }: Props) {
 
       const res = await fetch("/api/commerce/feed/import", {
         method: "POST",
-        headers: { "x-admin-code": "aura-admin-internal" },
         body: formData,
       });
 
@@ -79,7 +78,6 @@ export function FeedImportWizard({ onImportComplete }: Props) {
 
       const res = await fetch("/api/commerce/feed/import", {
         method: "POST",
-        headers: { "x-admin-code": "aura-admin-internal" },
         body: formData,
       });
 

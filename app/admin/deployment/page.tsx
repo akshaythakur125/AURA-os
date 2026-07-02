@@ -20,15 +20,16 @@ export default function AdminDeploymentPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.resolve().then(() => setAuthenticated(sessionStorage.getItem("auracheck_admin_auth") === "true"));
+    fetch("/api/admin/auth")
+      .then((r) => r.json())
+      .then((data) => setAuthenticated(!!data.authenticated))
+      .catch(() => {});
   }, []);
 
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/deployment/check", {
-        headers: { "x-admin-code": "aura-admin-internal" },
-      });
+      const res = await fetch("/api/deployment/check");
       const data = await res.json();
       if (data.success) {
         setDeployment(data.deployment);
@@ -41,12 +42,14 @@ export default function AdminDeploymentPage() {
 
   useEffect(() => { if (authenticated) { Promise.resolve().then(loadData); } }, [authenticated, loadData]);
 
-  function handleGate() {
-    const code = "ADMINDEMO";
-    if (gateInput === code) {
-      sessionStorage.setItem("auracheck_admin_auth", "true");
-      setAuthenticated(true);
-    }
+  async function handleGate() {
+    const res = await fetch("/api/admin/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: gateInput }),
+    });
+    const data = await res.json();
+    if (data.success) setAuthenticated(true);
   }
 
   function handleCopyEnv() {

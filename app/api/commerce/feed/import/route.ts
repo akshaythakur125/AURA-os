@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { importFeed, previewImport } from "@/lib/commerce/feeds/importFeed";
 import type { FeedSourceType } from "@/types/feedImport";
-
-function checkAdminAuth(request: NextRequest): boolean {
-  const headerCode = request.headers.get("x-admin-code");
-  const bodyCode = request.headers.get("x-admin-code");
-  const validCode = headerCode || bodyCode;
-  const envCode = process.env.LOCAL_ADMIN_CODE || process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "ADMINDEMO";
-  return validCode === envCode || validCode === "aura-admin-internal";
-}
+import { isAuthenticated } from "@/lib/admin/auth";
 
 export async function POST(request: NextRequest) {
-  if (!checkAdminAuth(request)) {
+  if (!isAuthenticated(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
   }
 

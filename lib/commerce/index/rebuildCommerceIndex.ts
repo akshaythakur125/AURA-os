@@ -124,15 +124,11 @@ export async function rebuildFullIndex(): Promise<RebuildResult> {
 export async function rebuildAndSync(
   adminCode?: string
 ): Promise<{ success: boolean; result?: RebuildResult; error?: string }> {
-  // Admin gate
-  const validCode =
-    typeof window !== "undefined"
-      ? sessionStorage.getItem("auracheck:admin_auth")
-      : null;
-
-  if (!validCode && adminCode !== "aura-admin-internal") {
-    // Try env vars
-    const envCode = typeof process !== "undefined" ? process.env.LOCAL_ADMIN_CODE || process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "ADMINDEMO" : "ADMINDEMO";
+  // Client-side calls are already gated by the calling admin page's own
+  // authenticated session; only the server-side (API route) path needs to
+  // check a real admin code here, since that's the actual network boundary.
+  if (typeof window === "undefined") {
+    const envCode = process.env.ADMIN_ACCESS_CODE || process.env.LOCAL_ADMIN_CODE || "ADMINDEMO";
     if (adminCode !== envCode) {
       return { success: false, error: "Unauthorized" };
     }

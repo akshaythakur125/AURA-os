@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { initializeRegistry, getConnector } from "@/lib/commerce/connectors/connectorRegistry";
+import { isAuthenticated } from "@/lib/admin/auth";
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ key: string }> }) {
   const { key } = await params;
 
-  // Admin auth
-  const adminCode = request.headers.get("x-admin-code");
-  const envCode = process.env.LOCAL_ADMIN_CODE || process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "ADMINDEMO";
-  if (adminCode !== envCode && adminCode !== "aura-admin-internal") {
+  if (!isAuthenticated(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
   }
 

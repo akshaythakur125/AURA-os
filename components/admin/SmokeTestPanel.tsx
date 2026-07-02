@@ -15,7 +15,6 @@ export function SmokeTestPanel() {
     try {
       const res = await fetch("/api/launch/smoke-test", {
         method: "POST",
-        headers: { "x-admin-code": "aura-admin-internal" },
       });
       const data = await res.json();
       if (data.success) setSuite(data.suite);

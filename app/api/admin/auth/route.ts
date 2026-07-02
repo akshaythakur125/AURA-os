@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const submittedCode = (body.code as string) || "";
     const expectedCode = getAdminAccessCode();
 
-    if (submittedCode !== expectedCode && submittedCode !== "aura-admin-internal") {
+    if (submittedCode !== expectedCode) {
       return NextResponse.json(
         { success: false, error: "Invalid admin code" },
         { status: 403 },

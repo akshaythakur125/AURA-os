@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runSmokeTests } from "@/lib/launch/smokeTestRunner";
+import { isAuthenticated } from "@/lib/admin/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
-  const adminCode = request.headers.get("x-admin-code");
-  const envCode = process.env.LOCAL_ADMIN_CODE || process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "ADMINDEMO";
-  if (adminCode !== envCode && adminCode !== "aura-admin-internal") {
+  if (!isAuthenticated(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
   }
 

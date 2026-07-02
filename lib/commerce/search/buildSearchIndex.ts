@@ -116,14 +116,14 @@ function tryBuildFromStatic(): CommerceSearchItem[] {
 export async function rebuildSearchIndex(
   adminCode?: string
 ): Promise<{ indexedCount: number; invalidCount: number; warnings: string[]; catalogSource: string }> {
-  // Simple admin gate
-  const validCode =
-    typeof window !== "undefined"
-      ? sessionStorage.getItem("auracheck:admin_auth")
-      : null;
-
-  if (!validCode && adminCode !== "aura-admin-internal") {
-    return { indexedCount: 0, invalidCount: 0, warnings: ["Unauthorized"], catalogSource: "none" };
+  // Client-side calls are already gated by the calling admin page's own
+  // authenticated session; only the server-side (API route) path needs to
+  // check a real admin code here, since that's the actual network boundary.
+  if (typeof window === "undefined") {
+    const envCode = process.env.ADMIN_ACCESS_CODE || process.env.LOCAL_ADMIN_CODE || "ADMINDEMO";
+    if (adminCode !== envCode) {
+      return { indexedCount: 0, invalidCount: 0, warnings: ["Unauthorized"], catalogSource: "none" };
+    }
   }
 
   const result = await buildSearchIndex();

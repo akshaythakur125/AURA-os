@@ -15,7 +15,6 @@ export function PostDeploySmokeTestPanel() {
     try {
       const res = await fetch("/api/deployment/post-deploy-smoke", {
         method: "POST",
-        headers: { "x-admin-code": "aura-admin-internal" },
       });
       const data = await res.json();
       if (data.tests) setResults(data.tests);

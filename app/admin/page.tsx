@@ -72,6 +72,12 @@ export default function AdminPage() {
   const [remoteOrders, setRemoteOrders] = useState<ManualOrder[]>([]);
   const [loadingRemote, setLoadingRemote] = useState(false);
 
+  const mergedOrders = useMemo(() => {
+    if (remoteOrders.length === 0) return orders;
+    const localIds = new Set(orders.map((o) => o.id));
+    return [...orders, ...remoteOrders.filter((r) => !localIds.has(r.id))];
+  }, [orders, remoteOrders]);
+
   useEffect(() => {
     fetch("/api/admin/auth")
       .then((r) => r.json())
@@ -267,12 +273,6 @@ export default function AdminPage() {
       </Container>
     );
   }
-
-  const mergedOrders = useMemo(() => {
-    if (remoteOrders.length === 0) return orders;
-    const localIds = new Set(orders.map((o) => o.id));
-    return [...orders, ...remoteOrders.filter((r) => !localIds.has(r.id))];
-  }, [orders, remoteOrders]);
 
   function computeStats(list: ManualOrder[]) {
     return {

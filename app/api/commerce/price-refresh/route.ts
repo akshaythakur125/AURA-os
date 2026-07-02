@@ -6,15 +6,10 @@ import { buildSearchTokensForItem } from "@/lib/commerce/search/tokenizeProduct"
 import { buildComparableGroupKey } from "@/lib/commerce/search/similarProductGrouping";
 import { addPriceSnapshot } from "@/lib/commerce/prices/priceSnapshotStore";
 import type { PriceSnapshot } from "@/types/priceSnapshot";
-
-function checkAuth(request: NextRequest): boolean {
-  const code = request.headers.get("x-admin-code");
-  const envCode = process.env.LOCAL_ADMIN_CODE || process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "ADMINDEMO";
-  return code === envCode || code === "aura-admin-internal";
-}
+import { isAuthenticated } from "@/lib/admin/auth";
 
 export async function POST(request: NextRequest) {
-  if (!checkAuth(request)) {
+  if (!isAuthenticated(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
   }
 

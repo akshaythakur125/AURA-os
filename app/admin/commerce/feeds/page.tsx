@@ -16,10 +16,10 @@ export default function AdminFeedsPage() {
   const [stats, setStats] = useState<ReturnType<typeof getImportStats> | null>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    Promise.resolve().then(() => {
-      setAuthenticated(sessionStorage.getItem("auracheck_admin_auth") === "true");
-    });
+    fetch("/api/admin/auth")
+      .then((r) => r.json())
+      .then((data) => setAuthenticated(!!data.authenticated))
+      .catch(() => {});
   }, []);
 
   const loadHistory = useCallback(() => {
@@ -33,12 +33,14 @@ export default function AdminFeedsPage() {
     }
   }, [authenticated, activeTab, loadHistory]);
 
-  function handleGate() {
-    const envCode = process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "ADMINDEMO";
-    if (gateInput === envCode || gateInput === "ADMINDEMO") {
-      sessionStorage.setItem("auracheck_admin_auth", "true");
-      setAuthenticated(true);
-    }
+  async function handleGate() {
+    const res = await fetch("/api/admin/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: gateInput }),
+    });
+    const data = await res.json();
+    if (data.success) setAuthenticated(true);
   }
 
   if (!authenticated) {

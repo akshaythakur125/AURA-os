@@ -1,7 +1,11 @@
-import { createHmac, timingSafeEqual } from "crypto";
+import { createHmac, randomBytes, timingSafeEqual } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
-const TOKEN_SECRET = process.env.ADMIN_TOKEN_SECRET || "auracheck-dev-token-secret-2026";
+// No hardcoded fallback: a secret baked into the public repo would let anyone
+// forge a valid session token. If ADMIN_TOKEN_SECRET isn't set, generate a
+// random one per server process so tokens are still unguessable (they just
+// won't survive a restart until a real secret is configured).
+const TOKEN_SECRET = process.env.ADMIN_TOKEN_SECRET || randomBytes(32).toString("hex");
 const SESSION_DURATION_MS = 24 * 60 * 60 * 1000;
 
 const DEV_MODE_WARNING = process.env.ADMIN_ACCESS_CODE
@@ -94,6 +98,14 @@ export function clearSessionCookie(response: NextResponse): void {
   });
 }
 
+function codeMatches(submitted: string | null, expected: string): boolean {
+  if (!submitted) return false;
+  const a = Buffer.from(submitted);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(a, b);
+}
+
 export function isAuthenticated(request: NextRequest): boolean {
   // 1. Check session cookie (server-managed, preferred)
   const sessionToken = getSessionFromCookie(request);
@@ -101,14 +113,12 @@ export function isAuthenticated(request: NextRequest): boolean {
     return true;
   }
 
-  // 2. Fallback: x-admin-code header (backward compat for scripts/internal tools)
+  // 2. Fallback: x-admin-code header, checked only against the real
+  // server-only secret (backward compat for scripts/internal tools). There is
+  // intentionally no magic bypass string here — anything checked into the
+  // public repo source is not a secret.
   const adminCode = request.headers.get("x-admin-code");
-  const envCode = getAdminAccessCode();
-  if (adminCode === envCode || adminCode === "aura-admin-internal") {
-    return true;
-  }
-
-  return false;
+  return codeMatches(adminCode, getAdminAccessCode());
 }
 
 export function requireAdmin(request: NextRequest): { authorized: boolean; response?: NextResponse } {

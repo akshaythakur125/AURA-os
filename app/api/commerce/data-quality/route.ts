@@ -2,15 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { buildQualitySummary, getStalePriceDetails, getLowConfidenceDetails, getDuplicateProducts, getHighClickStaleProducts } from "@/lib/commerce/index/searchIndexQuality";
 import { getAnomalySummary } from "@/lib/commerce/prices/priceAnomalyDetector";
 import { getSearchIndex } from "@/lib/storage/commerceSearchStore";
-
-function checkAuth(request: NextRequest): boolean {
-  const code = request.headers.get("x-admin-code");
-  const envCode = process.env.LOCAL_ADMIN_CODE || process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "ADMINDEMO";
-  return code === envCode || code === "aura-admin-internal";
-}
+import { isAuthenticated } from "@/lib/admin/auth";
 
 export async function GET(request: NextRequest) {
-  if (!checkAuth(request)) {
+  if (!isAuthenticated(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
   }
 

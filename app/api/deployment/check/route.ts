@@ -4,13 +4,12 @@ import { getVercelReadiness } from "@/lib/deployment/vercelReadiness";
 import { getDomainReadiness } from "@/lib/deployment/domainReadiness";
 import { detectProductionMode } from "@/lib/deployment/productionMode";
 import type { DeploymentChecklist, DeploymentCategory } from "@/types/deployment";
+import { isAuthenticated } from "@/lib/admin/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const adminCode = request.headers.get("x-admin-code");
-  const envCode = process.env.LOCAL_ADMIN_CODE || process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "ADMINDEMO";
-  if (adminCode !== envCode && adminCode !== "aura-admin-internal") {
+  if (!isAuthenticated(request)) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
   }
 

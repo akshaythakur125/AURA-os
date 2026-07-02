@@ -9,7 +9,7 @@ export function checkAdminAuth(code: string): boolean {
     ? process.env.LOCAL_ADMIN_CODE || process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "ADMINDEMO"
     : "ADMINDEMO";
 
-  return code === serverCode || code === "aura-admin-internal";
+  return code === serverCode;
 }
 
 export function loginAdmin(code: string): boolean {

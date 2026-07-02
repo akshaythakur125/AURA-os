@@ -19,7 +19,10 @@ export default function AdminSecurityPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.resolve().then(() => setAuthenticated(sessionStorage.getItem("auracheck_admin_auth") === "true"));
+    fetch("/api/admin/auth")
+      .then((r) => r.json())
+      .then((data) => setAuthenticated(!!data.authenticated))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -30,9 +33,7 @@ export default function AdminSecurityPage() {
   async function loadData() {
     setLoading(true);
     try {
-      const res = await fetch("/api/security/audit", {
-        headers: { "x-admin-code": "aura-admin-internal" },
-      });
+      const res = await fetch("/api/security/audit");
       const data = await res.json();
       if (data.success) setAudit(data.audit);
 
@@ -41,12 +42,14 @@ export default function AdminSecurityPage() {
     setLoading(false);
   }
 
-  function handleGate() {
-    const code = "ADMINDEMO";
-    if (gateInput === code) {
-      sessionStorage.setItem("auracheck_admin_auth", "true");
-      setAuthenticated(true);
-    }
+  async function handleGate() {
+    const res = await fetch("/api/admin/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: gateInput }),
+    });
+    const data = await res.json();
+    if (data.success) setAuthenticated(true);
   }
 
   const adminWarning = getAdminCodeWarning();
@@ -82,7 +85,7 @@ export default function AdminSecurityPage() {
             <h1 className="text-2xl font-bold text-white">Security Dashboard</h1>
             <p className="text-xs text-gray-500">Security audit, secret exposure check, and event monitoring</p>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => { logoutAdmin(); setAuthenticated(false); }}>Logout Admin</Button>
+          <Button variant="ghost" size="sm" onClick={() => { logoutAdmin(); fetch("/api/admin/auth", { method: "DELETE" }); setAuthenticated(false); }}>Logout Admin</Button>
         </div>
 
         {loading && (
