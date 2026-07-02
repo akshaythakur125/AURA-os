@@ -99,6 +99,103 @@ button {
   backdrop-filter: blur(22px);
 }
 
+.prism-panel {
+  background:
+    radial-gradient(circle at top left, rgba(125, 211, 252, 0.16), transparent 26%),
+    radial-gradient(circle at bottom right, rgba(249, 115, 22, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 32px 90px rgba(2, 8, 23, 0.34);
+  backdrop-filter: blur(20px);
+}
+
+.scene-3d {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.float-card {
+  transform-style: preserve-3d;
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease,
+    border-color 240ms ease;
+  will-change: transform;
+}
+
+.float-card > * {
+  transform: translateZ(18px);
+}
+
+.float-card:hover {
+  transform: perspective(1400px) translateY(-8px) rotateX(7deg) rotateY(-7deg) scale(1.01);
+  box-shadow: 0 34px 90px rgba(2, 8, 23, 0.42);
+}
+
+.glow-frame {
+  position: relative;
+  overflow: hidden;
+}
+
+.glow-frame::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(125, 211, 252, 0.42), rgba(255, 255, 255, 0.08), rgba(249, 115, 22, 0.38));
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.shine-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-sweep::before {
+  content: "";
+  position: absolute;
+  inset: -30% auto -30% -60%;
+  width: 40%;
+  transform: rotate(18deg);
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  animation: shine-sweep 7.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.spotlight {
+  position: relative;
+}
+
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--spot-x, 50%) 0%, rgba(255, 255, 255, 0.12), transparent 44%);
+  pointer-events: none;
+}
+
+.orbital-ring {
+  position: absolute;
+  inset: 50%;
+  width: 120%;
+  height: 120%;
+  border: 1px solid rgba(125, 211, 252, 0.16);
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  animation: ring-float 12s ease-in-out infinite;
+  pointer-events: none;
+}
+
 .mesh-glow {
   position: absolute;
   border-radius: 999px;
@@ -196,6 +293,33 @@ button {
   }
 }
 
+@keyframes shine-sweep {
+  0%,
+  14% {
+    transform: translateX(0) rotate(18deg);
+    opacity: 0;
+  }
+  20%,
+  34% {
+    transform: translateX(340%) rotate(18deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(340%) rotate(18deg);
+    opacity: 0;
+  }
+}
+
+@keyframes ring-float {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(10deg) scale(1.04);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -210,6 +334,10 @@ button {
   }
 
   .tilt-card {
+    transform: none;
+  }
+
+  .float-card:hover {
     transform: none;
   }
 }

@@ -1,9 +1,11 @@
+import { cloneElement, isValidElement } from "react";
 import { cn } from "@/lib/utils/cn";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "ghost" | "outline";
   size?: "sm" | "md" | "lg";
   children: React.ReactNode;
+  asChild?: boolean;
 }
 
 const variants = {
@@ -28,16 +30,28 @@ export function Button({
   size = "md",
   className,
   children,
+  asChild = false,
   ...props
 }: ButtonProps) {
+  const buttonClassName = cn(
+    "inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-[-0.02em] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300/45 focus:ring-offset-2 focus:ring-offset-slate-950 disabled:pointer-events-none disabled:opacity-50",
+    variants[variant],
+    sizes[size],
+    className,
+  );
+
+  if (asChild && isValidElement(children)) {
+    const child = children as React.ReactElement<Record<string, unknown> & { className?: string }>;
+
+    return cloneElement(child, {
+      ...props,
+      className: cn(child.props.className, buttonClassName),
+    });
+  }
+
   return (
     <button
-      className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-full font-semibold tracking-[-0.02em] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-sky-300/45 focus:ring-offset-2 focus:ring-offset-slate-950 disabled:pointer-events-none disabled:opacity-50",
-        variants[variant],
-        sizes[size],
-        className,
-      )}
+      className={buttonClassName}
       {...props}
     >
       {children}

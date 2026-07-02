@@ -19,12 +19,13 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 px-3 pt-3 sm:px-4">
-      <Container className="glass-panel rounded-[26px] px-4 sm:px-6">
+      <Container className="glass-panel glow-frame rounded-[26px] px-4 sm:px-6">
         <div className="flex h-18 items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3">
-            <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-[linear-gradient(145deg,rgba(125,211,252,0.95),rgba(59,130,246,0.78),rgba(249,115,22,0.7))] text-sm font-black text-slate-950 shadow-[0_16px_40px_rgba(56,189,248,0.25)]">
+            <div className="scene-3d shine-sweep relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl border border-white/20 bg-[linear-gradient(145deg,rgba(125,211,252,0.95),rgba(59,130,246,0.78),rgba(249,115,22,0.7))] text-sm font-black text-slate-950 shadow-[0_16px_40px_rgba(56,189,248,0.25)]">
               <span className="relative z-10 display-font text-base">A</span>
               <div className="pulse-glow absolute inset-1 rounded-[14px] border border-white/25" />
+              <div className="orbital-ring" />
             </div>
             <div>
               <div className="display-font text-lg font-bold text-white sm:text-xl">AuraCheck</div>
@@ -47,14 +48,12 @@ export function Header() {
           </nav>
 
           <div className="hidden items-center gap-3 md:flex">
-            <Link href="/pricing">
-              <Button variant="ghost" size="sm">
-                View Plans
-              </Button>
-            </Link>
-            <Link href="/audit/new">
-              <Button size="sm">Start Aura Check</Button>
-            </Link>
+            <Button asChild variant="ghost" size="sm">
+              <Link href="/pricing">View Plans</Link>
+            </Button>
+            <Button asChild size="sm">
+              <Link href="/audit/new">Start Aura Check</Link>
+            </Button>
           </div>
 
           <button
@@ -88,16 +87,12 @@ export function Header() {
                 </Link>
               ))}
               <div className="grid grid-cols-2 gap-3 pt-2">
-                <Link href="/pricing" onClick={() => setMobileOpen(false)}>
-                  <Button className="w-full" variant="secondary" size="sm">
-                    View Plans
-                  </Button>
-                </Link>
-                <Link href="/audit/new" onClick={() => setMobileOpen(false)}>
-                  <Button className="w-full" size="sm">
-                    Start
-                  </Button>
-                </Link>
+                <Button asChild className="w-full" variant="secondary" size="sm">
+                  <Link href="/pricing" onClick={() => setMobileOpen(false)}>View Plans</Link>
+                </Button>
+                <Button asChild className="w-full" size="sm">
+                  <Link href="/audit/new" onClick={() => setMobileOpen(false)}>Start</Link>
+                </Button>
               </div>
             </nav>
           </div>

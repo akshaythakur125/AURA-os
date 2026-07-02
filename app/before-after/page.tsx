@@ -135,12 +135,12 @@ export default function BeforeAfterPage() {
             Generate a free Aura Score and see exactly what to fix first.
           </p>
           <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Link href="/audit/new">
-              <Button size="lg">Start Free Aura Check</Button>
-            </Link>
-            <Link href="/pricing">
-              <Button variant="outline" size="lg">See Pricing</Button>
-            </Link>
+            <Button asChild size="lg">
+              <Link href="/audit/new">Start Free Aura Check</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link href="/pricing">See Pricing</Link>
+            </Button>
           </div>
         </section>
 

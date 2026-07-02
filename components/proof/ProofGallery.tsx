@@ -79,11 +79,11 @@ export function ProofStrip({ examples, title, ctaHref, ctaText }: ProofStripProp
       </div>
       {ctaHref && ctaText && (
         <div className="mt-6 text-center">
-          <Link href={ctaHref}>
-            <Button variant="outline" size="sm" onClick={() => trackEvent("proof_cta_clicked", { href: ctaHref })}>
+          <Button asChild variant="outline" size="sm">
+            <Link href={ctaHref} onClick={() => trackEvent("proof_cta_clicked", { href: ctaHref })}>
               {ctaText}
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
       )}
     </div>

@@ -62,8 +62,8 @@ export default function AuditWardrobeDiagnosisPage({ params }: { params: Promise
           <h1 className="mb-4 text-2xl font-bold text-white">Diagnosis Unavailable</h1>
           <p className="mb-6 text-sm text-gray-400">{error}</p>
           <div className="flex justify-center gap-3">
-            {audit && <Link href={`/audit/${auditId}`}><Button variant="outline">Back to Audit</Button></Link>}
-            <Link href="/wardrobe/diagnosis"><Button>Try New Diagnosis</Button></Link>
+            {audit && <Button asChild variant="outline"><Link href={`/audit/${auditId}`}>Back to Audit</Link></Button>}
+            <Button asChild><Link href="/wardrobe/diagnosis">Try New Diagnosis</Link></Button>
           </div>
         </div>
       </Container>
@@ -75,7 +75,7 @@ export default function AuditWardrobeDiagnosisPage({ params }: { params: Promise
       <Container className="py-12">
         <div className="mx-auto max-w-md text-center">
           <p className="text-sm text-gray-400">No diagnosis available.</p>
-          <Link href="/wardrobe/diagnosis"><Button className="mt-4">New Diagnosis</Button></Link>
+          <Button asChild className="mt-4"><Link href="/wardrobe/diagnosis">New Diagnosis</Link></Button>
         </div>
       </Container>
     );
