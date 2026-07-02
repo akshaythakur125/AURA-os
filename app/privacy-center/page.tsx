@@ -97,8 +97,8 @@ export default function PrivacyCenterPage() {
         </div>
 
         <div className="mt-8 flex flex-wrap gap-3">
-          <Link href="/data"><Button variant="outline">Manage My Local Data</Button></Link>
-          <Link href="/audit/new"><Button>Start Aura Check</Button></Link>
+          <Button asChild variant="outline"><Link href="/data">Manage My Local Data</Link></Button>
+          <Button asChild><Link href="/audit/new">Start Aura Check</Link></Button>
           {supportEmail && <a href={`mailto:${supportEmail}`}><Button variant="ghost">Contact Support</Button></a>}
         </div>
       </div>

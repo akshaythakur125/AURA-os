@@ -153,9 +153,9 @@ export default function ProgressPage() {
 
         {/* ─── CTA ─── */}
         <div className="text-center">
-          <Link href="/audit/new">
-            <Button variant="outline" size="lg">Create New Audit</Button>
-          </Link>
+          <Button asChild variant="outline" size="lg">
+            <Link href="/audit/new">Create New Audit</Link>
+          </Button>
         </div>
       </div>
     </Container>

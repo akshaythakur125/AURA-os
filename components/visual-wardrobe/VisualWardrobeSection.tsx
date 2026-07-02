@@ -91,14 +91,14 @@ export function VisualWardrobeSection({ diagnosis, compact }: Props) {
       {/* CTAs */}
       <div className="flex flex-wrap gap-2">
         {diagnosis.commerceSearchIntents.length > 0 && (
-          <Link href={`/wardrobe/search?style=${diagnosis.recommendedStyleDirection}`}>
-            <Button size="sm">Find Matching Clothes</Button>
-          </Link>
+          <Button asChild size="sm">
+            <Link href={`/wardrobe/search?style=${diagnosis.recommendedStyleDirection}`}>Find Matching Clothes</Link>
+          </Button>
         )}
         {diagnosis.auditId && (
-          <Link href={`/wardrobe/${diagnosis.auditId}`}>
-            <Button size="sm" variant="outline">Build Outfit</Button>
-          </Link>
+          <Button asChild size="sm" variant="outline">
+            <Link href={`/wardrobe/${diagnosis.auditId}`}>Build Outfit</Link>
+          </Button>
         )}
       </div>
     </div>

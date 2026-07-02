@@ -1,0 +1,26 @@
+<svg width="720" height="960" viewBox="0 0 720 960" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="960" rx="44" fill="#161112"/>
+  <rect width="720" height="960" rx="44" fill="url(#bg)"/>
+  <circle cx="532" cy="180" r="160" fill="#F5A15C" fill-opacity="0.34"/>
+  <circle cx="167" cy="766" r="220" fill="#D5557D" fill-opacity="0.2"/>
+  <rect x="60" y="62" width="600" height="836" rx="34" fill="url(#panel)" stroke="#FFFFFF" stroke-opacity="0.18"/>
+  <path d="M230 741C240 610 290 430 360 430C430 430 480 610 490 741H230Z" fill="#F6E2D7"/>
+  <path d="M282 404C282 332 319 282 360 282C401 282 438 332 438 404C438 475 401 528 360 528C319 528 282 475 282 404Z" fill="#E9CBB9"/>
+  <path d="M285 379C300 316 331 250 360 250C389 250 420 316 435 379C412 353 387 341 360 341C333 341 308 353 285 379Z" fill="#2F1D1C"/>
+  <path d="M224 754C243 646 296 560 360 560C424 560 477 646 496 754" stroke="#F8EDE5" stroke-width="82" stroke-linecap="round"/>
+  <path d="M270 620H450" stroke="#8A4F37" stroke-width="16" stroke-linecap="round"/>
+  <text x="90" y="132" fill="#F5F1EC" font-family="Arial, sans-serif" font-size="34" letter-spacing="7">INDIA</text>
+  <text x="92" y="790" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="72" font-weight="700">SOFT POWER</text>
+  <text x="92" y="842" fill="#F2D5CA" font-family="Arial, sans-serif" font-size="28">Priyanka-inspired &#8226; rich tailoring &#8226; luxe neutrals</text>
+  <defs>
+    <linearGradient id="bg" x1="97" y1="51" x2="637" y2="907" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3D2623"/>
+      <stop offset="0.48" stop-color="#18171E"/>
+      <stop offset="1" stop-color="#101B2A"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="360" y1="62" x2="360" y2="898" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.04"/>
+    </linearGradient>
+  </defs>
+</svg>

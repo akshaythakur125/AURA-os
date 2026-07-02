@@ -12,10 +12,12 @@ export function Card({ children, className, hover = false, onClick }: CardProps)
     <div
       onClick={onClick}
       className={cn(
-        "rounded-2xl border border-white/5 bg-gradient-to-br from-white/[0.07] to-white/[0.02] p-6 backdrop-blur-sm",
-        hover && "transition-all duration-300 hover:border-purple-500/30 hover:from-white/[0.1] hover:to-white/[0.04] hover:shadow-lg hover:shadow-purple-500/5",
+        "glass-card relative overflow-hidden rounded-[28px] p-6 text-white/92",
+        "before:pointer-events-none before:absolute before:inset-x-8 before:top-0 before:h-px before:bg-white/28 before:content-['']",
+        hover &&
+          "transition-all duration-300 hover:-translate-y-1.5 hover:border-sky-300/28 hover:shadow-[0_26px_72px_rgba(8,47,73,0.38)]",
         onClick && "cursor-pointer",
-        className
+        className,
       )}
     >
       {children}

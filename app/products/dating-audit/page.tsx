@@ -39,21 +39,21 @@ export default function DatingAuditPage() {
           <div className="mb-8 text-5xl font-bold text-amber-400">&#8377;299</div>
           <div className="flex flex-wrap justify-center gap-3">
             {upsell && !alreadyUnlocked ? (
-              <Link href={`/unlock?auditId=${upsell.auditId}&product=dating_audit`}>
-                <Button size="lg" onClick={() => trackEvent("pricing_cta_clicked", { product: "dating_audit", target: "unlock" })}>
+              <Button asChild size="lg">
+                <Link href={`/unlock?auditId=${upsell.auditId}&product=dating_audit`} onClick={() => trackEvent("pricing_cta_clicked", { product: "dating_audit", target: "unlock" })}>
                   Unlock for Latest Audit
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             ) : upsell && alreadyUnlocked ? (
-              <Link href={`/audit/${upsell.auditId}`}>
-                <Button size="lg">View Your Report</Button>
-              </Link>
+              <Button asChild size="lg">
+                <Link href={`/audit/${upsell.auditId}`}>View Your Report</Link>
+              </Button>
             ) : (
-              <Link href="/audit/new">
-                <Button size="lg" onClick={() => trackEvent("pricing_cta_clicked", { product: "dating_audit", target: "new_audit" })}>
+              <Button asChild size="lg">
+                <Link href="/audit/new" onClick={() => trackEvent("pricing_cta_clicked", { product: "dating_audit", target: "new_audit" })}>
                   Start Free Aura Check
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             )}
           </div>
         </div>
@@ -133,9 +133,9 @@ export default function DatingAuditPage() {
           <h2 className="mb-4 text-2xl font-bold text-white">Ready to optimize your profile?</h2>
           <p className="mb-6 text-gray-400">Get profile feedback that actually helps you stand out.</p>
           {upsell && !alreadyUnlocked ? (
-            <Link href={`/unlock?auditId=${upsell.auditId}&product=dating_audit`}><Button size="lg">Unlock Now — ₹299</Button></Link>
+            <Button asChild size="lg"><Link href={`/unlock?auditId=${upsell.auditId}&product=dating_audit`}>Unlock Now — ₹299</Link></Button>
           ) : (
-            <Link href="/audit/new"><Button size="lg">Start Free Aura Check</Button></Link>
+            <Button asChild size="lg"><Link href="/audit/new">Start Free Aura Check</Link></Button>
           )}
         </div>
       </div>

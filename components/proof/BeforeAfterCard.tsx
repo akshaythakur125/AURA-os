@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Card } from "@/components/ui/Card";
+import { trackEvent } from "@/lib/storage/analyticsStore";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import type { ProofExample } from "@/types/proof";
-import { trackEvent } from "@/lib/storage/analyticsStore";
 
 interface BeforeAfterCardProps {
   example: ProofExample;
@@ -20,16 +20,15 @@ export function BeforeAfterCard({ example, compact, onCtaClick }: BeforeAfterCar
   };
 
   return (
-    <Card className={`relative overflow-hidden border-white/5 ${compact ? "p-3" : "p-4"}`}>
-      {/* Score Delta Badge */}
+    <Card className={`float-card relative overflow-hidden border-white/5 ${compact ? "p-3" : "p-4"}`}>
       <div className="absolute right-3 top-3">
         <Badge variant={example.scoreDelta >= 10 ? "success" : "warning"}>
-          {example.scoreDelta > 0 ? "+" : ""}{example.scoreDelta}
+          {example.scoreDelta > 0 ? "+" : ""}
+          {example.scoreDelta}
         </Badge>
       </div>
 
       <div className={`grid gap-4 ${compact ? "sm:grid-cols-1" : "sm:grid-cols-2"}`}>
-        {/* Before Panel */}
         <div className="rounded-xl border border-red-500/10 bg-gradient-to-br from-red-950/30 to-rose-950/20 p-3">
           <div className="mb-2 flex items-center justify-between">
             <Badge variant="danger">Before</Badge>
@@ -48,7 +47,6 @@ export function BeforeAfterCard({ example, compact, onCtaClick }: BeforeAfterCar
           <div className="text-xs text-red-300">{example.beforeVisualDescription}</div>
         </div>
 
-        {/* After Panel */}
         <div className={`rounded-xl border border-emerald-500/10 bg-gradient-to-br from-emerald-950/30 to-teal-950/20 p-3 ${compact ? "sm:col-start-1" : ""}`}>
           <div className="mb-2 flex items-center justify-between">
             <Badge variant="success">After</Badge>
@@ -69,8 +67,7 @@ export function BeforeAfterCard({ example, compact, onCtaClick }: BeforeAfterCar
         </div>
       </div>
 
-      {/* Details */}
-      {!compact && (
+      {!compact ? (
         <div className="mt-3 space-y-2">
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="rounded-lg bg-white/5 p-2">
@@ -95,20 +92,19 @@ export function BeforeAfterCard({ example, compact, onCtaClick }: BeforeAfterCar
             {example.keyLesson}
           </div>
         </div>
-      )}
+      ) : null}
 
-      {/* CTA */}
-      <div className={`mt-3 ${compact ? "" : ""}`}>
-        <Link href={example.ctaHref} onClick={handleCta}>
-          <Button size="sm" className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-400 hover:to-teal-400">
+      <div className="mt-3">
+        <Button asChild size="sm" className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-400 hover:to-teal-400">
+          <Link href={example.ctaHref} onClick={handleCta}>
             {example.ctaText}
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </div>
 
-      {example.isDemo && (
-        <p className="mt-2 text-[10px] text-gray-600 text-center">Demo example — not a real user result</p>
-      )}
+      {example.isDemo ? (
+        <p className="mt-2 text-center text-[10px] text-gray-600">Demo example, not a real user result</p>
+      ) : null}
     </Card>
   );
 }

@@ -44,9 +44,9 @@ export default function ChallengesPage() {
         </div>
 
         <div className="mt-12 text-center">
-          <Link href="/audit/new">
-            <Button size="lg">Start Free Aura Check</Button>
-          </Link>
+          <Button asChild size="lg">
+            <Link href="/audit/new">Start Free Aura Check</Link>
+          </Button>
         </div>
       </div>
     </Container>

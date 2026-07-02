@@ -3,6 +3,7 @@
 import { Card } from "@/components/ui/Card";
 import type { UpgradeBundle } from "@/types/product";
 import { recordAffiliateClick } from "@/lib/storage/affiliateStore";
+import { getProductExternalUrl } from "@/lib/utils/externalLinks";
 
 export function UpgradeBundleCard({
   bundle,
@@ -55,19 +56,17 @@ export function UpgradeBundleCard({
                   <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
                   <span className="text-gray-300">{rec.product.title}</span>
                 </div>
-                {rec.product.affiliateUrl && rec.product.affiliateUrl !== "#" ? (
-                  <button
-                    onClick={() => {
-                      recordAffiliateClick({ productId: rec.product.id, auditId, source: "bundle" });
-                      window.open(rec.product.affiliateUrl, "_blank", "noopener,noreferrer");
-                    }}
-                    className="text-purple-400 hover:underline"
-                  >
-                    {rec.product.priceLabel}
-                  </button>
-                ) : (
-                  <span className="text-gray-500">{rec.product.priceLabel}</span>
-                )}
+                <a
+                  href={getProductExternalUrl(rec.product)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => {
+                    recordAffiliateClick({ productId: rec.product.id, auditId, source: "bundle" });
+                  }}
+                  className="text-purple-400 hover:underline"
+                >
+                  {rec.product.priceLabel}
+                </a>
               </li>
             ))}
           </ul>

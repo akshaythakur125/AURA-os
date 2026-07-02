@@ -3,11 +3,11 @@
 import type { ComparableGroup } from "@/types/commerceSearch";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
 import { PriceFreshnessBadge } from "./PriceFreshnessBadge";
 import { formatPrice } from "@/lib/commerce/dealScoring";
 import { trackStoreClick } from "@/lib/commerce/commerceTracking";
 import { comparePricesInGroup } from "@/lib/commerce/search/priceComparisonEngine";
+import { getCommerceItemExternalUrl } from "@/lib/utils/externalLinks";
 
 interface Props {
   group: ComparableGroup;
@@ -32,7 +32,6 @@ export function PriceComparisonCard({ group, auditId }: Props) {
       item.isSponsored,
       item.storeName
     );
-    window.open(item.affiliateUrl || item.productUrl, "_blank");
   }
 
   return (
@@ -55,9 +54,20 @@ export function PriceComparisonCard({ group, auditId }: Props) {
             <div className="mt-1">
               <PriceFreshnessBadge status={comparison.cheapest.priceFreshness} showLabel={false} />
             </div>
-            <Button size="sm" className="mt-2 w-full" onClick={() => handleItemClick(comparison.cheapest!)}>
+            <a
+              href={getCommerceItemExternalUrl({
+                affiliateUrl: comparison.cheapest.affiliateUrl,
+                productUrl: comparison.cheapest.productUrl,
+                originalTitle: comparison.cheapest.originalTitle,
+                storeKey: comparison.cheapest.storeKey,
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => handleItemClick(comparison.cheapest!)}
+              className="mt-2 inline-flex min-h-10 w-full items-center justify-center rounded-full border border-white/15 bg-[linear-gradient(135deg,rgba(125,211,252,0.95),rgba(59,130,246,0.92)_45%,rgba(249,115,22,0.84))] px-4 text-sm font-semibold tracking-[-0.02em] text-slate-950 shadow-[0_18px_48px_rgba(56,189,248,0.22)] hover:-translate-y-0.5 hover:shadow-[0_24px_60px_rgba(249,115,22,0.22)]"
+            >
               View
-            </Button>
+            </a>
           </div>
         )}
 
@@ -72,9 +82,20 @@ export function PriceComparisonCard({ group, auditId }: Props) {
             <div className="mt-1">
               <PriceFreshnessBadge status={comparison.bestValue.priceFreshness} showLabel={false} />
             </div>
-            <Button size="sm" className="mt-2 w-full" onClick={() => handleItemClick(comparison.bestValue!)}>
+            <a
+              href={getCommerceItemExternalUrl({
+                affiliateUrl: comparison.bestValue.affiliateUrl,
+                productUrl: comparison.bestValue.productUrl,
+                originalTitle: comparison.bestValue.originalTitle,
+                storeKey: comparison.bestValue.storeKey,
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => handleItemClick(comparison.bestValue!)}
+              className="mt-2 inline-flex min-h-10 w-full items-center justify-center rounded-full border border-white/15 bg-[linear-gradient(135deg,rgba(125,211,252,0.95),rgba(59,130,246,0.92)_45%,rgba(249,115,22,0.84))] px-4 text-sm font-semibold tracking-[-0.02em] text-slate-950 shadow-[0_18px_48px_rgba(56,189,248,0.22)] hover:-translate-y-0.5 hover:shadow-[0_24px_60px_rgba(249,115,22,0.22)]"
+            >
               View
-            </Button>
+            </a>
           </div>
         )}
       </div>

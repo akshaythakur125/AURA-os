@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { Suspense, useState, useCallback, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -9,8 +10,10 @@ import { SearchResultCard } from "@/components/commerce/SearchResultCard";
 import { PriceComparisonCard } from "@/components/commerce/PriceComparisonCard";
 import type { CommerceSearchInput, CommerceSearchSort, CommerceSearchResponse } from "@/types/commerceSearch";
 import type { WardrobeCategory, StoreKey, AuraStyleDirection, AuraLeakTag } from "@/types/commerce";
+import { CELEBRITY_TREND_PRESETS } from "@/config/celebrityTrendPresets";
 
-export default function WardrobeSearchPage() {
+function WardrobeSearchContent() {
+  const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [budgetMin, setBudgetMin] = useState("");
@@ -22,6 +25,7 @@ export default function WardrobeSearchPage() {
   const [results, setResults] = useState<CommerceSearchResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
+  const [initializedFromUrl, setInitializedFromUrl] = useState(false);
 
   const doSearch = useCallback(async () => {
     setLoading(true);
@@ -70,6 +74,57 @@ export default function WardrobeSearchPage() {
     }
   }, [query, category, budgetMin, budgetMax, storeFilter, styleDirection, auraLeakTag, sort]);
 
+  useEffect(() => {
+    if (initializedFromUrl) return;
+
+    const queryParam = searchParams.get("query") || "";
+    const categoryParam = searchParams.get("category") || "";
+    const budgetMaxParam = searchParams.get("maxBudget") || "";
+    const styleParam = searchParams.get("style") || "";
+    const leakParam = searchParams.get("leak") || "";
+    const sortParam = searchParams.get("sort") as CommerceSearchSort | null;
+    const presetParam = searchParams.get("preset");
+
+    if (presetParam) {
+      const preset = CELEBRITY_TREND_PRESETS.find((item) => item.id === presetParam);
+      if (preset) {
+        setQuery(preset.searchQuery);
+        setStyleDirection(preset.styleDirection);
+        setAuraLeakTag(preset.auraLeakTags[0] || "");
+        setCategory(preset.recommendedCategories[0] || "");
+        setBudgetMax(String(preset.budgetMax || ""));
+        setSort(sortParam || "cheapest");
+        setInitializedFromUrl(true);
+        return;
+      }
+    }
+
+    setQuery(queryParam);
+    setCategory(categoryParam);
+    setBudgetMax(budgetMaxParam);
+    setStyleDirection(styleParam);
+    setAuraLeakTag(leakParam);
+    if (sortParam) setSort(sortParam);
+    setInitializedFromUrl(true);
+  }, [initializedFromUrl, searchParams]);
+
+  useEffect(() => {
+    if (!initializedFromUrl) return;
+    if (searched) return;
+
+    const hasPreset = searchParams.get("preset");
+    const hasDirectFilters =
+      searchParams.get("query") ||
+      searchParams.get("category") ||
+      searchParams.get("maxBudget") ||
+      searchParams.get("style") ||
+      searchParams.get("leak");
+
+    if (hasPreset || hasDirectFilters) {
+      void doSearch();
+    }
+  }, [initializedFromUrl, searched, searchParams, doSearch]);
+
   function handlePresetSelect(presetId: string) {
     const presets = [
       { id: "dating_warm_fix", style: "dating_warm", leak: "dating_warmth_missing", category: "shirt", maxBudget: "5000" },
@@ -98,6 +153,57 @@ export default function WardrobeSearchPage() {
             Find clothes by style direction, budget, and aura gap. Prices are from AuraCheck&rsquo;s catalog
             and should be verified on the store before buying.
           </p>
+        </div>
+
+        <div className="mb-8">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-white">Latest celebrity trend presets</h2>
+              <p className="text-xs text-gray-500">
+                One click opens a current trend-inspired search with multi-site Indian price comparison.
+              </p>
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {CELEBRITY_TREND_PRESETS.map((preset) => (
+              <Card key={preset.id} className="flex flex-col gap-4">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-white/55">
+                    {preset.region}
+                  </span>
+                  <span className="text-[10px] text-gray-500">{preset.trendDateLabel}</span>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">{preset.label}</h3>
+                  <p className="mt-1 text-xs text-purple-300">{preset.celebrity}</p>
+                </div>
+                <p className="text-sm text-gray-400">{preset.summary}</p>
+                <div className="flex flex-wrap gap-2">
+                  {preset.recommendedCategories.slice(0, 3).map((item) => (
+                    <span key={item} className="rounded-full bg-white/5 px-2.5 py-1 text-[10px] text-gray-400">
+                      {item.replace(/_/g, " ")}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-auto flex flex-col gap-2">
+                  <a
+                    href={`/wardrobe/search?preset=${preset.id}&sort=cheapest`}
+                    className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/15 bg-[linear-gradient(135deg,rgba(125,211,252,0.95),rgba(59,130,246,0.92)_45%,rgba(249,115,22,0.84))] px-4 text-sm font-semibold tracking-[-0.02em] text-slate-950 shadow-[0_18px_48px_rgba(56,189,248,0.22)] hover:-translate-y-0.5 hover:shadow-[0_24px_60px_rgba(249,115,22,0.22)]"
+                  >
+                    Compare cheapest now
+                  </a>
+                  <a
+                    href={preset.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-center text-[11px] text-gray-500 hover:text-gray-300"
+                  >
+                    Source: {preset.sourceLabel}
+                  </a>
+                </div>
+              </Card>
+            ))}
+          </div>
         </div>
 
         {/* Layout: filters sidebar + results */}
@@ -237,5 +343,23 @@ export default function WardrobeSearchPage() {
         </div>
       </div>
     </Container>
+  );
+}
+
+export default function WardrobeSearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <Container className="py-8 sm:py-12">
+          <Card>
+            <div className="py-16 text-center">
+              <p className="text-sm text-gray-400">Loading wardrobe search...</p>
+            </div>
+          </Card>
+        </Container>
+      }
+    >
+      <WardrobeSearchContent />
+    </Suspense>
   );
 }
