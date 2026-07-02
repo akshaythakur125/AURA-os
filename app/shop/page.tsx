@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { WARDROBE_CATALOG } from "@/config/auraWardrobeCatalog";
+import { CELEBRITY_TREND_PRESETS } from "@/config/celebrityTrendPresets";
 import { getActiveStores } from "@/config/storeDirectory";
 import { formatPrice } from "@/lib/commerce/dealScoring";
 import { buildComparisonForProduct } from "@/lib/commerce/priceComparison";
@@ -135,6 +136,52 @@ export default function ShopPage() {
         </div>
 
         {/* ─── Tabs ─── */}
+        <Card className="mb-8">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-white">Latest celebrity styles now trending</h2>
+              <p className="text-xs text-gray-500">
+                India + global looks, mapped to Indian shopping sites with one-click cheapest comparison.
+              </p>
+            </div>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {CELEBRITY_TREND_PRESETS.map((preset) => (
+              <div key={preset.id} className="rounded-2xl border border-white/8 bg-white/[0.03] p-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="rounded-full border border-white/10 px-2.5 py-1 text-[10px] uppercase tracking-[0.2em] text-white/55">
+                    {preset.region}
+                  </span>
+                  <span className="text-[10px] text-gray-500">{preset.trendDateLabel}</span>
+                </div>
+                <h3 className="mt-3 text-base font-semibold text-white">{preset.label}</h3>
+                <p className="mt-1 text-xs text-purple-300">{preset.celebrity}</p>
+                <p className="mt-3 text-xs leading-6 text-gray-400">{preset.summary}</p>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {preset.recommendedCategories.slice(0, 3).map((item) => (
+                    <span key={item} className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-gray-400">
+                      {item.replace(/_/g, " ")}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-4 flex flex-col gap-2">
+                  <Link href={`/wardrobe/search?preset=${preset.id}&sort=cheapest`}>
+                    <Button size="sm" className="w-full">Compare cheapest</Button>
+                  </Link>
+                  <a
+                    href={preset.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-center text-[11px] text-gray-500 hover:text-gray-300"
+                  >
+                    Source
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
         <div className="mb-6 flex flex-wrap gap-2">
           {TABS.map((tab) => (
             <button
