@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auditEnvSecurity } from "@/lib/security/envSecurityAudit";
 import { scanForExposures } from "@/lib/security/secretExposureScanner";
 import { getSecurityEventStats } from "@/lib/security/securityEventStore";
+import { requireAdmin } from "@/lib/admin/auth";
 import type { SecurityCategory, SecurityCheck, SecurityLabel } from "@/types/security";
 
 function scoreLabel(score: number): SecurityLabel {
@@ -14,11 +15,8 @@ function scoreLabel(score: number): SecurityLabel {
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const adminCode = request.headers.get("x-admin-code");
-  const envCode = process.env.LOCAL_ADMIN_CODE || process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "ADMINDEMO";
-  if (adminCode !== envCode && adminCode !== "aura-admin-internal") {
-    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
-  }
+  const auth = requireAdmin(request);
+  if (!auth.authorized) return auth.response;
 
   try {
     const envChecks = auditEnvSecurity();

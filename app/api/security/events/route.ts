@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSecurityEvents, addSecurityEvent, clearSecurityEvents } from "@/lib/security/securityEventStore";
+import { requireAdmin } from "@/lib/admin/auth";
 import type { SecurityEventType } from "@/types/security";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const adminCode = request.headers.get("x-admin-code");
-  const envCode = process.env.LOCAL_ADMIN_CODE || process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "ADMINDEMO";
-  if (adminCode !== envCode && adminCode !== "aura-admin-internal") {
-    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 403 });
-  }
+  const auth = requireAdmin(request);
+  if (!auth.authorized) return auth.response;
 
   try {
     const { searchParams } = new URL(request.url);

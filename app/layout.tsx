@@ -25,6 +25,24 @@ export const metadata: Metadata = {
   description:
     "Premium first-impression audit for photos, profiles, outfits, and visual presence.",
   manifest: "/manifest.json",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://auracheck.vercel.app"),
+  openGraph: {
+    title: "AuraCheck | First-Impression Intelligence",
+    description:
+      "Premium first-impression audit for photos, profiles, outfits, and visual presence.",
+    url: "/",
+    siteName: "AuraCheck",
+    locale: "en_IN",
+    type: "website",
+    images: [{ url: "/opengraph-image", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AuraCheck | First-Impression Intelligence",
+    description:
+      "Premium first-impression audit for photos, profiles, outfits, and visual presence.",
+    images: ["/opengraph-image"],
+  },
   other: {
     "mobile-web-app-capable": "yes",
   },
