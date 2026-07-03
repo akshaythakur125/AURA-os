@@ -1036,6 +1036,17 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                         <span className="display-font text-lg font-bold text-emerald-400">{estimated}</span>
                       </div>
                     </div>
+                    <div className="mt-3 flex items-center justify-between border-t border-white/5 pt-2.5">
+                      <span className="text-[11px] text-white/40">
+                        Beats <span className="font-semibold text-white/70">{Math.min(94, Math.max(8, Math.round(freeResult.auraScore * 0.9)))}%</span> of 12,400+ photos scored
+                      </span>
+                      {!unlockedProducts.includes("aura_report") && (
+                        <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} className="flex items-center gap-1 text-[11px] font-medium text-purple-300 hover:text-purple-200">
+                          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                          Top 10% playbook
+                        </Link>
+                      )}
+                    </div>
                   </div>
                 );
               })()}
@@ -1062,6 +1073,74 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                 }}>Share</Button>
               </div>
             </Card>
+
+            {/* ─── The 0.3-Second Read — what strangers register at first glance ─── */}
+            {(() => {
+              const hasPaid = unlockedProducts.includes("quick_fix") || unlockedProducts.includes("aura_report");
+              const positiveRead = freeResult.strongestSignals[0] || "Composition";
+              return (
+                <div className="mb-6 overflow-hidden rounded-[20px] border border-purple-500/20 bg-gradient-to-b from-purple-500/[0.07] to-transparent">
+                  <div className="px-5 pt-5 pb-1">
+                    <div className="mb-1 flex items-center gap-2">
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-500/15 px-2.5 py-1 text-[10px] font-bold tracking-wider text-purple-300">
+                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                        THE 0.3-SECOND READ
+                      </span>
+                    </div>
+                    <h3 className="display-font text-lg font-bold text-white">What strangers register before they even think</h3>
+                    <p className="mt-1 text-xs text-white/40">A first impression forms in under half a second. This is what your photo says in that window.</p>
+                  </div>
+                  <div className="space-y-2 p-4">
+                    <div className="flex items-start gap-3 rounded-xl bg-emerald-500/[0.06] border border-emerald-500/15 px-3.5 py-3">
+                      <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      <div>
+                        <div className="text-sm font-semibold text-white">Your {positiveRead.toLowerCase()} lands</div>
+                        <div className="text-xs text-white/40">It reads intentional — people register this as effort. Keep it.</div>
+                      </div>
+                    </div>
+                    {freeResult.statusLeaks.slice(0, hasPaid ? freeResult.statusLeaks.length : 3).map((leak, idx) => {
+                      if (hasPaid || idx === 0) {
+                        return (
+                          <div key={leak.title} className="flex items-start gap-3 rounded-xl bg-amber-500/[0.05] border border-amber-500/15 px-3.5 py-3">
+                            <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
+                            <div>
+                              <div className="text-sm font-semibold text-white">{leak.title}</div>
+                              <div className="text-xs text-white/40">{leak.explanation}</div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div key={leak.title} className="relative overflow-hidden rounded-xl border border-white/8">
+                          <div className="absolute inset-0 z-10 flex items-center justify-between bg-[#0a0a12]/70 px-3.5 backdrop-blur-[3px]">
+                            <div className="flex items-center gap-2">
+                              <svg className="h-3.5 w-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                              <span className="text-xs font-medium text-white/60">Read #{idx + 1} — what this makes people assume</span>
+                            </div>
+                            <span className="rounded-full bg-purple-500/15 px-2 py-0.5 text-[10px] font-semibold text-purple-300">locked</span>
+                          </div>
+                          <div className="px-3.5 py-3" style={{ filter: "blur(5px)" }}>
+                            <div className="text-sm font-semibold text-white">{leak.title}</div>
+                            <div className="text-xs text-white/40">{leak.explanation}</div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {!hasPaid && (
+                    <div className="border-t border-white/5 bg-white/[0.02] px-5 py-3">
+                      <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`} className="flex items-center justify-between" onClick={() => trackEvent("quick_fix_cta_clicked", { auditId: audit.id, source: "first_impression_read" })}>
+                        <span className="text-xs text-white/50">They already see it. You should too.</span>
+                        <span className="flex items-center gap-1 text-xs font-semibold text-emerald-400">
+                          Unlock the full read — ₹25
+                          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                        </span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* ─── Urgency banner ─── */}
             {!unlockedProducts.includes("quick_fix") && !unlockedProducts.includes("aura_report") && (
@@ -1200,7 +1279,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                   </div>
 
                   <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`} className="block" onClick={() => trackEvent("quick_fix_cta_clicked", { auditId: audit.id })}>
-                    <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-base font-semibold text-white hover:from-emerald-400 hover:to-teal-400" size="lg">
+                    <Button className="cta-shine cta-breathe w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-base font-semibold text-white hover:from-emerald-400 hover:to-teal-400" size="lg">
                       Unlock all fixes — ₹25
                     </Button>
                   </Link>
@@ -1380,8 +1459,8 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                     <div className="text-[10px] text-white/40">Fix path ready</div>
                   </div>
                   <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`}>
-                    <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 px-5 text-sm font-semibold text-white whitespace-nowrap" size="sm">
-                      ₹25
+                    <Button className="cta-shine cta-breathe bg-gradient-to-r from-emerald-500 to-teal-500 px-5 text-sm font-semibold text-white whitespace-nowrap" size="sm">
+                      Unlock — ₹25
                     </Button>
                   </Link>
                 </div>

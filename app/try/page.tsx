@@ -155,7 +155,7 @@ export default function TryPage() {
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Button onClick={handleCTA} size="lg" disabled={processing} className="text-base">
+            <Button onClick={handleCTA} size="lg" disabled={processing} className="cta-shine cta-breathe text-base">
               {processing ? "Processing..." : "Score my photo — free"}
             </Button>
           </div>
@@ -383,7 +383,7 @@ export default function TryPage() {
               One photo. Zero sign-ups. Takes 8 seconds.
             </p>
             <div className="mt-7">
-              <Button onClick={handleCTA} size="lg" disabled={processing} className="w-full max-w-xs text-base">
+              <Button onClick={handleCTA} size="lg" disabled={processing} className="cta-shine cta-breathe w-full max-w-xs text-base">
                 {processing ? "Processing..." : "Score my photo — free"}
               </Button>
             </div>
@@ -402,7 +402,7 @@ export default function TryPage() {
 
       {/* ─── Sticky mobile CTA bar ─── */}
       <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/10 bg-[#07111f]/90 px-4 py-3 backdrop-blur-lg sm:hidden">
-        <Button onClick={handleCTA} size="lg" disabled={processing} className="w-full text-base">
+        <Button onClick={handleCTA} size="lg" disabled={processing} className="cta-shine cta-breathe w-full text-base">
           {processing ? "Processing..." : "Score my photo — free"}
         </Button>
       </div>
