@@ -26,10 +26,10 @@ export const BUDGET_LABELS: Record<string, string> = {
 };
 
 export const PRODUCT_LABELS: Record<ProductType, string> = {
-  quick_fix: "Quick Aura Fix",
-  aura_report: "Full Aura Report",
+  quick_fix: "Fast Fix",
+  aura_report: "Full Read",
   dating_audit: "Dating/Profile Audit",
-  glowup_plan: "30-Day Glow-Up Plan",
+  glowup_plan: "30-Day Reset",
 };
 
 export const PRODUCT_PRICES: Record<ProductType, number> = {

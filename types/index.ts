@@ -32,6 +32,18 @@ export type ProductType = "quick_fix" | "aura_report" | "dating_audit" | "glowup
 
 export type ReportStatus = "draft" | "free_generated" | "full_report";
 
+export interface BattleRecord {
+  id: string;
+  timestamp: string;
+  leftLabel: string;
+  rightLabel: string;
+  leftScore: number;
+  rightScore: number;
+  leftLeaks: string[];
+  rightLeaks: string[];
+  winner: "left" | "right" | "tie";
+}
+
 export interface Audit {
   id: string;
   auditType: AuditType;

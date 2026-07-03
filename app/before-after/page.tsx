@@ -64,7 +64,7 @@ export default function BeforeAfterPage() {
 
         {/* Glow-Up Plan Examples */}
         <section className="mb-12">
-          <h2 className="mb-6 text-xl font-bold text-white">Glow-Up Plan Example</h2>
+          <h2 className="mb-6 text-xl font-bold text-white">30-Day Reset Example</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {PROOF_EXAMPLES.filter((e) => e.productSuggested === "glowup_plan").map((ex) => (
               <BeforeAfterCard key={ex.id} example={ex} />

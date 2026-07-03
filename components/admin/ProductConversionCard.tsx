@@ -12,7 +12,7 @@ const PRODUCT_LABELS: Record<string, string> = {
   quick_fix: "Quick Fix (₹49)",
   aura_report: "Aura Report (₹99)",
   dating_audit: "Dating Audit (₹299)",
-  glowup_plan: "Glow-Up Plan (₹499)",
+  glowup_plan: "30-Day Reset (₹499)",
 };
 
 export function ProductConversionCard({ funnels }: Props) {

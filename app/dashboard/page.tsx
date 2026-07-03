@@ -489,7 +489,7 @@ export default function DashboardPage() {
                           </svg>
                         )}
                         {audit.glowupPlan && (
-                          <svg className="h-3.5 w-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><title>Glow-Up Plan</title>
+                          <svg className="h-3.5 w-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><title>30-Day Reset</title>
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                           </svg>
                         )}

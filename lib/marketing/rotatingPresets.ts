@@ -34,3 +34,9 @@ export function getMarqueePresets(): CelebrityTrendPreset[] {
   const subset = getRotatingPresets();
   return [...subset, ...subset];
 }
+
+export function getDailySubset<T>(items: T[], count: number): T[] {
+  const seed = getDateSeed();
+  const shuffled = seededShuffle(items, seed);
+  return shuffled.slice(0, count);
+}

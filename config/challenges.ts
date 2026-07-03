@@ -69,11 +69,11 @@ export const CHALLENGES: Challenge[] = [
   },
   {
     id: "glowup-start",
-    title: "30-Day Glow-Up Start",
+    title: "30-Day Reset Start",
     slug: "glowup-start",
     description: "Kick off your 30-day plan. Take your baseline photo and unlock your glow-up roadmap.",
     type: "glowup_before_after",
-    entryRequirement: "30-Day Glow-Up Plan unlocked for your audit.",
+    entryRequirement: "30-Day Reset unlocked for your audit.",
     rewardText: "A complete roadmap for your 30-day transformation.",
     isActive: true,
     createdAt: "2025-01-01T00:00:00Z",

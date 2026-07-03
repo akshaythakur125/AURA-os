@@ -11,8 +11,8 @@ import { shouldUseSupabase } from "@/lib/storage/storageMode";
 
 import { generateFreeAuraReport, generateFreeReportWithPersonalization } from "@/lib/aura-engine/generateFreeAuraReport";
 import { RecommendationSection } from "@/components/products/RecommendationSection";
-import { generateShareCardPng } from "@/lib/export/generateShareCard";
 import { trackEvent } from "@/lib/storage/analyticsStore";
+import { hasReferralEarnedFreeFix } from "@/lib/storage/referralStore";
 import { isMissionComplete, markMissionComplete, isChecklistComplete, markChecklistComplete } from "@/lib/storage/habitStore";
 import type { FreeAuraResult, FullAuraReport, ProductType } from "@/types";
 import type { PersonalizationResult } from "@/types/personalization";
@@ -27,24 +27,42 @@ import { PROOF_EXAMPLES } from "@/config/proofExamples";
 const STATUS_BADGE: Record<string, { label: string; variant: "default" | "warning" | "success" | "premium" }> = {
   draft: { label: "Draft", variant: "default" },
   free_generated: { label: "Free Score Generated", variant: "success" },
-  full_report: { label: "Full Report", variant: "premium" },
+  full_report: { label: "Full Read", variant: "premium" },
 };
 
 const PRODUCT_CTA: { type: ProductType; name: string; price: number; gradient: string; features: string[]; badge?: string }[] = [
-  { type: "quick_fix", name: "Quick Aura Fix", price: 49, gradient: "from-emerald-500 to-teal-500", features: ["Biggest status leak", "Fastest free fix path", "Under ₹500 fix", "Under ₹2,000 fix", "Avoid wasting money"], badge: "Best first unlock" },
-  { type: "aura_report", name: "Full Aura Report", price: 99, gradient: "from-purple-600 to-pink-500", features: ["Full visual breakdown", "Detailed status leak analysis", "Budget upgrade roadmap", "Shareable Aura card", "Product recommendations"], badge: "Most popular" },
+  { type: "quick_fix", name: "Fast Fix", price: 49, gradient: "from-emerald-500 to-teal-500", features: ["Biggest status leak", "Fastest free fix path", "Under ₹500 fix", "Under ₹2,000 fix", "Avoid wasting money"], badge: "Best first unlock" },
+  { type: "aura_report", name: "Full Read", price: 99, gradient: "from-purple-600 to-pink-500", features: ["Full visual breakdown", "Detailed status leak analysis", "Budget upgrade roadmap", "Shareable Aura card", "Product recommendations"], badge: "Most popular" },
   { type: "dating_audit", name: "Dating/Profile Audit", price: 299, gradient: "from-rose-500 to-red-500", features: ["Profile Presentation Score", "Bio/prompt/caption feedback", "Red-flag cleanup", "Suggested bio versions", "Photo order strategy"] },
-  { type: "glowup_plan", name: "30-Day Glow-Up Plan", price: 499, gradient: "from-amber-500 to-orange-500", features: ["30 daily missions", "4-week structured plan", "Budget roadmap (₹0–₹25K+)", "Photo/grooming/outfit system", "Progress tracker"], badge: "Best value" },
+  { type: "glowup_plan", name: "30-Day Reset", price: 499, gradient: "from-amber-500 to-orange-500", features: ["30 daily missions", "4-week structured plan", "Budget roadmap (₹0–₹25K+)", "Photo/grooming/outfit system", "Progress tracker"], badge: "Best value" },
 ];
 
-function ScoreGauge({ score, size = "lg", animate = true }: { score: number; size?: "sm" | "lg"; animate?: boolean }) {
-  const [displayScore, setDisplayScore] = useState(score);
-  const [barWidth, setBarWidth] = useState(score);
-  const initialRender = useRef(true);
+function ScoreGauge({ score, size = "lg", animate = true, onRevealComplete }: {
+  score: number;
+  size?: "sm" | "lg";
+  animate?: boolean;
+  onRevealComplete?: () => void;
+}) {
+  const [displayScore, setDisplayScore] = useState(0);
+  const [barWidth, setBarWidth] = useState(0);
+  const completed = useRef(false);
+  const onCompleteRef = useRef(onRevealComplete);
+  onCompleteRef.current = onRevealComplete;
 
   useEffect(() => {
-    if (initialRender.current) { initialRender.current = false; return; }
-    if (!animate) return;
+    completed.current = false;
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!animate || prefersReduced) {
+      setDisplayScore(score);
+      setBarWidth(score);
+      if (!completed.current) {
+        completed.current = true;
+        onCompleteRef.current?.();
+      }
+      return;
+    }
+    setDisplayScore(0);
+    setBarWidth(0);
     const duration = 1200;
     let rafId: number;
     const start = Date.now();
@@ -54,7 +72,12 @@ function ScoreGauge({ score, size = "lg", animate = true }: { score: number; siz
       const eased = 1 - Math.pow(1 - progress, 3);
       setDisplayScore(Math.round(score * eased));
       setBarWidth(score * eased);
-      if (progress < 1) rafId = requestAnimationFrame(tick);
+      if (progress < 1) {
+        rafId = requestAnimationFrame(tick);
+      } else if (!completed.current) {
+        completed.current = true;
+        onCompleteRef.current?.();
+      }
     };
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
@@ -249,7 +272,7 @@ function GlowUpSection({ plan, auditId }: { plan: GlowUpPlan; auditId: string })
         <div className="mb-4 flex items-center justify-between">
           <div>
             <Badge variant="premium">Unlocked</Badge>
-            <h2 className="mt-2 text-lg font-bold text-white">30-Day Glow-Up Plan</h2>
+            <h2 className="mt-2 text-lg font-bold text-white">30-Day Reset</h2>
           </div>
           <div className="text-right">
             <div className="text-xs text-gray-500">Plan Score</div>
@@ -643,9 +666,21 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
   const datingReport: ProfileAuditResult | undefined = audit.datingProfileReport;
   const glowupPlan: GlowUpPlan | undefined = audit.glowupPlan;
   const quickFixReport = audit.quickFixReport;
-  const unlockedProducts: ProductType[] = (audit.unlockedProducts || []).filter((p): p is ProductType =>
-    p === "quick_fix" || p === "aura_report" || p === "dating_audit" || p === "glowup_plan"
-  );
+  const referralFreeFix = typeof window !== "undefined" ? hasReferralEarnedFreeFix() : false;
+
+  const unlockedProducts: ProductType[] = [
+    ...(audit.unlockedProducts || []).filter((p): p is ProductType =>
+      p === "quick_fix" || p === "aura_report" || p === "dating_audit" || p === "glowup_plan"
+    ),
+    ...(referralFreeFix ? (["quick_fix"] as ProductType[]) : []),
+  ];
+
+  const [leaksVisible, setLeaksVisible] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const hasAllLeaks = unlockedProducts.includes("quick_fix") || unlockedProducts.includes("aura_report");
+    if (hasAllLeaks) return true;
+    return localStorage.getItem(`auracheck:v1:revealed:${audit.id}`) === "true";
+  });
 
   async function handleGenerate() {
     if (!audit) return;
@@ -757,13 +792,24 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               </div>
               <div className="flex flex-wrap gap-2 border-t border-white/5 pt-4">
                 <Button size="sm" variant="outline" onClick={() => {
-                  generateShareCardPng(
-                    fullReport.fullScore, fullReport.category,
-                    fullReport.strongestSignals[0] || "Presentation",
-                    fullReport.biggestStatusLeaks[0]?.title || "Background",
-                  );
-                  trackEvent("share_card_downloaded");
-                }}>📤 Share Aura Card</Button>
+                  const url = `/api/share-card?score=${fullReport.fullScore}&category=${encodeURIComponent(fullReport.category)}&signal=${encodeURIComponent(fullReport.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(fullReport.biggestStatusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
+                  window.open(url, "_blank");
+                  trackEvent("share_card_viewed");
+                }}>📤 View Story Card</Button>
+                <Button size="sm" variant="ghost" onClick={async () => {
+                  const shareUrl = `${location.origin}/api/share-card?score=${fullReport.fullScore}&category=${encodeURIComponent(fullReport.category)}&signal=${encodeURIComponent(fullReport.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(fullReport.biggestStatusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
+                  try {
+                    await navigator.clipboard.writeText(shareUrl);
+                    trackEvent("share_card_link_copied");
+                  } catch { /* clipboard unavailable */ }
+                }}>🔗 Copy link</Button>
+                <Button size="sm" variant="ghost" onClick={async () => {
+                  const shareUrl = `${location.origin}/api/share-card?score=${fullReport.fullScore}&category=${encodeURIComponent(fullReport.category)}&signal=${encodeURIComponent(fullReport.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(fullReport.biggestStatusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
+                  try {
+                    await navigator.share({ title: "My Aura Report", text: `My Full Aura Score: ${fullReport.fullScore}/100`, url: shareUrl });
+                    trackEvent("share_card_native_shared");
+                  } catch { /* native share unavailable or cancelled */ }
+                }}>📱 Share</Button>
                 <Button asChild size="sm" variant="ghost"><Link href="/progress">📊 Compare Progress</Link></Button>
                 <Button asChild size="sm" variant="ghost"><Link href="/twin-simulator">🔮 Aura Twin</Link></Button>
               </div>
@@ -924,11 +970,11 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               <Card className="mb-8 border-amber-500/20">
                 <h3 className="mb-2 text-lg font-bold text-white">Want a 30-day action system?</h3>
                 <p className="mb-4 text-sm text-gray-400">
-                  The Full Report shows what to fix. The Glow-Up Plan shows how to fix it — day by day, step by step.
+                  The Full Read shows what to fix. The 30-Day Reset shows how to fix it — day by day, step by step.
                 </p>
                 <Button asChild variant="outline" size="sm" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10">
                   <Link href={`/unlock?auditId=${audit.id}&product=glowup_plan`}>
-                    Unlock 30-Day Glow-Up Plan — ₹499
+                    Unlock 30-Day Reset — ₹499
                   </Link>
                 </Button>
               </Card>
@@ -941,7 +987,10 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               <div className="mb-6 grid gap-6 sm:grid-cols-2">
                 <div>
                   <div className="mb-1 text-xs text-gray-500">Aura Score</div>
-                  <ScoreGauge score={freeResult.auraScore} />
+                  <ScoreGauge score={freeResult.auraScore} onRevealComplete={() => {
+                    localStorage.setItem(`auracheck:v1:revealed:${audit.id}`, "true");
+                    setLeaksVisible(true);
+                  }} />
                   <div className="mt-3"><Badge variant="premium">{freeResult.category}</Badge></div>
                 </div>
                 <div className="space-y-4">
@@ -951,13 +1000,24 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               </div>
               <div className="flex flex-wrap gap-2 border-t border-white/5 pt-4">
                 <Button size="sm" variant="outline" onClick={() => {
-                  generateShareCardPng(
-                    freeResult.auraScore, freeResult.category,
-                    freeResult.strongestSignals[0] || "Presentation",
-                    freeResult.statusLeaks[0]?.title || "Background",
-                  );
-                  trackEvent("share_card_downloaded");
-                }}>📤 Share Aura Card</Button>
+                  const url = `/api/share-card?score=${freeResult.auraScore}&category=${encodeURIComponent(freeResult.category)}&signal=${encodeURIComponent(freeResult.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(freeResult.statusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
+                  window.open(url, "_blank");
+                  trackEvent("share_card_viewed");
+                }}>📤 View Story Card</Button>
+                <Button size="sm" variant="ghost" onClick={async () => {
+                  const shareUrl = `${location.origin}/api/share-card?score=${freeResult.auraScore}&category=${encodeURIComponent(freeResult.category)}&signal=${encodeURIComponent(freeResult.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(freeResult.statusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
+                  try {
+                    await navigator.clipboard.writeText(shareUrl);
+                    trackEvent("share_card_link_copied");
+                  } catch { /* clipboard unavailable */ }
+                }}>🔗 Copy link</Button>
+                <Button size="sm" variant="ghost" onClick={async () => {
+                  const shareUrl = `${location.origin}/api/share-card?score=${freeResult.auraScore}&category=${encodeURIComponent(freeResult.category)}&signal=${encodeURIComponent(freeResult.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(freeResult.statusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
+                  try {
+                    await navigator.share({ title: "My Aura Score", text: `My Aura Score: ${freeResult.auraScore}/100`, url: shareUrl });
+                    trackEvent("share_card_native_shared");
+                  } catch { /* native share unavailable or cancelled */ }
+                }}>📱 Share</Button>
                 <Button asChild size="sm" variant="ghost"><Link href="/progress">📊 Compare Progress</Link></Button>
                 <Button asChild size="sm" variant="ghost"><Link href="/twin-simulator">🔮 Aura Twin</Link></Button>
               </div>
@@ -990,25 +1050,45 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               </Card>
             )}
 
+            {referralFreeFix && (
+              <div className="mb-6 rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-center text-sm text-emerald-300">
+                3 friends joined — Fast Fix unlocked on us.
+              </div>
+            )}
+
             <h2 className="mb-4 text-lg font-semibold text-white">Status Leaks</h2>
-            <div className="mb-8 space-y-3">
+            <div className={`mb-8 space-y-3 transition-all duration-700 ease-out ${leaksVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+              style={{ transitionDelay: "100ms" }}>
               {freeResult.statusLeaks.map((leak, idx) => {
-                if (idx > 1 && !unlockedProducts.includes("aura_report")) {
+                const hasPaidLeakAccess = unlockedProducts.includes("quick_fix") || unlockedProducts.includes("aura_report");
+                if (idx > 0 && !hasPaidLeakAccess) {
                   return (
-                    <div key={leak.title} className="relative">
-                      <div className="pointer-events-none mt-3 opacity-15 blur-sm">
-                        <Card className={`border ${severityColors[leak.severity] || severityColors.low}`}>
-                          <div className="mb-1 flex items-center justify-between">
-                            <h3 className="text-sm font-semibold text-white">{leak.title}</h3>
-                          </div>
-                          <p className="mb-2 text-xs text-gray-400">{leak.explanation.slice(0, 60)}...</p>
-                        </Card>
+                    <div key={leak.title} className="relative overflow-hidden rounded-2xl border border-white/10"
+                      style={{ transitionDelay: `${300 + idx * 100}ms` }}>
+                      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-[#0a0a0f]/80 backdrop-blur-sm">
+                        <svg className="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m9.364-7.364A9 9 0 1112 3a9 9 0 017.364 4.636z" /></svg>
+                        <span className="text-xs text-gray-400">Unlock to reveal fix</span>
+                      </div>
+                      <div className="p-4 pb-3" style={{ filter: "blur(6px)" }}>
+                        <div className="mb-1 flex items-center justify-between">
+                          <h3 className="text-sm font-semibold text-white">{leak.title}</h3>
+                          <Badge variant={leak.severity === "high" ? "danger" : leak.severity === "medium" ? "warning" : "default"}>{leak.severity}</Badge>
+                        </div>
+                        <p className="mb-2 text-xs text-gray-400">{leak.explanation}</p>
+                        <p className="text-xs text-purple-300">{leak.fix}</p>
+                      </div>
+                      <div className="border-t border-white/5 px-4 py-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="text-gray-500">Impact</span>
+                          <span className="font-semibold text-emerald-400">+{leak.impactScore} pts if fixed</span>
+                        </div>
                       </div>
                     </div>
                   );
                 }
                 return (
-                  <Card key={leak.title} className={`border ${severityColors[leak.severity] || severityColors.low}`}>
+                  <Card key={leak.title} className={`border ${severityColors[leak.severity] || severityColors.low} transition-all duration-500`}
+                    style={{ transitionDelay: `${300 + idx * 100}ms` }}>
                     <div className="mb-1 flex items-center justify-between">
                       <h3 className="text-sm font-semibold text-white">{leak.title}</h3>
                       <Badge variant={leak.severity === "high" ? "danger" : leak.severity === "medium" ? "warning" : "default"}>{leak.severity}</Badge>
@@ -1025,12 +1105,20 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                   </Card>
                 );
               })}
-              {freeResult.statusLeaks.length > 2 && !unlockedProducts.includes("aura_report") && (
-                <div className="flex justify-center py-2">
-                  <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-4 py-2 text-xs text-purple-300 hover:bg-purple-500/20 transition-colors">
-                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" /></svg>
-                    Unlock Full Report — See {freeResult.statusLeaks.length - 2} more leaks → ₹99
-                  </Link>
+              {!unlockedProducts.includes("quick_fix") && !unlockedProducts.includes("aura_report") && (
+                <div className="flex flex-col items-center gap-3 rounded-2xl border border-purple-500/20 bg-purple-500/5 p-5 text-center transition-all duration-500"
+                  style={{ transitionDelay: `${400 + freeResult.statusLeaks.length * 100}ms` }}>
+                  <p className="text-sm text-gray-400">
+                    <span className="text-white font-semibold">{freeResult.statusLeaks.length - 1} more vibe leak{freeResult.statusLeaks.length - 1 !== 1 ? "s" : ""}</span> detected — each with a fix and score impact.
+                  </p>
+                  <div className="flex flex-col gap-2 w-full sm:flex-row sm:justify-center">
+                    <Button asChild size="sm">
+                      <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`}>Unlock all fixes · ₹49</Link>
+                    </Button>
+                    <Button asChild size="sm" variant="outline">
+                      <Link href={`/unlock?auditId=${audit.id}&product=aura_report`}>Full report ₹99</Link>
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -1232,7 +1320,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                 {!unlockedProducts.includes("glowup_plan") && (
                   <Link href={`/unlock?auditId=${audit.id}&product=glowup_plan`} onClick={() => trackEvent("quick_fix_upsell_glowup_clicked", { auditId: audit.id })}>
                     <Button variant="outline" size="sm" className="border-amber-500/50 text-amber-400 hover:bg-amber-500/10">
-                      Start 30-Day Glow-Up Plan — ₹499
+                      Start 30-Day Reset — ₹499
                     </Button>
                   </Link>
                 )}

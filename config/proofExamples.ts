@@ -136,7 +136,7 @@ export const PROOF_EXAMPLES: ProofExample[] = [
     beforeVisualDescription: "One week good, next week back to old habits. No system. Improvement does not compound because there is no structure.",
     afterVisualDescription: "Steady visible improvement across weeks. Outfits improve. Photos get better. Grooming becomes consistent. The system works.",
     keyLesson: "Sporadic effort does not compound. A structured 30-day system creates habits that last far beyond the first week.",
-    ctaText: "Start 30-Day Glow-Up Plan — ₹499",
+    ctaText: "Start 30-Day Reset — ₹499",
     ctaHref: "/products/glowup-plan",
     isDemo: true,
     createdAt: "2026-06-01T00:00:00Z",

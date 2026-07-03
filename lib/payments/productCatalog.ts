@@ -33,7 +33,7 @@ const PRODUCTS: Record<ProductType, ProductConfig> = {
   },
   glowup_plan: {
     type: "glowup_plan",
-    name: "30-Day Glow-Up Plan",
+    name: "30-Day Reset",
     amount: 499,
     description:
       "30-day presentation upgrade system",

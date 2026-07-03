@@ -34,7 +34,7 @@ export default function GlowUpPlanPage() {
         {/* ─── Hero ─── */}
         <div className="mb-12 text-center">
           <Badge variant="warning" className="mb-4">Best value</Badge>
-          <h1 className="mb-4 text-4xl font-bold text-white">30-Day Glow-Up Plan</h1>
+          <h1 className="mb-4 text-4xl font-bold text-white">30-Day Reset</h1>
           <p className="mx-auto mb-6 max-w-2xl text-lg text-gray-400">
             A structured month-long roadmap with daily missions to level up your visual presence.
           </p>

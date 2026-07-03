@@ -5,7 +5,7 @@ export function ReportComparison() {
   return (
     <div className="grid gap-6 md:grid-cols-3">
       <SampleReportCard
-        title="Full Aura Report"
+        title="Full Read"
         score={SAMPLE_FULL_REPORT.score}
         badgeText={SAMPLE_FULL_REPORT.archetype}
         gradient="from-purple-600 to-pink-500"
@@ -34,7 +34,7 @@ export function ReportComparison() {
       </SampleReportCard>
 
       <SampleReportCard
-        title="30-Day Glow-Up Plan"
+        title="30-Day Reset"
         score={SAMPLE_GLOWUP_PLAN.planScore}
         badgeText="Plan Score"
         badgeVariant="warning"

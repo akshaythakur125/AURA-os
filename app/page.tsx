@@ -7,7 +7,10 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { STYLE_SEARCH_SUGGESTIONS } from "@/config/styleSearchSuggestions";
 import { ReferralBanner } from "@/components/marketing/ReferralBanner";
-import { getMarqueePresets } from "@/lib/marketing/rotatingPresets";
+import { getAudits } from "@/lib/storage/auditStore";
+import { getTwinStats } from "@/lib/storage/auraTwinStore";
+import { getMarqueePresets, getDailySubset } from "@/lib/marketing/rotatingPresets";
+import { getHomepageProofEntries } from "@/data/homepageProof";
 
 const marqueeStyles = getMarqueePresets();
 
@@ -20,7 +23,7 @@ const steps = [
   {
     number: "02",
     title: "Get the read",
-    body: "Your Aura Score out of 100, plus the exact “vibe leaks” quietly dragging it down.",
+    body: "Your Aura Score out of 100, plus the exact vibe leaks quietly dragging it down.",
   },
   {
     number: "03",
@@ -58,31 +61,35 @@ const exploreCards = [
 
 const offerCards = [
   {
-    name: "Free Check",
+    name: "Vibe Check",
     price: "Free",
     body: "Your Aura Score + the #1 thing holding your photo back. No sign-up.",
+    sub: "no card, no sign-up",
     cta: "Start free",
     href: "/audit/new",
   },
   {
-    name: "Quick Fix",
+    name: "Fast Fix",
     price: "Rs 49",
     body: "The single fastest change that moves your score the most. One clear move.",
+    sub: "less than a coffee · UPI in one tap",
     cta: "Unlock",
     href: "/unlock?product=quick_fix",
   },
   {
-    name: "Full Report",
+    name: "Full Read",
     price: "Rs 99",
     body: "Full breakdown — fit, color, grooming, posture — with a step-by-step fix path.",
+    sub: "one lunch · UPI in one tap",
     cta: "Get the report",
     href: "/products/aura-report",
     featured: true,
   },
   {
-    name: "Glow-Up Plan",
+    name: "30-Day Reset",
     price: "Rs 499",
     body: "30 days of weekly missions and tracked progress. The full reset.",
+    sub: "cheaper than a haircut · UPI supported",
     cta: "Start the plan",
     href: "/products/glowup-plan",
   },
@@ -107,11 +114,12 @@ const demoLeaks = [
 ];
 
 export default function HomePage() {
+  const stats = { audits: typeof window !== "undefined" ? getAudits().length : 0, twins: typeof window !== "undefined" ? getTwinStats().totalSimulations : 0 };
+
   return (
     <>
       <ReferralBanner />
 
-      {/* HERO — the first thing a visitor sees must explain the product. */}
       <section className="relative overflow-hidden pb-16 pt-12 sm:pb-20 sm:pt-16">
         <div className="hero-grid absolute inset-x-0 top-0 h-[40rem]" />
         <Container className="relative">
@@ -124,9 +132,7 @@ export default function HomePage() {
                 Your vibe has a score. Find yours.
               </h1>
               <p className="mt-5 max-w-xl text-base leading-7 text-white/68 sm:text-lg">
-                Drop any photo — a selfie, a date-night fit, your LinkedIn headshot.
-                AuraCheck reads the first impression it gives, flags exactly
-                what&apos;s off, and shows you the fix — plus where to shop it.
+                Drop a photo. See your aura in 8 seconds. Fix what&apos;s off. Ship a version of you people can&apos;t scroll past.
               </p>
 
               <div className="mt-8 flex flex-col gap-4 sm:flex-row">
@@ -140,14 +146,13 @@ export default function HomePage() {
 
               <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/50">
                 <span>Free tier, forever</span>
-                <span aria-hidden className="text-white/25">•</span>
+                <span aria-hidden className="text-white/25">·</span>
                 <span>No sign-up needed</span>
-                <span aria-hidden className="text-white/25">•</span>
+                <span aria-hidden className="text-white/25">·</span>
                 <span>Your photo never leaves your browser</span>
               </div>
             </div>
 
-            {/* Mock report card — shows a visitor exactly what they get before they try it. */}
             <div className="prism-panel glow-frame spotlight relative overflow-hidden rounded-[30px] p-6">
               <div className="flex items-center justify-between gap-3">
                 <div className="text-xs uppercase tracking-[0.22em] text-white/45">
@@ -161,24 +166,8 @@ export default function HomePage() {
               <div className="mt-5 flex items-center gap-5">
                 <div className="relative h-28 w-28 shrink-0">
                   <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
-                    <circle
-                      cx="60"
-                      cy="60"
-                      r="52"
-                      fill="none"
-                      stroke="rgba(255,255,255,0.08)"
-                      strokeWidth="10"
-                    />
-                    <circle
-                      cx="60"
-                      cy="60"
-                      r="52"
-                      fill="none"
-                      stroke="url(#auraScoreGradient)"
-                      strokeWidth="10"
-                      strokeLinecap="round"
-                      strokeDasharray="255 327"
-                    />
+                    <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="10" />
+                    <circle cx="60" cy="60" r="52" fill="none" stroke="url(#auraScoreGradient)" strokeWidth="10" strokeLinecap="round" strokeDasharray="255 327" />
                     <defs>
                       <linearGradient id="auraScoreGradient" x1="0" y1="0" x2="1" y2="1">
                         <stop offset="0%" stopColor="#38bdf8" />
@@ -188,9 +177,7 @@ export default function HomePage() {
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <div className="display-font text-4xl font-bold text-white">78</div>
-                    <div className="text-[9px] uppercase tracking-[0.2em] text-white/50">
-                      aura score
-                    </div>
+                    <div className="text-[9px] uppercase tracking-[0.2em] text-white/50">aura score</div>
                   </div>
                 </div>
                 <div>
@@ -198,32 +185,19 @@ export default function HomePage() {
                     Strong base. Two leaks are holding you back.
                   </div>
                   <p className="mt-1 text-xs leading-5 text-white/55">
-                    This is what your free check looks like — a score, the leaks,
-                    and what each fix is worth.
+                    This is what your free check looks like — a score, the leaks, and what each fix is worth.
                   </p>
                 </div>
               </div>
 
               <div className="mt-5 grid gap-2.5">
                 {demoLeaks.map((leak) => (
-                  <div
-                    key={leak.label}
-                    className="glass-card flex items-center justify-between gap-3 rounded-[18px] px-4 py-3"
-                  >
+                  <div key={leak.label} className="glass-card flex items-center justify-between gap-3 rounded-[18px] px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <span
-                        aria-hidden
-                        className={`h-2 w-2 shrink-0 rounded-full ${
-                          leak.kind === "leak" ? "bg-amber-400" : "bg-emerald-400"
-                        }`}
-                      />
+                      <span aria-hidden className={`h-2 w-2 shrink-0 rounded-full ${leak.kind === "leak" ? "bg-amber-400" : "bg-emerald-400"}`} />
                       <span className="text-xs text-white/80">{leak.label}</span>
                     </div>
-                    <span
-                      className={`shrink-0 text-[11px] font-semibold ${
-                        leak.kind === "leak" ? "text-sky-300" : "text-emerald-300"
-                      }`}
-                    >
+                    <span className={`shrink-0 text-[11px] font-semibold ${leak.kind === "leak" ? "text-sky-300" : "text-emerald-300"}`}>
                       {leak.delta}
                     </span>
                   </div>
@@ -243,7 +217,6 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* HOW IT WORKS — numbered, concrete, 20 seconds. */}
       <section className="pb-16">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
@@ -292,7 +265,6 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* TREND RADAR — now below the hero, with context so it makes sense. */}
       <section className="pb-16">
         <Container>
           <div className="prism-panel glow-frame shine-sweep overflow-hidden rounded-[30px] p-4 sm:p-5">
@@ -305,13 +277,20 @@ export default function HomePage() {
                   Steal a look that&apos;s working.
                 </h2>
                 <p className="mt-2 max-w-xl text-sm text-white/55">
-                  Every card is shoppable — tap one to see the pieces behind the
-                  look and compare prices across Indian stores.
+                  Every card is shoppable — tap one to see the pieces behind the look and compare prices across Indian stores.
                 </p>
               </div>
-              <Button asChild size="sm" variant="outline">
-                <Link href="/wardrobe/search">Shop all trends</Link>
-              </Button>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/battle"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/5 px-3 py-1.5 text-[11px] text-purple-300 transition-colors hover:bg-purple-500/15"
+                >
+                  ⚔️ Aura Battle <span className="rounded-full bg-purple-500/20 px-1.5 py-0.5 text-[9px] text-purple-300">new</span>
+                </Link>
+                <Button asChild size="sm" variant="outline">
+                  <Link href="/wardrobe/search">Shop all trends</Link>
+                </Button>
+              </div>
             </div>
 
             <div className="overflow-hidden">
@@ -323,11 +302,7 @@ export default function HomePage() {
                     className="glass-card float-card block w-[250px] min-w-[250px] overflow-hidden rounded-[28px] p-3 hover:-translate-y-1"
                   >
                     <div className="overflow-hidden rounded-[22px]">
-                      <img
-                        src={preset.imageSrc}
-                        alt={preset.celebrity}
-                        className="h-[300px] w-full object-cover"
-                      />
+                      <img src={preset.imageSrc} alt={preset.celebrity} className="h-[300px] w-full object-cover" />
                     </div>
                     <div className="px-1 pb-1 pt-3">
                       <h3 className="text-sm font-semibold text-white">{preset.celebrity}</h3>
@@ -341,7 +316,6 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* EXPLORE — give a curious visitor somewhere to go and a reason to stay. */}
       <section className="pb-16">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
@@ -367,13 +341,48 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* PRICING — plain words about what each tier actually contains. */}
+      {/* ─── Real Results Gallery ─── */}
+      <section className="pb-16">
+        <Container>
+          <div className="mx-auto max-w-3xl text-center">
+            <Badge variant="default" className="mb-4">Real vibe checks this week</Badge>
+            <h2 className="display-font text-4xl font-bold text-white sm:text-5xl">
+              Small changes, sharp jumps.
+            </h2>
+          </div>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {getDailySubset(getHomepageProofEntries(), 6).map((entry) => (
+              <div key={entry.initials} className="prism-panel float-card group rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]">
+                <div className="flex items-center gap-3">
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${entry.gradient} text-xs font-bold text-white`}>
+                    {entry.initials}
+                  </div>
+                  <div>
+                    <div className="text-xs text-white/45">{entry.city}</div>
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center gap-2">
+                  <span className="text-lg font-bold text-white/50">{entry.beforeScore}</span>
+                  <svg className="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                  <span className="text-lg font-bold text-white">{entry.afterScore}</span>
+                </div>
+                <div className="mt-2 flex items-center gap-2 text-xs">
+                  <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-400">{entry.leakLabel}</span>
+                  <span className="text-emerald-400 font-medium">+{entry.pointsGained} pts</span>
+                </div>
+                <div className="mt-3 text-[10px] text-white/35">{entry.timeframe}</div>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
       <section className="pb-16">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="default">simple pricing</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              Start free. Pay only for more depth.
+              Free scores. Small money for the fix.
             </h2>
           </div>
 
@@ -394,6 +403,7 @@ export default function HomePage() {
                 </div>
                 <h3 className="display-font mt-3 text-3xl font-bold text-white">{offer.name}</h3>
                 <p className="mt-3 text-sm leading-6 text-white/62">{offer.body}</p>
+                <p className="mt-1.5 text-[10px] italic text-gray-500">{offer.sub}</p>
                 <div className="mt-6">
                   <Button asChild className="w-full" variant={offer.featured ? "primary" : "secondary"}>
                     <Link href={offer.href}>{offer.cta}</Link>
@@ -405,7 +415,6 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* FINAL CTA */}
       <section className="pb-12">
         <Container>
           <div className="glass-panel glow-frame shine-sweep relative overflow-hidden rounded-[36px] px-6 py-10 text-center sm:px-10 sm:py-14">
@@ -414,15 +423,14 @@ export default function HomePage() {
               Your next photo could hit different.
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-white/60 sm:text-base">
-              Find the leak, fix the vibe, shop smarter. It takes one photo and
-              zero sign-ups to see your score.
+              Find the leak, fix the vibe, shop smarter. It takes one photo and zero sign-ups to see your score.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
               <Button asChild size="lg">
                 <Link href="/audit/new">Get my Aura Score — free</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link href="/shop">Browse trending looks</Link>
+                <Link href="/shop">Shop this vibe</Link>
               </Button>
             </div>
           </div>

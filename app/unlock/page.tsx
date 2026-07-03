@@ -28,10 +28,10 @@ import { RazorpayCheckoutButton } from "@/components/payments/RazorpayCheckoutBu
 import { getPublicRazorpayKeyId } from "@/lib/razorpay/env";
 
 const PRODUCT_INFO: Record<ProductType, { name: string; price: number; desc: string }> = {
-  quick_fix: { name: "Quick Aura Fix", price: 49, desc: "Your biggest status leak and the fastest fix path." },
-  aura_report: { name: "Full Aura Report", price: 99, desc: "Deep visual analysis with upgrade roadmap." },
+  quick_fix: { name: "Fast Fix", price: 49, desc: "Your biggest status leak and the fastest fix path." },
+  aura_report: { name: "Full Read", price: 99, desc: "Deep visual analysis with upgrade roadmap." },
   dating_audit: { name: "Dating/Profile Audit", price: 299, desc: "Profile presentation score, bio feedback, and photo order strategy." },
-  glowup_plan: { name: "30-Day Glow-Up Plan", price: 499, desc: "Structured 30-day roadmap with daily missions and budget roadmap." },
+  glowup_plan: { name: "30-Day Reset", price: 499, desc: "Structured 30-day roadmap with daily missions and budget roadmap." },
 };
 
 type Stage = "payment" | "submit" | "unlock";
@@ -429,6 +429,14 @@ function UnlockContent() {
                 />
               </Card>
             )}
+            <div className="mb-4 flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3">
+              <svg className="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="3" strokeWidth="1.5"/><text x="12" y="16" fontSize="10" textAnchor="middle" fill="currentColor">R</text></svg>
+              <span className="text-[10px] text-gray-500">Razorpay</span>
+              <svg className="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor" opacity="0.1"/><text x="12" y="16" fontSize="10" textAnchor="middle" fill="currentColor">UPI</text></svg>
+              <span className="text-[10px] text-gray-500">UPI</span>
+              <svg className="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor" opacity="0.1"/><text x="12" y="14" fontSize="7" textAnchor="middle" fill="currentColor">VISA</text></svg>
+              <span className="text-[10px] text-gray-500">Cards</span>
+            </div>
             <Card className="mb-6">
               <h3 className="mb-4 text-sm font-semibold text-white">{razorpayAvailable ? "Manual UPI Fallback" : "1. Pay via UPI"}</h3>
               <div className="mb-4 rounded-xl bg-white/5 p-4 text-center">

@@ -81,3 +81,17 @@ export function clearReferralData(): void {
   setItem(PROFILE_KEY, null);
   setItem(CLAIMS_KEY, []);
 }
+
+export function hasReferralEarnedFreeFix(): boolean {
+  const profile = getReferralProfile();
+  if (!profile) return false;
+  const claims = getReferralClaims();
+  const myClaims = claims.filter((c) => c.referralCode === profile.referralCode);
+  return myClaims.length >= 3;
+}
+
+export function getReferralClaimsCount(): number {
+  const profile = getReferralProfile();
+  if (!profile) return 0;
+  return getReferralClaims().filter((c) => c.referralCode === profile.referralCode).length;
+}

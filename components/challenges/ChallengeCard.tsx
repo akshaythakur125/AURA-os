@@ -5,7 +5,7 @@ import type { Challenge } from "@/types/challenge";
 
 const TYPE_BADGES: Record<string, { label: string; variant: "premium" | "success" | "warning" | "danger" | "default" }> = {
   status_leak: { label: "Status Leak", variant: "danger" },
-  glowup_before_after: { label: "Glow-Up", variant: "warning" },
+  glowup_before_after: { label: "30-Day Reset", variant: "warning" },
   budget_upgrade: { label: "Budget", variant: "success" },
   clean_profile: { label: "Clean", variant: "premium" },
   best_background: { label: "Background", variant: "default" },

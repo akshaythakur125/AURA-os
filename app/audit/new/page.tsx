@@ -607,6 +607,13 @@ export default function NewAuditPage() {
             : "Local-only MVP: your image is processed and stored in this browser. It is not uploaded to a server."}
         </div>
 
+        {/* ─── Trust Chips ─── */}
+        <div className="mb-4 flex flex-wrap items-center justify-center gap-2">
+          <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/20 bg-sky-500/5 px-3 py-1 text-[10px] text-sky-300">🔒 Local only</span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/20 bg-sky-500/5 px-3 py-1 text-[10px] text-sky-300">📵 No sign-up</span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-sky-500/20 bg-sky-500/5 px-3 py-1 text-[10px] text-sky-300">🇮🇳 UPI checkout</span>
+        </div>
+
         {/* ─── Submit ─── */}
         <Button
           onClick={handleSubmit}

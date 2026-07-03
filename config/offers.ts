@@ -23,7 +23,7 @@ export const OFFERS: OfferCode[] = [
     code: "GLOW25",
     discountType: "fixed",
     discountValue: 125,
-    label: "₹125 off Glow-Up Plan",
+    label: "₹125 off 30-Day Reset",
     productTypes: ["glowup_plan"],
     minAmount: 499,
     isActive: true,

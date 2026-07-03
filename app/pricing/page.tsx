@@ -79,7 +79,7 @@ const plans = [
     disclaimer: "Profile guidance is for presentation clarity, not dating guarantees.",
   },
   {
-    name: "30-Day Glow-Up Plan",
+    name: "30-Day Reset",
     price: "499",
     tagline: "Best when you want a structured improvement system, not a one-off fix.",
     features: [
@@ -169,7 +169,7 @@ export default function PricingPage() {
             <div className="mt-1 text-purple-300/70">Explains the full reason and roadmap</div>
           </div>
           <div className="float-card rounded-lg border border-amber-500/10 bg-amber-500/[0.03] p-3">
-            <div className="font-semibold text-amber-400">4. Rs 499 Glow-Up Plan</div>
+            <div className="font-semibold text-amber-400">4. Rs 499 30-Day Reset</div>
             <div className="mt-1 text-amber-300/70">Gives the long-term system</div>
           </div>
         </div>

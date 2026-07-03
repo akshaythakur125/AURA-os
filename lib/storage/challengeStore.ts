@@ -2,6 +2,12 @@ import { getItem, setItem } from "@/lib/storage/localStore";
 import type { ChallengeEntry } from "@/types/challenge";
 
 const ENTRIES_KEY = "auracheck:v1:challenge_entries";
+const STREAK_KEY = "auracheck.challengeStreak";
+
+export interface ChallengeStreak {
+  currentStreak: number;
+  lastCheckinDate: string;
+}
 
 export function getChallengeEntries(): ChallengeEntry[] {
   return getItem<ChallengeEntry[]>(ENTRIES_KEY, []);
@@ -46,4 +52,32 @@ export function getChallengeStats(): Record<string, number> {
 
 export function clearChallengeEntries(): void {
   setItem(ENTRIES_KEY, []);
+}
+
+export function getChallengeStreak(): ChallengeStreak {
+  return getItem<ChallengeStreak>(STREAK_KEY, { currentStreak: 0, lastCheckinDate: "" });
+}
+
+export function markChallengeComplete(): { newStreak: number; incremented: boolean } {
+  const streak = getChallengeStreak();
+  const today = new Date().toISOString().split("T")[0];
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+
+  if (streak.lastCheckinDate === today) {
+    return { newStreak: streak.currentStreak, incremented: false };
+  }
+
+  let newStreak: number;
+  if (streak.lastCheckinDate === yesterday) {
+    newStreak = streak.currentStreak + 1;
+  } else {
+    newStreak = 1;
+  }
+
+  setItem(STREAK_KEY, { currentStreak: newStreak, lastCheckinDate: today });
+  return { newStreak, incremented: true };
+}
+
+export function resetChallengeStreak(): void {
+  setItem(STREAK_KEY, { currentStreak: 0, lastCheckinDate: "" });
 }

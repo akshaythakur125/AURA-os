@@ -839,7 +839,7 @@ export default function AdminPage() {
                   { key: "quickfix_unlock", label: "Test Quick Aura Fix unlock" },
                   { key: "aura_unlock", label: "Test Full Aura Report unlock" },
                   { key: "dating_unlock", label: "Test Dating Audit unlock" },
-                  { key: "glowup_unlock", label: "Test Glow-Up Plan unlock" },
+                  { key: "glowup_unlock", label: "Test 30-Day Reset unlock" },
                   { key: "offer_codes", label: "Test offer codes on unlock page" },
                   { key: "order_export", label: "Test order export (CSV/JSON)" },
                   { key: "data_export", label: "Test data export from /data page" },

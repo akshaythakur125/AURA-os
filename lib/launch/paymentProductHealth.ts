@@ -4,7 +4,7 @@ const PRODUCTS = [
   { type: "quick_fix", name: "Quick Aura Fix", price: 49 },
   { type: "aura_report", name: "Full Aura Report", price: 99 },
   { type: "dating_audit", name: "Dating/Profile Audit", price: 299 },
-  { type: "glowup_plan", name: "30-Day Glow-Up Plan", price: 499 },
+  { type: "glowup_plan", name: "30-Day Reset", price: 499 },
 ];
 
 export function checkPaymentProductHealth(): { checks: LaunchCheck[] } {
