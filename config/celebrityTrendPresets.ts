@@ -23,7 +23,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "ananya-sporty-luxe",
     label: "Sporty Luxe Reset",
-    celebrity: "Ananya Panday-inspired",
+    celebrity: "India Trending Now",
     imageSrc: "/celebs/ananya-sporty-luxe.jpg",
     avatarLabel: "AP",
     avatarGradient: "from-fuchsia-400 via-rose-300 to-orange-200",
@@ -42,7 +42,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "priyanka-soft-power",
     label: "Soft Power Tailoring",
-    celebrity: "Priyanka Chopra-style",
+    celebrity: "Boardroom-Ready Edit",
     imageSrc: "/celebs/priyanka-soft-power.jpg",
     avatarLabel: "PC",
     avatarGradient: "from-amber-300 via-orange-300 to-rose-300",
@@ -61,7 +61,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "kendall-hailey-track",
     label: "Off-Duty Track Energy",
-    celebrity: "Kendall + Hailey off-duty",
+    celebrity: "Off-Duty Icon Energy",
     imageSrc: "/celebs/kendall-hailey-track.jpg",
     avatarLabel: "KH",
     avatarGradient: "from-sky-300 via-cyan-300 to-blue-400",
@@ -80,7 +80,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "oscars-wide-leg-tailoring",
     label: "Relaxed Red Carpet Tailoring",
-    celebrity: "Michael B. Jordan / Oscars 2026",
+    celebrity: "Red Carpet Approved",
     imageSrc: "/celebs/oscars-wide-leg-tailoring.jpg",
     avatarLabel: "MB",
     avatarGradient: "from-slate-200 via-zinc-300 to-amber-200",
@@ -99,7 +99,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "timothee-clean-minimal",
     label: "Effortless Clean Basics",
-    celebrity: "Timothée Chalamet-style",
+    celebrity: "Off-Duty Minimalist",
     imageSrc: "/celebs/timothee-clean-minimal.jpg",
     avatarLabel: "TC",
     avatarGradient: "from-stone-200 via-neutral-300 to-gray-400",
@@ -118,7 +118,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "deepika-soft-luxury",
     label: "Soft Luxury Resort Wear",
-    celebrity: "Deepika Padukone-style",
+    celebrity: "Resort-Ready Edit",
     imageSrc: "/celebs/deepika-soft-luxury.jpg",
     avatarLabel: "DP",
     avatarGradient: "from-rose-200 via-pink-300 to-purple-400",
@@ -137,7 +137,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "ranveer-creator-bold",
     label: "Bold Creator Edge",
-    celebrity: "Ranveer Singh-inspired",
+    celebrity: "Bold & Unapologetic",
     imageSrc: "/celebs/ranveer-creator-bold.jpg",
     avatarLabel: "RS",
     avatarGradient: "from-yellow-300 via-orange-400 to-red-500",
@@ -156,7 +156,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "ibrahim-college-casual",
     label: "Campus Cool Refresh",
-    celebrity: "Ibrahim Ali Khan-style",
+    celebrity: "Campus Street Energy",
     imageSrc: "/celebs/ibrahim-college-casual.jpg",
     avatarLabel: "IA",
     avatarGradient: "from-blue-200 via-indigo-300 to-slate-400",
@@ -175,7 +175,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "shahid-corporate-sharp",
     label: "Boardroom Sharp Edit",
-    celebrity: "Shahid Kapoor-style",
+    celebrity: "Power Dressing Edit",
     imageSrc: "/celebs/shahid-corporate-sharp.jpg",
     avatarLabel: "SK",
     avatarGradient: "from-gray-300 via-zinc-400 to-blue-600",
@@ -194,7 +194,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "hrithik-dating-warm",
     label: "Date Night Warmth",
-    celebrity: "Hrithik Roshan-style",
+    celebrity: "Warm & Approachable",
     imageSrc: "/celebs/hrithik-dating-warm.jpg",
     avatarLabel: "HR",
     avatarGradient: "from-amber-200 via-orange-300 to-rose-400",
@@ -213,7 +213,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "siddharth-ethnic-clean",
     label: "Modern Ethnic Clean",
-    celebrity: "Sidharth Malhotra-style",
+    celebrity: "Festive Season Edit",
     imageSrc: "/celebs/siddharth-ethnic-clean.jpg",
     avatarLabel: "SM",
     avatarGradient: "from-emerald-200 via-teal-300 to-cyan-400",
@@ -232,7 +232,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "virat-gym-casual",
     label: "Gym-to-Street Athleisure",
-    celebrity: "Virat Kohli-inspired",
+    celebrity: "Athlete Off-Duty",
     imageSrc: "/celebs/virat-gym-casual.jpg",
     avatarLabel: "VK",
     avatarGradient: "from-gray-600 via-zinc-500 to-slate-400",
@@ -251,7 +251,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "kartik-mumbai-street",
     label: "Mumbai Street Luxe",
-    celebrity: "Kartik Aaryan-style",
+    celebrity: "Mumbai Street Energy",
     imageSrc: "/celebs/kartik-mumbai-street.jpg",
     avatarLabel: "KA",
     avatarGradient: "from-sky-200 via-blue-300 to-indigo-400",
@@ -270,7 +270,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "harry-quiet-luxury",
     label: "Quiet Luxury Travel",
-    celebrity: "Harry Styles-style",
+    celebrity: "Quiet Luxury Edit",
     imageSrc: "/celebs/harry-quiet-luxury.jpg",
     avatarLabel: "HS",
     avatarGradient: "from-peach-200 via-coral-300 to-rose-400",
@@ -289,7 +289,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "dev-effortless-date",
     label: "Effortless Date Night",
-    celebrity: "Dev Patel-style",
+    celebrity: "Effortless Charisma",
     imageSrc: "/celebs/dev-effortless-date.jpg",
     avatarLabel: "DP",
     avatarGradient: "from-olive-200 via-amber-300 to-brown-400",
@@ -308,7 +308,7 @@ export const CELEBRITY_TREND_PRESETS: CelebrityTrendPreset[] = [
   {
     id: "global-street-tech",
     label: "Tokyo Street Tech",
-    celebrity: "Global street style-inspired",
+    celebrity: "Global Street Style",
     imageSrc: "/celebs/global-street-tech.jpg",
     avatarLabel: "GS",
     avatarGradient: "from-lime-200 via-green-300 to-cyan-400",
