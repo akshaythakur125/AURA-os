@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
+import { STYLE_SEARCH_SUGGESTIONS } from "@/config/styleSearchSuggestions";
 import { ReferralBanner } from "@/components/marketing/ReferralBanner";
 import { getMarqueePresets } from "@/lib/marketing/rotatingPresets";
 
@@ -259,6 +260,34 @@ export default function HomePage() {
                 <p className="mt-3 text-sm leading-6 text-white/62">{step.body}</p>
               </Card>
             ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="pb-16">
+        <Container>
+          <div className="mx-auto max-w-4xl text-center">
+            <Badge variant="premium">100 styles</Badge>
+            <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
+              Pick a vibe. We search it for you.
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-white/62">
+              From old money to airport fit to wedding guest, users can start from a real style instead of a blank search box.
+            </p>
+          </div>
+
+          <div className="glass-panel glow-frame mt-8 rounded-[32px] p-5 sm:p-6">
+            <div className="flex flex-wrap gap-2">
+              {STYLE_SEARCH_SUGGESTIONS.map((style) => (
+                <Link
+                  key={style.id}
+                  href={`/wardrobe/search?query=${encodeURIComponent(style.query)}&sort=aura_best`}
+                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75 transition-colors hover:border-sky-300/30 hover:text-sky-200"
+                >
+                  {style.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </Container>
       </section>

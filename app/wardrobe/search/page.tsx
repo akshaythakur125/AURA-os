@@ -12,6 +12,7 @@ import { PriceComparisonCard } from "@/components/commerce/PriceComparisonCard";
 import type { CommerceSearchInput, CommerceSearchSort, CommerceSearchResponse } from "@/types/commerceSearch";
 import type { WardrobeCategory, StoreKey, AuraStyleDirection, AuraLeakTag } from "@/types/commerce";
 import { CELEBRITY_TREND_PRESETS } from "@/config/celebrityTrendPresets";
+import { STYLE_SEARCH_SUGGESTIONS } from "@/config/styleSearchSuggestions";
 import { getRotatingPresets } from "@/lib/marketing/rotatingPresets";
 
 function WardrobeSearchContent() {
@@ -276,6 +277,28 @@ function WardrobeSearchContent() {
             </div>
           </>
         )}
+
+        <div className="mb-8">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-white">100 style ideas to choose from</h2>
+            <p className="text-xs text-gray-500">
+              Tap any style and AuraCheck turns it into a ready shopping search.
+            </p>
+          </div>
+          <Card>
+            <div className="flex flex-wrap gap-2">
+              {STYLE_SEARCH_SUGGESTIONS.map((style) => (
+                <a
+                  key={style.id}
+                  href={`/wardrobe/search?query=${encodeURIComponent(style.query)}&sort=aura_best`}
+                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-gray-300 transition-colors hover:border-sky-300/30 hover:text-sky-200"
+                >
+                  {style.label}
+                </a>
+              ))}
+            </div>
+          </Card>
+        </div>
 
         {/* Layout: filters sidebar + results */}
         <div className="grid gap-6 lg:grid-cols-[280px_1fr]">

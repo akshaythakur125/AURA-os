@@ -12,6 +12,7 @@ import type { AuraCommercePlan } from "@/types/commerce";
 import { formatPrice } from "@/lib/commerce/dealScoring";
 import { WARDROBE_CATALOG } from "@/config/auraWardrobeCatalog";
 import { getActiveStores } from "@/config/storeDirectory";
+import { getClickUrl } from "@/lib/commerce/affiliateLinks";
 
 export default function WardrobePage() {
   const audits = getAudits();
@@ -135,12 +136,12 @@ export default function WardrobePage() {
                   </div>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <Button size="sm" onClick={() => window.open(plan.bestSingleUpgrade!.cheapestOffer.url, "_blank")}>
-                    View on {plan.bestSingleUpgrade.cheapestOffer.storeName}
+                  <Button size="sm" onClick={() => window.open(getClickUrl(plan.bestSingleUpgrade!.cheapestOffer), "_blank")}>
+                    Search on {plan.bestSingleUpgrade.cheapestOffer.storeName}
                   </Button>
                   {plan.bestSingleUpgrade.bestValueOffer.storeKey !== plan.bestSingleUpgrade.cheapestOffer.storeKey && (
-                    <Button size="sm" variant="outline" onClick={() => window.open(plan.bestSingleUpgrade!.bestValueOffer.url, "_blank")}>
-                      Compare at {plan.bestSingleUpgrade.bestValueOffer.storeName} (₹{plan.bestSingleUpgrade.bestValueOffer.price})
+                    <Button size="sm" variant="outline" onClick={() => window.open(getClickUrl(plan.bestSingleUpgrade!.bestValueOffer), "_blank")}>
+                      Search on {plan.bestSingleUpgrade.bestValueOffer.storeName} (₹{plan.bestSingleUpgrade.bestValueOffer.price})
                     </Button>
                   )}
                 </div>
@@ -171,11 +172,11 @@ export default function WardrobePage() {
                     </div>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-1">
-                    <Button size="sm" onClick={() => window.open(rec.cheapestOffer.url, "_blank")}>
-                      View on {rec.cheapestOffer.storeName}
+                    <Button size="sm" onClick={() => window.open(getClickUrl(rec.cheapestOffer), "_blank")}>
+                      Search on {rec.cheapestOffer.storeName}
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => window.open(rec.bestValueOffer.url, "_blank")}>
-                      Best value: {rec.bestValueOffer.storeName} (₹{rec.bestValueOffer.price})
+                    <Button size="sm" variant="outline" onClick={() => window.open(getClickUrl(rec.bestValueOffer), "_blank")}>
+                      Best value search: {rec.bestValueOffer.storeName} (₹{rec.bestValueOffer.price})
                     </Button>
                   </div>
                 </Card>
@@ -244,7 +245,7 @@ export default function WardrobePage() {
         <Card className="mb-8">
           <h3 className="mb-3 text-sm font-semibold text-white">Supported stores</h3>
           <div className="flex flex-wrap gap-2">
-            {stores.filter((s) => s.isActive).map((store) => (
+            {stores.filter((s) => s.isActive && s.homepageUrl !== "#").map((store) => (
               <a
                 key={store.key}
                 href={store.homepageUrl}
@@ -257,7 +258,7 @@ export default function WardrobePage() {
             ))}
           </div>
           <p className="mt-3 text-xs text-gray-500">
-            Prices are from AuraCheck&rsquo;s MVP catalog and may not be live. Verify on store before buying.
+            Links open real store search pages or affiliate URLs. Prices are from AuraCheck&rsquo;s MVP catalog and may not be live. Verify on store before buying.
             AuraCheck may earn affiliate commission from some links. Sponsored items do not automatically rank first.
           </p>
         </Card>

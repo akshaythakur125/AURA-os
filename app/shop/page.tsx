@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { WARDROBE_CATALOG } from "@/config/auraWardrobeCatalog";
+import { STYLE_SEARCH_SUGGESTIONS } from "@/config/styleSearchSuggestions";
 import { getRotatingPresets } from "@/lib/marketing/rotatingPresets";
 import { getActiveStores } from "@/config/storeDirectory";
 import { getButtonLabel, getClickUrl } from "@/lib/commerce/affiliateLinks";
@@ -199,6 +200,26 @@ export default function ShopPage() {
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card className="mb-8">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-white">Choose from 100 styles</h2>
+            <p className="text-xs text-gray-500">
+              Users can jump into any vibe without guessing the right search words.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {STYLE_SEARCH_SUGGESTIONS.map((style) => (
+              <Link
+                key={style.id}
+                href={`/wardrobe/search?query=${encodeURIComponent(style.query)}&sort=aura_best`}
+                className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-gray-300 transition-colors hover:border-sky-300/30 hover:text-sky-200"
+              >
+                {style.label}
+              </Link>
             ))}
           </div>
         </Card>
@@ -412,7 +433,7 @@ export default function ShopPage() {
         <Card className="glow-frame mb-8">
           <h3 className="mb-3 text-sm font-semibold text-white">Supported Stores</h3>
           <div className="flex flex-wrap gap-2">
-            {stores.map((store) => (
+            {stores.filter((store) => store.homepageUrl !== "#").map((store) => (
               <a
                 key={store.key}
                 href={store.homepageUrl}
