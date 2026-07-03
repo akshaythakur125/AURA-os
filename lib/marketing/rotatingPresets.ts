@@ -2,10 +2,15 @@ import { CELEBRITY_TREND_PRESETS } from "@/config/celebrityTrendPresets";
 import type { CelebrityTrendPreset } from "@/config/celebrityTrendPresets";
 
 const COUNT = 6;
+const ROTATION_WINDOW_MS = 72 * 60 * 60 * 1000;
 
-function getDateSeed(): number {
-  const d = new Date();
-  return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
+// Stable per-72h-window seed, based on UTC epoch time rather than local
+// calendar date fields (getFullYear/getMonth/getDate reflect the runtime's
+// local timezone, which differs between the server -- UTC -- and each
+// visitor's browser; using those would pick a different rotation on the
+// server than on the client's first paint, a hydration mismatch).
+function getRotationSeed(): number {
+  return Math.floor(Date.now() / ROTATION_WINDOW_MS);
 }
 
 function seededShuffle<T>(arr: T[], seed: number): T[] {
@@ -20,7 +25,7 @@ function seededShuffle<T>(arr: T[], seed: number): T[] {
 }
 
 export function getRotatingPresets(): CelebrityTrendPreset[] {
-  const seed = getDateSeed();
+  const seed = getRotationSeed();
   const shuffled = seededShuffle(CELEBRITY_TREND_PRESETS, seed);
   return shuffled.slice(0, COUNT);
 }
