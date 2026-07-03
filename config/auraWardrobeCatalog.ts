@@ -43,23 +43,33 @@ const SOU = "The Souled Store";
 const BEW = "Bewakoof";
 const HMI = "H&M India";
 
+// These `path` slugs (e.g. "/beige-overshirt") were never real product page
+// paths on the target stores -- they were manually invented labels, and
+// visiting them directly 404s/405s on every store's server since no such
+// page exists. Since this catalog has no live inventory API and can't link
+// to a real, verified specific product, route through each store's own
+// search instead so every offer resolves to an actual, working page with
+// relevant results, rather than a dead link.
+function slugToQuery(path: string): string {
+  return path.replace(/^\//, "").replace(/-/g, " ").trim();
+}
 function mkMyntra(path: string) {
-  return `https://www.myntra.com${path}`;
+  return `https://www.google.com/search?q=${encodeURIComponent(slugToQuery(path) + " site:myntra.com")}`;
 }
 function mkAjio(path: string) {
-  return `https://www.ajio.com${path}`;
+  return `https://www.google.com/search?q=${encodeURIComponent(slugToQuery(path) + " site:ajio.com")}`;
 }
 function mkAmazon(path: string) {
-  return `https://www.amazon.in${path}`;
+  return `https://www.amazon.in/s?k=${encodeURIComponent(slugToQuery(path))}`;
 }
 function mkFlipkart(path: string) {
-  return `https://www.flipkart.com${path}`;
+  return `https://www.flipkart.com/search?q=${encodeURIComponent(slugToQuery(path))}`;
 }
 function mkTata(path: string) {
-  return `https://www.tatacliq.com${path}`;
+  return `https://www.google.com/search?q=${encodeURIComponent(slugToQuery(path) + " site:tatacliq.com")}`;
 }
 function mkNykaa(path: string) {
-  return `https://www.nykaafashion.com${path}`;
+  return `https://www.google.com/search?q=${encodeURIComponent(slugToQuery(path) + " site:nykaafashion.com")}`;
 }
 
 const M = "myntra" as StoreKey;
@@ -123,7 +133,7 @@ const TSHIRTS: CommerceProduct[] = [
       makeOffer("tsb_a1", A, AJI, "Black Solid T-Shirt", 449, 999, mkAjio("/black-solid-t-shirt"), false, false),
       makeOffer("tsb_z1", Z, AMZ, "Symbol Black T-Shirt", 349, 699, mkAmazon("/symbol-basic-cotton-black"), false, false),
       makeOffer("tsb_f1", F, FLP, "Campus Sutra Black T-Shirt", 299, 599, mkFlipkart("/campus-sutra-black"), false, false),
-      makeOffer("tsb_h1", H, HMI, "H&M Black Jersey Top", 499, 999, "https://www2.hm.com/en_in/productpage.123456.html", false, false),
+      makeOffer("tsb_h1", H, HMI, "H&M Black Jersey Top", 499, 999, "https://www2.hm.com/en_in/", false, false),
       makeOffer("tsb_o1", O, SOU, "The Souled Store Black T-Shirt", 449, 799, "https://www.thesouledstore.com/collections/plain-t-shirts", false, false),
     ],
     createdAt: now,
