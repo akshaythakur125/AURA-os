@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useState, useCallback, useEffect } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
@@ -168,6 +169,15 @@ function WardrobeSearchContent() {
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {getRotatingPresets().map((preset) => (
               <Card key={preset.id} className="flex flex-col gap-4">
+                <div className="overflow-hidden rounded-[18px]">
+                  <Image
+                    src={preset.imageSrc}
+                    alt={preset.label}
+                    width={720}
+                    height={960}
+                    className="h-[220px] w-full object-cover"
+                  />
+                </div>
                 <div className="flex items-center justify-between gap-3">
                   <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-white/55">
                     {preset.region}
