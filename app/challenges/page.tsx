@@ -11,9 +11,10 @@ import { StreakRing } from "@/components/challenges/StreakRing";
 import { LeaderboardStrip } from "@/components/challenges/LeaderboardStrip";
 import { CHALLENGES } from "@/config/challenges";
 import { getChallengeEntries, createChallengeEntry, getChallengeStreak, markChallengeComplete } from "@/lib/storage/challengeStore";
+import type { ChallengeStreak } from "@/lib/storage/challengeStore";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 import { useEffectOnce } from "@/lib/utils/effectOnce";
-import type { Challenge } from "@/types/challenge";
+import type { Challenge, ChallengeEntry } from "@/types/challenge";
 
 const TYPE_BADGES: Record<string, { label: string; variant: "premium" | "success" | "warning" | "danger" | "default" }> = {
   status_leak: { label: "Status Leak", variant: "danger" },
@@ -27,14 +28,21 @@ const TYPE_BADGES: Record<string, { label: string; variant: "premium" | "success
 };
 
 export default function ChallengesPage() {
-  const [entries, setEntries] = useState(() => getChallengeEntries());
-  const [streak, setStreak] = useState(() => getChallengeStreak());
+  // SSR-safe defaults. getChallengeEntries/getChallengeStreak read
+  // localStorage, which is unavailable on the server; seeding state from them
+  // in a lazy initializer makes the server-rendered HTML differ from the
+  // client's first paint (React hydration error #418). Start empty, then load
+  // real values on mount.
+  const [entries, setEntries] = useState<ChallengeEntry[]>([]);
+  const [streak, setStreak] = useState<ChallengeStreak>({ currentStreak: 0, lastCheckinDate: "" });
   const [loggedToday, setLoggedToday] = useState<Set<string>>(new Set());
   const [streakMessage, setStreakMessage] = useState<string | null>(null);
 
   const activeChallenges = CHALLENGES.filter((c) => c.isActive);
 
   useEffectOnce(() => {
+    setEntries(getChallengeEntries());
+    setStreak(getChallengeStreak());
     trackEvent("challenge_viewed");
   });
 

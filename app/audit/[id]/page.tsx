@@ -615,6 +615,12 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
   const [checkedLocal, setCheckedLocal] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Leaks start hidden so the score reveal can fade them in. This hook MUST
+  // live above the early returns below (Rules of Hooks) and MUST default to a
+  // constant -- deriving it from localStorage/audit here would both crash
+  // (audit is null on first render) and cause a hydration mismatch. An effect
+  // reveals them immediately for already-unlocked or previously-revealed audits.
+  const [leaksVisible, setLeaksVisible] = useState(false);
 
   // Check localStorage, then fall back to Supabase if not found locally
   useEffect(() => {
@@ -638,6 +644,21 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Reveal leaks immediately (skip the animation gate) when the audit is
+  // already paid-unlocked or was revealed on a previous visit.
+  useEffect(() => {
+    if (!audit) return;
+    const unlocked =
+      (audit.unlockedProducts || []).includes("quick_fix") ||
+      (audit.unlockedProducts || []).includes("aura_report");
+    const alreadyRevealed =
+      typeof window !== "undefined" &&
+      localStorage.getItem(`auracheck:v1:revealed:${audit.id}`) === "true";
+    if (unlocked || alreadyRevealed || hasReferralEarnedFreeFix()) {
+      setLeaksVisible(true);
+    }
+  }, [audit]);
 
   if (!checkedLocal) {
     return (
@@ -674,13 +695,6 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
     ),
     ...(referralFreeFix ? (["quick_fix"] as ProductType[]) : []),
   ];
-
-  const [leaksVisible, setLeaksVisible] = useState(() => {
-    if (typeof window === "undefined") return true;
-    const hasAllLeaks = unlockedProducts.includes("quick_fix") || unlockedProducts.includes("aura_report");
-    if (hasAllLeaks) return true;
-    return localStorage.getItem(`auracheck:v1:revealed:${audit.id}`) === "true";
-  });
 
   async function handleGenerate() {
     if (!audit) return;

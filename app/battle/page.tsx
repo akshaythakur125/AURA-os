@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
@@ -25,7 +25,13 @@ export default function BattlePage() {
   const [rightLeaks, setRightLeaks] = useState<StatusLeak[]>([]);
   const [leftLabel] = useState("You");
   const [rightLabel] = useState("Them");
-  const [battleCount] = useState(() => getBattleCount());
+  // Start at 0 (SSR-safe) and read the real count on mount; reading
+  // localStorage in the initializer would mismatch the server HTML for
+  // returning users (React hydration #418).
+  const [battleCount, setBattleCount] = useState(0);
+  useEffect(() => {
+    setBattleCount(getBattleCount());
+  }, []);
 
   const ready = leftImage && rightImage && phase === "upload";
 
@@ -57,7 +63,7 @@ export default function BattlePage() {
         winner,
       });
 
-      trackEvent("battle_completed", { leftScore: leftResult.auraScore, rightScore: rightResult.auraScore });
+      trackEvent("battle_completed", { leftScore: String(leftResult.auraScore), rightScore: String(rightResult.auraScore) });
       setPhase("result");
     } catch {
       setError("Analysis failed. Try different photos.");

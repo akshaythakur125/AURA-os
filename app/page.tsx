@@ -7,8 +7,6 @@ import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { STYLE_SEARCH_SUGGESTIONS } from "@/config/styleSearchSuggestions";
 import { ReferralBanner } from "@/components/marketing/ReferralBanner";
-import { getAudits } from "@/lib/storage/auditStore";
-import { getTwinStats } from "@/lib/storage/auraTwinStore";
 import { getMarqueePresets, getDailySubset } from "@/lib/marketing/rotatingPresets";
 import { getHomepageProofEntries } from "@/data/homepageProof";
 
@@ -114,8 +112,6 @@ const demoLeaks = [
 ];
 
 export default function HomePage() {
-  const stats = { audits: typeof window !== "undefined" ? getAudits().length : 0, twins: typeof window !== "undefined" ? getTwinStats().totalSimulations : 0 };
-
   return (
     <>
       <ReferralBanner />

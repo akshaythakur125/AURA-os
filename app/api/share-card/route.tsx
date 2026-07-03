@@ -77,8 +77,8 @@ export async function GET(request: Request) {
             </span>
           )}
 
-          <div style={{ position: "absolute", bottom: 28, left: 0, right: 0, textAlign: "center", fontSize: 11, color: "#555" }}>
-            {appUrl.replace("https://", "")} · Presentation guidance only
+          <div style={{ position: "absolute", bottom: 28, left: 0, right: 0, display: "flex", justifyContent: "center", fontSize: 11, color: "#555" }}>
+            <span>{appUrl.replace("https://", "")} · Presentation guidance only</span>
           </div>
         </div>
       ),
@@ -149,8 +149,8 @@ export async function GET(request: Request) {
           </div>
         )}
 
-        <div style={{ position: "absolute", bottom: 28, left: 0, right: 0, textAlign: "center", fontSize: 11, color: "#555" }}>
-          {appUrl.replace("https://", "")} · Presentation guidance only
+        <div style={{ position: "absolute", bottom: 28, left: 0, right: 0, display: "flex", justifyContent: "center", fontSize: 11, color: "#555" }}>
+          <span>{appUrl.replace("https://", "")} · Presentation guidance only</span>
         </div>
       </div>
     ),

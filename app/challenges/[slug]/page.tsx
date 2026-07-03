@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
@@ -17,8 +17,13 @@ export default function ChallengeDetailPage() {
   const params = useParams();
   const slug = params?.slug as string;
   const challenge = CHALLENGES.find((c) => c.slug === slug);
-  const [entries, setEntries] = useState(() => getEntriesByChallengeId(challenge?.id ?? ""));
+  // Load entries on mount, not in the initializer -- getEntriesByChallengeId
+  // reads localStorage and would mismatch the server render (hydration #418).
+  const [entries, setEntries] = useState<ReturnType<typeof getEntriesByChallengeId>>([]);
   const [saved, setSaved] = useState(false);
+  useEffect(() => {
+    if (challenge) setEntries(getEntriesByChallengeId(challenge.id));
+  }, [challenge]);
 
   if (!challenge) {
     return (

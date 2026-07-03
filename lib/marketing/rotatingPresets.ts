@@ -35,8 +35,12 @@ export function getMarqueePresets(): CelebrityTrendPreset[] {
   return [...subset, ...subset];
 }
 
+// Deterministic rotating subset for any list (e.g. the homepage proof
+// gallery). Reuses the same UTC-epoch window seed as the presets so the
+// server and the client's first paint pick the same items (no hydration
+// mismatch).
 export function getDailySubset<T>(items: T[], count: number): T[] {
-  const seed = getDateSeed();
+  const seed = getRotationSeed();
   const shuffled = seededShuffle(items, seed);
   return shuffled.slice(0, count);
 }

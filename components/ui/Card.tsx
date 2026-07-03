@@ -5,12 +5,14 @@ interface CardProps {
   className?: string;
   hover?: boolean;
   onClick?: () => void;
+  style?: React.CSSProperties;
 }
 
-export function Card({ children, className, hover = false, onClick }: CardProps) {
+export function Card({ children, className, hover = false, onClick, style }: CardProps) {
   return (
     <div
       onClick={onClick}
+      style={style}
       className={cn(
         "glass-card relative overflow-hidden rounded-[28px] p-6 text-white/92",
         "before:pointer-events-none before:absolute before:inset-x-8 before:top-0 before:h-px before:bg-white/28 before:content-['']",
