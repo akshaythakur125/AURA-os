@@ -8,6 +8,7 @@ import { formatPrice } from "@/lib/commerce/dealScoring";
 import { trackStoreClick } from "@/lib/commerce/commerceTracking";
 import { comparePricesInGroup } from "@/lib/commerce/search/priceComparisonEngine";
 import { getCommerceItemExternalUrl } from "@/lib/utils/externalLinks";
+import { ProductThumb } from "./ProductThumb";
 
 interface Props {
   group: ComparableGroup;
@@ -34,11 +35,22 @@ export function PriceComparisonCard({ group, auditId }: Props) {
     );
   }
 
+  const heroItem = group.items[0];
+
   return (
     <Card className="border-emerald-500/10">
-      <div className="mb-3">
-        <h4 className="text-sm font-semibold text-white">{group.label}</h4>
-        <p className="text-[10px] text-gray-500">{group.items.length} options · ₹{comparison.priceRange.min.toLocaleString("en-IN")} – ₹{comparison.priceRange.max.toLocaleString("en-IN")}</p>
+      <div className="mb-3 flex items-start gap-3">
+        <ProductThumb
+          imageUrl={heroItem?.imageUrl}
+          category={heroItem?.category || "tshirt"}
+          title={group.label}
+          colorTag={heroItem?.colorTags?.[0]}
+          size="md"
+        />
+        <div className="min-w-0 flex-1">
+          <h4 className="text-sm font-semibold text-white">{group.label}</h4>
+          <p className="mt-1 text-[10px] text-gray-500">{group.items.length} options · ₹{comparison.priceRange.min.toLocaleString("en-IN")} – ₹{comparison.priceRange.max.toLocaleString("en-IN")}</p>
+        </div>
       </div>
 
       {/* Best picks row */}

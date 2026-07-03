@@ -16,6 +16,10 @@ import { getRotatingPresets } from "@/lib/marketing/rotatingPresets";
 
 function WardrobeSearchContent() {
   const searchParams = useSearchParams();
+  const presetParam = searchParams.get("preset");
+  const activePreset = presetParam
+    ? CELEBRITY_TREND_PRESETS.find((item) => item.id === presetParam)
+    : undefined;
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [budgetMin, setBudgetMin] = useState("");
@@ -148,74 +152,130 @@ function WardrobeSearchContent() {
   return (
     <Container className="py-8 sm:py-12">
       <div className="mx-auto max-w-6xl">
-        {/* Hero */}
-        <div className="mb-8 text-center">
-          <h1 className="mb-3 text-3xl font-bold text-white">Search aura-improving clothes across Indian stores</h1>
-          <p className="mx-auto max-w-2xl text-sm text-gray-400">
-            Find clothes by style direction, budget, and aura gap. Prices are from AuraCheck&rsquo;s catalog
-            and should be verified on the store before buying.
-          </p>
-        </div>
-
-        <div className="mb-8">
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <div>
-              <h2 className="text-lg font-semibold text-white">Latest celebrity trend presets</h2>
-              <p className="text-xs text-gray-500">
-                One click opens a current trend-inspired search with multi-site Indian price comparison.
-              </p>
-            </div>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {getRotatingPresets().map((preset) => (
-              <Card key={preset.id} className="flex flex-col gap-4">
-                <div className="overflow-hidden rounded-[18px]">
-                  <Image
-                    src={preset.imageSrc}
-                    alt={preset.label}
-                    width={720}
-                    height={960}
-                    className="h-[220px] w-full object-cover"
-                  />
-                </div>
-                <div className="flex items-center justify-between gap-3">
+        {/* Focused preset header — shown when the user landed here from a
+           celebrity trend card. Puts the picked look front-and-centre and
+           drops the visitor straight into that preset's results below,
+           instead of a wall of unrelated trend cards. */}
+        {activePreset ? (
+          <div className="mb-8">
+            <Card className="flex flex-col gap-4 border-white/10 md:flex-row md:items-center">
+              <div className="overflow-hidden rounded-[18px] md:w-[260px]">
+                <Image
+                  src={activePreset.imageSrc}
+                  alt={activePreset.label}
+                  width={720}
+                  height={960}
+                  className="h-[220px] w-full object-cover md:h-[240px]"
+                />
+              </div>
+              <div className="flex-1">
+                <div className="mb-2 flex flex-wrap items-center gap-2">
                   <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-white/55">
-                    {preset.region}
+                    {activePreset.region}
                   </span>
-                  <span className="text-[10px] text-gray-500">{preset.trendDateLabel}</span>
+                  <span className="text-[10px] text-gray-500">{activePreset.trendDateLabel}</span>
                 </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-white">{preset.label}</h3>
-                  <p className="mt-1 text-xs text-purple-300">{preset.celebrity}</p>
-                </div>
-                <p className="text-sm text-gray-400">{preset.summary}</p>
-                <div className="flex flex-wrap gap-2">
-                  {preset.recommendedCategories.slice(0, 3).map((item) => (
+                <h1 className="text-2xl font-bold text-white sm:text-3xl">{activePreset.label}</h1>
+                <p className="mt-1 text-sm text-purple-300">{activePreset.celebrity}</p>
+                <p className="mt-3 max-w-2xl text-sm text-gray-400">{activePreset.summary}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {activePreset.recommendedCategories.slice(0, 5).map((item) => (
                     <span key={item} className="rounded-full bg-white/5 px-2.5 py-1 text-[10px] text-gray-400">
                       {item.replace(/_/g, " ")}
                     </span>
                   ))}
                 </div>
-                <div className="mt-auto flex flex-col gap-2">
+                <div className="mt-4 flex flex-wrap gap-3">
                   <a
-                    href={`/wardrobe/search?preset=${preset.id}&sort=cheapest`}
-                    className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/15 bg-[linear-gradient(135deg,rgba(125,211,252,0.95),rgba(59,130,246,0.92)_45%,rgba(249,115,22,0.84))] px-4 text-sm font-semibold tracking-[-0.02em] text-slate-950 shadow-[0_18px_48px_rgba(56,189,248,0.22)] hover:-translate-y-0.5 hover:shadow-[0_24px_60px_rgba(249,115,22,0.22)]"
+                    href="/wardrobe/search"
+                    className="inline-flex min-h-9 items-center justify-center rounded-full border border-white/15 bg-white/5 px-4 text-xs font-semibold text-white hover:bg-white/10"
                   >
-                    Compare cheapest now
+                    Try a different look
                   </a>
                   <a
-                    href={preset.sourceUrl}
+                    href={activePreset.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-center text-[11px] text-gray-500 hover:text-gray-300"
+                    className="inline-flex min-h-9 items-center px-1 text-xs text-gray-500 hover:text-gray-300"
                   >
-                    Source: {preset.sourceLabel}
+                    Source: {activePreset.sourceLabel}
                   </a>
                 </div>
-              </Card>
-            ))}
+              </div>
+            </Card>
           </div>
-        </div>
+        ) : (
+          <>
+            {/* Landing hero — shown only when no preset is active. */}
+            <div className="mb-8 text-center">
+              <h1 className="mb-3 text-3xl font-bold text-white">Find clothes across Indian stores</h1>
+              <p className="mx-auto max-w-2xl text-sm text-gray-400">
+                Pick a trending look below, or use the filters on the left. Prices come from
+                AuraCheck&rsquo;s catalog and should be verified on the store before buying.
+              </p>
+            </div>
+
+            <div className="mb-8">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <div>
+                  <h2 className="text-lg font-semibold text-white">Latest celebrity trend presets</h2>
+                  <p className="text-xs text-gray-500">
+                    One click opens a current trend-inspired search with multi-site Indian price comparison.
+                  </p>
+                </div>
+              </div>
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                {getRotatingPresets().map((preset) => (
+                  <Card key={preset.id} className="flex flex-col gap-4">
+                    <div className="overflow-hidden rounded-[18px]">
+                      <Image
+                        src={preset.imageSrc}
+                        alt={preset.label}
+                        width={720}
+                        height={960}
+                        className="h-[220px] w-full object-cover"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-white/55">
+                        {preset.region}
+                      </span>
+                      <span className="text-[10px] text-gray-500">{preset.trendDateLabel}</span>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-white">{preset.label}</h3>
+                      <p className="mt-1 text-xs text-purple-300">{preset.celebrity}</p>
+                    </div>
+                    <p className="text-sm text-gray-400">{preset.summary}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {preset.recommendedCategories.slice(0, 3).map((item) => (
+                        <span key={item} className="rounded-full bg-white/5 px-2.5 py-1 text-[10px] text-gray-400">
+                          {item.replace(/_/g, " ")}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="mt-auto flex flex-col gap-2">
+                      <a
+                        href={`/wardrobe/search?preset=${preset.id}&sort=cheapest`}
+                        className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/15 bg-[linear-gradient(135deg,rgba(125,211,252,0.95),rgba(59,130,246,0.92)_45%,rgba(249,115,22,0.84))] px-4 text-sm font-semibold tracking-[-0.02em] text-slate-950 shadow-[0_18px_48px_rgba(56,189,248,0.22)] hover:-translate-y-0.5 hover:shadow-[0_24px_60px_rgba(249,115,22,0.22)]"
+                      >
+                        Find these clothes
+                      </a>
+                      <a
+                        href={preset.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-center text-[11px] text-gray-500 hover:text-gray-300"
+                      >
+                        Source: {preset.sourceLabel}
+                      </a>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Layout: filters sidebar + results */}
         <div className="grid gap-6 lg:grid-cols-[280px_1fr]">

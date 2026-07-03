@@ -7,6 +7,7 @@ import { PriceFreshnessBadge } from "./PriceFreshnessBadge";
 import { trackStoreClick } from "@/lib/commerce/commerceTracking";
 import { formatPrice } from "@/lib/commerce/dealScoring";
 import { getCommerceItemExternalUrl } from "@/lib/utils/externalLinks";
+import { ProductThumb } from "./ProductThumb";
 
 interface Props {
   result: CommerceSearchResult;
@@ -41,6 +42,15 @@ export function SearchResultCard({ result, rankPosition, auditId }: Props) {
   return (
     <Card className="group transition-colors hover:border-purple-500/30">
       <div className="flex flex-wrap items-start justify-between gap-4">
+        {/* Product Thumb */}
+        <ProductThumb
+          imageUrl={item.imageUrl}
+          category={item.category}
+          title={item.originalTitle}
+          colorTag={item.colorTags[0]}
+          size="md"
+        />
+
         {/* Product Info */}
         <div className="flex-1 min-w-0">
           <div className="mb-1 flex items-center gap-2 flex-wrap">
