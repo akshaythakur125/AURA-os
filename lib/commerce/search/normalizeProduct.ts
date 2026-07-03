@@ -61,9 +61,20 @@ export function normalizeCommerceProduct(
   }
 
   return product.offers.map((offer) => {
-    const freshness = offer.lastCheckedText
-      ? computeFreshness(offer.updatedAt)
-      : computeFreshnessFromSource(sourceType);
+    // A manually-curated catalog price is honestly "Manual MVP price", not a
+    // time-checked price. Treating its fixed catalog timestamp as a real
+    // price-check date ages every offer into "stale" ("Price may be
+    // outdated"), which is both misleading and alarming. Manual source wins
+    // over the timestamp here, matching evaluateFreshness() and the
+    // no-offer path above. Real feed/API imports (affiliate_csv, etc.) still
+    // use their genuine lastChecked timestamp.
+    const isManualSource =
+      sourceType === "manual" || sourceType === "csv" || sourceType === "json";
+    const freshness = isManualSource
+      ? computeFreshnessFromSource(sourceType)
+      : offer.lastCheckedText
+        ? computeFreshness(offer.updatedAt)
+        : computeFreshnessFromSource(sourceType);
 
     const discount = offer.discountPercent !== undefined
       ? offer.discountPercent
