@@ -1012,28 +1012,45 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                   <div><div className="text-xs text-gray-500">Strongest Signals</div><div className="mt-1 flex flex-wrap gap-1.5">{freeResult.strongestSignals.map((s) => (<span key={s} className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs text-emerald-400">{s}</span>))}</div></div>
                 </div>
               </div>
+
+              {/* ─── Estimated Score After Fix ─── */}
+              {(() => {
+                const totalImpact = freeResult.statusLeaks.reduce((sum, l) => sum + l.impactScore, 0);
+                const estimated = Math.min(100, freeResult.auraScore + totalImpact);
+                return (
+                  <div className="mb-4 rounded-[16px] bg-gradient-to-r from-sky-500/10 to-purple-500/10 border border-sky-400/15 px-4 py-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-white/60">Fix all {freeResult.statusLeaks.length} leaks</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-white/40">{freeResult.auraScore}</span>
+                        <svg className="h-3 w-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                        <span className="display-font text-lg font-bold text-emerald-400">{estimated}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+
               <div className="flex flex-wrap gap-2 border-t border-white/5 pt-4">
                 <Button size="sm" variant="outline" onClick={() => {
                   const url = `/api/share-card?score=${freeResult.auraScore}&category=${encodeURIComponent(freeResult.category)}&signal=${encodeURIComponent(freeResult.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(freeResult.statusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
                   window.open(url, "_blank");
                   trackEvent("share_card_viewed");
-                }}>📤 View Story Card</Button>
+                }}>View Story Card</Button>
                 <Button size="sm" variant="ghost" onClick={async () => {
                   const shareUrl = `${location.origin}/api/share-card?score=${freeResult.auraScore}&category=${encodeURIComponent(freeResult.category)}&signal=${encodeURIComponent(freeResult.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(freeResult.statusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
                   try {
                     await navigator.clipboard.writeText(shareUrl);
                     trackEvent("share_card_link_copied");
                   } catch { /* clipboard unavailable */ }
-                }}>🔗 Copy link</Button>
+                }}>Copy link</Button>
                 <Button size="sm" variant="ghost" onClick={async () => {
                   const shareUrl = `${location.origin}/api/share-card?score=${freeResult.auraScore}&category=${encodeURIComponent(freeResult.category)}&signal=${encodeURIComponent(freeResult.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(freeResult.statusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
                   try {
                     await navigator.share({ title: "My Aura Score", text: `My Aura Score: ${freeResult.auraScore}/100`, url: shareUrl });
                     trackEvent("share_card_native_shared");
                   } catch { /* native share unavailable or cancelled */ }
-                }}>📱 Share</Button>
-                <Button asChild size="sm" variant="ghost"><Link href="/progress">📊 Compare Progress</Link></Button>
-                <Button asChild size="sm" variant="ghost"><Link href="/twin-simulator">🔮 Aura Twin</Link></Button>
+                }}>Share</Button>
               </div>
             </Card>
 
@@ -1049,18 +1066,6 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                   <div className="mb-1 text-xs text-purple-400">Best Next Move</div>
                   <p className="text-sm text-gray-300">{personalization.userPriority}</p>
                 </div>
-                {personalization.signalMismatches.length > 0 && (
-                  <div className="mt-3 space-y-1">
-                    {personalization.signalMismatches.slice(0, 2).map((m) => (
-                      <div key={m.title} className="flex items-start gap-2 text-xs">
-                        <svg className={`mt-0.5 h-3 w-3 flex-shrink-0 ${m.severity === "high" ? "text-red-400" : m.severity === "medium" ? "text-amber-400" : "text-blue-400"}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                        </svg>
-                        <span className="text-gray-400">{m.title}: {m.explanation}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </Card>
             )}
 
@@ -1071,7 +1076,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
             )}
 
             <h2 className="mb-4 text-lg font-semibold text-white">Status Leaks</h2>
-            <div className={`mb-8 space-y-3 transition-all duration-700 ease-out ${leaksVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+            <div className={`mb-4 space-y-3 transition-all duration-700 ease-out ${leaksVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
               style={{ transitionDelay: "100ms" }}>
               {freeResult.statusLeaks.map((leak, idx) => {
                 const hasPaidLeakAccess = unlockedProducts.includes("quick_fix") || unlockedProducts.includes("aura_report");
@@ -1119,47 +1124,129 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                   </Card>
                 );
               })}
-              {!unlockedProducts.includes("quick_fix") && !unlockedProducts.includes("aura_report") && (
-                <div className="flex flex-col items-center gap-3 rounded-2xl border border-purple-500/20 bg-purple-500/5 p-5 text-center transition-all duration-500"
-                  style={{ transitionDelay: `${400 + freeResult.statusLeaks.length * 100}ms` }}>
-                  <p className="text-sm text-gray-400">
-                    <span className="text-white font-semibold">{freeResult.statusLeaks.length - 1} more vibe leak{freeResult.statusLeaks.length - 1 !== 1 ? "s" : ""}</span> detected — each with a fix and score impact.
-                  </p>
-                  <div className="flex flex-col gap-2 w-full sm:flex-row sm:justify-center">
-                    <Button asChild size="sm">
-                      <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`}>Unlock all fixes · ₹49</Link>
-                    </Button>
-                    <Button asChild size="sm" variant="outline">
-                      <Link href={`/unlock?auditId=${audit.id}&product=aura_report`}>Full report ₹99</Link>
-                    </Button>
-                  </div>
-                </div>
-              )}
             </div>
 
-            <h2 className="mb-4 text-lg font-semibold text-white">Quick Fixes</h2>
-            <Card className="mb-8">
-              <ul className="space-y-2">
-                {freeResult.quickFixes.map((fix) => (
-                  <li key={fix} className="flex items-start gap-2 text-sm text-gray-300">
-                    <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                    {fix}
-                  </li>
-                ))}
-              </ul>
-            </Card>
+            {/* ─── PRIMARY PAYWALL — right after leaks ─── */}
+            {!unlockedProducts.includes("quick_fix") && !unlockedProducts.includes("aura_report") && (
+              <div className="mb-8 overflow-hidden rounded-[24px] border border-emerald-500/25 bg-gradient-to-b from-emerald-500/[0.06] to-transparent">
+                <div className="p-5 sm:p-6">
+                  <div className="mb-4 flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2.5 py-1 text-[11px] font-semibold text-emerald-400">
+                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m9.364-7.364A9 9 0 1112 3a9 9 0 017.364 4.636z" /></svg>
+                      {freeResult.statusLeaks.length - 1} leaks locked
+                    </span>
+                  </div>
+                  <h3 className="display-font mb-2 text-xl font-bold text-white sm:text-2xl">
+                    You know the score. Now see the fix.
+                  </h3>
+                  <p className="mb-5 text-sm text-white/50">
+                    Your #1 leak is visible above. The other {freeResult.statusLeaks.length - 1} are blurred — each with a specific fix and point impact. Unlock them before spending money on the wrong upgrade.
+                  </p>
 
-            <h2 className="mb-4 text-lg font-semibold text-white">Budget Upgrade Plan</h2>
-            {freeResult.budgetUpgradePlan.map((plan) => (
-              <Card key={`${plan.budgetRange}-${plan.priority}`} className="mb-3">
-                <div className="mb-2 flex items-center justify-between">
-                  <Badge variant="premium">&#8377;{plan.budgetRange === "0" ? "0" : plan.budgetRange === "25000" ? "25,000+" : Number(plan.budgetRange).toLocaleString("en-IN")}</Badge>
-                  <span className="text-xs text-gray-500">Priority {plan.priority}</span>
+                  {/* What's inside */}
+                  <div className="mb-5 grid gap-2 sm:grid-cols-2">
+                    {[
+                      { icon: "🔍", text: "All status leaks revealed" },
+                      { icon: "⚡", text: "Fastest free fix for each" },
+                      { icon: "💰", text: "Under-₹500 and under-₹2K fixes" },
+                      { icon: "🚫", text: "What NOT to waste money on" },
+                    ].map((item) => (
+                      <div key={item.text} className="flex items-center gap-2 rounded-xl bg-white/[0.03] px-3 py-2.5">
+                        <span className="text-sm">{item.icon}</span>
+                        <span className="text-xs text-white/70">{item.text}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`} className="flex-1" onClick={() => trackEvent("quick_fix_cta_clicked", { auditId: audit.id })}>
+                      <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-400 hover:to-teal-400" size="lg">
+                        Unlock all fixes — ₹49
+                      </Button>
+                    </Link>
+                    <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} className="flex-1">
+                      <Button variant="outline" className="w-full" size="lg">
+                        Full report — ₹99
+                      </Button>
+                    </Link>
+                  </div>
+
+                  <p className="mt-3 text-center text-[10px] text-white/25">UPI / cards accepted. Instant unlock.</p>
                 </div>
-                <ul className="mb-2 space-y-1">{plan.actions.map((a) => (<li key={a} className="flex items-start gap-2 text-xs text-gray-300"><span className="mt-1 h-1 w-1 rounded-full bg-purple-400" />{a}</li>))}</ul>
-                <p className="text-xs text-emerald-400">{plan.estimatedImpact}</p>
-              </Card>
-            ))}
+              </div>
+            )}
+
+            {/* ─── Teased Quick Fixes (gated) ─── */}
+            {!unlockedProducts.includes("quick_fix") && !unlockedProducts.includes("aura_report") ? (
+              <div className="relative mb-8">
+                <h2 className="mb-4 text-lg font-semibold text-white">Quick Fixes</h2>
+                <div className="relative overflow-hidden rounded-2xl border border-white/10">
+                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0a0a0f]/70 backdrop-blur-[3px]">
+                    <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`}>
+                      <Button size="sm" className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white">Unlock fixes — ₹49</Button>
+                    </Link>
+                  </div>
+                  <div className="p-4 space-y-2" style={{ filter: "blur(4px)" }}>
+                    {freeResult.quickFixes.slice(0, 3).map((fix) => (
+                      <div key={fix} className="flex items-start gap-2 text-sm text-gray-300">
+                        <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        {fix}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <h2 className="mb-4 text-lg font-semibold text-white">Quick Fixes</h2>
+                <Card className="mb-8">
+                  <ul className="space-y-2">
+                    {freeResult.quickFixes.map((fix) => (
+                      <li key={fix} className="flex items-start gap-2 text-sm text-gray-300">
+                        <svg className="mt-0.5 h-4 w-4 flex-shrink-0 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                        {fix}
+                      </li>
+                    ))}
+                  </ul>
+                </Card>
+              </>
+            )}
+
+            {/* ─── Budget Upgrade Plan (gated for non-payers) ─── */}
+            {!unlockedProducts.includes("quick_fix") && !unlockedProducts.includes("aura_report") ? (
+              <div className="relative mb-8">
+                <h2 className="mb-4 text-lg font-semibold text-white">Budget Upgrade Plan</h2>
+                <div className="relative overflow-hidden rounded-2xl border border-white/10">
+                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0a0a0f]/70 backdrop-blur-[3px]">
+                    <Link href={`/unlock?auditId=${audit.id}&product=aura_report`}>
+                      <Button size="sm">Full budget plan — ₹99</Button>
+                    </Link>
+                  </div>
+                  <div className="p-4 space-y-3" style={{ filter: "blur(4px)" }}>
+                    {freeResult.budgetUpgradePlan.slice(0, 2).map((plan) => (
+                      <div key={`${plan.budgetRange}-${plan.priority}`} className="rounded-xl bg-white/[0.03] p-3">
+                        <div className="text-xs text-gray-400">₹{plan.budgetRange}</div>
+                        <ul className="mt-1 space-y-1">{plan.actions.slice(0, 2).map((a) => (<li key={a} className="text-xs text-gray-500">{a}</li>))}</ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <h2 className="mb-4 text-lg font-semibold text-white">Budget Upgrade Plan</h2>
+                {freeResult.budgetUpgradePlan.map((plan) => (
+                  <Card key={`${plan.budgetRange}-${plan.priority}`} className="mb-3">
+                    <div className="mb-2 flex items-center justify-between">
+                      <Badge variant="premium">&#8377;{plan.budgetRange === "0" ? "0" : plan.budgetRange === "25000" ? "25,000+" : Number(plan.budgetRange).toLocaleString("en-IN")}</Badge>
+                      <span className="text-xs text-gray-500">Priority {plan.priority}</span>
+                    </div>
+                    <ul className="mb-2 space-y-1">{plan.actions.map((a) => (<li key={a} className="flex items-start gap-2 text-xs text-gray-300"><span className="mt-1 h-1 w-1 rounded-full bg-purple-400" />{a}</li>))}</ul>
+                    <p className="text-xs text-emerald-400">{plan.estimatedImpact}</p>
+                  </Card>
+                ))}
+              </>
+            )}
 
             <details className="mb-8">
               <summary className="cursor-pointer text-sm text-gray-500 hover:text-gray-300">Image Metrics Details</summary>
@@ -1188,10 +1275,30 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               </Card>
             </details>
 
-            {/* ─── Recommendations ─── */}
-            <RecommendationSection audit={audit} />
+            {/* ─── Wardrobe (only for paid users) ─── */}
+            {(unlockedProducts.includes("quick_fix") || unlockedProducts.includes("aura_report")) && (
+              <>
+                <RecommendationSection audit={audit} />
+                <Card className="mb-8 border-purple-500/20">
+                  <div className="mb-4">
+                    <Badge variant="premium" className="mb-2">Aura Wardrobe Direction</Badge>
+                    <h3 className="text-lg font-bold text-white">What to wear based on your analysis</h3>
+                    <p className="mt-1 text-sm text-gray-400">
+                      Your Aura Check identified visual signals that clothing choices can improve.
+                    </p>
+                  </div>
+                  <div className="mb-4 grid gap-3 sm:grid-cols-2">
+                    <Button asChild className="w-full"><Link href={`/wardrobe/${audit.id}`}>Compare clothes across stores</Link></Button>
+                    <Button asChild variant="outline" className="w-full"><Link href={`/wardrobe/diagnosis/${audit.id}`}>Visual Wardrobe Diagnosis</Link></Button>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Prices from AuraCheck&rsquo;s catalog. Verify on store before buying.
+                  </p>
+                </Card>
+              </>
+            )}
 
-            {/* ─── Personalized Proof Suggestion ─── */}
+            {/* ─── Before/After Proof + Final upsell (for free users) ─── */}
             {!unlockedProducts.includes("quick_fix") && (() => {
               const firstLeak = freeResult.statusLeaks[0]?.title?.toLowerCase() || "";
               const match = PROOF_EXAMPLES.find((e) =>
@@ -1204,86 +1311,36 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               return (
                 <Card className="mb-8 border-emerald-500/20">
                   <div className="mb-3">
-                    <Badge variant="success" className="mb-2">Before/After Example</Badge>
+                    <Badge variant="success" className="mb-2">Real Example</Badge>
                     <p className="text-sm text-gray-400">
-                      Users usually waste money because they fix the wrong thing first. Your leak looks closest to this example.
+                      Most people waste money fixing the wrong thing first. This user had a similar leak to yours.
                     </p>
                   </div>
                   <BeforeAfterCard example={match} compact />
+                  <div className="mt-4 border-t border-white/5 pt-4 text-center">
+                    <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`}>
+                      <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-400 hover:to-teal-400" size="sm">
+                        Don&apos;t guess — unlock your fix path for ₹49
+                      </Button>
+                    </Link>
+                  </div>
                 </Card>
               );
             })()}
 
-            {/* ─── Aura Wardrobe Direction ─── */}
-            <Card className="mb-8 border-purple-500/20">
-              <div className="mb-4">
-                <Badge variant="premium" className="mb-2">Aura Wardrobe Direction</Badge>
-                <h3 className="text-lg font-bold text-white">What to wear based on your analysis</h3>
-                <p className="mt-1 text-sm text-gray-400">
-                  Your Aura Check identified visual signals that clothing choices can improve. Compare options across Indian stores.
-                </p>
-              </div>
-              <div className="mb-4 grid gap-3 sm:grid-cols-2">
-                <Button asChild className="w-full"><Link href={`/wardrobe/${audit.id}`}>Compare clothes across Indian stores</Link></Button>
-                <Button asChild variant="outline" className="w-full"><Link href="/wardrobe">Open Wardrobe Finder</Link></Button>
-              </div>
-              <div className="mb-4 grid gap-3 sm:grid-cols-2">
-                <Button asChild variant="outline" className="w-full"><Link href={`/wardrobe/diagnosis/${audit.id}`}>Visual Wardrobe Diagnosis</Link></Button>
-                <Button asChild variant="outline" className="w-full"><Link href={`/wardrobe/search?auditId=${audit.id}`}>Search by Diagnosis</Link></Button>
-              </div>
-              <p className="text-xs text-gray-500">
-                Prices are from AuraCheck&rsquo;s MVP catalog and may not be live. Verify on store before buying.
-                AuraCheck may earn affiliate commission from some links. Sponsored items do not automatically rank first.
-              </p>
-            </Card>
-
-            {/* ─── ₹49 Paywall (if Quick Fix not unlocked) ─── */}
-            {!unlockedProducts.includes("quick_fix") && (
-              <Card className="mb-8 border-emerald-500/30 ring-1 ring-emerald-500/20">
-                <div className="mb-4">
-                  <Badge variant="success" className="mb-3">₹49 — Quick Aura Fix</Badge>
-                  <h3 className="text-xl font-bold text-white">Your biggest status leak is visible.</h3>
-                  <p className="mt-2 text-sm text-gray-400">Unlock the fastest fix path for ₹49 before spending money on the wrong upgrade.</p>
-                </div>
-                <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3 text-center">
-                    <div className="text-xs text-gray-500">Your free score shows the problem.</div>
-                  </div>
-                  <div className="rounded-lg border border-emerald-500/10 bg-emerald-500/[0.03] p-3 text-center">
-                    <div className="text-xs text-emerald-400">The ₹49 Quick Fix shows the exact first move.</div>
-                  </div>
-                  <div className="rounded-lg border border-amber-500/10 bg-amber-500/[0.03] p-3 text-center">
-                    <div className="text-xs text-amber-400">Avoid wasting money on upgrades that will not fix your main leak.</div>
-                  </div>
-                  <div className="rounded-lg border border-red-500/10 bg-red-500/[0.03] p-3 text-center">
-                    <div className="text-xs text-red-400">Fix the right thing first — or nothing else will matter.</div>
-                  </div>
-                </div>
-                <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3">
-                    <div className="text-xs text-gray-500">🔍 Biggest leak detected</div>
-                  </div>
-                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3">
-                    <div className="text-xs text-gray-500">⚡ Fastest free fix</div>
-                  </div>
-                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3">
-                    <div className="text-xs text-gray-500">💰 Under ₹500 fix</div>
-                  </div>
-                  <div className="rounded-lg border border-white/5 bg-white/[0.02] p-3">
-                    <div className="text-xs text-gray-500">🚫 What not to buy right now</div>
-                  </div>
-                </div>
-                <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`} onClick={() => trackEvent("quick_fix_cta_clicked", { auditId: audit.id })}>
-                  <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-400 hover:to-teal-400" size="lg">
-                    Unlock Quick Aura Fix — ₹49
-                  </Button>
-                </Link>
-                <p className="mt-3 text-xs text-gray-500 text-center">AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
-              </Card>
-            )}
-
             {/* ─── Product CTAs ─── */}
             <ProductCTAButtons auditId={audit.id} unlockedProducts={unlockedProducts} />
+
+            {/* ─── Sticky mobile purchase bar (free users only) ─── */}
+            {!unlockedProducts.includes("quick_fix") && !unlockedProducts.includes("aura_report") && (
+              <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-emerald-500/20 bg-[#07111f]/95 px-4 py-3 backdrop-blur-lg sm:hidden">
+                <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`} className="block">
+                  <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white" size="lg">
+                    Unlock all fixes — ₹49
+                  </Button>
+                </Link>
+              </div>
+            )}
           </>
         ) : (
           /* ─── Generate Button ─── */
