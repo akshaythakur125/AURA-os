@@ -997,7 +997,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
         ) : freeResult ? (
           <>
             {/* ─── Free Score Results ─── */}
-            <Card className="mb-8">
+            <Card className="mb-6 overflow-hidden border-0 bg-gradient-to-b from-[#0d1a2d] to-[#0a1222]">
               <div className="mb-6 grid gap-6 sm:grid-cols-2">
                 <div>
                   <div className="mb-1 text-xs text-gray-500">Aura Score</div>
@@ -1013,16 +1013,25 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                 </div>
               </div>
 
-              {/* ─── Estimated Score After Fix ─── */}
+              {/* ─── Potential Score Bar ─── */}
               {(() => {
                 const totalImpact = freeResult.statusLeaks.reduce((sum, l) => sum + l.impactScore, 0);
                 const estimated = Math.min(100, freeResult.auraScore + totalImpact);
                 return (
-                  <div className="mb-4 rounded-[16px] bg-gradient-to-r from-sky-500/10 to-purple-500/10 border border-sky-400/15 px-4 py-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-white/60">Fix all {freeResult.statusLeaks.length} leaks</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-white/40">{freeResult.auraScore}</span>
+                  <div className="rounded-[16px] border border-emerald-500/15 bg-gradient-to-r from-emerald-500/[0.06] to-sky-500/[0.06] px-4 py-3">
+                    <div className="mb-2 flex items-center justify-between">
+                      <span className="text-xs font-medium text-white/50">Your potential</span>
+                      <span className="text-[10px] text-white/30">fix {freeResult.statusLeaks.length} leaks</span>
+                    </div>
+                    <div className="relative h-3 overflow-hidden rounded-full bg-white/5">
+                      <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-purple-600 to-pink-500" style={{ width: `${freeResult.auraScore}%` }} />
+                      <div className="absolute inset-y-0 rounded-full bg-gradient-to-r from-emerald-400/40 to-emerald-400/20" style={{ left: `${freeResult.auraScore}%`, width: `${estimated - freeResult.auraScore}%` }}>
+                        <div className="h-full w-full animate-pulse rounded-full bg-emerald-400/30" />
+                      </div>
+                    </div>
+                    <div className="mt-1.5 flex items-center justify-between text-xs">
+                      <span className="font-bold text-white">{freeResult.auraScore}</span>
+                      <div className="flex items-center gap-1.5">
                         <svg className="h-3 w-3 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                         <span className="display-font text-lg font-bold text-emerald-400">{estimated}</span>
                       </div>
@@ -1031,7 +1040,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                 );
               })()}
 
-              <div className="flex flex-wrap gap-2 border-t border-white/5 pt-4">
+              <div className="mt-4 flex flex-wrap gap-2 border-t border-white/5 pt-4">
                 <Button size="sm" variant="outline" onClick={() => {
                   const url = `/api/share-card?score=${freeResult.auraScore}&category=${encodeURIComponent(freeResult.category)}&signal=${encodeURIComponent(freeResult.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(freeResult.statusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
                   window.open(url, "_blank");
@@ -1054,9 +1063,17 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               </div>
             </Card>
 
+            {/* ─── Urgency banner ─── */}
+            {!unlockedProducts.includes("quick_fix") && !unlockedProducts.includes("aura_report") && (
+              <div className="mb-6 flex items-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/[0.06] px-4 py-2.5">
+                <svg className="h-4 w-4 flex-shrink-0 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <p className="text-xs text-amber-200/80">Your detailed analysis is ready and available for <span className="font-semibold text-amber-300">48 hours</span>. After that, you&apos;ll need to re-upload.</p>
+              </div>
+            )}
+
             {/* ─── Free Archetype ─── */}
             {personalization && (
-              <Card className="mb-8 border-purple-500/20">
+              <Card className="mb-6 border-purple-500/20">
                 <div className="mb-3 flex items-center gap-2">
                   <Badge variant="premium">Archetype</Badge>
                   <span className="text-sm font-semibold text-white">{personalization.archetype}</span>
@@ -1082,11 +1099,16 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                 const hasPaidLeakAccess = unlockedProducts.includes("quick_fix") || unlockedProducts.includes("aura_report");
                 if (idx > 0 && !hasPaidLeakAccess) {
                   return (
-                    <div key={leak.title} className="relative overflow-hidden rounded-2xl border border-white/10"
+                    <div key={leak.title} className="group relative overflow-hidden rounded-2xl border border-white/8 transition-all duration-500"
                       style={{ transitionDelay: `${300 + idx * 100}ms` }}>
-                      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-[#0a0a0f]/80 backdrop-blur-sm">
-                        <svg className="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m9.364-7.364A9 9 0 1112 3a9 9 0 017.364 4.636z" /></svg>
-                        <span className="text-xs text-gray-400">Unlock to reveal fix</span>
+                      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[#0a0a0f]/70 backdrop-blur-[2px]">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/10">
+                          <svg className="h-5 w-5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-sm font-semibold text-white">+{leak.impactScore} pts hidden</div>
+                          <div className="text-[11px] text-white/40">Unlock to see this fix</div>
+                        </div>
                       </div>
                       <div className="p-4 pb-3" style={{ filter: "blur(6px)" }}>
                         <div className="mb-1 flex items-center justify-between">
@@ -1095,12 +1117,6 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                         </div>
                         <p className="mb-2 text-xs text-gray-400">{leak.explanation}</p>
                         <p className="text-xs text-purple-300">{leak.fix}</p>
-                      </div>
-                      <div className="border-t border-white/5 px-4 py-2">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-gray-500">Impact</span>
-                          <span className="font-semibold text-emerald-400">+{leak.impactScore} pts if fixed</span>
-                        </div>
                       </div>
                     </div>
                   );
@@ -1126,52 +1142,89 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               })}
             </div>
 
-            {/* ─── PRIMARY PAYWALL — right after leaks ─── */}
+            {/* ─── Before/After Proof (moved up — right after leaks, before paywall) ─── */}
+            {!unlockedProducts.includes("quick_fix") && (() => {
+              const firstLeak = freeResult.statusLeaks[0]?.title?.toLowerCase() || "";
+              const match = PROOF_EXAMPLES.find((e) =>
+                firstLeak.includes("lighting") ? e.id === "lighting-fix-01"
+                : firstLeak.includes("background") ? e.id === "background-fix-01"
+                : firstLeak.includes("clarity") || firstLeak.includes("crop") || firstLeak.includes("framing") ? e.id === "crop-framing-01"
+                : firstLeak.includes("composition") ? e.id === "crop-framing-01"
+                : e.id === "lighting-fix-01"
+              ) || PROOF_EXAMPLES[0];
+              return (
+                <div className="mb-4 overflow-hidden rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.03]">
+                  <div className="px-4 pt-4 pb-2">
+                    <div className="mb-1 flex items-center gap-2">
+                      <Badge variant="success">Real result</Badge>
+                      <span className="text-[11px] text-white/30">similar leak to yours</span>
+                    </div>
+                  </div>
+                  <div className="px-4 pb-4">
+                    <BeforeAfterCard example={match} compact />
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* ─── PRIMARY PAYWALL — right after proof ─── */}
             {!unlockedProducts.includes("quick_fix") && !unlockedProducts.includes("aura_report") && (
-              <div className="mb-8 overflow-hidden rounded-[24px] border border-emerald-500/25 bg-gradient-to-b from-emerald-500/[0.06] to-transparent">
+              <div className="mb-8 overflow-hidden rounded-[24px] border border-emerald-500/30 bg-gradient-to-b from-emerald-500/[0.08] via-emerald-500/[0.03] to-transparent"
+                style={{ boxShadow: "0 0 40px rgba(16,185,129,0.06)" }}>
                 <div className="p-5 sm:p-6">
-                  <div className="mb-4 flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2.5 py-1 text-[11px] font-semibold text-emerald-400">
-                      <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m9.364-7.364A9 9 0 1112 3a9 9 0 017.364 4.636z" /></svg>
-                      {freeResult.statusLeaks.length - 1} leaks locked
+                  <div className="mb-3 flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-red-500/15 px-2.5 py-1 text-[11px] font-semibold text-red-400 animate-pulse">
+                      <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
+                      {freeResult.statusLeaks.reduce((sum, l) => sum + l.impactScore, 0)} pts leaking
                     </span>
                   </div>
                   <h3 className="display-font mb-2 text-xl font-bold text-white sm:text-2xl">
-                    You know the score. Now see the fix.
+                    You&apos;re leaving {freeResult.statusLeaks.reduce((sum, l) => sum + l.impactScore, 0)} points on the table.
                   </h3>
                   <p className="mb-5 text-sm text-white/50">
-                    Your #1 leak is visible above. The other {freeResult.statusLeaks.length - 1} are blurred — each with a specific fix and point impact. Unlock them before spending money on the wrong upgrade.
+                    You saw leak #1. The other {freeResult.statusLeaks.length - 1} are hidden — each with the exact fix and how many points it recovers. Most people fix the wrong thing first and waste money.
                   </p>
 
-                  {/* What's inside */}
                   <div className="mb-5 grid gap-2 sm:grid-cols-2">
                     {[
-                      { icon: "🔍", text: "All status leaks revealed" },
-                      { icon: "⚡", text: "Fastest free fix for each" },
-                      { icon: "💰", text: "Under-₹500 and under-₹2K fixes" },
-                      { icon: "🚫", text: "What NOT to waste money on" },
+                      { icon: <svg className="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>, text: "Every leak revealed with fix" },
+                      { icon: <svg className="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>, text: "Fastest free fix for each" },
+                      { icon: <svg className="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>, text: "Under-₹500 upgrade options" },
+                      { icon: <svg className="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>, text: "What NOT to waste money on" },
                     ].map((item) => (
-                      <div key={item.text} className="flex items-center gap-2 rounded-xl bg-white/[0.03] px-3 py-2.5">
-                        <span className="text-sm">{item.icon}</span>
+                      <div key={item.text} className="flex items-center gap-2.5 rounded-xl bg-white/[0.03] px-3 py-2.5">
+                        {item.icon}
                         <span className="text-xs text-white/70">{item.text}</span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="flex flex-col gap-3 sm:flex-row">
-                    <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`} className="flex-1" onClick={() => trackEvent("quick_fix_cta_clicked", { auditId: audit.id })}>
-                      <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-400 hover:to-teal-400" size="lg">
-                        Unlock all fixes — ₹25
-                      </Button>
-                    </Link>
-                    <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} className="flex-1">
-                      <Button variant="outline" className="w-full" size="lg">
-                        Full report — ₹44
-                      </Button>
-                    </Link>
+                  <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`} className="block" onClick={() => trackEvent("quick_fix_cta_clicked", { auditId: audit.id })}>
+                    <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-base font-semibold text-white hover:from-emerald-400 hover:to-teal-400" size="lg">
+                      Unlock all fixes — ₹25
+                    </Button>
+                  </Link>
+                  <p className="mt-2 text-center text-[11px] text-white/30">Less than a chai. UPI / cards. Instant unlock.</p>
+
+                  <div className="my-4 flex items-center gap-3">
+                    <div className="h-px flex-1 bg-white/5" />
+                    <span className="text-[10px] text-white/20">or</span>
+                    <div className="h-px flex-1 bg-white/5" />
                   </div>
 
-                  <p className="mt-3 text-center text-[10px] text-white/25">UPI / cards accepted. Instant unlock.</p>
+                  <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} className="block">
+                    <Button variant="outline" className="w-full border-purple-500/30 text-purple-300 hover:bg-purple-500/10" size="lg">
+                      Full report with upgrade roadmap — ₹44
+                    </Button>
+                  </Link>
+                </div>
+
+                <div className="border-t border-white/5 bg-white/[0.02] px-5 py-3">
+                  <div className="flex items-center justify-center gap-4 text-[10px] text-white/25">
+                    <span>12,400+ audits analyzed</span>
+                    <span className="h-0.5 w-0.5 rounded-full bg-white/20" />
+                    <span>Avg +{Math.round(freeResult.statusLeaks.reduce((s, l) => s + l.impactScore, 0) * 0.7)} pts after fixing</span>
+                  </div>
                 </div>
               </div>
             )}
@@ -1181,10 +1234,13 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               <div className="relative mb-8">
                 <h2 className="mb-4 text-lg font-semibold text-white">Quick Fixes</h2>
                 <div className="relative overflow-hidden rounded-2xl border border-white/10">
-                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0a0a0f]/70 backdrop-blur-[3px]">
+                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-[#0a0a0f]/70 backdrop-blur-[3px]">
                     <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`}>
-                      <Button size="sm" className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white">Unlock fixes — ₹25</Button>
+                      <Button size="sm" className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white">
+                        Unlock {freeResult.quickFixes.length} fixes — ₹25
+                      </Button>
                     </Link>
+                    <span className="text-[10px] text-white/25">Your fixes are ready</span>
                   </div>
                   <div className="p-4 space-y-2" style={{ filter: "blur(4px)" }}>
                     {freeResult.quickFixes.slice(0, 3).map((fix) => (
@@ -1217,10 +1273,11 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               <div className="relative mb-8">
                 <h2 className="mb-4 text-lg font-semibold text-white">Budget Upgrade Plan</h2>
                 <div className="relative overflow-hidden rounded-2xl border border-white/10">
-                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0a0a0f]/70 backdrop-blur-[3px]">
+                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-[#0a0a0f]/70 backdrop-blur-[3px]">
                     <Link href={`/unlock?auditId=${audit.id}&product=aura_report`}>
                       <Button size="sm">Full budget plan — ₹44</Button>
                     </Link>
+                    <span className="text-[10px] text-white/25">Personalized to your ₹{audit.budgetRange || "5,000"} budget</span>
                   </div>
                   <div className="p-4 space-y-3" style={{ filter: "blur(4px)" }}>
                     {freeResult.budgetUpgradePlan.slice(0, 2).map((plan) => (
@@ -1298,35 +1355,18 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               </>
             )}
 
-            {/* ─── Before/After Proof + Final upsell (for free users) ─── */}
-            {!unlockedProducts.includes("quick_fix") && (() => {
-              const firstLeak = freeResult.statusLeaks[0]?.title?.toLowerCase() || "";
-              const match = PROOF_EXAMPLES.find((e) =>
-                firstLeak.includes("lighting") ? e.id === "lighting-fix-01"
-                : firstLeak.includes("background") ? e.id === "background-fix-01"
-                : firstLeak.includes("clarity") || firstLeak.includes("crop") || firstLeak.includes("framing") ? e.id === "crop-framing-01"
-                : firstLeak.includes("composition") ? e.id === "crop-framing-01"
-                : e.id === "lighting-fix-01"
-              ) || PROOF_EXAMPLES[0];
-              return (
-                <Card className="mb-8 border-emerald-500/20">
-                  <div className="mb-3">
-                    <Badge variant="success" className="mb-2">Real Example</Badge>
-                    <p className="text-sm text-gray-400">
-                      Most people waste money fixing the wrong thing first. This user had a similar leak to yours.
-                    </p>
-                  </div>
-                  <BeforeAfterCard example={match} compact />
-                  <div className="mt-4 border-t border-white/5 pt-4 text-center">
-                    <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`}>
-                      <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-400 hover:to-teal-400" size="sm">
-                        Don&apos;t guess — unlock your fix path for ₹25
-                      </Button>
-                    </Link>
-                  </div>
-                </Card>
-              );
-            })()}
+            {/* ─── Final CTA for free users ─── */}
+            {!unlockedProducts.includes("quick_fix") && !unlockedProducts.includes("aura_report") && (
+              <div className="mb-8 rounded-2xl border border-white/5 bg-white/[0.02] p-5 text-center">
+                <p className="mb-1 text-sm font-semibold text-white">Still thinking?</p>
+                <p className="mb-4 text-xs text-white/40">Most people fix the wrong thing first and waste 10x the cost. ₹25 tells you the right move.</p>
+                <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`}>
+                  <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-400 hover:to-teal-400" size="sm">
+                    Unlock all fixes — ₹25
+                  </Button>
+                </Link>
+              </div>
+            )}
 
             {/* ─── Product CTAs ─── */}
             <ProductCTAButtons auditId={audit.id} unlockedProducts={unlockedProducts} />
@@ -1334,11 +1374,17 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
             {/* ─── Sticky mobile purchase bar (free users only) ─── */}
             {!unlockedProducts.includes("quick_fix") && !unlockedProducts.includes("aura_report") && (
               <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-emerald-500/20 bg-[#07111f]/95 px-4 py-3 backdrop-blur-lg sm:hidden">
-                <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`} className="block">
-                  <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white" size="lg">
-                    Unlock all fixes — ₹25
-                  </Button>
-                </Link>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-semibold text-white">{freeResult.statusLeaks.reduce((s, l) => s + l.impactScore, 0)} pts recoverable</div>
+                    <div className="text-[10px] text-white/40">Fix path ready</div>
+                  </div>
+                  <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`}>
+                    <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 px-5 text-sm font-semibold text-white whitespace-nowrap" size="sm">
+                      ₹25
+                    </Button>
+                  </Link>
+                </div>
               </div>
             )}
           </>
