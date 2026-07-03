@@ -51,7 +51,9 @@ export type AnalyticsEvent =
   | "share_card_native_shared"
   | "battle_completed"
   | "battle_share_card_viewed"
-  | "challenge_logged";
+  | "challenge_logged"
+  | "landing_page_viewed"
+  | "landing_cta_clicked";
 
 export interface AnalyticsRecord {
   id: string;

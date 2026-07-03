@@ -34,7 +34,7 @@ const footerGroups = [
 
 export function Footer() {
   return (
-    <footer className="relative z-10 mt-20 px-3 pb-4 sm:px-4">
+    <footer id="site-footer" className="relative z-10 mt-20 px-3 pb-4 sm:px-4">
       <Container className="glass-panel glow-frame rounded-[32px] px-6 py-10 sm:px-8">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_repeat(3,1fr)]">
           <div className="max-w-sm">

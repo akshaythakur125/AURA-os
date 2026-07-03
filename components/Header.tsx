@@ -18,7 +18,7 @@ export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 px-3 pt-3 sm:px-4">
+    <header id="site-header" className="sticky top-0 z-50 px-3 pt-3 sm:px-4">
       <Container className="glass-panel glow-frame rounded-[26px] px-4 sm:px-6">
         <div className="flex h-18 items-center justify-between gap-4">
           <Link href="/" className="flex items-center gap-3">
