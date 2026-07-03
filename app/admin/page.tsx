@@ -54,7 +54,7 @@ export default function AdminPage() {
   const [audits] = useState(() => getAudits());
   const [analytics] = useState(() => getAnalyticsSummary());
   const [leads, setLeads] = useState(() => getLeads());
-  const [referralProfile] = useState(() => getOrCreateReferralProfile());
+  const [referralProfile, setReferralProfile] = useState<ReturnType<typeof getOrCreateReferralProfile> | null>(null);
   const [referralClaims] = useState(() => getReferralClaims());
   const [challengeEntries] = useState(() => getChallengeEntries());
   const [progressComparisons] = useState(() => getProgressComparisons());
@@ -77,6 +77,10 @@ export default function AdminPage() {
     const localIds = new Set(orders.map((o) => o.id));
     return [...orders, ...remoteOrders.filter((r) => !localIds.has(r.id))];
   }, [orders, remoteOrders]);
+
+  useEffect(() => {
+    setReferralProfile(getOrCreateReferralProfile());
+  }, []);
 
   useEffect(() => {
     fetch("/api/admin/auth")
@@ -746,7 +750,7 @@ export default function AdminPage() {
             <div className="mb-6 grid gap-4 sm:grid-cols-4">
               <Card>
                 <div className="text-xs text-gray-500">Referral Code</div>
-                <div className="mt-1 text-lg font-bold text-purple-300">{referralProfile.referralCode}</div>
+                <div className="mt-1 text-lg font-bold text-purple-300">{referralProfile?.referralCode ?? "—"}</div>
               </Card>
               <Card>
                 <div className="text-xs text-gray-500">Local Claims</div>

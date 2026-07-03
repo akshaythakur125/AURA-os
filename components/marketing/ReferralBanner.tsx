@@ -1,24 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { recordReferralClaim } from "@/lib/storage/referralStore";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 
 let didRun = false;
 
 export function ReferralBanner() {
-  const [referrer] = useState(() => {
-    if (didRun || typeof window === "undefined") return null;
+  // Reading window.location.search and recording the claim can only happen
+  // client-side, so this must start at null (matching the server) and
+  // resolve inside an effect -- doing it in the useState initializer runs
+  // during the client's first render too, before hydration reconciles
+  // against the server's null-returning render, causing a mismatch on
+  // every referral-link visit (the banner element itself is present vs
+  // absent), plus it wrote the claim as a render side-effect.
+  const [referrer, setReferrer] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (didRun) return;
     didRun = true;
     const params = new URLSearchParams(window.location.search);
     const ref = params.get("ref");
     if (ref && ref.trim()) {
       recordReferralClaim(ref.trim(), "url");
       trackEvent("referral_claimed", { code: ref.trim(), source: "url" });
-      return ref.trim();
+      setReferrer(ref.trim());
     }
-    return null;
-  });
+  }, []);
 
   if (!referrer) return null;
 

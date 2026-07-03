@@ -583,13 +583,22 @@ function ProductCTAButtons({ auditId, unlockedProducts }: { auditId: string; unl
 
 export default function AuditDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const [audit, setAudit] = useState(() => getAuditById(id) || null);
+  // getAuditById reads localStorage, which doesn't exist during SSR -- calling
+  // it as the initial useState value would render "Audit not found" on the
+  // server and the real audit on the client's first paint, a guaranteed
+  // hydration mismatch for anyone hard-navigating/refreshing this page.
+  // Start unresolved and only read local storage inside an effect.
+  const [audit, setAudit] = useState<ReturnType<typeof getAuditById> | null>(null);
+  const [checkedLocal, setCheckedLocal] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Try loading from Supabase if not found locally
+  // Check localStorage, then fall back to Supabase if not found locally
   useEffect(() => {
-    if (!audit && shouldUseSupabase()) {
+    const local = getAuditById(id) || null;
+    setAudit(local);
+    setCheckedLocal(true);
+    if (!local && shouldUseSupabase()) {
       fetch(`/api/audits/${id}`)
         .then((res) => res.ok ? res.json() : null)
         .then((data) => {
@@ -606,6 +615,14 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (!checkedLocal) {
+    return (
+      <Container className="py-12">
+        <div className="mx-auto max-w-md text-center text-sm text-gray-500">Loading audit...</div>
+      </Container>
+    );
+  }
 
   if (!audit) {
     return (

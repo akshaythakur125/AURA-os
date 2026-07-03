@@ -29,13 +29,25 @@ const STATUS_BADGE: Record<string, { label: string; variant: "default" | "warnin
 export default function DashboardPage() {
   const [audits, setAudits] = useState(() => getAudits());
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
-  const [referralProfile] = useState(() => getOrCreateReferralProfile());
+  const [referralProfile, setReferralProfile] = useState<ReturnType<typeof getOrCreateReferralProfile> | null>(null);
   const [referralStats] = useState(() => getReferralStats());
+
+  useEffect(() => {
+    setReferralProfile(getOrCreateReferralProfile());
+  }, []);
   const [progressComparisons] = useState(() => getProgressComparisons());
   const [latestTwin] = useState(() => getLatestTwinResult());
   const [habitStats] = useState(() => getHabitStats());
-  const [todayMission] = useState(() => getTodayMission());
+  // getTodayMission() derives "today" from the runtime's local timezone,
+  // which differs between the server (UTC) and the visitor's browser --
+  // computing it eagerly can render a different day/title on first paint
+  // than what SSR produced. Defer to an effect so it's client-only.
+  const [todayMission, setTodayMission] = useState<ReturnType<typeof getTodayMission>>(null);
   const [shareCopied, setShareCopied] = useState(false);
+
+  useEffect(() => {
+    setTodayMission(getTodayMission());
+  }, []);
 
   function handleDelete(id: string) {
     deleteAudit(id);
@@ -220,51 +232,53 @@ export default function DashboardPage() {
         )}
 
         {/* ─── Referral Card ─── */}
-        <Card className="mb-8 border-purple-500/20">
-          <h2 className="mb-4 text-lg font-bold text-white">Invite Friends</h2>
-          <div className="mb-4 rounded-xl bg-white/5 p-4 text-center">
-            <div className="mb-1 text-xs text-gray-500">Your Referral Code</div>
-            <div className="text-2xl font-bold text-purple-300">{referralProfile.referralCode}</div>
-          </div>
-          <div className="mb-4 grid grid-cols-3 gap-2 text-center text-xs">
-            <div className="rounded-lg bg-white/5 p-2">
-              <div className="text-lg font-bold text-white">{referralStats.totalInvitesLocal}</div>
-              <div className="text-gray-500">Invites</div>
+        {referralProfile && (
+          <Card className="mb-8 border-purple-500/20">
+            <h2 className="mb-4 text-lg font-bold text-white">Invite Friends</h2>
+            <div className="mb-4 rounded-xl bg-white/5 p-4 text-center">
+              <div className="mb-1 text-xs text-gray-500">Your Referral Code</div>
+              <div className="text-2xl font-bold text-purple-300">{referralProfile.referralCode}</div>
             </div>
-            <div className="rounded-lg bg-white/5 p-2">
-              <div className="text-lg font-bold text-white">{referralStats.totalClaimsLocal}</div>
-              <div className="text-gray-500">Claims</div>
+            <div className="mb-4 grid grid-cols-3 gap-2 text-center text-xs">
+              <div className="rounded-lg bg-white/5 p-2">
+                <div className="text-lg font-bold text-white">{referralStats.totalInvitesLocal}</div>
+                <div className="text-gray-500">Invites</div>
+              </div>
+              <div className="rounded-lg bg-white/5 p-2">
+                <div className="text-lg font-bold text-white">{referralStats.totalClaimsLocal}</div>
+                <div className="text-gray-500">Claims</div>
+              </div>
+              <div className="rounded-lg bg-white/5 p-2">
+                <div className="text-lg font-bold text-white">{referralStats.claimRate.toFixed(0)}%</div>
+                <div className="text-gray-500">Claim Rate</div>
+              </div>
             </div>
-            <div className="rounded-lg bg-white/5 p-2">
-              <div className="text-lg font-bold text-white">{referralStats.claimRate.toFixed(0)}%</div>
-              <div className="text-gray-500">Claim Rate</div>
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="outline" size="sm" onClick={async () => {
+                await copyInviteLink(referralProfile.referralCode);
+                incrementInviteCount();
+                trackEvent("referral_link_copied");
+                setShareCopied(true);
+                setTimeout(() => setShareCopied(false), 2000);
+              }}>{shareCopied ? "Copied!" : "Copy Invite Link"}</Button>
+              <Button variant="outline" size="sm" onClick={async () => {
+                await copyInviteMessage(referralProfile.referralCode);
+                incrementInviteCount();
+                trackEvent("referral_shared");
+              }}>Copy Message</Button>
+              {typeof navigator.share !== "undefined" && (
+                <Button variant="ghost" size="sm" className="col-span-2" onClick={async () => {
+                  try {
+                    await nativeShare(referralProfile.referralCode);
+                    incrementInviteCount();
+                    trackEvent("referral_shared");
+                  } catch { /* user cancelled */ }
+                }}>Share via Native Share</Button>
+              )}
             </div>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" size="sm" onClick={async () => {
-              await copyInviteLink(referralProfile.referralCode);
-              incrementInviteCount();
-              trackEvent("referral_link_copied");
-              setShareCopied(true);
-              setTimeout(() => setShareCopied(false), 2000);
-            }}>{shareCopied ? "Copied!" : "Copy Invite Link"}</Button>
-            <Button variant="outline" size="sm" onClick={async () => {
-              await copyInviteMessage(referralProfile.referralCode);
-              incrementInviteCount();
-              trackEvent("referral_shared");
-            }}>Copy Message</Button>
-            {typeof navigator.share !== "undefined" && (
-              <Button variant="ghost" size="sm" className="col-span-2" onClick={async () => {
-                try {
-                  await nativeShare(referralProfile.referralCode);
-                  incrementInviteCount();
-                  trackEvent("referral_shared");
-                } catch { /* user cancelled */ }
-              }}>Share via Native Share</Button>
-            )}
-          </div>
-          <p className="mt-3 text-[10px] text-gray-600">Referral claims are tracked only in this browser for MVP testing.</p>
-        </Card>
+            <p className="mt-3 text-[10px] text-gray-600">Referral claims are tracked only in this browser for MVP testing.</p>
+          </Card>
+        )}
 
         {/* ─── Progress Card ─── */}
         {progressComparisons.length > 0 && (

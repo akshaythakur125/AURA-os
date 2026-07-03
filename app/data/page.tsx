@@ -1,16 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { getStorageSummary, formatBytes } from "@/lib/data/getStorageSummary";
+import type { StorageSummary } from "@/lib/data/getStorageSummary";
 import { downloadSnapshot, validateSnapshot, importAllData } from "@/lib/data/exportAllData";
 import type { DataSnapshot } from "@/lib/data/exportAllData";
 import { clearLocalData } from "@/lib/data/clearLocalData";
 import type { ClearTarget } from "@/lib/data/clearLocalData";
 import { getStorageHealth, repairKnownStores } from "@/lib/storage/storageHealth";
+import type { StorageHealthResult } from "@/lib/storage/storageHealth";
 import { MigrateLocalToCloudCard } from "@/components/data/MigrateLocalToCloudCard";
 
 const CLEAR_ITEMS: { target: ClearTarget; label: string; require?: string }[] = [
@@ -24,9 +26,33 @@ const CLEAR_ITEMS: { target: ClearTarget; label: string; require?: string }[] = 
   { target: "progress", label: "Clear Progress Data" },
 ];
 
+const SSR_SAFE_SUMMARY: StorageSummary = { entries: [], totalEstimatedBytes: 0, localStorageAvailable: false };
+const SSR_SAFE_HEALTH: StorageHealthResult = {
+  localStorageAvailable: false,
+  estimatedUsage: 0,
+  estimatedUsageFormatted: "0 B",
+  estimatedPercentage: 0,
+  warning: null,
+  corruptStores: [],
+};
+
 export default function DataPage() {
-  const [summary] = useState(() => getStorageSummary());
-  const [health] = useState(() => getStorageHealth());
+  // Storage APIs are environment-sensitive (typeof window checks), so the
+  // real values differ between server and the browser's first paint even
+  // before any user interaction -- start from a fixed, SSR-matching
+  // default and only read the real client values inside an effect to
+  // avoid a hydration mismatch.
+  const [summary, setSummary] = useState(SSR_SAFE_SUMMARY);
+  const [health, setHealth] = useState(SSR_SAFE_HEALTH);
+
+  function refreshStorageInfo() {
+    setSummary(getStorageSummary());
+    setHealth(getStorageHealth());
+  }
+
+  useEffect(() => {
+    refreshStorageInfo();
+  }, []);
   const [importPreview, setImportPreview] = useState<DataSnapshot | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const [importMode, setImportMode] = useState<"merge" | "replace">("merge");
@@ -105,7 +131,7 @@ export default function DataPage() {
               <div className="text-xs text-gray-500">Corrupt Stores</div>
               <div className="mt-1 text-sm text-white">{health.corruptStores.length > 0 ? `${health.corruptStores.length} found` : "None"}</div>
               {health.corruptStores.length > 0 && (
-                <Button size="sm" variant="ghost" onClick={() => { const { repaired } = repairKnownStores(); setStatus(`Repaired ${repaired} store(s).`); }} className="mt-2">Repair</Button>
+                <Button size="sm" variant="ghost" onClick={() => { const { repaired } = repairKnownStores(); setStatus(`Repaired ${repaired} store(s).`); refreshStorageInfo(); }} className="mt-2">Repair</Button>
               )}
             </div>
           </div>

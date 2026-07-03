@@ -76,11 +76,11 @@ export async function runSmokeTests(): Promise<SmokeTestSuite> {
     return res.ok;
   }));
 
-  // 8. Affiliate out route
-  tests.push(await runTest("Affiliate out route exists", async () => {
-    const res = await fetch("/api/out");
-    return res.status === 400 || res.status === 405; // should exist but reject bad requests
-  }, "Check /api/out route exists in codebase."));
+  // 8. Affiliate click tracking route
+  tests.push(await runTest("Affiliate click tracking route exists", async () => {
+    const res = await fetch("/api/commerce/click", { method: "POST", body: "{}" });
+    return res.status === 400; // should exist but reject missing required fields
+  }));
 
   // 9. Wishlist API
   tests.push(await runTest("Wishlist API exists", async () => {
