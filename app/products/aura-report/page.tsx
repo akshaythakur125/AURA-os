@@ -92,7 +92,7 @@ export default function AuraReportPage() {
           <div className="grid gap-6 sm:grid-cols-3">
             {[
               { step: "1", title: "Analyze", desc: "Upload 1&ndash;3 photos of yourself. The engine runs a full visual analysis locally." },
-              { step: "2", title: "Pay & Unlock", desc: "Complete a manual UPI payment of ₹99. You'll receive an unlock code." },
+              { step: "2", title: "Pay & Unlock", desc: "Complete a manual UPI payment of ₹44. You'll receive an unlock code." },
               { step: "3", title: "Read Your Report", desc: "View your full report with visual breakdowns, archetype, and personalized upgrade plan." },
             ].map((s) => (
               <div key={s.step} className="text-center">
@@ -145,7 +145,7 @@ export default function AuraReportPage() {
           <h2 className="mb-4 text-2xl font-bold text-white">Ready for your full breakdown?</h2>
           <p className="mb-6 text-gray-400">Get your personalized upgrade roadmap in minutes.</p>
           {upsell && !alreadyUnlocked ? (
-            <Button asChild size="lg"><Link href={`/unlock?auditId=${upsell.auditId}&product=aura_report`}>Unlock Now — ₹99</Link></Button>
+            <Button asChild size="lg"><Link href={`/unlock?auditId=${upsell.auditId}&product=aura_report`}>Unlock Now — ₹44</Link></Button>
           ) : (
             <Button asChild size="lg"><Link href="/audit/new">Start Free Aura Check</Link></Button>
           )}

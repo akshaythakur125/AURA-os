@@ -339,8 +339,8 @@ export default function TryPage() {
           <div className="space-y-3">
             {[
               { name: "Vibe Check", price: "Free", desc: "Score + #1 vibe leak", highlight: false },
-              { name: "Fast Fix", price: "Rs 49", desc: "The single move that changes the most", highlight: false },
-              { name: "Full Read", price: "Rs 99", desc: "Complete breakdown + step-by-step fix path", highlight: true },
+              { name: "Fast Fix", price: "Rs 25", desc: "The single move that changes the most", highlight: false },
+              { name: "Full Read", price: "Rs 44", desc: "Complete breakdown + step-by-step fix path", highlight: true },
               { name: "30-Day Reset", price: "Rs 499", desc: "Weekly missions + tracked progress", highlight: false },
             ].map((tier) => (
               <div

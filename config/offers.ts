@@ -7,7 +7,7 @@ export const OFFERS: OfferCode[] = [
     discountValue: 10,
     label: "10% off any product",
     productTypes: ["quick_fix", "aura_report", "dating_audit", "glowup_plan"],
-    minAmount: 49,
+    minAmount: 25,
     isActive: true,
   },
   {
@@ -34,7 +34,7 @@ export const OFFERS: OfferCode[] = [
     discountValue: 50,
     label: "₹50 off any product",
     productTypes: ["quick_fix", "aura_report", "dating_audit", "glowup_plan"],
-    minAmount: 49,
+    minAmount: 25,
     isActive: true,
   },
   {
@@ -46,12 +46,12 @@ export const OFFERS: OfferCode[] = [
     isActive: true,
   },
   {
-    code: "FIX25",
+    code: "FIX10",
     discountType: "fixed",
-    discountValue: 25,
-    label: "₹25 off Quick Aura Fix",
+    discountValue: 10,
+    label: "₹10 off Quick Aura Fix",
     productTypes: ["quick_fix"],
-    minAmount: 49,
+    minAmount: 25,
     isActive: true,
   },
   {
@@ -60,7 +60,7 @@ export const OFFERS: OfferCode[] = [
     discountValue: 50,
     label: "₹50 off — early user discount",
     productTypes: ["quick_fix", "aura_report", "dating_audit", "glowup_plan"],
-    minAmount: 49,
+    minAmount: 25,
     isActive: true,
   },
 ];

@@ -33,8 +33,8 @@ export const PRODUCT_LABELS: Record<ProductType, string> = {
 };
 
 export const PRODUCT_PRICES: Record<ProductType, number> = {
-  quick_fix: 49,
-  aura_report: 99,
+  quick_fix: 25,
+  aura_report: 44,
   dating_audit: 299,
   glowup_plan: 499,
 };

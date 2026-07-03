@@ -68,7 +68,7 @@ const offerCards = [
   },
   {
     name: "Fast Fix",
-    price: "Rs 49",
+    price: "Rs 25",
     body: "The single fastest change that moves your score the most. One clear move.",
     sub: "less than a coffee · UPI in one tap",
     cta: "Unlock",
@@ -76,7 +76,7 @@ const offerCards = [
   },
   {
     name: "Full Read",
-    price: "Rs 99",
+    price: "Rs 44",
     body: "Full breakdown — fit, color, grooming, posture — with a step-by-step fix path.",
     sub: "one lunch · UPI in one tap",
     cta: "Get the report",

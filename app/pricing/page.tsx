@@ -23,7 +23,7 @@ const plans = [
   },
   {
     name: "Quick Aura Fix",
-    price: "49",
+    price: "25",
     tagline: "Best when you want the fastest actionable improvement.",
     features: [
       "Biggest status leak identified",
@@ -40,7 +40,7 @@ const plans = [
   },
   {
     name: "Full Aura Report",
-    price: "99",
+    price: "44",
     tagline: "Best when you want the full reasoning and full roadmap.",
     features: [
       "Up to 3 photos analyzed",
@@ -161,11 +161,11 @@ export default function PricingPage() {
             <div className="mt-1 text-gray-500">Shows the problem</div>
           </div>
           <div className="float-card rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-3 ring-1 ring-emerald-500/20">
-            <div className="font-semibold text-emerald-300">2. Rs 49 Quick Fix</div>
+            <div className="font-semibold text-emerald-300">2. Rs 25 Quick Fix</div>
             <div className="mt-1 text-emerald-300/70">Gives the fastest first move</div>
           </div>
           <div className="float-card rounded-lg border border-purple-500/10 bg-purple-500/[0.03] p-3">
-            <div className="font-semibold text-purple-400">3. Rs 99 Full Report</div>
+            <div className="font-semibold text-purple-400">3. Rs 44 Full Report</div>
             <div className="mt-1 text-purple-300/70">Explains the full reason and roadmap</div>
           </div>
           <div className="float-card rounded-lg border border-amber-500/10 bg-amber-500/[0.03] p-3">
@@ -238,11 +238,11 @@ export default function PricingPage() {
             <div className="mt-1 text-gray-500">Shows score and top leak</div>
           </div>
           <div className="rounded-lg border border-emerald-500/10 bg-emerald-500/[0.03] p-3">
-            <div className="font-semibold text-emerald-400">Rs 49</div>
+            <div className="font-semibold text-emerald-400">Rs 25</div>
             <div className="mt-1 text-emerald-300/70">Shows fastest fix path</div>
           </div>
           <div className="rounded-lg border border-purple-500/10 bg-purple-500/[0.03] p-3">
-            <div className="font-semibold text-purple-400">Rs 99</div>
+            <div className="font-semibold text-purple-400">Rs 44</div>
             <div className="mt-1 text-purple-300/70">Shows full reasoning and roadmap</div>
           </div>
           <div className="rounded-lg border border-rose-500/10 bg-rose-500/[0.03] p-3">

@@ -31,8 +31,8 @@ const STATUS_BADGE: Record<string, { label: string; variant: "default" | "warnin
 };
 
 const PRODUCT_CTA: { type: ProductType; name: string; price: number; gradient: string; features: string[]; badge?: string }[] = [
-  { type: "quick_fix", name: "Fast Fix", price: 49, gradient: "from-emerald-500 to-teal-500", features: ["Biggest status leak", "Fastest free fix path", "Under ₹500 fix", "Under ₹2,000 fix", "Avoid wasting money"], badge: "Best first unlock" },
-  { type: "aura_report", name: "Full Read", price: 99, gradient: "from-purple-600 to-pink-500", features: ["Full visual breakdown", "Detailed status leak analysis", "Budget upgrade roadmap", "Shareable Aura card", "Product recommendations"], badge: "Most popular" },
+  { type: "quick_fix", name: "Fast Fix", price: 25, gradient: "from-emerald-500 to-teal-500", features: ["Biggest status leak", "Fastest free fix path", "Under ₹500 fix", "Under ₹2,000 fix", "Avoid wasting money"], badge: "Best first unlock" },
+  { type: "aura_report", name: "Full Read", price: 44, gradient: "from-purple-600 to-pink-500", features: ["Full visual breakdown", "Detailed status leak analysis", "Budget upgrade roadmap", "Shareable Aura card", "Product recommendations"], badge: "Most popular" },
   { type: "dating_audit", name: "Dating/Profile Audit", price: 299, gradient: "from-rose-500 to-red-500", features: ["Profile Presentation Score", "Bio/prompt/caption feedback", "Red-flag cleanup", "Suggested bio versions", "Photo order strategy"] },
   { type: "glowup_plan", name: "30-Day Reset", price: 499, gradient: "from-amber-500 to-orange-500", features: ["30 daily missions", "4-week structured plan", "Budget roadmap (₹0–₹25K+)", "Photo/grooming/outfit system", "Progress tracker"], badge: "Best value" },
 ];
@@ -493,7 +493,7 @@ function QuickFixSection({ report }: { report: QuickAuraFixReport }) {
   return (
     <>
       <div className="mb-4 flex items-center gap-3">
-        <Badge variant="premium">₹49 Quick Aura Fix</Badge>
+        <Badge variant="premium">₹25 Quick Aura Fix</Badge>
       </div>
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
         <Card className="border-emerald-500/20">
@@ -1161,12 +1161,12 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                   <div className="flex flex-col gap-3 sm:flex-row">
                     <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`} className="flex-1" onClick={() => trackEvent("quick_fix_cta_clicked", { auditId: audit.id })}>
                       <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-400 hover:to-teal-400" size="lg">
-                        Unlock all fixes — ₹49
+                        Unlock all fixes — ₹25
                       </Button>
                     </Link>
                     <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} className="flex-1">
                       <Button variant="outline" className="w-full" size="lg">
-                        Full report — ₹99
+                        Full report — ₹44
                       </Button>
                     </Link>
                   </div>
@@ -1183,7 +1183,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                 <div className="relative overflow-hidden rounded-2xl border border-white/10">
                   <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0a0a0f]/70 backdrop-blur-[3px]">
                     <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`}>
-                      <Button size="sm" className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white">Unlock fixes — ₹49</Button>
+                      <Button size="sm" className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white">Unlock fixes — ₹25</Button>
                     </Link>
                   </div>
                   <div className="p-4 space-y-2" style={{ filter: "blur(4px)" }}>
@@ -1219,7 +1219,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                 <div className="relative overflow-hidden rounded-2xl border border-white/10">
                   <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#0a0a0f]/70 backdrop-blur-[3px]">
                     <Link href={`/unlock?auditId=${audit.id}&product=aura_report`}>
-                      <Button size="sm">Full budget plan — ₹99</Button>
+                      <Button size="sm">Full budget plan — ₹44</Button>
                     </Link>
                   </div>
                   <div className="p-4 space-y-3" style={{ filter: "blur(4px)" }}>
@@ -1320,7 +1320,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                   <div className="mt-4 border-t border-white/5 pt-4 text-center">
                     <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`}>
                       <Button className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:from-emerald-400 hover:to-teal-400" size="sm">
-                        Don&apos;t guess — unlock your fix path for ₹49
+                        Don&apos;t guess — unlock your fix path for ₹25
                       </Button>
                     </Link>
                   </div>
@@ -1336,7 +1336,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-emerald-500/20 bg-[#07111f]/95 px-4 py-3 backdrop-blur-lg sm:hidden">
                 <Link href={`/unlock?auditId=${audit.id}&product=quick_fix`} className="block">
                   <Button className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white" size="lg">
-                    Unlock all fixes — ₹49
+                    Unlock all fixes — ₹25
                   </Button>
                 </Link>
               </div>
@@ -1378,13 +1378,13 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
             <Card className="mb-8 border-purple-500/20 ring-1 ring-purple-500/20">
               <h3 className="mb-2 text-lg font-bold text-white">Want the full reason behind this fix?</h3>
               <p className="mb-4 text-sm text-gray-400">
-                The ₹49 Quick Fix tells you the fastest move. The ₹99 Full Aura Report gives the full visual breakdown, archetype, mismatch map, and budget upgrade plan.
+                The ₹25 Quick Fix tells you the fastest move. The ₹44 Full Aura Report gives the full visual breakdown, archetype, mismatch map, and budget upgrade plan.
               </p>
               <div className="flex flex-wrap gap-3">
                 {!unlockedProducts.includes("aura_report") && (
                   <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} onClick={() => trackEvent("quick_fix_upsell_full_report_clicked", { auditId: audit.id })}>
                     <Button className="bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-500 hover:to-pink-400" size="sm">
-                      Upgrade to Full Aura Report — ₹99
+                      Upgrade to Full Aura Report — ₹44
                     </Button>
                   </Link>
                 )}

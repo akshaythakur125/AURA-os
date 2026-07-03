@@ -36,7 +36,7 @@ export function generatePaidProductForAudit(
           "Improve lighting and background",
           "Optimize clothing contrast",
         ],
-        budgetPlan: "Start with ₹49 Quick Fix, then upgrade to full glow-up",
+        budgetPlan: "Start with ₹25 Quick Fix, then upgrade to full glow-up",
       };
     }
 

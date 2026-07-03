@@ -31,7 +31,7 @@ export function ComparisonTable({ className }: ComparisonTableProps) {
           <tr className="border-b border-white/5">
             <th className="pb-3 pr-4 text-gray-500 font-medium">Feature</th>
             <th className="pb-3 pr-4 text-white font-medium">Free</th>
-            <th className="pb-3 pr-4 text-purple-300 font-medium">₹99 Report</th>
+            <th className="pb-3 pr-4 text-purple-300 font-medium">₹44 Report</th>
             <th className="pb-3 pr-4 text-rose-300 font-medium">₹299 Dating</th>
             <th className="pb-3 text-amber-300 font-medium">₹499 30-Day Reset</th>
           </tr>

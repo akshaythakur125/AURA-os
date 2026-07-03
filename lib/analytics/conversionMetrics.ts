@@ -94,16 +94,16 @@ export function computeFunnelLeaks(metrics: ConversionMetrics): FunnelLeak[] {
 
   if (metrics.overall.freeScores > 0 && metrics.rates.freeScoreToPaywall < 30) {
     leaks.push({
-      stage: "Free Score → ₹49 Paywall",
+      stage: "Free Score → ₹25 Paywall",
       dropoffCount: metrics.overall.freeScores - metrics.overall.paywallViews,
       dropoffPercent: 100 - metrics.rates.freeScoreToPaywall,
-      suggestion: "Improve ₹49 paywall copy and CTA placement on audit result page.",
+      suggestion: "Improve ₹25 paywall copy and CTA placement on audit result page.",
     });
   }
 
   if (metrics.overall.paywallViews > 0 && metrics.rates.paywallToCheckout < 20) {
     leaks.push({
-      stage: "₹49 Paywall → Checkout Start",
+      stage: "₹25 Paywall → Checkout Start",
       dropoffCount: metrics.overall.paywallViews - metrics.overall.checkoutStarts,
       dropoffPercent: 100 - metrics.rates.paywallToCheckout,
       suggestion: "Many paywall views but few checkout starts. Review unlock page UX and pricing clarity.",

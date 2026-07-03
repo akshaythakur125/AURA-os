@@ -339,10 +339,10 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-semibold text-white">Unlock Quick Aura Fix</h3>
-                  <p className="text-xs text-gray-400">Get your biggest status leak and the fastest fix path for ₹49.</p>
+                  <p className="text-xs text-gray-400">Get your biggest status leak and the fastest fix path for ₹25.</p>
                 </div>
                 <Button asChild size="sm" variant="outline" className="border-emerald-500/50 text-emerald-400">
-                  <Link href={`/unlock?auditId=${latest.id}&product=quick_fix`}>Unlock — ₹49</Link>
+                  <Link href={`/unlock?auditId=${latest.id}&product=quick_fix`}>Unlock — ₹25</Link>
                 </Button>
               </div>
             </Card>

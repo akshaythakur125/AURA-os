@@ -28,8 +28,8 @@ import { RazorpayCheckoutButton } from "@/components/payments/RazorpayCheckoutBu
 import { getPublicRazorpayKeyId } from "@/lib/razorpay/env";
 
 const PRODUCT_INFO: Record<ProductType, { name: string; price: number; desc: string }> = {
-  quick_fix: { name: "Fast Fix", price: 49, desc: "Your biggest status leak and the fastest fix path." },
-  aura_report: { name: "Full Read", price: 99, desc: "Deep visual analysis with upgrade roadmap." },
+  quick_fix: { name: "Fast Fix", price: 25, desc: "Your biggest status leak and the fastest fix path." },
+  aura_report: { name: "Full Read", price: 44, desc: "Deep visual analysis with upgrade roadmap." },
   dating_audit: { name: "Dating/Profile Audit", price: 299, desc: "Profile presentation score, bio feedback, and photo order strategy." },
   glowup_plan: { name: "30-Day Reset", price: 499, desc: "Structured 30-day roadmap with daily missions and budget roadmap." },
 };
@@ -342,7 +342,7 @@ function UnlockContent() {
         </h1>
         <p className="mb-8 text-center text-sm text-gray-400">
           {product === "quick_fix"
-            ? "Pay ₹49 manually via UPI and enter your unlock code to reveal the exact fix path."
+            ? "Pay ₹25 manually via UPI and enter your unlock code to reveal the exact fix path."
             : "Manual UPI payment — MVP demo flow"}
         </p>
 

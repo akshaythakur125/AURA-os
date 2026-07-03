@@ -12,14 +12,14 @@ const PRODUCTS: Record<ProductType, ProductConfig> = {
   quick_fix: {
     type: "quick_fix",
     name: "Quick Aura Fix",
-    amount: 49,
+    amount: 25,
     description: "Biggest status leak and fastest fix path",
     unlockCodePrefix: "FIX",
   },
   aura_report: {
     type: "aura_report",
     name: "Full Aura Report",
-    amount: 99,
+    amount: 44,
     description: "Full visual breakdown and budget upgrade plan",
     unlockCodePrefix: "AURA",
   },

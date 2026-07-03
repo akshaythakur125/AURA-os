@@ -1,8 +1,8 @@
 import type { LaunchCheck } from "@/types/launch";
 
 const PRODUCTS = [
-  { type: "quick_fix", name: "Quick Aura Fix", price: 49 },
-  { type: "aura_report", name: "Full Aura Report", price: 99 },
+  { type: "quick_fix", name: "Quick Aura Fix", price: 25 },
+  { type: "aura_report", name: "Full Aura Report", price: 44 },
   { type: "dating_audit", name: "Dating/Profile Audit", price: 299 },
   { type: "glowup_plan", name: "30-Day Reset", price: 499 },
 ];
