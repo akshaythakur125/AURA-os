@@ -58,17 +58,12 @@ export async function searchCommerceIndex(
     });
   }
 
-  if (styleDirection) {
-    filtered = filtered.filter((item) =>
-      item.styleTags.includes(styleDirection)
-    );
-  }
-
-  if (auraLeakTags.length > 0) {
-    filtered = filtered.filter((item) =>
-      item.auraLeakTags.some((t) => auraLeakTags.includes(t))
-    );
-  }
+  // Style direction and aura leak tags are ranking signals (see
+  // computeRankScore below), not hard filters -- the catalog is small
+  // enough that AND-filtering on top of category/budget/query regularly
+  // zeroes out results for a valid combination that just isn't tagged
+  // that specifically. Boosting relevant items in the score instead keeps
+  // results non-empty while still surfacing the best matches first.
 
   // 7. Score and rank
   const sort = input.sort || "aura_best";
