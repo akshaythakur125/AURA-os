@@ -532,6 +532,37 @@ show freshness and confidence → compare prices safely
 - Public users must verify prices on the final store
 - No scraping, no fake discounts, no guaranteed cheapest claims
 
+### Live Feed Setup (Scheduled Refresh)
+
+Two Vercel Cron jobs are configured in `vercel.json`:
+
+| Cron | Path | Schedule | What it does |
+|---|---|---|---|
+| Catalog freshness | `/api/cron/refresh-catalog` | Every 72h (midnight UTC) | Re-derives freshness labels + confidence scores on persisted catalog rows (Supabase mode) |
+| Feed refresh | `/api/commerce/refresh/run` | Daily 03:00 UTC | Runs all configured store connectors and imports fresh prices |
+
+Both endpoints authenticate via `Authorization: Bearer ${CRON_SECRET}` (sent
+automatically by Vercel Cron when `CRON_SECRET` is set) and also accept the
+manual `x-refresh-secret: ${COMMERCE_REFRESH_SECRET}` header for hand-triggered
+runs.
+
+To wire a real live price feed, set in Vercel:
+
+1. `CRON_SECRET` — long random value; protects both cron endpoints
+2. One feed source:
+   - `COMMERCE_GENERIC_CSV_FEED_URL` — URL of an affiliate CSV feed
+   - or `COMMERCE_GENERIC_JSON_FEED_URL` — URL of an affiliate JSON feed
+   - optional `COMMERCE_GENERIC_FEED_TOKEN` — bearer token sent when fetching the feed
+
+With those set, the daily feed refresh imports real prices automatically. Until
+a feed URL is configured, the connectors are documented stubs and the refresh
+run reports honestly that no feed is available — nothing is invented in code.
+
+Store-specific connectors (Amazon PA-API, Flipkart Affiliate, Cuelinks,
+Admitad) are placeholder stubs; wire them when you have real credentials (see
+`.env.example` for the variable names and `lib/commerce/connectors/*Stub.ts`
+for the implementation points).
+
 ## Visual Wardrobe Diagnosis Engine
 
 AuraCheck includes a browser-based visual wardrobe diagnosis engine that analyzes uploaded photos to identify wardrobe gaps and recommend clothing improvements — all locally, with no external AI or server uploads.
