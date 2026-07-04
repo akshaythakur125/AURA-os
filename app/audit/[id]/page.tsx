@@ -617,6 +617,9 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
   const [checkedLocal, setCheckedLocal] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [leaksVisible, setLeaksVisible] = useState(true);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareTipUnlocked, setShareTipUnlocked] = useState(false);
 
   // Check localStorage, then fall back to Supabase if not found locally
   useEffect(() => {
@@ -640,6 +643,14 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!audit) return;
+    const prods: string[] = audit.unlockedProducts || [];
+    const hasAllLeaks = prods.includes("quick_fix") || prods.includes("aura_report");
+    if (hasAllLeaks) { setLeaksVisible(true); return; }
+    setLeaksVisible(localStorage.getItem(`auracheck:v1:revealed:${audit.id}`) === "true");
+  }, [audit]);
 
   if (!checkedLocal) {
     return (
@@ -676,16 +687,6 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
     ),
     ...(referralFreeFix ? (["quick_fix"] as ProductType[]) : []),
   ];
-
-  const [leaksVisible, setLeaksVisible] = useState(() => {
-    if (typeof window === "undefined") return true;
-    const hasAllLeaks = unlockedProducts.includes("quick_fix") || unlockedProducts.includes("aura_report");
-    if (hasAllLeaks) return true;
-    return localStorage.getItem(`auracheck:v1:revealed:${audit.id}`) === "true";
-  });
-
-  const [shareModalOpen, setShareModalOpen] = useState(false);
-  const [shareTipUnlocked, setShareTipUnlocked] = useState(false);
 
   async function handleGenerate() {
     if (!audit) return;
