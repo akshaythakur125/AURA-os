@@ -262,9 +262,36 @@ function WardrobeSearchContent() {
               </div>
             </Card>
           </div>
+        ) : selectedStyleId || searchParams.get("query") ? (
+          <div className="mb-8 text-center">
+            <h1 className="mb-3 text-3xl font-bold text-white">
+              {selectedStyle ? `${selectedStyle.label} — shop the look` : "Search results"}
+            </h1>
+            <p className="mx-auto max-w-2xl text-sm text-gray-400">
+              {selectedStyle
+                ? "Matching clothes from Indian stores below. Tap any store button to browse more on their site."
+                : "Prices come from AuraCheck’s catalog and should be verified on the store before buying."}
+            </p>
+            {selectedStyle && (
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                {STYLE_STORE_LINKS.map((store) => (
+                  <a
+                    key={store.key}
+                    href={buildStoreSearchUrl(store.key, `${selectedStyle.label} outfit`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 rounded-full border border-sky-300/25 bg-sky-400/10 px-3 py-1.5 text-xs font-medium text-sky-200 hover:bg-sky-400/20"
+                  >
+                    {store.name}
+                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
         ) : (
           <>
-            {/* Landing hero — shown only when no preset is active. */}
+            {/* Landing hero — shown only when no search is active. */}
             <div className="mb-8 text-center">
               <h1 className="mb-3 text-3xl font-bold text-white">Find clothes across Indian stores</h1>
               <p className="mx-auto max-w-2xl text-sm text-gray-400">

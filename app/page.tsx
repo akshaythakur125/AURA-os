@@ -404,7 +404,7 @@ export default function HomePage() {
               {STYLE_SEARCH_SUGGESTIONS.map((style) => (
                 <Link
                   key={style.id}
-                  href={`/wardrobe/search?query=${encodeURIComponent(style.query)}&sort=aura_best`}
+                  href={`/wardrobe/search?styleId=${style.id}&sort=aura_best`}
                   className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75 transition-colors hover:border-sky-300/30 hover:text-sky-200"
                 >
                   {style.label}
