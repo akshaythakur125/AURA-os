@@ -224,7 +224,8 @@ export default function TryPage() {
         {/* ─── What You'll See ─── */}
         <div className="mx-auto mt-20 max-w-lg">
           <div className="mb-6 text-center">
-            <h2 className="text-xl font-bold text-white">What you&apos;ll see in 8 seconds</h2>
+            <h2 className="text-xl font-bold text-white">What are you afraid the photo says about you?</h2>
+          <p className="mt-2 text-xs text-white/45">In 8 seconds, you&apos;ll know. Here&apos;s what you get:</p>
           </div>
           <div className="space-y-3">
             {[
@@ -246,7 +247,8 @@ export default function TryPage() {
         {/* ─── What People Found ─── */}
         <div className="mx-auto mt-20 max-w-3xl">
           <div className="mb-6 text-center">
-            <h2 className="text-xl font-bold text-white">What 12,400 people found this week</h2>
+            <h2 className="text-xl font-bold text-white">They thought their photo was fine too.</h2>
+          <p className="mt-2 text-xs text-white/45">Here&apos;s what 12,400 people actually found this week:</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {galleryEntries.map((card, i) => (
@@ -295,7 +297,8 @@ export default function TryPage() {
         {/* ─── Before / After Proof Cards ─── */}
         <div className="mx-auto mt-20 max-w-3xl">
           <div className="mb-6 text-center">
-            <h2 className="text-xl font-bold text-white">Small changes, sharp jumps</h2>
+            <h2 className="text-xl font-bold text-white">One fix. That&apos;s all it took.</h2>
+          <p className="mt-2 text-xs text-white/45">These people changed one thing and watched their score jump:</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             {getHomepageProofEntries().slice(0, 3).map((entry) => (
@@ -340,14 +343,43 @@ export default function TryPage() {
           </div>
         </div>
 
+        {/* ─── Quick Fixes You Can Buy Right Now ─── */}
+        <div className="mx-auto mt-20 max-w-3xl">
+          <div className="mb-6 text-center">
+            <h2 className="text-xl font-bold text-white">Most people fix their #1 leak for under Rs 500</h2>
+            <p className="mt-2 text-xs text-white/45">Here&apos;s what people buy right after their score:</p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {[
+              { label: "Ring Light", price: "Rs 399", fix: "Fixes flat lighting (+12 pts)", emoji: "💡", url: "https://www.amazon.in/s?k=ring+light+selfie&tag=auracheck-21" },
+              { label: "Solid Tee", price: "Rs 349", fix: "Kills logo noise (+8 pts)", emoji: "👕", url: "https://www.amazon.in/s?k=solid+colour+tshirt+men&tag=auracheck-21" },
+              { label: "Phone Tripod", price: "Rs 299", fix: "Fixes bad crop (+11 pts)", emoji: "📱", url: "https://www.amazon.in/s?k=phone+tripod+stand&tag=auracheck-21" },
+            ].map((p) => (
+              <a key={p.label} href={p.url} target="_blank" rel="noopener noreferrer" className="group flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-3 transition-all hover:border-sky-500/20">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/5 text-2xl">
+                  {p.emoji}
+                </div>
+                <div>
+                  <div className="text-sm font-semibold text-white">{p.label} <span className="text-white/40">· {p.price}</span></div>
+                  <div className="text-[11px] text-emerald-400">{p.fix}</div>
+                  <div className="mt-1 text-[10px] text-sky-300 group-hover:text-sky-200">Buy on Amazon →</div>
+                </div>
+              </a>
+            ))}
+          </div>
+          <p className="mt-4 text-center">
+            <Link href="/shop" className="text-xs text-purple-400 hover:text-purple-300">See all fixes by leak type →</Link>
+          </p>
+        </div>
+
         {/* ─── Final CTA ─── */}
         <div className="mx-auto mt-20 max-w-xl text-center">
           <div className="rounded-[36px] border border-purple-500/20 bg-gradient-to-b from-purple-500/5 to-transparent p-8 sm:p-12">
             <h2 className="text-3xl font-bold text-white sm:text-4xl">
-              Your next photo could hit different.
+              Still guessing what people see?
             </h2>
             <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-white/55">
-              One photo. Eight seconds. Zero sign-ups. Find out what people actually see.
+              You scrolled this far for a reason. One photo. Eight seconds. Find out — or keep wondering every time you post.
             </p>
             <div className="mt-6">
               <button

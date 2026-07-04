@@ -81,8 +81,8 @@ export default function GlowUpPage() {
       <div className="mx-auto max-w-3xl">
         <div className="mb-8 text-center">
           <Badge variant="premium" className="mb-3">30-Day Glow-Up</Badge>
-          <h1 className="text-4xl font-bold text-white">Your Glow-Up Journey</h1>
-          <p className="mt-2 text-sm text-gray-400">One small win every day. 30 days to a sharper presentation.</p>
+          <h1 className="text-4xl font-bold text-white">How different could you look in 30 days?</h1>
+          <p className="mt-2 text-sm text-gray-400">One mission a day. No gym. No surgery. Just the small things that move the needle most.</p>
         </div>
 
         {/* Stats bar */}

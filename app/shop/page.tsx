@@ -138,9 +138,9 @@ export default function ShopPage() {
     <Container className="py-8 sm:py-12">
       <div className="mx-auto max-w-6xl">
         <div className="prism-panel glow-frame shine-sweep mb-8 rounded-[34px] px-6 py-8 text-center sm:px-10">
-          <h1 className="mb-3 text-3xl font-bold text-white">Upgrade Your Visual Signal</h1>
+          <h1 className="mb-3 text-3xl font-bold text-white">Know your leak. Now fix it for less.</h1>
           <p className="mx-auto max-w-xl text-sm text-gray-400">
-            Trend-led picks, cheaper comparisons, less guesswork.
+            Every piece here patches a real aura leak. Price-compared across 6 stores so you don&apos;t overpay.
           </p>
           <div className="mt-4 flex justify-center gap-3">
             <Button asChild size="sm" variant="outline">

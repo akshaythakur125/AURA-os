@@ -123,9 +123,9 @@ export default function GalleryPage() {
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 text-center">
           <Badge variant="premium" className="mb-3">Aura Gallery</Badge>
-          <h1 className="text-4xl font-bold text-white">Real Scores, Real People</h1>
+          <h1 className="text-4xl font-bold text-white">Think you&apos;d score higher than them?</h1>
           <p className="mt-2 text-sm text-gray-400">
-            {stats.totalEntries} entries · Highest: {stats.highestScore} · Average: {stats.averageScore}
+            {stats.totalEntries} entries · Highest: {stats.highestScore} · Average: {stats.averageScore} — where would you land?
           </p>
         </div>
 
@@ -198,7 +198,18 @@ export default function GalleryPage() {
         )}
 
         <div className="mt-8 text-center">
-          <Button asChild variant="outline"><Link href="/audit/new">Get Your Aura Score — Free</Link></Button>
+          <p className="mb-3 text-sm text-white/55">You&apos;ve looked at everyone else&apos;s score. Don&apos;t you want to know yours?</p>
+          <Button asChild><Link href="/audit/new">Find out — free</Link></Button>
+        </div>
+
+        {/* ─── Shoppable CTA ─── */}
+        <div className="mt-12 rounded-[22px] border border-purple-500/20 bg-gradient-to-b from-purple-500/5 to-transparent p-6 text-center">
+          <h3 className="text-lg font-bold text-white">Want to be in the Hall of Fame?</h3>
+          <p className="mt-2 text-sm text-white/50">The top scorers all fixed their #1 leak first. Most fixes cost less than Rs 500.</p>
+          <div className="mt-4 flex flex-wrap justify-center gap-3">
+            <Button asChild size="sm"><Link href="/audit/new">Get your score</Link></Button>
+            <Button asChild size="sm" variant="outline"><Link href="/shop">Shop top fixes →</Link></Button>
+          </div>
         </div>
       </div>
     </Container>

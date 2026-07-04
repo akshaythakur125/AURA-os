@@ -66,7 +66,7 @@ export default function ChallengesPage() {
     <Container className="py-12">
       <div className="mx-auto max-w-5xl">
         <div className="mb-12 text-center">
-          <h1 className="mb-4 text-4xl font-bold text-white">Small daily missions. Ranked glow-up.</h1>
+          <h1 className="mb-4 text-4xl font-bold text-white">Can you keep a streak longer than 7 days?</h1>
           <div className="flex flex-col items-center gap-4">
             <StreakRing streak={streak.currentStreak} />
             <p className="text-sm text-gray-400">

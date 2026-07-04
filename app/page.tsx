@@ -7,12 +7,73 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { STYLE_SEARCH_SUGGESTIONS } from "@/config/styleSearchSuggestions";
+import { CELEBRITY_TREND_PRESETS } from "@/config/celebrityTrendPresets";
 import { ReferralBanner } from "@/components/marketing/ReferralBanner";
 import { getMarqueePresets, getDailySubset } from "@/lib/marketing/rotatingPresets";
 import { getHomepageProofEntries } from "@/data/homepageProof";
 import { getGalleryEntries } from "@/lib/storage/galleryStore";
 
 const marqueeStyles = getMarqueePresets();
+
+const quickFixProducts = [
+  {
+    label: "Ring Light",
+    leak: "Fixes flat lighting",
+    price: "Rs 399",
+    points: "+12 pts avg",
+    emoji: "💡",
+    url: "https://www.amazon.in/s?k=ring+light+selfie&tag=auracheck-21",
+  },
+  {
+    label: "Solid Colour Tee",
+    leak: "Kills logo noise",
+    price: "Rs 349",
+    points: "+8 pts avg",
+    emoji: "👕",
+    url: "https://www.amazon.in/s?k=solid+colour+tshirt+men&tag=auracheck-21",
+  },
+  {
+    label: "Grooming Kit",
+    leak: "Skin + hair fix",
+    price: "Rs 499",
+    points: "+9 pts avg",
+    emoji: "✂️",
+    url: "https://www.amazon.in/s?k=mens+grooming+kit&tag=auracheck-21",
+  },
+  {
+    label: "Phone Tripod",
+    leak: "Fixes bad crop",
+    price: "Rs 299",
+    points: "+11 pts avg",
+    emoji: "📱",
+    url: "https://www.amazon.in/s?k=phone+tripod+stand&tag=auracheck-21",
+  },
+  {
+    label: "Minimal Watch",
+    leak: "Instant premium signal",
+    price: "Rs 899",
+    points: "+7 pts avg",
+    emoji: "⌚",
+    url: "https://www.amazon.in/s?k=minimal+analog+watch+men&tag=auracheck-21",
+  },
+  {
+    label: "White Sneakers",
+    leak: "Footwear upgrade",
+    price: "Rs 799",
+    points: "+6 pts avg",
+    emoji: "👟",
+    url: "https://www.amazon.in/s?k=white+sneakers+men+casual&tag=auracheck-21",
+  },
+];
+
+const occasionShops = [
+  { emoji: "💘", label: "Date Night", query: "date night outfit men", hook: "Does your outfit say 'effort' or 'afterthought'?" },
+  { emoji: "💼", label: "Interview", query: "interview formal shirt trousers men", hook: "Dress like you already got the job." },
+  { emoji: "🎉", label: "Wedding Guest", query: "wedding guest outfit kurta men", hook: "Show up like you own the venue." },
+  { emoji: "🏖️", label: "Goa Trip", query: "beach vacation shirt men", hook: "Pack less, look better." },
+  { emoji: "🎓", label: "College Fit", query: "college casual outfit men", hook: "Campus legend starter pack." },
+  { emoji: "📸", label: "Profile Photo", query: "solid colour polo tshirt men", hook: "Your DP's outfit matters more than your face." },
+];
 
 const heroScenarios = [
   {
@@ -391,16 +452,59 @@ export default function HomePage() {
                     className="glass-card float-card block w-[250px] min-w-[250px] overflow-hidden rounded-[28px] p-3 hover:-translate-y-1"
                   >
                     <div className="overflow-hidden rounded-[22px]">
-                      <img src={preset.imageSrc} alt={preset.celebrity} className="h-[300px] w-full object-cover" />
+                      <img src={preset.imageSrc} alt={preset.celebrity} className="h-[300px] w-full object-cover" loading="lazy" />
                     </div>
                     <div className="px-1 pb-1 pt-3">
                       <h3 className="text-sm font-semibold text-white">{preset.celebrity}</h3>
                       <p className="mt-1 text-xs text-sky-200">{preset.label}</p>
+                      <span className="mt-2 inline-block rounded-full bg-sky-400/15 px-2.5 py-0.5 text-[10px] font-semibold text-sky-300">
+                        Shop this look →
+                      </span>
                     </div>
                   </Link>
                 ))}
               </div>
             </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── All Trending Looks Grid ─── */}
+      <section className="pb-16">
+        <Container>
+          <div className="mx-auto max-w-3xl text-center">
+            <Badge variant="premium">all 16 trending looks</Badge>
+            <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
+              Which one are you pulling off next?
+            </h2>
+            <p className="mt-3 text-sm text-white/55 sm:text-base">
+              Every look is shoppable. Tap → see the pieces → compare prices. That&apos;s it.
+            </p>
+          </div>
+          <div className="mt-8 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+            {CELEBRITY_TREND_PRESETS.map((preset) => (
+              <Link
+                key={preset.id}
+                href={`/wardrobe/search?preset=${preset.id}&sort=cheapest`}
+                className="glass-card float-card group overflow-hidden rounded-[22px] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]"
+              >
+                <div className="overflow-hidden">
+                  <img
+                    src={preset.imageSrc}
+                    alt={preset.label}
+                    className="h-[200px] w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="p-3">
+                  <h3 className="text-sm font-semibold text-white">{preset.label}</h3>
+                  <p className="mt-1 text-[11px] text-white/50">{preset.celebrity}</p>
+                  <span className="mt-2 inline-block text-[10px] font-semibold text-sky-300 group-hover:text-sky-200">
+                    Shop this look →
+                  </span>
+                </div>
+              </Link>
+            ))}
           </div>
         </Container>
       </section>
@@ -498,6 +602,85 @@ export default function HomePage() {
                 </div>
               ));
             })()}
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── Quick Fixes People Actually Buy ─── */}
+      <section className="pb-16">
+        <Container>
+          <div className="mx-auto max-w-3xl text-center">
+            <Badge variant="premium">top fixes this month</Badge>
+            <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
+              What if the fix costs less than your lunch?
+            </h2>
+            <p className="mt-3 text-sm text-white/55 sm:text-base">
+              These are the most-bought fixes after people see their score. Average gain: +9 points.
+            </p>
+          </div>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {quickFixProducts.map((prod) => (
+              <a
+                key={prod.label}
+                href={prod.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="prism-panel float-card group flex gap-4 rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]"
+              >
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[14px] bg-white/5 text-3xl">
+                  {prod.emoji}
+                </div>
+                <div className="flex flex-col justify-between">
+                  <div>
+                    <div className="text-sm font-semibold text-white">{prod.label}</div>
+                    <div className="text-xs text-white/45">{prod.leak}</div>
+                    <div className="mt-1 flex items-center gap-2 text-xs">
+                      <span className="text-white/50">from {prod.price}</span>
+                      <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-400">{prod.points}</span>
+                    </div>
+                  </div>
+                  <span className="mt-2 text-[11px] font-semibold text-sky-300 group-hover:text-sky-200">
+                    Buy on Amazon →
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+          <div className="mt-6 text-center">
+            <Button asChild size="sm" variant="outline">
+              <Link href="/shop">See all fixes by leak type →</Link>
+            </Button>
+          </div>
+        </Container>
+      </section>
+
+      {/* ─── Shop by Occasion ─── */}
+      <section className="pb-16">
+        <Container>
+          <div className="mx-auto max-w-3xl text-center">
+            <Badge variant="default">shop by occasion</Badge>
+            <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
+              Where are you headed next?
+            </h2>
+            <p className="mt-3 text-sm text-white/55 sm:text-base">
+              Pick the occasion. We pull the outfit. Price-compared across 6 Indian stores.
+            </p>
+          </div>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {occasionShops.map((occ) => (
+              <Link
+                key={occ.label}
+                href={`/wardrobe/search?query=${encodeURIComponent(occ.query)}&sort=aura_best`}
+                className="prism-panel float-card group rounded-[22px] p-5 transition-all duration-300 hover:shadow-[0_0_30px_rgba(147,51,234,0.1)]"
+              >
+                <div className="text-3xl">{occ.emoji}</div>
+                <h3 className="display-font mt-3 text-xl font-bold text-white">{occ.label}</h3>
+                <p className="mt-2 text-sm text-white/55 italic">&ldquo;{occ.hook}&rdquo;</p>
+                <span className="mt-3 inline-block text-[11px] font-semibold text-purple-300 group-hover:text-purple-200">
+                  Shop this occasion →
+                </span>
+              </Link>
+            ))}
           </div>
         </Container>
       </section>

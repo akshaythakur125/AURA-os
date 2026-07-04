@@ -160,9 +160,9 @@ export default function BattlePage() {
       <div className="mx-auto max-w-3xl">
         <div className="mb-10 text-center">
           <Badge variant="default" className="mb-3">Aura Battle</Badge>
-          <h1 className="mb-3 text-4xl font-bold text-white">Who has the higher aura?</h1>
+          <h1 className="mb-3 text-4xl font-bold text-white">Think you&apos;d win? Prove it.</h1>
           <p className="text-sm text-gray-400">
-            {battleCount > 0 && `${battleCount} battles so far.`}
+            Drop two photos. We score both. The aura speaks for itself.{battleCount > 0 && ` ${battleCount} battles and counting.`}
           </p>
 
           <div className="mt-4 flex justify-center gap-2">
