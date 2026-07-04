@@ -12,6 +12,8 @@ import { shouldUseSupabase } from "@/lib/storage/storageMode";
 import { generateFreeAuraReport, generateFreeReportWithPersonalization } from "@/lib/aura-engine/generateFreeAuraReport";
 import { RecommendationSection } from "@/components/products/RecommendationSection";
 import { trackEvent } from "@/lib/storage/analyticsStore";
+import { ShareModal } from "@/components/ui/ShareModal";
+import { submitToGallery, hasSubmittedAudit } from "@/lib/storage/galleryStore";
 import { hasReferralEarnedFreeFix } from "@/lib/storage/referralStore";
 import { isMissionComplete, markMissionComplete, isChecklistComplete, markChecklistComplete } from "@/lib/storage/habitStore";
 import type { FreeAuraResult, FullAuraReport, ProductType } from "@/types";
@@ -615,12 +617,6 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
   const [checkedLocal, setCheckedLocal] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // Leaks start hidden so the score reveal can fade them in. This hook MUST
-  // live above the early returns below (Rules of Hooks) and MUST default to a
-  // constant -- deriving it from localStorage/audit here would both crash
-  // (audit is null on first render) and cause a hydration mismatch. An effect
-  // reveals them immediately for already-unlocked or previously-revealed audits.
-  const [leaksVisible, setLeaksVisible] = useState(false);
 
   // Check localStorage, then fall back to Supabase if not found locally
   useEffect(() => {
@@ -644,21 +640,6 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // Reveal leaks immediately (skip the animation gate) when the audit is
-  // already paid-unlocked or was revealed on a previous visit.
-  useEffect(() => {
-    if (!audit) return;
-    const unlocked =
-      (audit.unlockedProducts || []).includes("quick_fix") ||
-      (audit.unlockedProducts || []).includes("aura_report");
-    const alreadyRevealed =
-      typeof window !== "undefined" &&
-      localStorage.getItem(`auracheck:v1:revealed:${audit.id}`) === "true";
-    if (unlocked || alreadyRevealed || hasReferralEarnedFreeFix()) {
-      setLeaksVisible(true);
-    }
-  }, [audit]);
 
   if (!checkedLocal) {
     return (
@@ -695,6 +676,16 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
     ),
     ...(referralFreeFix ? (["quick_fix"] as ProductType[]) : []),
   ];
+
+  const [leaksVisible, setLeaksVisible] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const hasAllLeaks = unlockedProducts.includes("quick_fix") || unlockedProducts.includes("aura_report");
+    if (hasAllLeaks) return true;
+    return localStorage.getItem(`auracheck:v1:revealed:${audit.id}`) === "true";
+  });
+
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareTipUnlocked, setShareTipUnlocked] = useState(false);
 
   async function handleGenerate() {
     if (!audit) return;
@@ -806,24 +797,21 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               </div>
               <div className="flex flex-wrap gap-2 border-t border-white/5 pt-4">
                 <Button size="sm" variant="outline" onClick={() => {
-                  const url = `/api/share-card?score=${fullReport.fullScore}&category=${encodeURIComponent(fullReport.category)}&signal=${encodeURIComponent(fullReport.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(fullReport.biggestStatusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
-                  window.open(url, "_blank");
+                  setShareModalOpen(true);
                   trackEvent("share_card_viewed");
-                }}>📤 View Story Card</Button>
+                }}>📤 Share Your Report</Button>
                 <Button size="sm" variant="ghost" onClick={async () => {
                   const shareUrl = `${location.origin}/api/share-card?score=${fullReport.fullScore}&category=${encodeURIComponent(fullReport.category)}&signal=${encodeURIComponent(fullReport.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(fullReport.biggestStatusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
                   try {
                     await navigator.clipboard.writeText(shareUrl);
                     trackEvent("share_card_link_copied");
                   } catch { /* clipboard unavailable */ }
-                }}>🔗 Copy link</Button>
-                <Button size="sm" variant="ghost" onClick={async () => {
-                  const shareUrl = `${location.origin}/api/share-card?score=${fullReport.fullScore}&category=${encodeURIComponent(fullReport.category)}&signal=${encodeURIComponent(fullReport.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(fullReport.biggestStatusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
-                  try {
-                    await navigator.share({ title: "My Aura Report", text: `My Full Aura Score: ${fullReport.fullScore}/100`, url: shareUrl });
-                    trackEvent("share_card_native_shared");
-                  } catch { /* native share unavailable or cancelled */ }
-                }}>📱 Share</Button>
+                }}>🔗 Copy link</Button>{" "}
+                {shareTipUnlocked && (
+                  <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs text-emerald-400 self-center">
+                    🎁 Tip unlocked
+                  </span>
+                )}
                 <Button asChild size="sm" variant="ghost"><Link href="/progress">📊 Compare Progress</Link></Button>
                 <Button asChild size="sm" variant="ghost"><Link href="/twin-simulator">🔮 Aura Twin</Link></Button>
               </div>
@@ -1014,10 +1002,9 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
               </div>
               <div className="flex flex-wrap gap-2 border-t border-white/5 pt-4">
                 <Button size="sm" variant="outline" onClick={() => {
-                  const url = `/api/share-card?score=${freeResult.auraScore}&category=${encodeURIComponent(freeResult.category)}&signal=${encodeURIComponent(freeResult.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(freeResult.statusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
-                  window.open(url, "_blank");
+                  setShareModalOpen(true);
                   trackEvent("share_card_viewed");
-                }}>📤 View Story Card</Button>
+                }}>📤 Share Your Score</Button>
                 <Button size="sm" variant="ghost" onClick={async () => {
                   const shareUrl = `${location.origin}/api/share-card?score=${freeResult.auraScore}&category=${encodeURIComponent(freeResult.category)}&signal=${encodeURIComponent(freeResult.strongestSignals[0] || "Presentation")}&leak=${encodeURIComponent(freeResult.statusLeaks[0]?.title || "Background")}&url=${encodeURIComponent(location.origin)}`;
                   try {
@@ -1031,11 +1018,43 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                     await navigator.share({ title: "My Aura Score", text: `My Aura Score: ${freeResult.auraScore}/100`, url: shareUrl });
                     trackEvent("share_card_native_shared");
                   } catch { /* native share unavailable or cancelled */ }
-                }}>📱 Share</Button>
+                }}>📱 Share</Button>{" "}
+                {shareTipUnlocked && (
+                  <span className="rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs text-emerald-400 self-center">
+                    🎁 Tip unlocked
+                  </span>
+                )}
                 <Button asChild size="sm" variant="ghost"><Link href="/progress">📊 Compare Progress</Link></Button>
                 <Button asChild size="sm" variant="ghost"><Link href="/twin-simulator">🔮 Aura Twin</Link></Button>
               </div>
             </Card>
+
+            {/* Gallery submission */}
+            {freeResult && !hasSubmittedAudit(audit.id) && (
+              <div className="mb-6 rounded-2xl border border-purple-500/20 bg-purple-500/5 p-4 text-center">
+                <p className="text-sm text-gray-300">Proud of your score? Add it to the Aura Gallery!</p>
+                <p className="text-xs text-gray-500 mt-1">Anonymous — nickname only. Inspire others to check their aura.</p>
+                <div className="mt-3 flex justify-center gap-2">
+                  <Button size="sm" onClick={() => {
+                    const nickname = prompt("Pick a nickname for the gallery:")?.trim();
+                    if (!nickname) return;
+                    submitToGallery({
+                      nickname,
+                      score: freeResult.auraScore,
+                      category: freeResult.category as string,
+                      oneLineVerdict: freeResult.oneLineVerdict,
+                      strongestSignal: freeResult.strongestSignals[0] || "Presentation",
+                      biggestLeak: freeResult.statusLeaks[0]?.title || "Background",
+                      auditId: audit.id,
+                    });
+                    trackEvent("challenge_entered", { source: "gallery_submit", score: String(freeResult.auraScore) });
+                    alert("Added to gallery! Check it at /gallery");
+                  }}>
+                    Add to Gallery
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {/* ─── Free Archetype ─── */}
             {personalization && (
@@ -1383,6 +1402,22 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                   : ""}
           </span>
         </div>
+
+        <ShareModal
+          open={shareModalOpen}
+          onClose={() => setShareModalOpen(false)}
+          score={fullReport?.fullScore ?? freeResult?.auraScore ?? 0}
+          category={fullReport?.category ?? freeResult?.category ?? ""}
+          strongestSignal={fullReport?.strongestSignals?.[0] ?? freeResult?.strongestSignals?.[0] ?? "Presentation"}
+          biggestLeak={fullReport?.biggestStatusLeaks?.[0]?.title ?? freeResult?.statusLeaks?.[0]?.title ?? "Background"}
+          onShareComplete={() => {
+            if (!shareTipUnlocked) {
+              setShareTipUnlocked(true);
+              localStorage.setItem(`auracheck:v1:share_tip_unlocked:${audit.id}`, "true");
+              trackEvent("share_tip_unlocked", { auditId: audit.id });
+            }
+          }}
+        />
       </div>
     </Container>
   );
