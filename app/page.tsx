@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -13,6 +14,49 @@ import { getGalleryEntries } from "@/lib/storage/galleryStore";
 
 const marqueeStyles = getMarqueePresets();
 
+const heroScenarios = [
+  {
+    id: "date",
+    emoji: "💘",
+    label: "Date this week",
+    question:
+      "Would they swipe right on this photo? Be honest — you can't tell. You've seen your face too many times. Strangers haven't.",
+    cta: "Am I date-ready? — free",
+  },
+  {
+    id: "interview",
+    emoji: "💼",
+    label: "Interview coming up",
+    question:
+      "Does your photo say “hire me” — or “scroll past”? The recruiter decides before reading a single word.",
+    cta: "Am I interview-ready? — free",
+  },
+  {
+    id: "event",
+    emoji: "🎉",
+    label: "Wedding / event",
+    question:
+      "Everyone's posting the same night. Same venue, same lighting. Will your photo win the group chat — or disappear in it?",
+    cta: "Am I event-ready? — free",
+  },
+  {
+    id: "dp",
+    emoji: "📸",
+    label: "New DP loading",
+    question:
+      "You've been staring at it for ten minutes and still can't decide. That feeling has a name — it's a leak you can't see.",
+    cta: "Rate my DP — free",
+  },
+  {
+    id: "curious",
+    emoji: "👀",
+    label: "Just curious",
+    question:
+      "Strangers make up their mind about you in 0.3 seconds. Want to know what they decide — or keep guessing?",
+    cta: "Show me what they see — free",
+  },
+];
+
 const steps = [
   {
     number: "01",
@@ -22,7 +66,7 @@ const steps = [
   {
     number: "02",
     title: "Get the read",
-    body: "Your Aura Score out of 100, plus the exact vibe leaks quietly dragging it down.",
+    body: "Your Aura Score out of 100, plus the leaks you can't see — because you've looked at your own face too many times to notice.",
   },
   {
     number: "03",
@@ -35,25 +79,25 @@ const exploreCards = [
   {
     title: "Aura Twin",
     tag: "simulator",
-    body: "Test-drive a new look on your style twin before you spend a rupee on it.",
+    body: "Would that outfit even suit you? Test it on your style twin before you spend a rupee.",
     href: "/twin-simulator",
   },
   {
     title: "Wardrobe Scan",
     tag: "diagnosis",
-    body: "Show us your wardrobe. We find the gaps that keep your fits stuck on repeat.",
+    body: "Why do all your fits feel the same? Your wardrobe already knows. We make it talk.",
     href: "/wardrobe/diagnosis",
   },
   {
     title: "Glow-Up Challenges",
     tag: "streaks",
-    body: "Daily missions that level up your look one small win at a time.",
+    body: "How different could you look in 7 days? Daily missions. Small wins. Ask your streak.",
     href: "/challenges",
   },
   {
     title: "Trend Shop",
     tag: "price compare",
-    body: "Every trending look broken into pieces you can compare across 6 Indian stores.",
+    body: "Saved a look you never bought? We break it into pieces, price-compared across 6 stores.",
     href: "/shop",
   },
 ];
@@ -113,6 +157,19 @@ const demoLeaks = [
 ];
 
 export default function HomePage() {
+  const [scenarioIndex, setScenarioIndex] = useState(0);
+  const [userPicked, setUserPicked] = useState(false);
+
+  useEffect(() => {
+    if (userPicked) return;
+    const timer = setInterval(() => {
+      setScenarioIndex((i) => (i + 1) % heroScenarios.length);
+    }, 3800);
+    return () => clearInterval(timer);
+  }, [userPicked]);
+
+  const scenario = heroScenarios[scenarioIndex];
+
   return (
     <>
       <ReferralBanner />
@@ -126,15 +183,47 @@ export default function HomePage() {
                 free ai first-impression check
               </Badge>
               <h1 className="display-font max-w-3xl text-5xl font-bold leading-[0.95] text-white sm:text-6xl lg:text-7xl">
-                Your vibe has a score. Find yours.
+                Going somewhere?{" "}
+                <span className="bg-gradient-to-r from-sky-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
+                  Let&apos;s see how ready you are.
+                </span>
               </h1>
-              <p className="mt-5 max-w-xl text-base leading-7 text-white/68 sm:text-lg">
-                Drop a photo. See your aura in 8 seconds. Fix what&apos;s off. Ship a version of you people can&apos;t scroll past.
+
+              <div className="mt-6">
+                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/45">
+                  what&apos;s coming up?
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {heroScenarios.map((s, i) => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      onClick={() => {
+                        setScenarioIndex(i);
+                        setUserPicked(true);
+                      }}
+                      className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition-all ${
+                        i === scenarioIndex
+                          ? "border-sky-300/60 bg-sky-400/15 text-sky-200 shadow-[0_0_18px_rgba(56,189,248,0.25)]"
+                          : "border-white/10 bg-white/5 text-white/60 hover:border-white/25 hover:text-white/85"
+                      }`}
+                    >
+                      {s.emoji} {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <p
+                key={scenario.id}
+                className="mt-5 min-h-[5.5rem] max-w-xl text-base leading-7 text-white/75 sm:text-lg"
+              >
+                {scenario.question}
               </p>
 
-              <div className="mt-8 flex flex-col gap-4 sm:flex-row">
+              <div className="mt-6 flex flex-col gap-4 sm:flex-row">
                 <Button asChild size="lg">
-                  <Link href="/audit/new">Score my photo — free</Link>
+                  <Link href={`/audit/new?intent=${scenario.id}`}>{scenario.cta}</Link>
                 </Button>
                 <Button asChild size="lg" variant="secondary">
                   <Link href="/examples">See a real example</Link>
@@ -142,9 +231,9 @@ export default function HomePage() {
               </div>
 
               <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/50">
-                <span>Free tier, forever</span>
+                <span>8 seconds. No sign-up.</span>
                 <span aria-hidden className="text-white/25">·</span>
-                <span>No sign-up needed</span>
+                <span>Free tier, forever</span>
                 <span aria-hidden className="text-white/25">·</span>
                 <span>Your photo never leaves your browser</span>
               </div>
@@ -182,7 +271,7 @@ export default function HomePage() {
                     Strong base. Two leaks are holding you back.
                   </div>
                   <p className="mt-1 text-xs leading-5 text-white/55">
-                    This is what your free check looks like — a score, the leaks, and what each fix is worth.
+                    This person had no idea. That&apos;s the point — you can&apos;t see your own leaks. What&apos;s yours?
                   </p>
                 </div>
               </div>
@@ -219,8 +308,11 @@ export default function HomePage() {
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="default">how it works</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              20 seconds, start to finish.
+              Think you already know how you come across?
             </h2>
+            <p className="mt-3 text-sm text-white/55 sm:text-base">
+              Nobody does. It takes 20 seconds to stop guessing.
+            </p>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
             {steps.map((step) => (
@@ -239,10 +331,10 @@ export default function HomePage() {
           <div className="mx-auto max-w-4xl text-center">
             <Badge variant="premium">100 styles</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              Pick a vibe. We search it for you.
+              Know the vibe you want? Tap it.
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-white/62">
-              From old money to airport fit to wedding guest, users can start from a real style instead of a blank search box.
+              Old money, airport fit, wedding guest — pick where you&apos;re headed and we pull the exact pieces. No blank search box, no guessing.
             </p>
           </div>
 
@@ -271,10 +363,10 @@ export default function HomePage() {
                   celebrity trend radar · refreshed every 72h
                 </div>
                 <h2 className="display-font mt-2 text-2xl font-bold text-white sm:text-3xl">
-                  Steal a look that&apos;s working.
+                  Ever seen a fit and thought “I could pull that off”?
                 </h2>
                 <p className="mt-2 max-w-xl text-sm text-white/55">
-                  Every card is shoppable — tap one to see the pieces behind the look and compare prices across Indian stores.
+                  You probably can. Tap a look to see the exact pieces behind it, price-compared across Indian stores.
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -318,7 +410,7 @@ export default function HomePage() {
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="default">more ways to play</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              Not just a score.
+              Got your score. Now what?
             </h2>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -344,8 +436,11 @@ export default function HomePage() {
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="default" className="mb-4">Real vibe checks this week</Badge>
             <h2 className="display-font text-4xl font-bold text-white sm:text-5xl">
-              Small changes, sharp jumps.
+              They found their one thing. What&apos;s yours?
             </h2>
+            <p className="mt-3 text-sm text-white/55 sm:text-base">
+              Every one of these people thought their photo was fine. It was one fix away from a different reaction.
+            </p>
             <p className="mt-2 text-sm text-gray-400">
               <Link href="/gallery" className="text-purple-400 hover:text-purple-300 underline">View full gallery →</Link>
             </p>
@@ -412,8 +507,11 @@ export default function HomePage() {
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="default">simple pricing</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              Free scores. Small money for the fix.
+              The score is free. What&apos;s knowing the fix worth?
             </h2>
+            <p className="mt-3 text-sm text-white/55 sm:text-base">
+              Less than your coffee, as it turns out.
+            </p>
           </div>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-4">
@@ -450,14 +548,14 @@ export default function HomePage() {
           <div className="glass-panel glow-frame shine-sweep relative overflow-hidden rounded-[36px] px-6 py-10 text-center sm:px-10 sm:py-14">
             <Badge variant="premium">free to try</Badge>
             <h2 className="display-font mt-5 text-4xl font-bold text-white sm:text-5xl">
-              Your next photo could hit different.
+              Still wondering what people see?
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-white/60 sm:text-base">
-              Find the leak, fix the vibe, shop smarter. It takes one photo and zero sign-ups to see your score.
+              You&apos;ve scrolled this far because part of you wants to know. One photo. Eight seconds. Zero sign-ups. Find out — or keep guessing.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
               <Button asChild size="lg">
-                <Link href="/audit/new">Get my Aura Score — free</Link>
+                <Link href="/audit/new">End the suspense — free</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
                 <Link href="/shop">Shop this vibe</Link>
