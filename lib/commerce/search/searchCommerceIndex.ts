@@ -133,8 +133,16 @@ export async function searchCommerceIndex(
     };
   });
 
-  // 10. Build comparable groups from full filtered set
-  const comparisonGroups = buildComparableGroups(filtered);
+  // 10. Build comparable groups from the ranked results (not the raw
+  // filtered set) and order them by the best-ranked item each contains.
+  // Grouping the unranked set ordered groups purely by size, which made
+  // every style search open with the same generic groups regardless of
+  // what the user tapped.
+  const rankOf = new Map(topResults.map(({ item }, i) => [item.id, i]));
+  const comparisonGroups = buildComparableGroups(topResults.map(({ item }) => item)).sort((a, b) => {
+    const bestRank = (g: typeof a) => Math.min(...g.items.map((i) => rankOf.get(i.id) ?? Number.MAX_SAFE_INTEGER));
+    return bestRank(a) - bestRank(b);
+  });
 
   // 11. Freshness summary
   const freshnessSummary = buildFreshnessSummary(filtered);

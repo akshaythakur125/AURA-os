@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useCallback, useEffect } from "react";
+import { Suspense, useState, useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Container } from "@/components/ui/Container";
@@ -12,8 +12,18 @@ import { PriceComparisonCard } from "@/components/commerce/PriceComparisonCard";
 import type { CommerceSearchInput, CommerceSearchSort, CommerceSearchResponse } from "@/types/commerceSearch";
 import type { WardrobeCategory, StoreKey, AuraStyleDirection, AuraLeakTag } from "@/types/commerce";
 import { CELEBRITY_TREND_PRESETS } from "@/config/celebrityTrendPresets";
-import { STYLE_SEARCH_SUGGESTIONS } from "@/config/styleSearchSuggestions";
+import { STYLE_SEARCH_SUGGESTIONS, type StyleSearchSuggestion } from "@/config/styleSearchSuggestions";
 import { getRotatingPresets } from "@/lib/marketing/rotatingPresets";
+import { buildStoreSearchUrl } from "@/config/storeDirectory";
+
+// Stores worth linking a whole style search to. Native search pages always
+// resolve, so these links work for any style label.
+const STYLE_STORE_LINKS: { key: StoreKey; name: string }[] = [
+  { key: "myntra", name: "Myntra" },
+  { key: "amazon_fashion", name: "Amazon" },
+  { key: "ajio", name: "AJIO" },
+  { key: "flipkart_fashion", name: "Flipkart" },
+];
 
 function WardrobeSearchContent() {
   const searchParams = useSearchParams();
@@ -33,22 +43,18 @@ function WardrobeSearchContent() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [initializedFromUrl, setInitializedFromUrl] = useState(false);
+  const [selectedStyleId, setSelectedStyleId] = useState<string | null>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
-  const doSearch = useCallback(async () => {
+  const selectedStyle: StyleSearchSuggestion | undefined = selectedStyleId
+    ? STYLE_SEARCH_SUGGESTIONS.find((s) => s.id === selectedStyleId)
+    : undefined;
+
+  // Core search runner. Takes an explicit input so chip clicks can search
+  // immediately without waiting for state updates to land.
+  const runSearch = useCallback(async (input: CommerceSearchInput) => {
     setLoading(true);
     setSearched(true);
-
-    const input: CommerceSearchInput = {
-      query: query || undefined,
-      category: (category as WardrobeCategory) || undefined,
-      storeKeys: storeFilter ? [storeFilter as StoreKey] : undefined,
-      budgetMin: budgetMin ? parseInt(budgetMin, 10) : undefined,
-      budgetMax: budgetMax ? parseInt(budgetMax, 10) : undefined,
-      styleDirection: (styleDirection as AuraStyleDirection) || undefined,
-      auraLeakTags: auraLeakTag ? [auraLeakTag as AuraLeakTag] : undefined,
-      sort,
-      limit: 50,
-    };
 
     try {
       // Try API first
@@ -79,7 +85,37 @@ function WardrobeSearchContent() {
     } finally {
       setLoading(false);
     }
-  }, [query, category, budgetMin, budgetMax, storeFilter, styleDirection, auraLeakTag, sort]);
+  }, []);
+
+  const doSearch = useCallback(async () => {
+    const input: CommerceSearchInput = {
+      query: query || undefined,
+      category: (category as WardrobeCategory) || undefined,
+      storeKeys: storeFilter ? [storeFilter as StoreKey] : undefined,
+      budgetMin: budgetMin ? parseInt(budgetMin, 10) : undefined,
+      budgetMax: budgetMax ? parseInt(budgetMax, 10) : undefined,
+      styleDirection: (styleDirection as AuraStyleDirection) || undefined,
+      auraLeakTags: auraLeakTag ? [auraLeakTag as AuraLeakTag] : undefined,
+      sort,
+      limit: 50,
+    };
+    await runSearch(input);
+  }, [query, category, budgetMin, budgetMax, storeFilter, styleDirection, auraLeakTag, sort, runSearch]);
+
+  // Style chip click: search that style client-side and bring the results
+  // into view directly below the chips — no page reload.
+  function handleStyleSelect(style: StyleSearchSuggestion) {
+    setSelectedStyleId(style.id);
+    setQuery(style.query);
+    setSort("aura_best");
+    void runSearch({ query: style.query, sort: "aura_best", limit: 50 });
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", `/wardrobe/search?styleId=${style.id}`);
+      requestAnimationFrame(() => {
+        resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+  }
 
   useEffect(() => {
     if (initializedFromUrl) return;
@@ -91,6 +127,18 @@ function WardrobeSearchContent() {
     const leakParam = searchParams.get("leak") || "";
     const sortParam = searchParams.get("sort") as CommerceSearchSort | null;
     const presetParam = searchParams.get("preset");
+    const styleIdParam = searchParams.get("styleId");
+
+    if (styleIdParam) {
+      const style = STYLE_SEARCH_SUGGESTIONS.find((s) => s.id === styleIdParam);
+      if (style) {
+        setSelectedStyleId(style.id);
+        setQuery(style.query);
+        setSort(sortParam || "aura_best");
+        setInitializedFromUrl(true);
+        return;
+      }
+    }
 
     if (presetParam) {
       const preset = CELEBRITY_TREND_PRESETS.find((item) => item.id === presetParam);
@@ -104,6 +152,12 @@ function WardrobeSearchContent() {
         setInitializedFromUrl(true);
         return;
       }
+    }
+
+    // Old-style ?query= deep links that match a style chip highlight it too
+    if (queryParam) {
+      const matching = STYLE_SEARCH_SUGGESTIONS.find((s) => s.query === queryParam);
+      if (matching) setSelectedStyleId(matching.id);
     }
 
     setQuery(queryParam);
@@ -122,6 +176,7 @@ function WardrobeSearchContent() {
     const hasPreset = searchParams.get("preset");
     const hasDirectFilters =
       searchParams.get("query") ||
+      searchParams.get("styleId") ||
       searchParams.get("category") ||
       searchParams.get("maxBudget") ||
       searchParams.get("style") ||
@@ -149,6 +204,8 @@ function WardrobeSearchContent() {
       setBudgetMax(preset.maxBudget);
     }
   }
+
+  const showResultsBlock = searched || loading;
 
   return (
     <Container className="py-8 sm:py-12">
@@ -211,8 +268,8 @@ function WardrobeSearchContent() {
             <div className="mb-8 text-center">
               <h1 className="mb-3 text-3xl font-bold text-white">Find clothes across Indian stores</h1>
               <p className="mx-auto max-w-2xl text-sm text-gray-400">
-                Pick a trending look below, or use the filters on the left. Prices come from
-                AuraCheck&rsquo;s catalog and should be verified on the store before buying.
+                Pick a trending look below, or tap a style — its clothes appear right underneath.
+                Prices come from AuraCheck&rsquo;s catalog and should be verified on the store before buying.
               </p>
             </div>
 
@@ -278,34 +335,183 @@ function WardrobeSearchContent() {
           </>
         )}
 
-        <div className="mb-8">
+        {/* ─── 100 styles — tap a chip, clothes appear right below ─── */}
+        <div className="mb-6">
           <div className="mb-4">
             <h2 className="text-lg font-semibold text-white">100 style ideas to choose from</h2>
             <p className="text-xs text-gray-500">
-              Tap any style and AuraCheck turns it into a ready shopping search.
+              Tap any style — matching clothes load instantly just below.
             </p>
           </div>
           <Card>
             <div className="flex flex-wrap gap-2">
-              {STYLE_SEARCH_SUGGESTIONS.map((style) => (
-                <a
-                  key={style.id}
-                  href={`/wardrobe/search?query=${encodeURIComponent(style.query)}&sort=aura_best`}
-                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-gray-300 transition-colors hover:border-sky-300/30 hover:text-sky-200"
-                >
-                  {style.label}
-                </a>
-              ))}
+              {STYLE_SEARCH_SUGGESTIONS.map((style) => {
+                const isActive = style.id === selectedStyleId;
+                return (
+                  <button
+                    key={style.id}
+                    type="button"
+                    onClick={() => handleStyleSelect(style)}
+                    className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
+                      isActive
+                        ? "border-sky-300/60 bg-sky-400/15 font-semibold text-sky-200"
+                        : "border-white/10 bg-white/5 text-gray-300 hover:border-sky-300/30 hover:text-sky-200"
+                    }`}
+                  >
+                    {style.label}
+                  </button>
+                );
+              })}
             </div>
           </Card>
         </div>
 
-        {/* Layout: filters sidebar + results */}
-        <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-          {/* Filters Sidebar */}
-          <div>
-            <Card className="sticky top-4">
-              <h2 className="mb-4 text-sm font-semibold text-white">Filters</h2>
+        {/* ─── Results — directly below the style chips ─── */}
+        <div ref={resultsRef} className="mb-8 scroll-mt-20">
+          {showResultsBlock && (
+            <>
+              {/* Selected style header + real store links for that style */}
+              {selectedStyle && (
+                <Card className="mb-4 border-sky-400/20 bg-sky-400/[0.04]">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h2 className="text-lg font-bold text-white">{selectedStyle.label} — shop the look</h2>
+                      <p className="mt-0.5 text-xs text-gray-500">
+                        Matches from AuraCheck&rsquo;s catalog below, or open this exact style on a store:
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {STYLE_STORE_LINKS.map((store) => (
+                        <a
+                          key={store.key}
+                          href={buildStoreSearchUrl(store.key, `${selectedStyle.label} outfit`)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 rounded-full border border-sky-300/25 bg-sky-400/10 px-3 py-1.5 text-xs font-medium text-sky-200 hover:bg-sky-400/20"
+                        >
+                          {store.name}
+                          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              )}
+
+              {/* Search stats */}
+              {results && !loading && (
+                <div className="mb-4 flex items-center justify-between text-xs text-gray-500">
+                  <span>{results.totalResults} results · {results.freshnessSummary.fresh} fresh prices · Source: {results.catalogSource}</span>
+                </div>
+              )}
+
+              {/* Loading */}
+              {loading && (
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <Card key={i} className="animate-pulse">
+                      <div className="mb-3 h-5 w-48 rounded bg-white/10" />
+                      <div className="mb-2 h-3 w-64 rounded bg-white/5" />
+                      <div className="h-3 w-32 rounded bg-white/5" />
+                    </Card>
+                  ))}
+                </div>
+              )}
+
+              {/* Results */}
+              {results && !loading && (
+                <>
+                  {/* Comparison groups */}
+                  {results.comparisonGroups.length > 0 && (
+                    <div className="mb-8">
+                      <h2 className="mb-3 text-sm font-semibold text-white">Price Comparison Groups</h2>
+                      <div className="space-y-3">
+                        {results.comparisonGroups.slice(0, 5).map((group) => (
+                          <PriceComparisonCard
+                            key={group.key}
+                            group={group}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Search results */}
+                  <h2 className="mb-3 text-sm font-semibold text-white">Results</h2>
+                  <div className="space-y-3">
+                    {results.results.map((result, index) => (
+                      <SearchResultCard
+                        key={result.item.id}
+                        result={result}
+                        rankPosition={index + 1}
+                      />
+                    ))}
+                  </div>
+
+                  {results.results.length === 0 && (
+                    <Card>
+                      <div className="py-12 text-center">
+                        <p className="mb-2 text-sm text-gray-400">No catalog products match this style yet.</p>
+                        {selectedStyle ? (
+                          <p className="text-xs text-gray-500">
+                            Use the store buttons above to open {selectedStyle.label} directly on Myntra, Amazon, AJIO, or Flipkart.
+                          </p>
+                        ) : (
+                          <p className="text-xs text-gray-500">Try different filters, or search for a specific product name.</p>
+                        )}
+                      </div>
+                    </Card>
+                  )}
+
+                  {/* Freshness warnings */}
+                  {results.freshnessSummary.warnings.length > 0 && (
+                    <Card className="mt-6 border-amber-500/20">
+                      <h3 className="mb-2 text-xs font-semibold text-amber-400">Price Freshness Notes</h3>
+                      <div className="space-y-1">
+                        {results.freshnessSummary.warnings.map((w, i) => (
+                          <p key={i} className="text-[10px] text-gray-400">{w}</p>
+                        ))}
+                      </div>
+                      <p className="mt-2 text-[10px] text-gray-500">
+                        AuraCheck searches its own product index, not live websites. Prices may change.
+                        Verify on the store before buying. Best listed price means best price in AuraCheck&rsquo;s current catalog.
+                        Sponsored items do not automatically rank first. No scraping is used.
+                      </p>
+                    </Card>
+                  )}
+
+                  {/* Disclaimer */}
+                  <div className="mt-6 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center text-[10px] text-gray-600">
+                    <p>AuraCheck searches its own product index, not live websites. Prices may change. Verify on the store before buying.</p>
+                    <p className="mt-1">Best listed price means best price in AuraCheck&rsquo;s current catalog.</p>
+                    <p className="mt-1">Sponsored items do not automatically rank first. AuraCheck may earn affiliate commission from some links.</p>
+                    <p className="mt-1">No scraping is used.</p>
+                  </div>
+                </>
+              )}
+            </>
+          )}
+
+          {/* Initial state */}
+          {!showResultsBlock && (
+            <Card>
+              <div className="py-12 text-center">
+                <p className="mb-2 text-lg text-gray-400">Tap a style above to see matching clothes here</p>
+                <p className="text-xs text-gray-500">
+                  Or open the advanced filters below to search by category, budget, store, or aura gap.
+                </p>
+              </div>
+            </Card>
+          )}
+        </div>
+
+        {/* ─── Advanced filters — below the results, out of the way ─── */}
+        <details className="mb-8">
+          <summary className="cursor-pointer text-sm font-semibold text-white hover:text-sky-200">
+            Advanced filters &amp; custom search
+          </summary>
+          <Card className="mt-3">
+            <div className="max-w-xl">
               <SearchFilters
                 query={query}
                 onQueryChange={setQuery}
@@ -325,116 +531,20 @@ function WardrobeSearchContent() {
                 onSortChange={setSort}
                 onPresetSelect={handlePresetSelect}
               />
-              <Button className="mt-4 w-full" onClick={doSearch} disabled={loading}>
-                {loading ? "Searching..." : "Search"}
-              </Button>
-            </Card>
-          </div>
-
-          {/* Results */}
-          <div>
-            {/* Search stats */}
-            {results && (
-              <div className="mb-4 flex items-center justify-between text-xs text-gray-500">
-                <span>{results.totalResults} results · {results.freshnessSummary.fresh} fresh prices · Source: {results.catalogSource}</span>
-              </div>
-            )}
-
-            {/* Loading */}
-            {loading && (
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <Card key={i} className="animate-pulse">
-                    <div className="mb-3 h-5 w-48 rounded bg-white/10" />
-                    <div className="mb-2 h-3 w-64 rounded bg-white/5" />
-                    <div className="h-3 w-32 rounded bg-white/5" />
-                  </Card>
-                ))}
-              </div>
-            )}
-
-            {/* Results */}
-            {results && !loading && (
-              <>
-                {/* Comparison groups */}
-                {results.comparisonGroups.length > 0 && (
-                  <div className="mb-8">
-                    <h2 className="mb-3 text-sm font-semibold text-white">Price Comparison Groups</h2>
-                    <div className="space-y-3">
-                      {results.comparisonGroups.slice(0, 5).map((group) => (
-                        <PriceComparisonCard
-                          key={group.key}
-                          group={group}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Search results */}
-                <h2 className="mb-3 text-sm font-semibold text-white">Results</h2>
-                <div className="space-y-3">
-                  {results.results.map((result, index) => (
-                    <SearchResultCard
-                      key={result.item.id}
-                      result={result}
-                      rankPosition={index + 1}
-                    />
-                  ))}
-                </div>
-
-                {results.results.length === 0 && (
-                  <Card>
-                    <div className="py-12 text-center">
-                      <p className="mb-2 text-sm text-gray-400">No products match your criteria.</p>
-                      <p className="text-xs text-gray-500">Try different filters, or search for a specific product name.</p>
-                    </div>
-                  </Card>
-                )}
-
-                {/* Freshness warnings */}
-                {results.freshnessSummary.warnings.length > 0 && (
-                  <Card className="mt-6 border-amber-500/20">
-                    <h3 className="mb-2 text-xs font-semibold text-amber-400">Price Freshness Notes</h3>
-                    <div className="space-y-1">
-                      {results.freshnessSummary.warnings.map((w, i) => (
-                        <p key={i} className="text-[10px] text-gray-400">{w}</p>
-                      ))}
-                    </div>
-                    <p className="mt-2 text-[10px] text-gray-500">
-                      AuraCheck searches its own product index, not live websites. Prices may change.
-                      Verify on the store before buying. Best listed price means best price in AuraCheck&rsquo;s current catalog.
-                      Sponsored items do not automatically rank first. No scraping is used.
-                    </p>
-                  </Card>
-                )}
-              </>
-            )}
-
-            {/* Initial state */}
-            {!results && !loading && !searched && (
-              <Card>
-                <div className="py-16 text-center">
-                  <p className="mb-2 text-lg text-gray-400">Search for clothes that improve your aura</p>
-                  <p className="text-xs text-gray-500">
-                    Use the filters to find clothes by style, budget, or aura gap.
-                    Or pick a Quick Preset above to get started.
-                  </p>
-                </div>
-              </Card>
-            )}
-
-            {/* Disclaimer */}
-            {results && !loading && (
-              <div className="mt-6 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center text-[10px] text-gray-600">
-                <p>AuraCheck searches its own product index, not live websites. Prices may change. Verify on the store before buying.</p>
-                <p className="mt-1">Best listed price means best price in AuraCheck&rsquo;s current catalog.</p>
-                <p className="mt-1">Sponsored items do not automatically rank first. AuraCheck may earn affiliate commission from some links.</p>
-                <p className="mt-1">No scraping is used.</p>
-              </div>
-            )}
-          </div>
-        </div>
+            </div>
+            <Button
+              className="mt-4 w-full sm:w-auto"
+              onClick={() => {
+                setSelectedStyleId(null);
+                void doSearch();
+                resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }}
+              disabled={loading}
+            >
+              {loading ? "Searching..." : "Search"}
+            </Button>
+          </Card>
+        </details>
       </div>
     </Container>
   );

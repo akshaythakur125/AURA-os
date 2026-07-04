@@ -122,6 +122,29 @@ const STORE_MAP: Record<StoreKey, StoreInfo> = {
   },
 };
 
+// Native on-site search URL per store. Every one of these resolves to a real,
+// working results page for any query — unlike product-page deep links, they
+// cannot 404, which is what "links work flawlessly" requires for a catalog
+// with no live inventory API.
+const STORE_SEARCH_URLS: Partial<Record<StoreKey, (q: string) => string>> = {
+  myntra: (q) => `https://www.myntra.com/${q.trim().toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-")}`,
+  ajio: (q) => `https://www.ajio.com/search/?text=${encodeURIComponent(q)}`,
+  amazon_fashion: (q) => `https://www.amazon.in/s?k=${encodeURIComponent(q)}`,
+  flipkart_fashion: (q) => `https://www.flipkart.com/search?q=${encodeURIComponent(q)}`,
+  tata_cliq: (q) => `https://www.tatacliq.com/search/?searchCategory=all&text=${encodeURIComponent(q)}`,
+  nykaa_fashion: (q) => `https://www.nykaafashion.com/catalogsearch/result/?q=${encodeURIComponent(q)}`,
+  meesho: (q) => `https://www.meesho.com/search?q=${encodeURIComponent(q)}`,
+  snitch: (q) => `https://www.snitch.co.in/search?q=${encodeURIComponent(q)}`,
+  souled_store: (q) => `https://www.thesouledstore.com/search?q=${encodeURIComponent(q)}`,
+  bewakoof: (q) => `https://www.bewakoof.com/search?q=${encodeURIComponent(q)}`,
+  hm_india: (q) => `https://www2.hm.com/en_in/search-results.html?q=${encodeURIComponent(q)}`,
+};
+
+export function buildStoreSearchUrl(key: StoreKey, query: string): string | undefined {
+  const builder = STORE_SEARCH_URLS[key];
+  return builder ? builder(query) : undefined;
+}
+
 export function getStoreInfo(key: StoreKey): StoreInfo {
   return STORE_MAP[key];
 }

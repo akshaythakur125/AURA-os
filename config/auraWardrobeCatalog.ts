@@ -48,16 +48,17 @@ const HMI = "H&M India";
 // visiting them directly 404s/405s on every store's server since no such
 // page exists. Since this catalog has no live inventory API and can't link
 // to a real, verified specific product, route through each store's own
-// search instead so every offer resolves to an actual, working page with
-// relevant results, rather than a dead link.
+// NATIVE search page instead: every offer resolves to a live results page
+// on the store itself (real products, real photos), never a dead link and
+// never a google.com detour.
 function slugToQuery(path: string): string {
   return path.replace(/^\//, "").replace(/-/g, " ").trim();
 }
 function mkMyntra(path: string) {
-  return `https://www.google.com/search?q=${encodeURIComponent(slugToQuery(path) + " site:myntra.com")}`;
+  return `https://www.myntra.com/${slugToQuery(path).replace(/\s+/g, "-")}`;
 }
 function mkAjio(path: string) {
-  return `https://www.google.com/search?q=${encodeURIComponent(slugToQuery(path) + " site:ajio.com")}`;
+  return `https://www.ajio.com/search/?text=${encodeURIComponent(slugToQuery(path))}`;
 }
 function mkAmazon(path: string) {
   return `https://www.amazon.in/s?k=${encodeURIComponent(slugToQuery(path))}`;
@@ -66,10 +67,10 @@ function mkFlipkart(path: string) {
   return `https://www.flipkart.com/search?q=${encodeURIComponent(slugToQuery(path))}`;
 }
 function mkTata(path: string) {
-  return `https://www.google.com/search?q=${encodeURIComponent(slugToQuery(path) + " site:tatacliq.com")}`;
+  return `https://www.tatacliq.com/search/?searchCategory=all&text=${encodeURIComponent(slugToQuery(path))}`;
 }
 function mkNykaa(path: string) {
-  return `https://www.google.com/search?q=${encodeURIComponent(slugToQuery(path) + " site:nykaafashion.com")}`;
+  return `https://www.nykaafashion.com/catalogsearch/result/?q=${encodeURIComponent(slugToQuery(path))}`;
 }
 
 const M = "myntra" as StoreKey;
