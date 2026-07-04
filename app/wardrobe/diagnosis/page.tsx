@@ -38,6 +38,7 @@ export default function WardrobeDiagnosisPage() {
       });
       setDiagnosis(result);
     } catch (err) {
+      setDiagnosis(null);
       setProgress("Error: " + (err instanceof Error ? err.message : "Diagnosis failed"));
     }
     setLoading(false);

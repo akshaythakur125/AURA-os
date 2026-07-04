@@ -104,10 +104,10 @@ export default function ShopPage() {
       products = products.filter((p) => p.offers.some((o) => (o.discountPercent || 0) >= 30));
     }
     if (activeTab === "under_500") {
-      products = products.filter((p) => Math.min(...p.offers.map((o) => o.price)) <= 500);
+      products = products.filter((p) => p.offers.length > 0 && Math.min(...p.offers.map((o) => o.price)) <= 500);
     }
     if (activeTab === "under_2000") {
-      products = products.filter((p) => Math.min(...p.offers.map((o) => o.price)) <= 2000);
+      products = products.filter((p) => p.offers.length > 0 && Math.min(...p.offers.map((o) => o.price)) <= 2000);
     }
     if (activeTab === "full_outfit") {
       const cats = new Set(

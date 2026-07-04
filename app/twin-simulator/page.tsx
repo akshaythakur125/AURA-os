@@ -74,12 +74,15 @@ export default function TwinSimulatorPage() {
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
   const [downloadStatus, setDownloadStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [audits, setAudits] = useState<ReturnType<typeof getAudits>>([]);
+  const [latestTwinSaved, setLatestTwinSaved] = useState<ReturnType<typeof getLatestTwinResult>>(undefined);
 
   useEffect(() => {
     trackEvent("aura_twin_page_viewed");
+    setAudits(getAudits());
+    setLatestTwinSaved(getLatestTwinResult());
   }, []);
 
-  const audits = typeof window !== "undefined" ? getAudits() : [];
   const latestAudit = audits.length > 0 ? audits[0] : null;
 
   function resetResult() {
@@ -140,16 +143,18 @@ export default function TwinSimulatorPage() {
       });
 
       const rankedIds = rankTwinVariants({ variants, goal });
-      const original = variants.find((v) => v.type === "original")!;
+      const original = variants.find((v) => v.type === "original");
+      if (!original) throw new Error("Original variant missing from analysis");
       const strategy = buildTwinStrategy({ variants, originalScore: original.score, goal });
+      const bestVariant = variants.find((v) => v.id === strategy.bestVariantId) || original;
 
       setResult({
         variants,
         rankedIds,
         bestVariantId: strategy.bestVariantId,
         originalScore: original.score,
-        bestScore: variants.find((v) => v.id === strategy.bestVariantId)!.score,
-        bestDelta: variants.find((v) => v.id === strategy.bestVariantId)!.scoreDelta,
+        bestScore: bestVariant.score,
+        bestDelta: bestVariant.scoreDelta,
         strategy,
       });
 
@@ -214,9 +219,11 @@ export default function TwinSimulatorPage() {
   function handleDownloadPng() {
     if (!result) return;
     const best = getBestVariant(result.variants, goal);
+    const originalVariant = result.variants.find((v) => v.type === "original");
+    if (!originalVariant) return;
     setDownloadStatus("Generating...");
     downloadComparisonPng(
-      result.variants.find((v) => v.type === "original")!.imageDataUrl,
+      originalVariant.imageDataUrl,
       best.imageDataUrl,
       result.originalScore,
       best.score,
@@ -572,16 +579,15 @@ export default function TwinSimulatorPage() {
 
         {/* ─── Latest Saved Result Preview ─── */}
         {!result && !analyzing && (() => {
-          const latestTwin = typeof window !== "undefined" ? getLatestTwinResult() : undefined;
-          if (!latestTwin) return null;
-          const best = latestTwin.variants.find((v) => v.id === latestTwin.bestVariantId);
+          if (!latestTwinSaved) return null;
+          const best = latestTwinSaved.variants.find((v) => v.id === latestTwinSaved.bestVariantId);
           return (
             <Card className="border-purple-500/20">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="mb-1 text-lg font-semibold text-white">📂 Your Last Aura Twin</h2>
                   <div className="flex items-center gap-4 text-sm">
-                    <span className="text-gray-500">Original: <strong className="text-white">{latestTwin.originalScore}</strong></span>
+                    <span className="text-gray-500">Original: <strong className="text-white">{latestTwinSaved.originalScore}</strong></span>
                     <span className="text-gray-500">Best: <strong className="text-emerald-400">{best?.score ?? "—"}</strong></span>
                     <span className="text-gray-500">Fix: <strong className="text-purple-300">{best?.title ?? "—"}</strong></span>
                   </div>
