@@ -123,9 +123,9 @@ export default function GalleryPage() {
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 text-center">
           <Badge variant="premium" className="mb-3">Aura Gallery</Badge>
-          <h1 className="text-4xl font-bold text-white">Think you&apos;d score higher than them?</h1>
+          <h1 className="text-4xl font-bold text-white">Everyone here was sure they looked fine. See what they actually scored.</h1>
           <p className="mt-2 text-sm text-gray-400">
-            {stats.totalEntries} entries · Highest: {stats.highestScore} · Average: {stats.averageScore} — where would you land?
+            {stats.totalEntries} entries · Highest: {stats.highestScore} · Average: {stats.averageScore} — most people score lower than they expect. Where do you fall?
           </p>
         </div>
 
@@ -198,14 +198,14 @@ export default function GalleryPage() {
         )}
 
         <div className="mt-8 text-center">
-          <p className="mb-3 text-sm text-white/55">You&apos;ve looked at everyone else&apos;s score. Don&apos;t you want to know yours?</p>
-          <Button asChild><Link href="/audit/new">Find out — free</Link></Button>
+          <p className="mb-3 text-sm text-white/55">You just spent time judging other people&apos;s scores. Right now, someone is doing the same thing to your photo — and you have no idea what they&apos;re thinking.</p>
+          <Button asChild><Link href="/audit/new">Find out what they see — free</Link></Button>
         </div>
 
         {/* ─── Shoppable CTA ─── */}
         <div className="mt-12 rounded-[22px] border border-purple-500/20 bg-gradient-to-b from-purple-500/5 to-transparent p-6 text-center">
-          <h3 className="text-lg font-bold text-white">Want to be in the Hall of Fame?</h3>
-          <p className="mt-2 text-sm text-white/50">The top scorers all fixed their #1 leak first. Most fixes cost less than Rs 500.</p>
+          <h3 className="text-lg font-bold text-white">The people at the top all had one thing in common.</h3>
+          <p className="mt-2 text-sm text-white/50">They all had a leak they couldn&apos;t see — until they checked. They fixed it for under Rs 500. Now they&apos;re in the Hall of Fame. You&apos;re still scrolling.</p>
           <div className="mt-4 flex flex-wrap justify-center gap-3">
             <Button asChild size="sm"><Link href="/audit/new">Get your score</Link></Button>
             <Button asChild size="sm" variant="outline"><Link href="/shop">Shop top fixes →</Link></Button>

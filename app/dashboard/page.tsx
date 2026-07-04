@@ -90,7 +90,7 @@ export default function DashboardPage() {
     <Container className="py-8 sm:py-12">
       <div className="mx-auto max-w-4xl">
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-white">Are you improving — or just guessing?</h1>
+          <h1 className="text-3xl font-bold text-white">Your score hasn&apos;t changed. Are you actually doing something — or just hoping people don&apos;t notice?</h1>
           <Button asChild size="sm">
             <Link href="/audit/new">New Audit</Link>
           </Button>

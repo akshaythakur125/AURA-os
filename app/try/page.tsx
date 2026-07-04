@@ -23,17 +23,17 @@ const DISCOVERY_CARDS = [
 ];
 
 const TEASER_LEAKS = [
-  "Your background clutter is costing you 14 pts",
-  "That overhead light adds 3 years to your face",
-  "Logo on your shirt = instant skip on dating apps",
-  "Your crop cuts off at the worst point",
-  "Strongest signal: your eye contact lands",
+  "That background clutter is silently costing you 14 points",
+  "Your lighting is adding 3 years to your face right now",
+  "That logo tee is why they swiped left — you'll never know",
+  "Your photo is cropped at the exact spot that reads 'awkward'",
+  "Something in your photo is making people scroll past in 0.2s",
 ];
 
 const STICKY_TEXTS = [
-  "What's your photo hiding?",
-  "8 seconds. Zero sign-up.",
-  "12,400 checked this week",
+  "Something's off. Find out what.",
+  "They won't tell you. We will.",
+  "12,400 found out this week",
 ];
 
 export default function TryPage() {
@@ -152,14 +152,14 @@ export default function TryPage() {
 
           {/* ─── Hero Headline ─── */}
           <h1 className="display-font text-4xl font-bold leading-[1.05] text-white sm:text-5xl sm:leading-[1.05]">
-            People judge your photo in
+            Your photo is already being judged.
             <br />
             <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              0.3 seconds.
+              You just weren&apos;t asked.
             </span>
           </h1>
           <p className="mt-4 text-base leading-7 text-white/60 sm:text-lg">
-            Want to know what they see?
+            Recruiters, dates, strangers — they all decided something about you in 0.3 seconds. What did they decide?
           </p>
 
           {/* ─── Curiosity Teaser ─── */}
@@ -224,14 +224,14 @@ export default function TryPage() {
         {/* ─── What You'll See ─── */}
         <div className="mx-auto mt-20 max-w-lg">
           <div className="mb-6 text-center">
-            <h2 className="text-xl font-bold text-white">What are you afraid the photo says about you?</h2>
-          <p className="mt-2 text-xs text-white/45">In 8 seconds, you&apos;ll know. Here&apos;s what you get:</p>
+            <h2 className="text-xl font-bold text-white">Your photo is already talking about you. Here&apos;s what it&apos;s saying.</h2>
+          <p className="mt-2 text-xs text-white/45">Your friends won&apos;t tell you. Your mom thinks you look great. Strangers just scroll past. In 8 seconds, you&apos;ll finally know why:</p>
           </div>
           <div className="space-y-3">
             {[
-              { emoji: "🎯", text: "Your score out of 100" },
-              { emoji: "🔍", text: "The #1 thing silently hurting your vibe" },
-              { emoji: "⚡", text: "The single cheapest fix" },
+              { emoji: "🎯", text: "Your real score out of 100 — not what your friends say" },
+              { emoji: "🔍", text: "The #1 thing people notice about you (that you can't see)" },
+              { emoji: "⚡", text: "The one fix that would change everything — under Rs 500" },
             ].map((item, i) => (
               <div
                 key={i}
@@ -247,8 +247,8 @@ export default function TryPage() {
         {/* ─── What People Found ─── */}
         <div className="mx-auto mt-20 max-w-3xl">
           <div className="mb-6 text-center">
-            <h2 className="text-xl font-bold text-white">They thought their photo was fine too.</h2>
-          <p className="mt-2 text-xs text-white/45">Here&apos;s what 12,400 people actually found this week:</p>
+            <h2 className="text-xl font-bold text-white">Nobody warned them either. They found out the hard way.</h2>
+          <p className="mt-2 text-xs text-white/45">Every person below was confident about their photo. Then they uploaded it. Here&apos;s what 12,400 people discovered this week:</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {galleryEntries.map((card, i) => (
@@ -297,8 +297,8 @@ export default function TryPage() {
         {/* ─── Before / After Proof Cards ─── */}
         <div className="mx-auto mt-20 max-w-3xl">
           <div className="mb-6 text-center">
-            <h2 className="text-xl font-bold text-white">One fix. That&apos;s all it took.</h2>
-          <p className="mt-2 text-xs text-white/45">These people changed one thing and watched their score jump:</p>
+            <h2 className="text-xl font-bold text-white">It was one thing. Just one. And nobody had the guts to tell them.</h2>
+          <p className="mt-2 text-xs text-white/45">These people had been walking around with the same leak for months. One fix. That&apos;s all it took to change how everyone saw them:</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             {getHomepageProofEntries().slice(0, 3).map((entry) => (
@@ -346,8 +346,8 @@ export default function TryPage() {
         {/* ─── Quick Fixes You Can Buy Right Now ─── */}
         <div className="mx-auto mt-20 max-w-3xl">
           <div className="mb-6 text-center">
-            <h2 className="text-xl font-bold text-white">Most people fix their #1 leak for under Rs 500</h2>
-            <p className="mt-2 text-xs text-white/45">Here&apos;s what people buy right after their score:</p>
+            <h2 className="text-xl font-bold text-white">The thing ruining your look costs less than your lunch to fix.</h2>
+            <p className="mt-2 text-xs text-white/45">This is what people panic-buy the moment they see their score. The average leak costs Rs 399 to patch. You just don&apos;t know which one is yours yet:</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             {[
@@ -376,10 +376,10 @@ export default function TryPage() {
         <div className="mx-auto mt-20 max-w-xl text-center">
           <div className="rounded-[36px] border border-purple-500/20 bg-gradient-to-b from-purple-500/5 to-transparent p-8 sm:p-12">
             <h2 className="text-3xl font-bold text-white sm:text-4xl">
-              Still guessing what people see?
+              Every day you don&apos;t check is another day of wrong first impressions.
             </h2>
             <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-white/55">
-              You scrolled this far for a reason. One photo. Eight seconds. Find out — or keep wondering every time you post.
+              That date who ghosted. That recruiter who never called back. That group photo where everyone else looked great. What if it was one fixable thing the whole time? One photo. Eight seconds. Stop wondering.
             </p>
             <div className="mt-6">
               <button
