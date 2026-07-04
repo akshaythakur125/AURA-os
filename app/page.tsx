@@ -448,7 +448,7 @@ export default function HomePage() {
                 {marqueeStyles.map((preset, index) => (
                   <Link
                     key={`${preset.id}-${index}`}
-                    href={`/wardrobe/search?preset=${preset.id}&sort=cheapest`}
+                    href={`/wardrobe/search?preset=${preset.id}`}
                     className="glass-card float-card block w-[250px] min-w-[250px] overflow-hidden rounded-[28px] p-3 hover:-translate-y-1"
                   >
                     <div className="overflow-hidden rounded-[22px]">
@@ -485,7 +485,7 @@ export default function HomePage() {
             {CELEBRITY_TREND_PRESETS.map((preset) => (
               <Link
                 key={preset.id}
-                href={`/wardrobe/search?preset=${preset.id}&sort=cheapest`}
+                href={`/wardrobe/search?preset=${preset.id}`}
                 className="glass-card float-card group overflow-hidden rounded-[22px] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]"
               >
                 <div className="overflow-hidden">

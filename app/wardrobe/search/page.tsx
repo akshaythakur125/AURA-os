@@ -146,9 +146,8 @@ function WardrobeSearchContent() {
         setQuery(preset.searchQuery);
         setStyleDirection(preset.styleDirection);
         setAuraLeakTag(preset.auraLeakTags[0] || "");
-        setCategory(preset.recommendedCategories[0] || "");
         setBudgetMax(String(preset.budgetMax || ""));
-        setSort(sortParam || "cheapest");
+        setSort(sortParam || "aura_best");
         setInitializedFromUrl(true);
         return;
       }
@@ -341,7 +340,7 @@ function WardrobeSearchContent() {
                     </div>
                     <div className="mt-auto flex flex-col gap-2">
                       <a
-                        href={`/wardrobe/search?preset=${preset.id}&sort=cheapest`}
+                        href={`/wardrobe/search?preset=${preset.id}`}
                         className="inline-flex min-h-10 items-center justify-center rounded-full border border-white/15 bg-[linear-gradient(135deg,rgba(125,211,252,0.95),rgba(59,130,246,0.92)_45%,rgba(249,115,22,0.84))] px-4 text-sm font-semibold tracking-[-0.02em] text-slate-950 shadow-[0_18px_48px_rgba(56,189,248,0.22)] hover:-translate-y-0.5 hover:shadow-[0_24px_60px_rgba(249,115,22,0.22)]"
                       >
                         Find these clothes

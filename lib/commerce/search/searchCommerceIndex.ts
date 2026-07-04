@@ -52,9 +52,10 @@ export async function searchCommerceIndex(
   }
 
   if (queryTokens.length > 0) {
+    const minMatchRatio = queryTokens.length >= 6 ? 0.25 : queryTokens.length >= 4 ? 0.2 : 0;
     filtered = filtered.filter((item) => {
       const { score } = matchQueryTokens(queryTokens, item.searchTokens);
-      return score > 0;
+      return score > minMatchRatio;
     });
   }
 

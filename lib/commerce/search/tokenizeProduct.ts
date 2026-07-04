@@ -70,9 +70,9 @@ export function matchQueryTokens(
     if (itemTokenSet.has(qt)) {
       matched.push(qt);
     } else {
-      // Check partial matches
       for (const it of itemTokenSet) {
-        if (it.includes(qt) || qt.includes(it)) {
+        const overlap = Math.min(qt.length, it.length);
+        if (overlap >= 4 && (it.includes(qt) || qt.includes(it))) {
           matched.push(qt);
           break;
         }

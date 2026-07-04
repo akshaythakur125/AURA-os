@@ -187,7 +187,7 @@ export default function ShopPage() {
                   </div>
                   <div className="mt-4 flex flex-col gap-2">
                     <Button asChild size="sm" className="w-full">
-                      <Link href={`/wardrobe/search?preset=${preset.id}&sort=cheapest`}>Compare cheapest</Link>
+                      <Link href={`/wardrobe/search?preset=${preset.id}`}>Shop this look</Link>
                     </Button>
                     <a
                       href={preset.sourceUrl}
