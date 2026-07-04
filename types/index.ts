@@ -42,6 +42,14 @@ export interface BattleRecord {
   leftLeaks: string[];
   rightLeaks: string[];
   winner: "left" | "right" | "tie";
+  inviteCode?: string;
+  status?: "local" | "invited" | "completed";
+  leftImage?: string;
+  rightImage?: string;
+  leftSignal?: string;
+  rightSignal?: string;
+  leftCategory?: string;
+  rightCategory?: string;
 }
 
 export interface Audit {

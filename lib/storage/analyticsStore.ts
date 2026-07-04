@@ -46,14 +46,17 @@ export type AnalyticsEvent =
   | "proof_cta_clicked"
   | "proof_quick_fix_clicked"
   | "proof_pricing_clicked"
-  | "share_card_viewed"
   | "share_card_link_copied"
   | "share_card_native_shared"
   | "battle_completed"
   | "battle_share_card_viewed"
   | "challenge_logged"
   | "landing_page_viewed"
-  | "landing_cta_clicked";
+  | "landing_cta_clicked"
+  | "share_card_viewed"
+  | "share_card_shared"
+  | "share_platform_clicked"
+  | "share_tip_unlocked";
 
 export interface AnalyticsRecord {
   id: string;

@@ -9,6 +9,7 @@ import { STYLE_SEARCH_SUGGESTIONS } from "@/config/styleSearchSuggestions";
 import { ReferralBanner } from "@/components/marketing/ReferralBanner";
 import { getMarqueePresets, getDailySubset } from "@/lib/marketing/rotatingPresets";
 import { getHomepageProofEntries } from "@/data/homepageProof";
+import { getGalleryEntries } from "@/lib/storage/galleryStore";
 
 const marqueeStyles = getMarqueePresets();
 
@@ -345,30 +346,63 @@ export default function HomePage() {
             <h2 className="display-font text-4xl font-bold text-white sm:text-5xl">
               Small changes, sharp jumps.
             </h2>
+            <p className="mt-2 text-sm text-gray-400">
+              <Link href="/gallery" className="text-purple-400 hover:text-purple-300 underline">View full gallery →</Link>
+            </p>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {getDailySubset(getHomepageProofEntries(), 6).map((entry) => (
-              <div key={entry.initials} className="prism-panel float-card group rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]">
-                <div className="flex items-center gap-3">
-                  <div className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${entry.gradient} text-xs font-bold text-white`}>
-                    {entry.initials}
+            {(() => {
+              const realEntries = typeof window !== "undefined" ? getGalleryEntries("recent", 6) : [];
+              if (realEntries.length >= 3) {
+                return realEntries.map((entry) => (
+                  <div key={entry.id} className="prism-panel float-card group rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-pink-500 text-xs font-bold text-white">
+                        {entry.nickname.slice(0, 2).toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="text-xs font-semibold text-white">{entry.nickname}</div>
+                        {entry.city && <div className="text-[10px] text-white/45">{entry.city}</div>}
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <span className="text-2xl font-bold text-white">{entry.score}</span>
+                      <span className="text-xs text-gray-500">/100</span>
+                    </div>
+                    <div className="mt-2 flex items-center gap-2 text-xs">
+                      <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-400">{entry.strongestSignal}</span>
+                    </div>
+                    <div className="mt-2 text-[11px] text-white/55 italic">"{entry.oneLineVerdict}"</div>
+                    <div className="mt-3">
+                      <Link href="/gallery" className="text-[10px] text-purple-400 hover:text-purple-300">See full gallery →</Link>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-xs text-white/45">{entry.city}</div>
+                ));
+              }
+              // Fallback to static proof entries
+              return getDailySubset(getHomepageProofEntries(), 6).map((entry) => (
+                <div key={entry.initials} className="prism-panel float-card group rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]">
+                  <div className="flex items-center gap-3">
+                    <div className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${entry.gradient} text-xs font-bold text-white`}>
+                      {entry.initials}
+                    </div>
+                    <div>
+                      <div className="text-xs text-white/45">{entry.city}</div>
+                    </div>
                   </div>
+                  <div className="mt-4 flex items-center gap-2">
+                    <span className="text-lg font-bold text-white/50">{entry.beforeScore}</span>
+                    <svg className="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                    <span className="text-lg font-bold text-white">{entry.afterScore}</span>
+                  </div>
+                  <div className="mt-2 flex items-center gap-2 text-xs">
+                    <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-400">{entry.leakLabel}</span>
+                    <span className="text-emerald-400 font-medium">+{entry.pointsGained} pts</span>
+                  </div>
+                  <div className="mt-3 text-[10px] text-white/35">{entry.timeframe}</div>
                 </div>
-                <div className="mt-4 flex items-center gap-2">
-                  <span className="text-lg font-bold text-white/50">{entry.beforeScore}</span>
-                  <svg className="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                  <span className="text-lg font-bold text-white">{entry.afterScore}</span>
-                </div>
-                <div className="mt-2 flex items-center gap-2 text-xs">
-                  <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-400">{entry.leakLabel}</span>
-                  <span className="text-emerald-400 font-medium">+{entry.pointsGained} pts</span>
-                </div>
-                <div className="mt-3 text-[10px] text-white/35">{entry.timeframe}</div>
-              </div>
-            ))}
+              ));
+            })()}
           </div>
         </Container>
       </section>
