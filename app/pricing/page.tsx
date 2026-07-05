@@ -11,7 +11,7 @@ const plans = [
   {
     name: "Free Aura Score",
     price: "0",
-    tagline: "Best for first-time visitors who want to understand the problem.",
+    tagline: "See the problem. Free.",
     features: [
       "Basic aura score out of 100",
       "Your single biggest status leak",
@@ -24,7 +24,7 @@ const plans = [
   {
     name: "Quick Aura Fix",
     price: "25",
-    tagline: "Best when you want the fastest actionable improvement.",
+    tagline: "Your fastest next move.",
     features: [
       "Biggest status leak identified",
       "Fastest free fix for immediate improvement",
@@ -41,7 +41,7 @@ const plans = [
   {
     name: "Full Aura Report",
     price: "44",
-    tagline: "Best when you want the full reasoning and full roadmap.",
+    tagline: "Full breakdown. Full roadmap.",
     features: [
       "Up to 3 photos analyzed",
       "Detailed visual breakdown per photo",
@@ -63,7 +63,7 @@ const plans = [
   {
     name: "Dating / Profile Audit",
     price: "299",
-    tagline: "Best when the goal is dating app or profile conversion.",
+    tagline: "Make your profile work harder.",
     features: [
       "Profile presentation score",
       "Bio and prompt feedback with suggestions",
@@ -81,7 +81,7 @@ const plans = [
   {
     name: "30-Day Reset",
     price: "499",
-    tagline: "Best when you want a structured improvement system, not a one-off fix.",
+    tagline: "30 days. Complete transformation.",
     features: [
       "4-week plan with weekly focus areas",
       "30 daily missions with practical tasks",
@@ -101,19 +101,19 @@ const plans = [
 const faqs = [
   {
     q: "Can I try before paying?",
-    a: "Yes. The free Aura Score gives you a baseline assessment. You only pay if you want deeper analysis or a fuller action plan.",
+    a: "Yes. Free score first. Pay only if you want more.",
   },
   {
-    q: "Why are there multiple paid tiers?",
-    a: "Because people need different levels of help. Some just want the fastest next step, some want full reasoning, and some want a structured long-term system.",
+    q: "Why multiple tiers?",
+    a: "Different depths. Quick fix vs full roadmap vs 30-day system.",
   },
   {
-    q: "Is my image stored on a server?",
-    a: "No. All processing is local. No image is uploaded to any external server.",
+    q: "Is my photo stored?",
+    a: "No. Everything runs locally in your browser.",
   },
   {
     q: "How do I pay?",
-    a: "Payments are manual via UPI in the current MVP. After payment, you receive an unlock code for the selected feature.",
+    a: "Razorpay. Cards, UPI, and wallets accepted.",
   },
 ];
 
@@ -121,39 +121,36 @@ export default function PricingPage() {
   return (
     <Container className="py-12">
       <div className="prism-panel glow-frame shine-sweep mx-auto mb-12 max-w-4xl rounded-[34px] px-6 py-10 text-center sm:px-10">
-        <h1 className="mb-4 text-4xl font-bold text-white">Choose your audit depth</h1>
+        <h1 className="mb-4 text-4xl font-bold text-white">Pick your depth.</h1>
         <p className="text-lg text-gray-400">
-          AuraCheck helps users understand what their photos and profile are communicating, what is hurting first impression, and what to fix first. Start free to see the problem. Pay only when you want deeper clarity and stronger execution help.
+          Start free. Go deeper if you want.
         </p>
       </div>
 
       <div className="mx-auto mb-10 grid max-w-5xl gap-4 sm:grid-cols-3">
         <div className="prism-panel float-card rounded-[24px] p-4">
-          <div className="text-xs uppercase tracking-[0.2em] text-gray-500">what it offers</div>
+          <div className="text-xs uppercase tracking-[0.2em] text-gray-500">what it does</div>
           <p className="mt-2 text-sm text-gray-300">
-            A first-impression audit for photos, profiles, outfit direction, and visual presentation.
+            Finds what's hurting your first impression.
           </p>
         </div>
         <div className="prism-panel float-card rounded-[24px] p-4">
           <div className="text-xs uppercase tracking-[0.2em] text-gray-500">how it helps</div>
           <p className="mt-2 text-sm text-gray-300">
-            It shows the biggest leak, the best fix order, and the smartest use of budget instead of random trial and error.
+            Shows the fix. In order. Within budget.
           </p>
         </div>
         <div className="prism-panel float-card rounded-[24px] p-4">
-          <div className="text-xs uppercase tracking-[0.2em] text-gray-500">why people pay</div>
+          <div className="text-xs uppercase tracking-[0.2em] text-gray-500">why pay</div>
           <p className="mt-2 text-sm text-gray-300">
-            Paid features add more reasoning, more personalization, and more complete action plans than the free starter view.
+            More depth. More personalization. Better plan.
           </p>
         </div>
       </div>
 
       <div className="mx-auto mb-10 max-w-4xl">
         <div className="mb-6 text-center">
-          <h2 className="mb-2 text-xl font-bold text-white">How the value ladder works</h2>
-          <p className="text-sm text-gray-400">
-            Each step gives a different depth of help. You are not paying for the same answer twice.
-          </p>
+          <h2 className="mb-2 text-xl font-bold text-white">Each tier goes deeper</h2>
         </div>
         <div className="grid gap-3 text-center text-xs sm:grid-cols-4">
           <div className="float-card rounded-lg border border-emerald-500/10 bg-emerald-500/[0.03] p-3">
@@ -276,9 +273,9 @@ export default function PricingPage() {
       </div>
 
       <div className="mt-16 text-center">
-        <h2 className="mb-4 text-2xl font-bold text-white">Not sure where to start?</h2>
+        <h2 className="mb-4 text-2xl font-bold text-white">Not sure? Start free.</h2>
         <p className="mb-6 text-gray-400">
-          Start with the free Aura Score. It is the fastest way to understand your biggest leak before deciding if you want deeper paid help.
+          See your score first. Decide after.
         </p>
         <Button asChild size="lg">
           <Link href="/audit/new">Start Free Aura Check</Link>

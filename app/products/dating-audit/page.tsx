@@ -34,7 +34,7 @@ export default function DatingAuditPage() {
           <Badge variant="success" className="mb-4">Best for profile clarity</Badge>
           <h1 className="mb-4 text-4xl font-bold text-white">Dating / Profile Audit</h1>
           <p className="mx-auto mb-6 max-w-2xl text-lg text-gray-400">
-            Optimize how you present yourself on dating apps and social profiles.
+            Your profile, fixed. Photos, bio, order — all of it.
           </p>
           <div className="mb-8 text-5xl font-bold text-amber-400">&#8377;299</div>
           <div className="flex flex-wrap justify-center gap-3">

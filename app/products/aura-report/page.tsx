@@ -36,7 +36,7 @@ export default function AuraReportPage() {
           <Badge variant="premium" className="mb-4">Best starter</Badge>
           <h1 className="mb-4 text-4xl font-bold text-white">Full Aura Report</h1>
           <p className="mx-auto mb-6 max-w-2xl text-lg text-gray-400">
-            Beyond the free score — get a complete visual analysis with a personalized upgrade roadmap.
+            Every leak. Every fix. Priority order.
           </p>
           <div className="mb-8 text-5xl font-bold text-amber-400">&#8377;99</div>
           <div className="flex flex-wrap justify-center gap-3">
@@ -91,9 +91,9 @@ export default function AuraReportPage() {
           <h2 className="mb-6 text-xl font-bold text-white">How It Works</h2>
           <div className="grid gap-6 sm:grid-cols-3">
             {[
-              { step: "1", title: "Analyze", desc: "Upload 1&ndash;3 photos of yourself. The engine runs a full visual analysis locally." },
-              { step: "2", title: "Pay & Unlock", desc: "Complete a manual UPI payment of ₹44. You'll receive an unlock code." },
-              { step: "3", title: "Read Your Report", desc: "View your full report with visual breakdowns, archetype, and personalized upgrade plan." },
+              { step: "1", title: "Upload", desc: "Drop 1-3 photos. Analysis runs locally." },
+              { step: "2", title: "Pay", desc: "₹99 via Razorpay. Instant unlock." },
+              { step: "3", title: "Read", desc: "Full report with fixes and roadmap." },
             ].map((s) => (
               <div key={s.step} className="text-center">
                 <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/20 text-sm font-bold text-purple-300">{s.step}</div>
@@ -125,9 +125,9 @@ export default function AuraReportPage() {
           <h2 className="mb-6 text-xl font-bold text-white">Questions</h2>
           <div className="space-y-4">
             {[
-              { q: "What's the difference from the free score?", a: "The free score gives you a single number and your top status leak. The full report analyzes every photo, assigns an archetype, maps your signal mismatches, and gives you a complete upgrade roadmap with budget tiers." },
-              { q: "Can I get the report for multiple audits?", a: "Yes. Each audit has its own unlock. You can unlock the full report for any audit you've created." },
-              { q: "Is my image stored anywhere?", a: "No. Everything runs locally in your browser. No image leaves your device." },
+              { q: "How is this different from the free score?", a: "Free = one number + top leak. This = full breakdown, archetype, roadmap, and budget plan." },
+              { q: "Multiple audits?", a: "Yes. Each audit unlocks separately." },
+              { q: "Is my photo stored?", a: "No. Runs locally. Nothing leaves your device." },
             ].map((faq) => (
               <div key={faq.q}>
                 <h3 className="mb-1 text-sm font-semibold text-white">{faq.q}</h3>
@@ -142,8 +142,8 @@ export default function AuraReportPage() {
 
         {/* ─── CTA ─── */}
         <div className="mt-12 text-center">
-          <h2 className="mb-4 text-2xl font-bold text-white">Ready for your full breakdown?</h2>
-          <p className="mb-6 text-gray-400">Get your personalized upgrade roadmap in minutes.</p>
+          <h2 className="mb-4 text-2xl font-bold text-white">Get your full breakdown.</h2>
+          <p className="mb-6 text-gray-400">Takes minutes. Fixes everything.</p>
           {upsell && !alreadyUnlocked ? (
             <Button asChild size="lg"><Link href={`/unlock?auditId=${upsell.auditId}&product=aura_report`}>Unlock Now — ₹44</Link></Button>
           ) : (

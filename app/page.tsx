@@ -18,61 +18,61 @@ const marqueeStyles = getMarqueePresets();
 const quickFixProducts = [
   {
     label: "Ring Light",
-    leak: "Your lighting is aging you — people see 'tired'",
+    leak: "Bad lighting ages you instantly",
     price: "Rs 399",
-    points: "+12 pts avg",
+    points: "+12 pts",
     emoji: "💡",
     url: "https://www.amazon.in/s?k=ring+light+selfie&tag=auracheck-21",
   },
   {
     label: "Solid Colour Tee",
-    leak: "That logo tee is why they swipe left",
+    leak: "Logo tees kill first impressions",
     price: "Rs 349",
-    points: "+8 pts avg",
+    points: "+8 pts",
     emoji: "👕",
     url: "https://www.amazon.in/s?k=solid+colour+tshirt+men&tag=auracheck-21",
   },
   {
     label: "Grooming Kit",
-    leak: "People notice unkempt before anything else",
+    leak: "Unkempt is the first thing people see",
     price: "Rs 499",
-    points: "+9 pts avg",
+    points: "+9 pts",
     emoji: "✂️",
     url: "https://www.amazon.in/s?k=mens+grooming+kit&tag=auracheck-21",
   },
   {
     label: "Phone Tripod",
-    leak: "Bad angle = bad face. It's the crop, not you.",
+    leak: "Bad angle = bad face. Not you.",
     price: "Rs 299",
-    points: "+11 pts avg",
+    points: "+11 pts",
     emoji: "📱",
     url: "https://www.amazon.in/s?k=phone+tripod+stand&tag=auracheck-21",
   },
   {
     label: "Minimal Watch",
-    leak: "Empty wrist reads 'didn't try' subconsciously",
+    leak: "Empty wrist reads 'didn't try'",
     price: "Rs 899",
-    points: "+7 pts avg",
+    points: "+7 pts",
     emoji: "⌚",
     url: "https://www.amazon.in/s?k=minimal+analog+watch+men&tag=auracheck-21",
   },
   {
     label: "White Sneakers",
-    leak: "Dirty/old shoes ruin the entire outfit signal",
+    leak: "Old shoes ruin the whole outfit",
     price: "Rs 799",
-    points: "+6 pts avg",
+    points: "+6 pts",
     emoji: "👟",
     url: "https://www.amazon.in/s?k=white+sneakers+men+casual&tag=auracheck-21",
   },
 ];
 
 const occasionShops = [
-  { emoji: "💘", label: "Date Night", query: "date night outfit men", hook: "They'll decide in 3 seconds if you made an effort. Did you?" },
-  { emoji: "💼", label: "Interview", query: "interview formal shirt trousers men", hook: "The person who got your dream job dressed better. Not smarter." },
-  { emoji: "🎉", label: "Wedding Guest", query: "wedding guest outfit kurta men", hook: "250 people will see you that night. 250 first impressions you can't redo." },
-  { emoji: "🏖️", label: "Goa Trip", query: "beach vacation shirt men", hook: "Your trip photos live on Instagram forever. Your outfit choice doesn't get a second take." },
-  { emoji: "🎓", label: "College Fit", query: "college casual outfit men", hook: "You're being ranked every time you walk into class. You just can't see the scoreboard." },
-  { emoji: "📸", label: "Profile Photo", query: "solid colour polo tshirt men", hook: "Your face isn't the problem. Your shirt color is draining your skin tone and you can't tell." },
+  { emoji: "💘", label: "Date Night", query: "date night outfit men", hook: "Look like you tried. Without looking like you tried too hard." },
+  { emoji: "💼", label: "Interview", query: "interview formal shirt trousers men", hook: "They decide before you sit down." },
+  { emoji: "🎉", label: "Wedding Guest", query: "wedding guest outfit kurta men", hook: "250 people. One group photo. Zero do-overs." },
+  { emoji: "🏖️", label: "Goa Trip", query: "beach vacation shirt men", hook: "Trip photos live forever. Dress like it." },
+  { emoji: "🎓", label: "College Fit", query: "college casual outfit men", hook: "Effortless is a look. It takes effort." },
+  { emoji: "📸", label: "Profile Photo", query: "solid colour polo tshirt men", hook: "Wrong shirt color = tired face. Free fix." },
 ];
 
 const heroScenarios = [
@@ -80,59 +80,54 @@ const heroScenarios = [
     id: "date",
     emoji: "💘",
     label: "Date this week",
-    question:
-      "They already checked your profile. They already formed an opinion. You just don't know what it was — or why they didn't reply.",
-    cta: "Am I date-ready? — free",
+    question: "They checked your profile before you even showed up. What did they think?",
+    cta: "Check now — free",
   },
   {
     id: "interview",
     emoji: "💼",
     label: "Interview coming up",
-    question:
-      "The recruiter Googled you. Your LinkedIn photo loaded. They made a decision about you before reading a single line of your resume. Do you know what that decision was?",
-    cta: "Am I interview-ready? — free",
+    question: "Your LinkedIn photo loaded. They decided before reading your resume.",
+    cta: "Check now — free",
   },
   {
     id: "event",
     emoji: "🎉",
     label: "Wedding / event",
-    question:
-      "The group photo gets posted. Everyone looks great — except one person who didn't realize something was off. What if that person is you, and nobody's going to tell you?",
-    cta: "Am I event-ready? — free",
+    question: "Group photo gets posted. Everyone looks great except one person. Is it you?",
+    cta: "Check now — free",
   },
   {
     id: "dp",
     emoji: "📸",
     label: "New DP loading",
-    question:
-      "You've changed it three times this month and still aren't sure. That nagging feeling? It's because something is off and you literally cannot see it — you've looked at your own face too many times.",
-    cta: "Rate my DP — free",
+    question: "Changed it three times this month. Still not sure. There's a reason.",
+    cta: "Check now — free",
   },
   {
     id: "curious",
     emoji: "👀",
     label: "Just curious",
-    question:
-      "Right now, someone is looking at your photo and forming a permanent opinion about you. In 0.3 seconds. You'll never get a second chance at that moment. Want to know what they decided?",
-    cta: "Show me what they see — free",
+    question: "Someone looked at your photo today. Formed an opinion in 0.3 seconds. Want to know what it was?",
+    cta: "Check now — free",
   },
 ];
 
 const steps = [
   {
     number: "01",
-    title: "Drop the photo you're most unsure about",
-    body: "The one you almost posted. The one you keep second-guessing. That uncertainty isn't random — something specific is causing it.",
+    title: "Upload a photo",
+    body: "The one you're most unsure about.",
   },
   {
     number: "02",
-    title: "See what everyone else already sees",
-    body: "Your Aura Score out of 100 + the exact leaks dragging you down. The things your friends noticed but never mentioned.",
+    title: "Get your score",
+    body: "Score out of 100. Exact leaks. No sugarcoating.",
   },
   {
     number: "03",
-    title: "Fix it before more people see the old version",
-    body: "Every day you don't fix it, more people form the wrong first impression. Most fixes take under Rs 500 and 10 minutes.",
+    title: "Fix it today",
+    body: "Most fixes cost nothing. The rest cost less than lunch.",
   },
 ];
 
@@ -140,25 +135,25 @@ const exploreCards = [
   {
     title: "Aura Twin",
     tag: "simulator",
-    body: "You bought that outfit thinking it would look like the photo. It didn't. Test before you waste another Rs 2,000.",
+    body: "Test an outfit before you buy it.",
     href: "/twin-simulator",
   },
   {
     title: "Wardrobe Scan",
     tag: "diagnosis",
-    body: "You own 40 items and still say 'I have nothing to wear.' That's not a wardrobe problem — it's a signal problem.",
+    body: "40 items. Nothing to wear. Find out why.",
     href: "/wardrobe/diagnosis",
   },
   {
     title: "Glow-Up Challenges",
     tag: "streaks",
-    body: "Most people quit after 3 days. The ones who don't? Their scores jump by 15+ points. Can you outlast them?",
+    body: "Daily missions. 15+ point jumps in 30 days.",
     href: "/challenges",
   },
   {
     title: "Trend Shop",
     tag: "price compare",
-    body: "That person who always looks effortless? They're buying the same brands as you — just different pieces. See which ones.",
+    body: "Same brands. Different pieces. That's the gap.",
     href: "/shop",
   },
 ];
@@ -167,34 +162,34 @@ const offerCards = [
   {
     name: "Vibe Check",
     price: "Free",
-    body: "Find out your score + the #1 thing silently hurting you. No sign-up. No excuses left.",
-    sub: "no card, no sign-up",
-    cta: "See what they see",
+    body: "Your score + your #1 leak. No sign-up.",
+    sub: "8 seconds",
+    cta: "Try it",
     href: "/audit/new",
   },
   {
     name: "Fast Fix",
     price: "Rs 25",
-    body: "The single fastest change that moves your score the most. Know exactly what to fix — stop guessing.",
-    sub: "less than a coffee · UPI in one tap",
-    cta: "Stop guessing",
+    body: "Your single highest-impact fix. One answer.",
+    sub: "less than a coffee",
+    cta: "Get the fix",
     href: "/unlock?product=quick_fix",
   },
   {
     name: "Full Read",
     price: "Rs 44",
-    body: "Every leak exposed — fit, color, grooming, posture. The full truth your friends are too polite to say.",
-    sub: "one lunch · UPI in one tap",
-    cta: "Get the full truth",
+    body: "Every leak. Every fix. The full truth.",
+    sub: "less than lunch",
+    cta: "Get the truth",
     href: "/products/aura-report",
     featured: true,
   },
   {
     name: "30-Day Reset",
     price: "Rs 499",
-    body: "30 days of daily missions. Systematic fix for every leak. In a month, people will ask what changed.",
-    sub: "cheaper than a haircut · UPI supported",
-    cta: "Fix everything",
+    body: "Daily missions. 30 days. People will notice.",
+    sub: "less than a haircut",
+    cta: "Start the reset",
     href: "/products/glowup-plan",
   },
 ];
@@ -202,18 +197,18 @@ const offerCards = [
 const demoLeaks = [
   {
     kind: "leak",
-    label: "Your shirt color is washing out your skin — people see 'tired'",
-    delta: "+9 pts if fixed",
+    label: "Shirt color washing out your skin",
+    delta: "+9 pts",
   },
   {
     kind: "leak",
-    label: "Oversized fit is hiding your frame — reads as sloppy, not relaxed",
-    delta: "+6 pts if fixed",
+    label: "Oversized fit reads sloppy, not relaxed",
+    delta: "+6 pts",
   },
   {
     kind: "pass",
-    label: "Grooming — clean, on point (this is saving you)",
-    delta: "keep it",
+    label: "Grooming on point — this is saving you",
+    delta: "keep",
   },
 ];
 
@@ -241,7 +236,7 @@ export default function HomePage() {
           <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="max-w-2xl">
               <Badge variant="premium" className="mb-5">
-                free ai first-impression check
+                free · 8 seconds · no sign-up
               </Badge>
               <h1 className="display-font max-w-3xl text-5xl font-bold leading-[0.95] text-white sm:text-6xl lg:text-7xl">
                 Going somewhere?{" "}
@@ -292,21 +287,21 @@ export default function HomePage() {
               </div>
 
               <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/50">
-                <span>8 seconds to find out</span>
+                <span>Photo stays on your device</span>
                 <span aria-hidden className="text-white/25">·</span>
-                <span>Free. No sign-up. No excuses.</span>
+                <span>No downloads</span>
                 <span aria-hidden className="text-white/25">·</span>
-                <span>Your photo stays on your device</span>
+                <span>Works on any phone</span>
               </div>
             </div>
 
             <div className="prism-panel glow-frame spotlight relative overflow-hidden rounded-[30px] p-6">
               <div className="flex items-center justify-between gap-3">
                 <div className="text-xs uppercase tracking-[0.22em] text-white/45">
-                  your aura report · sample
+                  sample report
                 </div>
                 <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-[11px] font-semibold text-emerald-300">
-                  what you get
+                  this is what you get
                 </span>
               </div>
 
@@ -329,10 +324,10 @@ export default function HomePage() {
                 </div>
                 <div>
                   <div className="text-sm font-semibold text-white">
-                    This person thought they looked great. They had two silent leaks.
+                    Two silent leaks. Nobody told them.
                   </div>
                   <p className="mt-1 text-xs leading-5 text-white/55">
-                    Nobody told them. Friends won&apos;t. Strangers just swipe left. The average person has 2.4 leaks they can&apos;t see. What are yours?
+                    Friends won't. Strangers just swipe left.
                   </p>
                 </div>
               </div>
@@ -369,11 +364,8 @@ export default function HomePage() {
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="default">how it works</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              You think you look fine. That&apos;s the problem.
+              Three steps. Eight seconds.
             </h2>
-            <p className="mt-3 text-sm text-white/55 sm:text-base">
-              Your brain literally can&apos;t see your own flaws. You&apos;ve looked at your face 10,000 times — you&apos;re blind to what strangers notice in 0.3 seconds.
-            </p>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
             {steps.map((step) => (
@@ -392,11 +384,8 @@ export default function HomePage() {
           <div className="mx-auto max-w-4xl text-center">
             <Badge variant="premium">100 styles</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              You know what looks good. You just can&apos;t recreate it on yourself.
+              Pick a vibe. We find the pieces.
             </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-white/62">
-              That&apos;s not a you problem — it&apos;s an information problem. Pick a vibe and we break it into the exact pieces. Stop guessing why their outfit works and yours doesn&apos;t.
-            </p>
           </div>
 
           <div className="glass-panel glow-frame mt-8 rounded-[32px] p-5 sm:p-6">
@@ -421,14 +410,11 @@ export default function HomePage() {
             <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
               <div>
                 <div className="text-xs uppercase tracking-[0.22em] text-white/45">
-                  celebrity trend radar · refreshed every 72h
+                  trending now
                 </div>
                 <h2 className="display-font mt-2 text-2xl font-bold text-white sm:text-3xl">
-                  They&apos;re wearing the same brands as you. So why do they look better?
+                  Steal the look. Skip the guesswork.
                 </h2>
-                <p className="mt-2 max-w-xl text-sm text-white/55">
-                  It&apos;s not the brand. It&apos;s the combination. These celebrity looks are broken into exact pieces you can buy — and you&apos;ll finally see why your version never looked the same.
-                </p>
               </div>
               <div className="flex items-center gap-2">
                 <Link
@@ -473,13 +459,10 @@ export default function HomePage() {
       <section className="pb-16">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="premium">all 16 trending looks</Badge>
+            <Badge variant="premium">all trending looks</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              One of these looks would fix everything. You just don&apos;t know which one yet.
+              Every look. Broken into buyable parts.
             </h2>
-            <p className="mt-3 text-sm text-white/55 sm:text-base">
-              The difference between &ldquo;they look amazing&rdquo; and &ldquo;they look like they&apos;re trying&rdquo; is usually one wrong piece. Every look here is broken into buyable parts.
-            </p>
           </div>
           <div className="mt-8 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
             {CELEBRITY_TREND_PRESETS.map((preset) => (
@@ -512,9 +495,9 @@ export default function HomePage() {
       <section className="pb-16">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="default">more ways to play</Badge>
+            <Badge variant="default">explore</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              Knowing your score is step one. Living with it is the hard part.
+              More tools. Same goal.
             </h2>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -538,14 +521,11 @@ export default function HomePage() {
       <section className="pb-16">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="default" className="mb-4">Real vibe checks this week</Badge>
+            <Badge variant="default" className="mb-4">real results</Badge>
             <h2 className="display-font text-4xl font-bold text-white sm:text-5xl">
-              They looked just like you. Then they found the one thing nobody told them.
+              Real people. Real scores. Real fixes.
             </h2>
             <p className="mt-3 text-sm text-white/55 sm:text-base">
-              Every person below was walking around with a leak they couldn&apos;t see. Their friends saw it. Strangers saw it. Nobody said anything. Until they checked.
-            </p>
-            <p className="mt-2 text-sm text-gray-400">
               <Link href="/gallery" className="text-purple-400 hover:text-purple-300 underline">View full gallery →</Link>
             </p>
           </div>
@@ -610,13 +590,10 @@ export default function HomePage() {
       <section className="pb-16">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="premium">top fixes this month</Badge>
+            <Badge variant="premium">quick fixes</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              The thing silently ruining your photos costs Rs 399 to fix. You just don&apos;t know what it is yet.
+              Most-bought after seeing their score.
             </h2>
-            <p className="mt-3 text-sm text-white/55 sm:text-base">
-              These are the most-bought items right after someone sees their score for the first time. The average person jumps 9 points. Some jump 20.
-            </p>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {quickFixProducts.map((prod) => (
@@ -660,11 +637,8 @@ export default function HomePage() {
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="default">shop by occasion</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              Last time you walked into a room, what did people actually think?
+              Where are you going? Dress for it.
             </h2>
-            <p className="mt-3 text-sm text-white/55 sm:text-base">
-              You&apos;ll never know. But you can control what they think next time. Pick the occasion — we pull the exact outfit that changes the first impression.
-            </p>
           </div>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {occasionShops.map((occ) => (
@@ -688,13 +662,10 @@ export default function HomePage() {
       <section className="pb-16">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="default">simple pricing</Badge>
+            <Badge variant="default">pricing</Badge>
             <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              The problem isn&apos;t money. It&apos;s that you&apos;ve been walking around not knowing.
+              Free to find out. Cheap to fix.
             </h2>
-            <p className="mt-3 text-sm text-white/55 sm:text-base">
-              Every day without the fix is another day of wrong first impressions. The score is free. The fix costs less than your lunch.
-            </p>
           </div>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-4">
@@ -729,12 +700,12 @@ export default function HomePage() {
       <section className="pb-12">
         <Container>
           <div className="glass-panel glow-frame shine-sweep relative overflow-hidden rounded-[36px] px-6 py-10 text-center sm:px-10 sm:py-14">
-            <Badge variant="premium">free to try</Badge>
+            <Badge variant="premium">free</Badge>
             <h2 className="display-font mt-5 text-4xl font-bold text-white sm:text-5xl">
-              You&apos;re either someone who finds out — or someone who keeps guessing forever.
+              One photo. Eight seconds. Free.
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-white/60 sm:text-base">
-              You scrolled this far because something doesn&apos;t sit right. That feeling in your gut when you look at your own photo? It&apos;s trying to tell you something. One photo. Eight seconds. Free. End it now — or wonder every time you post.
+              Find out now or keep wondering.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
               <Button asChild size="lg">

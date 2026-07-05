@@ -36,7 +36,7 @@ export default function GlowUpPlanPage() {
           <Badge variant="warning" className="mb-4">Best value</Badge>
           <h1 className="mb-4 text-4xl font-bold text-white">30-Day Reset</h1>
           <p className="mx-auto mb-6 max-w-2xl text-lg text-gray-400">
-            A structured month-long roadmap with daily missions to level up your visual presence.
+            Daily missions. 30 days. People will ask what changed.
           </p>
           <div className="mb-8 text-5xl font-bold text-amber-400">&#8377;499</div>
           <div className="flex flex-wrap justify-center gap-3">
