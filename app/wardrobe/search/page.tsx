@@ -361,38 +361,7 @@ function WardrobeSearchContent() {
           </>
         )}
 
-        {/* ─── 100 styles — tap a chip, clothes appear right below ─── */}
-        <div className="mb-6">
-          <div className="mb-4">
-            <h2 className="text-lg font-semibold text-white">100 style ideas to choose from</h2>
-            <p className="text-xs text-gray-500">
-              Tap any style — matching clothes load instantly just below.
-            </p>
-          </div>
-          <Card>
-            <div className="flex flex-wrap gap-2">
-              {STYLE_SEARCH_SUGGESTIONS.map((style) => {
-                const isActive = style.id === selectedStyleId;
-                return (
-                  <button
-                    key={style.id}
-                    type="button"
-                    onClick={() => handleStyleSelect(style)}
-                    className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
-                      isActive
-                        ? "border-sky-300/60 bg-sky-400/15 font-semibold text-sky-200"
-                        : "border-white/10 bg-white/5 text-gray-300 hover:border-sky-300/30 hover:text-sky-200"
-                    }`}
-                  >
-                    {style.label}
-                  </button>
-                );
-              })}
-            </div>
-          </Card>
-        </div>
-
-        {/* ─── Results — directly below the style chips ─── */}
+        {/* ─── Results — directly below the selected look ─── */}
         <div ref={resultsRef} className="mb-8 scroll-mt-20">
           {showResultsBlock && (
             <>
@@ -529,6 +498,37 @@ function WardrobeSearchContent() {
               </div>
             </Card>
           )}
+        </div>
+
+        {/* ─── 100 styles — browse other looks ─── */}
+        <div className="mb-6">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-white">100 style ideas to choose from</h2>
+            <p className="text-xs text-gray-500">
+              Tap any style — matching clothes load instantly just below.
+            </p>
+          </div>
+          <Card>
+            <div className="flex flex-wrap gap-2">
+              {STYLE_SEARCH_SUGGESTIONS.map((style) => {
+                const isActive = style.id === selectedStyleId;
+                return (
+                  <button
+                    key={style.id}
+                    type="button"
+                    onClick={() => handleStyleSelect(style)}
+                    className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
+                      isActive
+                        ? "border-sky-300/60 bg-sky-400/15 font-semibold text-sky-200"
+                        : "border-white/10 bg-white/5 text-gray-300 hover:border-sky-300/30 hover:text-sky-200"
+                    }`}
+                  >
+                    {style.label}
+                  </button>
+                );
+              })}
+            </div>
+          </Card>
         </div>
 
         {/* ─── Advanced filters — below the results, out of the way ─── */}
