@@ -3,7 +3,6 @@
 import type { ComparableGroup } from "@/types/commerceSearch";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { PriceFreshnessBadge } from "./PriceFreshnessBadge";
 import { formatPrice } from "@/lib/commerce/dealScoring";
 import { trackStoreClick } from "@/lib/commerce/commerceTracking";
 import { comparePricesInGroup } from "@/lib/commerce/search/priceComparisonEngine";
@@ -63,9 +62,6 @@ export function PriceComparisonCard({ group, auditId }: Props) {
               <span className="text-xs font-bold text-emerald-400">{formatPrice(comparison.cheapest.price)}</span>
             </div>
             <p className="mt-1 text-[10px] text-gray-400">{comparison.cheapest.storeName}</p>
-            <div className="mt-1">
-              <PriceFreshnessBadge status={comparison.cheapest.priceFreshness} showLabel={false} />
-            </div>
             <a
               href={getCommerceItemExternalUrl({
                 affiliateUrl: comparison.cheapest.affiliateUrl,
@@ -91,9 +87,6 @@ export function PriceComparisonCard({ group, auditId }: Props) {
               <span className="text-xs font-bold text-purple-400">{formatPrice(comparison.bestValue.price)}</span>
             </div>
             <p className="mt-1 text-[10px] text-gray-400">{comparison.bestValue.storeName}</p>
-            <div className="mt-1">
-              <PriceFreshnessBadge status={comparison.bestValue.priceFreshness} showLabel={false} />
-            </div>
             <a
               href={getCommerceItemExternalUrl({
                 affiliateUrl: comparison.bestValue.affiliateUrl,
@@ -134,25 +127,7 @@ export function PriceComparisonCard({ group, auditId }: Props) {
           </div>
         )}
 
-        {comparison.affiliateOption && (
-          <div className="flex items-center justify-between rounded bg-white/5 px-2.5 py-1.5">
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-gray-400">{comparison.affiliateOption.storeName}</span>
-              <Badge variant="default" className="text-[8px]">Affiliate</Badge>
-            </div>
-            <span className="text-xs text-white">{formatPrice(comparison.affiliateOption.price)}</span>
-          </div>
-        )}
       </div>
-
-      {/* Stale warnings */}
-      {comparison.stalePriceWarnings.length > 0 && (
-        <div className="mt-3 rounded-lg bg-red-500/5 p-2">
-          <p className="text-[10px] text-red-400">
-            ⚠ {comparison.stalePriceWarnings.length} option{comparison.stalePriceWarnings.length > 1 ? "s have" : " has"} stale prices — verify on store before buying
-          </p>
-        </div>
-      )}
 
       {/* All options */}
       <div className="mt-3">
@@ -165,7 +140,6 @@ export function PriceComparisonCard({ group, auditId }: Props) {
               <div className="flex items-center justify-between rounded bg-white/5 px-2.5 py-1.5">
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] text-gray-400">{comparison.cheapest.storeName}</span>
-                  <PriceFreshnessBadge status={comparison.cheapest.priceFreshness} showLabel={false} />
                 </div>
                 <span className="text-xs text-white">{formatPrice(comparison.cheapest.price)}</span>
               </div>
@@ -177,7 +151,6 @@ export function PriceComparisonCard({ group, auditId }: Props) {
                 <div key={item.id} className="flex items-center justify-between rounded bg-white/5 px-2.5 py-1.5">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] text-gray-400">{item.storeName}</span>
-                    <PriceFreshnessBadge status={item.priceFreshness} showLabel={false} />
                   </div>
                   <span className="text-xs text-white">{formatPrice(item.price)}</span>
                 </div>

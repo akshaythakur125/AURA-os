@@ -39,6 +39,7 @@ function WardrobeSearchContent() {
   const [styleDirection, setStyleDirection] = useState("");
   const [auraLeakTag, setAuraLeakTag] = useState("");
   const [sort, setSort] = useState<CommerceSearchSort>("aura_best");
+  const [presetCategories, setPresetCategories] = useState<string[]>([]);
   const [results, setResults] = useState<CommerceSearchResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -91,6 +92,7 @@ function WardrobeSearchContent() {
     const input: CommerceSearchInput = {
       query: query || undefined,
       category: (category as WardrobeCategory) || undefined,
+      categories: presetCategories.length > 0 ? (presetCategories as WardrobeCategory[]) : undefined,
       storeKeys: storeFilter ? [storeFilter as StoreKey] : undefined,
       budgetMin: budgetMin ? parseInt(budgetMin, 10) : undefined,
       budgetMax: budgetMax ? parseInt(budgetMax, 10) : undefined,
@@ -100,7 +102,7 @@ function WardrobeSearchContent() {
       limit: 50,
     };
     await runSearch(input);
-  }, [query, category, budgetMin, budgetMax, storeFilter, styleDirection, auraLeakTag, sort, runSearch]);
+  }, [query, category, presetCategories, budgetMin, budgetMax, storeFilter, styleDirection, auraLeakTag, sort, runSearch]);
 
   // Style chip click: search that style client-side and bring the results
   // into view directly below the chips — no page reload.
@@ -147,6 +149,7 @@ function WardrobeSearchContent() {
         setStyleDirection(preset.styleDirection);
         setAuraLeakTag(preset.auraLeakTags[0] || "");
         setBudgetMax(String(preset.budgetMax || ""));
+        setPresetCategories(preset.recommendedCategories);
         setSort(sortParam || "aura_best");
         setInitializedFromUrl(true);
         return;

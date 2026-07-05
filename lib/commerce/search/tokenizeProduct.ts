@@ -71,8 +71,9 @@ export function matchQueryTokens(
       matched.push(qt);
     } else {
       for (const it of itemTokenSet) {
-        const overlap = Math.min(qt.length, it.length);
-        if (overlap >= 4 && (it.includes(qt) || qt.includes(it))) {
+        const shorter = qt.length <= it.length ? qt : it;
+        const longer = qt.length <= it.length ? it : qt;
+        if (shorter.length >= 5 && longer.startsWith(shorter)) {
           matched.push(qt);
           break;
         }

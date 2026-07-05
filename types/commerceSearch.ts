@@ -51,6 +51,7 @@ export interface CommerceSearchInput {
   auditId?: string;
   anonymousId?: string;
   category?: WardrobeCategory;
+  categories?: WardrobeCategory[];
   storeKeys?: StoreKey[];
   budgetMin?: number;
   budgetMax?: number;

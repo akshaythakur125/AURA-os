@@ -37,6 +37,9 @@ export async function searchCommerceIndex(
 
   if (input.category) {
     filtered = filtered.filter((item) => item.category === input.category);
+  } else if (input.categories && input.categories.length > 0) {
+    const catSet = new Set(input.categories);
+    filtered = filtered.filter((item) => catSet.has(item.category));
   }
 
   if (input.storeKeys && input.storeKeys.length > 0) {
