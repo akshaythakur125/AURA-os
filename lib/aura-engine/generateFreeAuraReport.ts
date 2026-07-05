@@ -8,7 +8,7 @@ export async function generateFreeAuraReport(imageDataUrl: string, budgetRange: 
   const imageMetrics = await extractImageMetrics(imageDataUrl);
   const auraScore = computeAuraScore(imageMetrics);
   const category = getCategory(auraScore);
-  const oneLineVerdict = getVerdict(auraScore);
+  const oneLineVerdict = getVerdict(auraScore, imageMetrics);
   const strongestSignals = getStrongestSignals(imageMetrics);
   const statusLeaks = generateStatusLeaks(imageMetrics);
   const quickFixes = generateQuickFixes(imageMetrics);

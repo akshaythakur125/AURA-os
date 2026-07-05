@@ -95,6 +95,19 @@ export interface ImageMetrics {
   compositionScore: number;
   backgroundComplexityEstimate: number;
   overallImageQualityScore: number;
+  topBrightness?: number;
+  bottomBrightness?: number;
+  centerBrightness?: number;
+  peripheryBrightness?: number;
+  centerSharpness?: number;
+  peripheryEdgeDensity?: number;
+  colorTemperature?: number;
+  skinTonePresent?: boolean;
+  faceRegionBrightness?: number;
+  lightingDirection?: "overhead" | "underlit" | "side_left" | "side_right" | "even" | "backlit";
+  backgroundClutterZone?: "full" | "top" | "bottom" | "sides" | "none";
+  subjectContrast?: number;
+  warmth?: number;
 }
 
 export interface StatusLeak {

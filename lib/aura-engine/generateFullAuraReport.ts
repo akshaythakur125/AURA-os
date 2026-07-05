@@ -23,7 +23,7 @@ export async function generateFullAuraReport(
     freeResult = {
       auraScore: score,
       category: getCategory(score),
-      oneLineVerdict: getVerdict(score),
+      oneLineVerdict: getVerdict(score, metrics),
       strongestSignals: getStrongestSignals(metrics),
       statusLeaks: generateStatusLeaks(metrics),
       quickFixes: [],

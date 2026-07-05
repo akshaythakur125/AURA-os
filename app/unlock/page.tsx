@@ -6,20 +6,15 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
 import { recordUnlock } from "@/lib/storage/unlockStore";
-import { createOrder, updateOrder, getOrdersByAuditId } from "@/lib/storage/orderStore";
 import { trackEvent } from "@/lib/storage/analyticsStore";
-import { validateUnlockCode, getDemoCode, getUpiiId } from "@/lib/payments/manualUnlock";
-import { generateUnlockCode } from "@/lib/payments/unlockCodeGenerator";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { generateDatingProfileAudit } from "@/lib/aura-engine/generateDatingProfileAudit";
 import { generateGlowUpPlan } from "@/lib/aura-engine/generateGlowUpPlan";
 import { generateQuickAuraFix } from "@/lib/aura-engine/generateQuickAuraFix";
 import type { ProductType } from "@/types";
-import type { ManualOrder } from "@/types/order";
 import { applyOffer } from "@/lib/offers/applyOffer";
 import type { OfferApplyResult } from "@/types/offer";
 import { BeforeAfterCard } from "@/components/proof/BeforeAfterCard";
@@ -33,8 +28,6 @@ const PRODUCT_INFO: Record<ProductType, { name: string; price: number; desc: str
   dating_audit: { name: "Dating/Profile Audit", price: 299, desc: "Profile presentation score, bio feedback, and photo order strategy." },
   glowup_plan: { name: "30-Day Reset", price: 499, desc: "Structured 30-day roadmap with daily missions and budget roadmap." },
 };
-
-type Stage = "payment" | "submit" | "unlock";
 
 export default function UnlockPage() {
   return (
@@ -58,15 +51,9 @@ function UnlockContent() {
   const validProducts: ProductType[] = ["quick_fix", "aura_report", "dating_audit", "glowup_plan"];
   const product = (validProducts.includes(productParam as ProductType) ? productParam : "aura_report") as ProductType;
 
-  const [customerName, setCustomerName] = useState("");
-  const [customerContact, setCustomerContact] = useState("");
-  const [upiTransactionRef, setUpiTransactionRef] = useState("");
-  const [userNote, setUserNote] = useState("");
-  const [unlockCode, setUnlockCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [unlocking, setUnlocking] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [offerCodeInput, setOfferCodeInput] = useState("");
   const [offerResult, setOfferResult] = useState<OfferApplyResult | null>(null);
   const [offerError, setOfferError] = useState<string | null>(null);
@@ -81,21 +68,10 @@ function UnlockContent() {
   }, []);
 
   const audit = auditId ? getAuditById(auditId) : undefined;
-  const upiId = getUpiiId();
-  const demoCode = getDemoCode();
   const productInfo = PRODUCT_INFO[product];
-  const auditCode = generateUnlockCode(auditId, product);
+  const razorpayAvailable = !!getPublicRazorpayKeyId();
 
   const finalAmount = (offerResult?.valid && offerResult.finalAmount >= 0) ? offerResult.finalAmount : productInfo.price;
-
-  const existingOrders = auditId ? getOrdersByAuditId(auditId) : [];
-  const foundExisting = existingOrders.find((o) => o.productType === product);
-  const initialStage: Stage = foundExisting
-    ? (foundExisting.status === "unlocked" || foundExisting.status === "payment_submitted" || foundExisting.status === "code_sent" ? "unlock" : "payment")
-    : "payment";
-  const [stage, setStage] = useState<Stage>(initialStage);
-  const [existingOrder, setExistingOrder] = useState<ManualOrder | undefined>(foundExisting);
-  const razorpayAvailable = !!getPublicRazorpayKeyId();
 
   const checkPaymentStatus = useCallback(async () => {
     if (!auditId || !audit) return;
@@ -112,11 +88,11 @@ function UnlockContent() {
         setPaymentStatusResult("Payment verified and product unlocked! Redirecting...");
         setTimeout(() => router.push(`/audit/${auditId}`), 1500);
       } else if (data.status === "payment_failed") {
-        setPaymentStatusResult("Payment failed. Please try manual UPI or contact support.");
+        setPaymentStatusResult("Payment failed. Please try again or contact support.");
       } else if (data.status === "amount_mismatch") {
         setPaymentStatusResult("Payment amount mismatch detected. Contact support.");
       } else if (data.status === "paid_pending_recovery") {
-        setPaymentStatusResult("Payment needs recovery. Click &lsquo;Recover payment&rsquo; below.");
+        setPaymentStatusResult("Payment needs recovery. Click 'Recover payment' below.");
       } else {
         setPaymentStatusResult("Payment not yet verified. If money was deducted, use the recovery option below.");
       }
@@ -200,36 +176,6 @@ function UnlockContent() {
     }
   }
 
-  async function handleSavePayment() {
-    setSaving(true);
-    setError(null);
-    try {
-      const order = createOrder({
-        auditId,
-        productType: product,
-        productName: productInfo.name,
-        amount: productInfo.price,
-        originalAmount: productInfo.price,
-        discountCode: offerResult?.valid ? offerResult.offer?.code : undefined,
-        discountAmount: offerResult?.valid ? offerResult.discountAmount : undefined,
-        finalAmount: offerResult?.valid ? offerResult.finalAmount : productInfo.price,
-        upiId,
-        customerName: customerName.trim() || undefined,
-        customerContact: customerContact.trim() || undefined,
-        upiTransactionRef: upiTransactionRef.trim() || undefined,
-        userNote: userNote.trim() || undefined,
-      });
-      setExistingOrder(order);
-      trackEvent("payment_request_saved", { product, auditId });
-      if (product === "quick_fix") trackEvent("quick_fix_payment_request_saved", { auditId });
-      setStage("unlock");
-    } catch {
-      setError("Failed to save payment request.");
-    } finally {
-      setSaving(false);
-    }
-  }
-
   async function handleRazorpaySuccess() {
     if (!auditId || !audit) return;
     setUnlocking(true);
@@ -269,99 +215,22 @@ function UnlockContent() {
     }
   }
 
-  async function handleUnlock() {
-    if (!auditId || !audit) return;
-    if (!unlockCode.trim()) { setError("Please enter an unlock code."); return; }
-    if (!validateUnlockCode(unlockCode, auditId, product)) { setError("Invalid unlock code."); return; }
-    setUnlocking(true);
-    setError(null);
-    try {
-      const existingProducts = (audit.unlockedProducts || []) as ProductType[];
-      if (existingProducts.includes(product)) { setError("Already unlocked."); setUnlocking(false); return; }
-
-      const newUnlocked = [...new Set([...existingProducts, product])];
-      const updateData: Record<string, unknown> = { unlockedProducts: newUnlocked };
-
-      if (product === "aura_report") {
-        const report = await generateFullAuraReport(audit.imageDataUrl, audit.freeResult, audit);
-        let personalization = audit.personalization;
-        if (!personalization && audit.freeResult) personalization = generateStatusArchetype(audit, audit.freeResult.imageMetrics);
-        updateData.fullReport = report;
-        updateData.fullScore = report.fullScore;
-        updateData.personalization = personalization;
-        updateData.reportStatus = "full_report";
-      } else if (product === "dating_audit" && audit.freeResult) {
-        updateData.datingProfileReport = generateDatingProfileAudit(audit);
-      } else if (product === "glowup_plan" && audit.freeResult) {
-        updateData.glowupPlan = generateGlowUpPlan(audit, audit.freeResult.imageMetrics);
-      } else if (product === "quick_fix" && audit.freeResult) {
-        updateData.quickFixReport = generateQuickAuraFix(auditId, audit.freeResult, audit.fullReport, audit.freeResult.imageMetrics);
-      }
-
-      recordUnlock(auditId, product, unlockCode.trim());
-      updateAudit(auditId, updateData);
-      if (existingOrder) updateOrder(existingOrder.id, { status: "unlocked", unlockedAt: new Date().toISOString() });
-      trackEvent("product_unlocked", { product, auditId });
-      if (product === "quick_fix") trackEvent("quick_fix_unlocked", { auditId });
-      setSuccess(`${productInfo.name} unlocked successfully!`);
-      setTimeout(() => router.push(`/audit/${auditId}`), 1500);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unlock failed.");
-      setUnlocking(false);
-    }
-  }
-
-  const upiDeepLink = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=AuraCheck&am=${finalAmount}&cu=INR&tn=AuraCheck%20${encodeURIComponent(productInfo.name)}%20${encodeURIComponent(auditId.slice(0, 8))}`;
-  const paymentSummary = [
-    `I have paid ₹${finalAmount} for ${productInfo.name}.`,
-    `Audit ID: ${auditId}`,
-    `${customerName ? `Name: ${customerName}` : ""}`,
-    `${customerContact ? `Contact: ${customerContact}` : ""}`,
-    `${upiTransactionRef ? `UPI Ref: ${upiTransactionRef}` : ""}`,
-    `${userNote ? `Note: ${userNote}` : ""}`,
-    "Please send my unlock code.",
-  ].filter(Boolean).join("\n");
-  const copySummary = [
-    `AuraCheck Payment Request`,
-    `Product: ${productInfo.name}`,
-    `Amount: ₹${finalAmount}${offerResult?.valid ? ` (original ₹${productInfo.price}, saved ₹${offerResult.discountAmount})` : ""}`,
-    `Audit: ${auditId}`,
-    `Customer: ${customerName || "—"}`,
-    `Contact: ${customerContact || "—"}`,
-    `UPI Ref: ${upiTransactionRef || "—"}`,
-    `Status: Payment Submitted`,
-  ].join("\n");
-  const ownerWhatsApp = typeof process !== "undefined" ? process.env.NEXT_PUBLIC_OWNER_WHATSAPP : "";
-  const waUrl = ownerWhatsApp ? `https://wa.me/${ownerWhatsApp.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(paymentSummary)}` : "";
+  const proofExample = product === "quick_fix" ? PROOF_EXAMPLES[0]
+    : product === "aura_report" ? PROOF_EXAMPLES[3]
+    : product === "dating_audit" ? PROOF_EXAMPLES[4]
+    : PROOF_EXAMPLES[6];
 
   return (
     <Container className="py-8 sm:py-12">
       <div className="mx-auto max-w-lg">
         <h1 className="mb-2 text-center text-3xl font-bold text-white">
-          {product === "quick_fix" ? "Unlock your fastest Aura fix." : `Unlock ${productInfo.name}`}
+          Unlock {productInfo.name}
         </h1>
         <p className="mb-8 text-center text-sm text-gray-400">
-          {product === "quick_fix"
-            ? "Pay ₹25 manually via UPI and enter your unlock code to reveal the exact fix path."
-            : "Manual UPI payment — MVP demo flow"}
+          Secure payment via Razorpay. Instant unlock after payment.
         </p>
 
-        {/* ─── Stage Indicator ─── */}
-        <div className="mb-8 flex items-center justify-center gap-2">
-          {(["payment", "submit", "unlock"] as Stage[]).map((s, i) => (
-            <div key={s} className="flex items-center gap-2">
-              <div className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
-                stage === s ? "bg-purple-500/20 text-purple-300" : stage === "payment" && i <= 1 ? "bg-white/10 text-gray-400" : i === 0 ? "bg-white/10 text-gray-400" : "bg-white/5 text-gray-600"
-              }`}>{i + 1}</div>
-              <span className={`text-xs ${stage === s ? "text-purple-300" : "text-gray-600"}`}>
-                {s === "payment" ? "Pay" : s === "submit" ? "Submit" : "Unlock"}
-              </span>
-              {i < 2 && <div className="h-px w-6 bg-white/10" />}
-            </div>
-          ))}
-        </div>
-
-        {/* ─── Always: Product Info ─── */}
+        {/* ─── Product Info ─── */}
         <Card className="mb-6">
           <div className="flex items-center justify-between">
             <div>
@@ -396,190 +265,73 @@ function UnlockContent() {
         </Card>
 
         {/* ─── Proof Card ─── */}
-        {stage === "payment" && (() => {
-          let proofExample = PROOF_EXAMPLES[0];
-          if (product === "quick_fix") proofExample = PROOF_EXAMPLES[0];
-          else if (product === "aura_report") proofExample = PROOF_EXAMPLES[3];
-          else if (product === "dating_audit") proofExample = PROOF_EXAMPLES[4];
-          else if (product === "glowup_plan") proofExample = PROOF_EXAMPLES[6];
-          return (
-            <div className="mb-6">
-              <p className="mb-2 text-xs text-gray-500">Before paying, see what this product is designed to solve.</p>
-              <BeforeAfterCard example={proofExample} compact />
+        <div className="mb-6">
+          <p className="mb-2 text-xs text-gray-500">See what this product is designed to solve.</p>
+          <BeforeAfterCard example={proofExample} compact />
+        </div>
+
+        {/* ─── Offer Code ─── */}
+        <Card className="mb-6">
+          <h3 className="mb-4 text-sm font-semibold text-white">Have an Offer Code?</h3>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={offerCodeInput}
+              onChange={(e) => setOfferCodeInput(e.target.value.toUpperCase())}
+              placeholder="Enter code"
+              className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none"
+            />
+            <Button variant="outline" size="sm" onClick={handleApplyOffer}>Apply</Button>
+          </div>
+          {offerResult?.valid && (
+            <div className="mt-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-xs">
+              <div className="text-emerald-400">{offerResult.message}</div>
+              <div className="mt-1 flex justify-between text-gray-300">
+                <span>Original</span>
+                <span className="line-through text-gray-500">₹{offerResult.originalAmount}</span>
+              </div>
+              <div className="flex justify-between text-emerald-300">
+                <span>You pay</span>
+                <span className="font-bold">₹{offerResult.finalAmount}</span>
+              </div>
             </div>
-          );
-        })()}
+          )}
+          {offerError && (
+            <div className="mt-3 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">{offerError}</div>
+          )}
+        </Card>
 
-        {/* ─── Stage 1: Payment ─── */}
-        {stage === "payment" && (
-          <>
-            {razorpayAvailable && (
-              <Card className="mb-6 border-purple-500/20">
-                <h3 className="mb-4 text-sm font-semibold text-purple-400">Pay Online (Instant Unlock)</h3>
-                <RazorpayCheckoutButton
-                  auditId={auditId}
-                  productType={product}
-                  productName={productInfo.name}
-                  amount={finalAmount}
-                  offerCode={offerResult?.valid ? offerResult.offer?.code : undefined}
-                  customerName={customerName}
-                  customerContact={customerContact}
-                  onSuccess={handleRazorpaySuccess}
-                  onError={(msg) => setError(msg)}
-                />
-              </Card>
-            )}
-            <div className="mb-4 flex items-center justify-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-4 py-3">
-              <svg className="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="3" strokeWidth="1.5"/><text x="12" y="16" fontSize="10" textAnchor="middle" fill="currentColor">R</text></svg>
-              <span className="text-[10px] text-gray-500">Razorpay</span>
-              <svg className="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor" opacity="0.1"/><text x="12" y="16" fontSize="10" textAnchor="middle" fill="currentColor">UPI</text></svg>
-              <span className="text-[10px] text-gray-500">UPI</span>
-              <svg className="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="3" fill="currentColor" opacity="0.1"/><text x="12" y="14" fontSize="7" textAnchor="middle" fill="currentColor">VISA</text></svg>
-              <span className="text-[10px] text-gray-500">Cards</span>
-            </div>
-            <Card className="mb-6">
-              <h3 className="mb-4 text-sm font-semibold text-white">{razorpayAvailable ? "Manual UPI Fallback" : "1. Pay via UPI"}</h3>
-              <div className="mb-4 rounded-xl bg-white/5 p-4 text-center">
-                <div className="mb-1 text-xs text-gray-500">Pay to this UPI ID</div>
-                <div className="text-lg font-bold text-purple-300">{upiId}</div>
-              </div>
-              <div className="mb-4 grid grid-cols-2 gap-2">
-                <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(upiId)}>Copy UPI ID</Button>
-                <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(`₹${finalAmount}`)}>Copy Amount</Button>
-                <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(`AuraCheck ${productInfo.name} ${auditId.slice(0, 8)}`)}>Copy Payment Note</Button>
-                <a href={upiDeepLink} target="_blank" rel="noopener noreferrer">
-                  <Button variant="outline" size="sm" className="w-full">Open UPI App</Button>
-                </a>
-              </div>
-              <p className="text-xs text-gray-500">Manual MVP payment flow: AuraCheck does not automatically verify UPI payments yet. After payment, submit your details below and send the summary to the owner/admin.</p>
-            </Card>
-
-            {/* ─── Offer Code ─── */}
-            <Card className="mb-6">
-              <h3 className="mb-4 text-sm font-semibold text-white">Have an Offer Code?</h3>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={offerCodeInput}
-                  onChange={(e) => setOfferCodeInput(e.target.value.toUpperCase())}
-                  placeholder="Enter code"
-                  className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none"
-                />
-                <Button variant="outline" size="sm" onClick={handleApplyOffer}>Apply</Button>
-              </div>
-              {offerResult?.valid && (
-                <div className="mt-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-xs">
-                  <div className="text-emerald-400">{offerResult.message}</div>
-                  <div className="mt-1 flex justify-between text-gray-300">
-                    <span>Original</span>
-                    <span className="line-through text-gray-500">₹{offerResult.originalAmount}</span>
-                  </div>
-                  <div className="flex justify-between text-emerald-300">
-                    <span>You pay</span>
-                    <span className="font-bold">₹{offerResult.finalAmount}</span>
-                  </div>
-                </div>
-              )}
-              {offerError && (
-                <div className="mt-3 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">{offerError}</div>
-              )}
-            </Card>
-
-            <Card className="mb-6">
-              <h3 className="mb-4 text-sm font-semibold text-white">2. Submit Payment Details</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="mb-1 block text-xs text-gray-500">Your Name (optional)</label>
-                  <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="e.g. Ravi" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none" />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs text-gray-500">WhatsApp / Contact (optional)</label>
-                  <input type="text" value={customerContact} onChange={(e) => setCustomerContact(e.target.value)} placeholder="e.g. +91 98765 43210" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none" />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs text-gray-500">UPI Transaction Ref (optional)</label>
-                  <input type="text" value={upiTransactionRef} onChange={(e) => setUpiTransactionRef(e.target.value)} placeholder="e.g. UPI123456789" className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none" />
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs text-gray-500">Note (optional)</label>
-                  <textarea value={userNote} onChange={(e) => setUserNote(e.target.value)} placeholder="Any message for the owner..." className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none" rows={2} />
-                </div>
-              </div>
-            </Card>
-
-            {error && <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</div>}
-
-            <Button onClick={handleSavePayment} disabled={saving} className="w-full" size="lg">
-              {saving ? "Saving..." : "Save Payment Request"}
-            </Button>
-          </>
+        {/* ─── Razorpay Payment ─── */}
+        {razorpayAvailable ? (
+          <Card className="mb-6 border-purple-500/20">
+            <h3 className="mb-4 text-sm font-semibold text-purple-400">Pay Securely</h3>
+            <RazorpayCheckoutButton
+              auditId={auditId}
+              productType={product}
+              productName={productInfo.name}
+              amount={finalAmount}
+              offerCode={offerResult?.valid ? offerResult.offer?.code : undefined}
+              customerName=""
+              customerContact=""
+              onSuccess={handleRazorpaySuccess}
+              onError={(msg) => setError(msg)}
+            />
+            <p className="mt-3 text-xs text-gray-500">UPI, cards, net banking, and wallets accepted via Razorpay.</p>
+          </Card>
+        ) : (
+          <Card className="mb-6 border-amber-500/20">
+            <h3 className="mb-3 text-sm font-semibold text-amber-400">Payment Coming Soon</h3>
+            <p className="text-xs text-gray-400">
+              Online payments are being set up. Check back shortly — Razorpay integration is in progress.
+            </p>
+          </Card>
         )}
 
-        {/* ─── Stage 2: Submit & Summary ─── */}
-        {stage === "submit" && (
-          <>
-            <Card className="mb-6 border-emerald-500/20">
-              <h3 className="mb-3 text-sm font-semibold text-emerald-400">Payment Details Saved</h3>
-              <div className="space-y-2 text-xs text-gray-300">
-                <div className="flex justify-between"><span className="text-gray-500">Product</span><span>{productInfo.name}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Amount</span><span>₹{productInfo.price}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Audit</span><span className="text-purple-300">{auditId}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Customer</span><span>{customerName || "—"}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Contact</span><span>{customerContact || "—"}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">UPI Ref</span><span>{upiTransactionRef || "—"}</span></div>
-                <div className="flex justify-between"><span className="text-gray-500">Status</span><Badge variant="success">Payment Submitted</Badge></div>
-              </div>
-              <p className="mt-4 text-xs text-gray-500">Send this summary to the owner/admin to receive your unlock code.</p>
-            </Card>
+        {error && <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</div>}
+        {success && <div className="mb-6 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">{success}</div>}
 
-            <div className="mb-6 grid grid-cols-2 gap-2">
-              <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(copySummary)}>Copy Payment Summary</Button>
-              <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(auditId)}>Copy Audit ID</Button>
-              <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(auditCode)}>Copy Product Code</Button>
-              {waUrl ? (
-                <a href={waUrl} target="_blank" rel="noopener noreferrer" className="col-span-2 sm:col-span-1">
-                  <Button variant="outline" size="sm" className="w-full border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/10">Send Payment Request on WhatsApp</Button>
-                </a>
-              ) : (
-                <Button variant="ghost" size="sm" onClick={() => navigator.clipboard.writeText(paymentSummary)}>Copy Payment Summary</Button>
-              )}
-            </div>
-
-            <Button onClick={() => setStage("unlock")} variant="outline" className="mb-4 w-full">I Have an Unlock Code — Continue</Button>
-          </>
-        )}
-
-        {/* ─── Stage 3: Unlock ─── */}
-        {stage === "unlock" && (
-          <>
-            <Card className="mb-6">
-              <h3 className="mb-4 text-sm font-semibold text-white">Enter Unlock Code</h3>
-              <p className="mb-3 text-xs text-gray-400">Use the demo code <strong className="text-purple-300">{demoCode}</strong> or the code sent by the owner.</p>
-              <input
-                type="text"
-                value={unlockCode}
-                onChange={(e) => setUnlockCode(e.target.value)}
-                placeholder={`Enter code (e.g. ${demoCode})`}
-                className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none"
-              />
-              {existingOrder && existingOrder.status !== "unlocked" && (
-                <p className="mt-2 text-xs text-gray-500">Your payment request is saved. Once the owner sends the code, enter it above.</p>
-              )}
-            </Card>
-
-            {error && <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</div>}
-            {success && <div className="mb-6 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">{success}</div>}
-
-            <Button onClick={handleUnlock} disabled={unlocking || success !== null} className="w-full" size="lg">
-              {unlocking ? "Generating..." : success ? "Redirecting..." : `Unlock ${productInfo.name} — ₹${productInfo.price}`}
-            </Button>
-
-            {!existingOrder && (
-              <Button onClick={() => setStage("payment")} variant="ghost" className="mt-3 w-full text-xs">
-                &larr; Back to payment details
-              </Button>
-            )}
-          </>
+        {unlocking && (
+          <div className="mb-6 text-center text-sm text-purple-300">Generating your report...</div>
         )}
 
         {/* ─── Payment Recovery ─── */}
@@ -587,7 +339,7 @@ function UnlockContent() {
           <Card className="mb-6 border-amber-500/20">
             <h3 className="mb-3 text-sm font-semibold text-amber-400">Payment Recovery</h3>
             <p className="mb-3 text-xs text-gray-400">
-              If you paid via Razorpay but the product didn&rsquo;t unlock (e.g., browser closed before redirect), check payment status or recover your payment.
+              If you paid but the product didn&rsquo;t unlock (e.g., browser closed before redirect), check payment status or recover your payment.
             </p>
             <div className="flex flex-wrap gap-2">
               <Button
@@ -605,12 +357,9 @@ function UnlockContent() {
                 onClick={handleRecoverPayment}
                 disabled={recovering}
               >
-                {recovering ? "Recovering..." : "Recover Payment / Check Again"}
+                {recovering ? "Recovering..." : "Recover Payment"}
               </Button>
             </div>
-            {checkingPaymentStatus && (
-              <p className="mt-2 text-xs text-gray-500">Checking payment status...</p>
-            )}
             {paymentStatusResult && (
               <div className={`mt-2 rounded-lg px-3 py-2 text-xs ${
                 paymentStatusResult.includes("unlocked") || paymentStatusResult.includes("verified")
@@ -637,8 +386,7 @@ function UnlockContent() {
 
         {/* ─── Footer ─── */}
         <div className="mt-6 space-y-2 text-center text-xs text-gray-600">
-          <p>Online payments unlock automatically after verification. If checkout closes after payment, AuraCheck can recover verified payments.</p>
-          <p>Manual payments still require owner/admin verification.</p>
+          <p>Payments are processed securely via Razorpay. Products unlock instantly after successful payment.</p>
           <p>Your image stays in this browser.</p>
           <p>No external AI service is used.</p>
           <p className="text-gray-500">AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth. No guaranteed dating, social, career, or financial outcomes.</p>
