@@ -52,10 +52,11 @@ export async function searchCommerceIndex(
   }
 
   if (queryTokens.length > 0) {
-    const minMatchRatio = queryTokens.length >= 6 ? 0.25 : queryTokens.length >= 4 ? 0.2 : 0;
+    const rawWordCount = input.query ? input.query.trim().split(/\s+/).length : queryTokens.length;
+    const minMatches = rawWordCount >= 6 ? 2 : rawWordCount >= 4 ? 1 : 0;
     filtered = filtered.filter((item) => {
-      const { score } = matchQueryTokens(queryTokens, item.searchTokens);
-      return score > minMatchRatio;
+      const { matched } = matchQueryTokens(queryTokens, item.searchTokens);
+      return matched.length > minMatches;
     });
   }
 

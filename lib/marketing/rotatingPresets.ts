@@ -1,7 +1,7 @@
 import { CELEBRITY_TREND_PRESETS } from "@/config/celebrityTrendPresets";
 import type { CelebrityTrendPreset } from "@/config/celebrityTrendPresets";
 
-const COUNT = 16;
+const COUNT = 13;
 const ROTATION_WINDOW_MS = 72 * 60 * 60 * 1000;
 
 // Stable per-72h-window seed, based on UTC epoch time rather than local
