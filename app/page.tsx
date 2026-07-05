@@ -244,9 +244,9 @@ export default function HomePage() {
                 free ai first-impression check
               </Badge>
               <h1 className="display-font max-w-3xl text-5xl font-bold leading-[0.95] text-white sm:text-6xl lg:text-7xl">
-                People already decided{" "}
+                Going somewhere?{" "}
                 <span className="bg-gradient-to-r from-sky-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
-                  what you look like. You just weren&apos;t there to hear it.
+                  See how ready you are.
                 </span>
               </h1>
 
