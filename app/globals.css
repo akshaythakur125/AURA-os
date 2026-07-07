@@ -371,6 +371,44 @@ button {
   }
 }
 
+/* ─── Score reveal animation ─── */
+.score-ring-container {
+  --score-final: 78;
+}
+
+.score-ring-progress {
+  animation: score-fill 1.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+}
+
+.score-number {
+  animation: score-count 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+}
+
+@keyframes score-fill {
+  from {
+    stroke-dasharray: 0 327;
+  }
+  to {
+    stroke-dasharray: 255 327; /* ~78% of circumference (255/327 ≈ 0.78) */
+  }
+}
+
+@keyframes score-count {
+  from {
+    opacity: 0.3;
+  }
+  20% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ponytail: CSS can't animate text content natively; score-number stays 0
+   and the ring does the visual heavy-lifting. If you want the number to
+   actually count up, swap in a tiny JS counter or framer-motion. */
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -382,6 +420,14 @@ button {
     animation: none !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  .score-ring-progress {
+    stroke-dasharray: 255 327;
+  }
+
+  .score-number {
+    opacity: 1;
   }
 
   .tilt-card {

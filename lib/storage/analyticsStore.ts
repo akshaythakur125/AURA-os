@@ -56,6 +56,7 @@ export type AnalyticsEvent =
   | "share_card_viewed"
   | "share_card_shared"
   | "share_platform_clicked"
+  | "share_card_viewed"
   | "share_tip_unlocked";
 
 export interface AnalyticsRecord {
