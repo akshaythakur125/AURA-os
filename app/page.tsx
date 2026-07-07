@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { STYLE_SEARCH_SUGGESTIONS } from "@/config/styleSearchSuggestions";
-import { CELEBRITY_TREND_PRESETS } from "@/config/celebrityTrendPresets";
 import { ReferralBanner } from "@/components/marketing/ReferralBanner";
 import { getMarqueePresets, getDailySubset } from "@/lib/marketing/rotatingPresets";
 import { getHomepageProofEntries } from "@/data/homepageProof";
@@ -15,119 +13,21 @@ import { getGalleryEntries } from "@/lib/storage/galleryStore";
 
 const marqueeStyles = getMarqueePresets();
 
-const quickFixProducts = [
-  {
-    label: "Ring Light",
-    leak: "Bad lighting ages you instantly",
-    price: "Rs 399",
-    points: "+12 pts",
-    emoji: "💡",
-    url: "https://www.amazon.in/s?k=ring+light+selfie&tag=auracheck-21",
-  },
-  {
-    label: "Solid Colour Tee",
-    leak: "Logo tees kill first impressions",
-    price: "Rs 349",
-    points: "+8 pts",
-    emoji: "👕",
-    url: "https://www.amazon.in/s?k=solid+colour+tshirt+men&tag=auracheck-21",
-  },
-  {
-    label: "Grooming Kit",
-    leak: "Unkempt is the first thing people see",
-    price: "Rs 499",
-    points: "+9 pts",
-    emoji: "✂️",
-    url: "https://www.amazon.in/s?k=mens+grooming+kit&tag=auracheck-21",
-  },
-  {
-    label: "Phone Tripod",
-    leak: "Bad angle = bad face. Not you.",
-    price: "Rs 299",
-    points: "+11 pts",
-    emoji: "📱",
-    url: "https://www.amazon.in/s?k=phone+tripod+stand&tag=auracheck-21",
-  },
-  {
-    label: "Minimal Watch",
-    leak: "Empty wrist reads 'didn't try'",
-    price: "Rs 899",
-    points: "+7 pts",
-    emoji: "⌚",
-    url: "https://www.amazon.in/s?k=minimal+analog+watch+men&tag=auracheck-21",
-  },
-  {
-    label: "White Sneakers",
-    leak: "Old shoes ruin the whole outfit",
-    price: "Rs 799",
-    points: "+6 pts",
-    emoji: "👟",
-    url: "https://www.amazon.in/s?k=white+sneakers+men+casual&tag=auracheck-21",
-  },
-];
-
-const occasionShops = [
-  { emoji: "💘", label: "Date Night", query: "date night outfit men", hook: "Look like you tried. Without looking like you tried too hard." },
-  { emoji: "💼", label: "Interview", query: "interview formal shirt trousers men", hook: "They decide before you sit down." },
-  { emoji: "🎉", label: "Wedding Guest", query: "wedding guest outfit kurta men", hook: "250 people. One group photo. Zero do-overs." },
-  { emoji: "🏖️", label: "Goa Trip", query: "beach vacation shirt men", hook: "Trip photos live forever. Dress like it." },
-  { emoji: "🎓", label: "College Fit", query: "college casual outfit men", hook: "Effortless is a look. It takes effort." },
-  { emoji: "📸", label: "Profile Photo", query: "solid colour polo tshirt men", hook: "Wrong shirt color = tired face. Free fix." },
-];
-
-const heroScenarios = [
-  {
-    id: "date",
-    emoji: "💘",
-    label: "Date this week",
-    question: "They checked your profile before you even showed up. What did they think?",
-    cta: "Check now — free",
-  },
-  {
-    id: "interview",
-    emoji: "💼",
-    label: "Interview coming up",
-    question: "Your LinkedIn photo loaded. They decided before reading your resume.",
-    cta: "Check now — free",
-  },
-  {
-    id: "event",
-    emoji: "🎉",
-    label: "Wedding / event",
-    question: "Group photo gets posted. Everyone looks great except one person. Is it you?",
-    cta: "Check now — free",
-  },
-  {
-    id: "dp",
-    emoji: "📸",
-    label: "New DP loading",
-    question: "Changed it three times this month. Still not sure. There's a reason.",
-    cta: "Check now — free",
-  },
-  {
-    id: "curious",
-    emoji: "👀",
-    label: "Just curious",
-    question: "Someone looked at your photo today. Formed an opinion in 0.3 seconds. Want to know what it was?",
-    cta: "Check now — free",
-  },
-];
-
 const steps = [
   {
     number: "01",
-    title: "Upload a photo",
-    body: "The one you're most unsure about.",
+    title: "Drop a photo",
+    body: "Selfie, mirror fit, dating pic — anything.",
   },
   {
     number: "02",
     title: "Get your score",
-    body: "Score out of 100. Exact leaks. No sugarcoating.",
+    body: "Aura Score out of 100 + what's dragging it down.",
   },
   {
     number: "03",
-    title: "Fix it today",
-    body: "Most fixes cost nothing. The rest cost less than lunch.",
+    title: "Fix or shop",
+    body: "Quick fix or shop the pieces across Myntra, Amazon, Flipkart.",
   },
 ];
 
@@ -135,25 +35,25 @@ const exploreCards = [
   {
     title: "Aura Twin",
     tag: "simulator",
-    body: "Test an outfit before you buy it.",
+    body: "Test-drive a look on your style twin before you spend.",
     href: "/twin-simulator",
   },
   {
     title: "Wardrobe Scan",
     tag: "diagnosis",
-    body: "40 items. Nothing to wear. Find out why.",
+    body: "Show us your closet. We find the gaps.",
     href: "/wardrobe/diagnosis",
   },
   {
     title: "Glow-Up Challenges",
     tag: "streaks",
-    body: "Daily missions. 15+ point jumps in 30 days.",
+    body: "Daily missions that level up your look.",
     href: "/challenges",
   },
   {
     title: "Trend Shop",
     tag: "price compare",
-    body: "Same brands. Different pieces. That's the gap.",
+    body: "Every trending look, pieces compared across 6 stores.",
     href: "/shop",
   },
 ];
@@ -162,34 +62,34 @@ const offerCards = [
   {
     name: "Vibe Check",
     price: "Free",
-    body: "Your score + your #1 leak. No sign-up.",
-    sub: "8 seconds",
+    body: "Your Aura Score + the #1 thing holding you back. No sign-up.",
+    sub: "no card, no sign-up",
     cta: "Try it",
     href: "/audit/new",
   },
   {
     name: "Fast Fix",
-    price: "Rs 25",
-    body: "Your single highest-impact fix. One answer.",
-    sub: "less than a coffee",
-    cta: "Get the fix",
+    price: "₹49",
+    body: "The single biggest fix for your score. One clear move.",
+    sub: "less than a chai",
+    cta: "Unlock",
     href: "/unlock?product=quick_fix",
   },
   {
     name: "Full Read",
-    price: "Rs 44",
-    body: "Every leak. Every fix. The full truth.",
-    sub: "less than lunch",
-    cta: "Get the truth",
+    price: "₹99",
+    body: "Full breakdown — fit, color, grooming, posture — with a fix path.",
+    sub: "one chai + samosa",
+    cta: "Get it",
     href: "/products/aura-report",
     featured: true,
   },
   {
     name: "30-Day Reset",
-    price: "Rs 499",
-    body: "Daily missions. 30 days. People will notice.",
-    sub: "less than a haircut",
-    cta: "Start the reset",
+    price: "₹499",
+    body: "30 days of weekly missions. The glow-up plan.",
+    sub: "cheaper than a haircut",
+    cta: "Start",
     href: "/products/glowup-plan",
   },
 ];
@@ -197,204 +97,186 @@ const offerCards = [
 const demoLeaks = [
   {
     kind: "leak",
-    label: "Shirt color washing out your skin",
+    label: "Washed-out top drains your skin tone",
     delta: "+9 pts",
   },
   {
     kind: "leak",
-    label: "Oversized fit reads sloppy, not relaxed",
+    label: "Oversized fit hides your frame",
     delta: "+6 pts",
   },
   {
     kind: "pass",
-    label: "Grooming on point — this is saving you",
-    delta: "keep",
+    label: "Grooming — clean, on point",
+    delta: "✓",
   },
 ];
 
 export default function HomePage() {
-  const [scenarioIndex, setScenarioIndex] = useState(0);
-  const [userPicked, setUserPicked] = useState(false);
-
-  useEffect(() => {
-    if (userPicked) return;
-    const timer = setInterval(() => {
-      setScenarioIndex((i) => (i + 1) % heroScenarios.length);
-    }, 3800);
-    return () => clearInterval(timer);
-  }, [userPicked]);
-
-  const scenario = heroScenarios[scenarioIndex];
-
   return (
     <>
       <ReferralBanner />
 
-      <section className="relative overflow-hidden pb-16 pt-12 sm:pb-20 sm:pt-16">
+      {/* ─── HERO ─── */}
+      <section className="relative overflow-hidden pb-12 pt-10 sm:pb-16 sm:pt-14">
         <div className="hero-grid absolute inset-x-0 top-0 h-[40rem]" />
         <Container className="relative">
-          <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+            {/* Left — punchy copy */}
             <div className="max-w-2xl">
-              <Badge variant="premium" className="mb-5">
-                free · 8 seconds · no sign-up
+              <Badge variant="premium" className="mb-4">
+                free vibe check
               </Badge>
-              <h1 className="display-font max-w-3xl text-5xl font-bold leading-[0.95] text-white sm:text-6xl lg:text-7xl">
-                Going somewhere?{" "}
-                <span className="bg-gradient-to-r from-sky-300 via-purple-300 to-pink-300 bg-clip-text text-transparent">
-                  See how ready you are.
+              <h1 className="display-font max-w-3xl text-5xl font-bold leading-[0.92] text-white sm:text-6xl lg:text-7xl">
+                your vibe has
+                <br />
+                a{" "}
+                <span className="bg-gradient-to-r from-sky-300 via-blue-400 to-orange-400 bg-clip-text text-transparent">
+                  score
                 </span>
+                .
               </h1>
-
-              <div className="mt-6">
-                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/45">
-                  where are you being judged next?
-                </div>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {heroScenarios.map((s, i) => (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => {
-                        setScenarioIndex(i);
-                        setUserPicked(true);
-                      }}
-                      className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition-all ${
-                        i === scenarioIndex
-                          ? "border-sky-300/60 bg-sky-400/15 text-sky-200 shadow-[0_0_18px_rgba(56,189,248,0.25)]"
-                          : "border-white/10 bg-white/5 text-white/60 hover:border-white/25 hover:text-white/85"
-                      }`}
-                    >
-                      {s.emoji} {s.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <p
-                key={scenario.id}
-                className="mt-5 min-h-[5.5rem] max-w-xl text-base leading-7 text-white/75 sm:text-lg"
-              >
-                {scenario.question}
+              <p className="mt-4 max-w-md text-base leading-6 text-white/55 sm:text-lg">
+                drop a photo. get your aura in 8 seconds. see what's off. fix it.
               </p>
 
-              <div className="mt-6 flex flex-col gap-4 sm:flex-row">
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button asChild size="lg">
-                  <Link href={`/audit/new?intent=${scenario.id}`}>{scenario.cta}</Link>
+                  <Link href="/audit/new">check my vibe — free</Link>
                 </Button>
-                <Button asChild size="lg" variant="secondary">
-                  <Link href="/examples">See a real example</Link>
+                <Button asChild size="lg" variant="ghost">
+                  <Link href="/examples">see an example</Link>
                 </Button>
               </div>
 
-              <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/50">
-                <span>Photo stays on your device</span>
-                <span aria-hidden className="text-white/25">·</span>
-                <span>No downloads</span>
-                <span aria-hidden className="text-white/25">·</span>
-                <span>Works on any phone</span>
+              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-white/35">
+                <span>free forever</span>
+                <span aria-hidden>·</span>
+                <span>no sign-up</span>
+                <span aria-hidden>·</span>
+                <span>photo stays on your phone</span>
               </div>
             </div>
 
-            <div className="prism-panel glow-frame spotlight relative overflow-hidden rounded-[30px] p-6">
-              <div className="flex items-center justify-between gap-3">
-                <div className="text-xs uppercase tracking-[0.22em] text-white/45">
-                  sample report
-                </div>
-                <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-[11px] font-semibold text-emerald-300">
-                  this is what you get
-                </span>
-              </div>
+            {/* Right — animated score reveal */}
+            <div className="relative mx-auto w-full max-w-[340px]">
+              {/* Outer glow ring */}
+              <div className="absolute -inset-6 rounded-full bg-gradient-to-br from-sky-400/20 via-blue-500/10 to-orange-400/15 blur-2xl" />
 
-              <div className="mt-5 flex items-center gap-5">
-                <div className="relative h-28 w-28 shrink-0">
-                  <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
-                    <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="10" />
-                    <circle cx="60" cy="60" r="52" fill="none" stroke="url(#auraScoreGradient)" strokeWidth="10" strokeLinecap="round" strokeDasharray="255 327" />
-                    <defs>
-                      <linearGradient id="auraScoreGradient" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stopColor="#38bdf8" />
-                        <stop offset="100%" stopColor="#a78bfa" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="display-font text-4xl font-bold text-white">78</div>
-                    <div className="text-[9px] uppercase tracking-[0.2em] text-white/50">aura score</div>
+              <div className="prism-panel glow-frame spotlight relative overflow-hidden rounded-[32px] p-6">
+                <div className="flex items-center justify-between">
+                  <div className="text-[10px] uppercase tracking-[0.22em] text-white/40">
+                    aura report
                   </div>
+                  <span className="rounded-full bg-emerald-400/15 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300">
+                    sample
+                  </span>
                 </div>
-                <div>
-                  <div className="text-sm font-semibold text-white">
-                    Two silent leaks. Nobody told them.
-                  </div>
-                  <p className="mt-1 text-xs leading-5 text-white/55">
-                    Friends won't. Strangers just swipe left.
-                  </p>
-                </div>
-              </div>
 
-              <div className="mt-5 grid gap-2.5">
-                {demoLeaks.map((leak) => (
-                  <div key={leak.label} className="glass-card flex items-center justify-between gap-3 rounded-[18px] px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      <span aria-hidden className={`h-2 w-2 shrink-0 rounded-full ${leak.kind === "leak" ? "bg-amber-400" : "bg-emerald-400"}`} />
-                      <span className="text-xs text-white/80">{leak.label}</span>
+                {/* Score ring — hero visual */}
+                <div className="mt-5 flex justify-center">
+                  <div className="score-ring-container relative h-36 w-36">
+                    <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
+                      <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8" />
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="52"
+                        fill="none"
+                        stroke="url(#heroScoreGradient)"
+                        strokeWidth="8"
+                        strokeLinecap="round"
+                        strokeDasharray="0 327"
+                        className="score-ring-progress"
+                      />
+                      <defs>
+                        <linearGradient id="heroScoreGradient" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stopColor="#38bdf8" />
+                          <stop offset="50%" stopColor="#818cf8" />
+                          <stop offset="100%" stopColor="#f97316" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <div className="score-number display-font text-5xl font-bold text-white">0</div>
+                      <div className="text-[9px] uppercase tracking-[0.25em] text-white/40">aura score</div>
                     </div>
-                    <span className={`shrink-0 text-[11px] font-semibold ${leak.kind === "leak" ? "text-sky-300" : "text-emerald-300"}`}>
-                      {leak.delta}
-                    </span>
                   </div>
-                ))}
-              </div>
+                </div>
 
-              <div className="mt-5 flex items-center justify-between gap-3 rounded-[18px] bg-sky-400/10 px-4 py-3">
-                <span className="text-xs font-semibold text-sky-200">
-                  Fix both leaks → estimated score 93
-                </span>
-                <Button asChild size="sm">
-                  <Link href="/audit/new">Try yours</Link>
-                </Button>
+                {/* Leaks */}
+                <div className="mt-4 grid gap-2">
+                  {demoLeaks.map((leak) => (
+                    <div key={leak.label} className="flex items-center justify-between gap-2 rounded-2xl bg-white/5 px-3 py-2.5">
+                      <div className="flex items-center gap-2.5">
+                        <span
+                          className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                            leak.kind === "leak" ? "bg-amber-400" : "bg-emerald-400"
+                          }`}
+                        />
+                        <span className="text-[11px] leading-tight text-white/70">{leak.label}</span>
+                      </div>
+                      <span
+                        className={`shrink-0 text-[10px] font-bold ${
+                          leak.kind === "leak" ? "text-sky-300" : "text-emerald-300"
+                        }`}
+                      >
+                        {leak.delta}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-3 rounded-2xl bg-sky-400/8 px-3 py-2.5 text-center">
+                  <span className="text-[11px] font-semibold text-sky-200">
+                    fix both → est. score{" "}
+                    <span className="text-lg font-bold text-white">93</span>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </Container>
       </section>
 
-      <section className="pb-16">
+      {/* ─── HOW IT WORKS — ultra short ─── */}
+      <section className="pb-14">
         <Container>
-          <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="default">how it works</Badge>
-            <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              Three steps. Eight seconds.
+          <div className="mx-auto max-w-2xl text-center">
+            <Badge>20 seconds</Badge>
+            <h2 className="display-font mt-3 text-3xl font-bold text-white sm:text-4xl">
+              start to finish.
             </h2>
           </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <div className="mt-6 grid gap-3 sm:grid-cols-3">
             {steps.map((step) => (
-              <Card key={step.number} hover className="float-card p-6">
+              <Card key={step.number} hover className="float-card p-5">
                 <div className="display-font text-sm font-bold text-sky-300">{step.number}</div>
-                <h3 className="display-font mt-3 text-2xl font-bold text-white">{step.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-white/62">{step.body}</p>
+                <h3 className="display-font mt-2 text-xl font-bold text-white">{step.title}</h3>
+                <p className="mt-2 text-sm leading-5 text-white/55">{step.body}</p>
               </Card>
             ))}
           </div>
         </Container>
       </section>
 
-      <section className="pb-16">
+      {/* ─── STYLE SEARCH ─── */}
+      <section className="pb-14">
         <Container>
-          <div className="mx-auto max-w-4xl text-center">
-            <Badge variant="premium">100 styles</Badge>
-            <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              Pick a vibe. We find the pieces.
+          <div className="mx-auto max-w-3xl text-center">
+            <Badge variant="premium">100 vibes</Badge>
+            <h2 className="display-font mt-3 text-3xl font-bold text-white sm:text-4xl">
+              pick a vibe. we search it.
             </h2>
           </div>
 
-          <div className="glass-panel glow-frame mt-8 rounded-[32px] p-5 sm:p-6">
+          <div className="glass-panel glow-frame mt-6 rounded-[28px] p-4 sm:p-5">
             <div className="flex flex-wrap gap-2">
               {STYLE_SEARCH_SUGGESTIONS.map((style) => (
                 <Link
                   key={style.id}
-                  href={`/wardrobe/search?styleId=${style.id}&sort=aura_best`}
-                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/75 transition-colors hover:border-sky-300/30 hover:text-sky-200"
+                  href={`/wardrobe/search?query=${encodeURIComponent(style.query)}&sort=aura_best`}
+                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/70 transition-colors hover:border-sky-300/30 hover:text-sky-200"
                 >
                   {style.label}
                 </Link>
@@ -404,16 +286,17 @@ export default function HomePage() {
         </Container>
       </section>
 
-      <section className="pb-16">
+      {/* ─── CELEBRITY TRENDS ─── */}
+      <section className="pb-14">
         <Container>
-          <div className="prism-panel glow-frame shine-sweep overflow-hidden rounded-[30px] p-4 sm:p-5">
-            <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+          <div className="prism-panel glow-frame shine-sweep overflow-hidden rounded-[28px] p-4 sm:p-5">
+            <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
               <div>
-                <div className="text-xs uppercase tracking-[0.22em] text-white/45">
-                  trending now
+                <div className="text-[10px] uppercase tracking-[0.22em] text-white/40">
+                  celebrity trend radar · refreshed every 72h
                 </div>
-                <h2 className="display-font mt-2 text-2xl font-bold text-white sm:text-3xl">
-                  Steal the look. Skip the guesswork.
+                <h2 className="display-font mt-1.5 text-2xl font-bold text-white sm:text-3xl">
+                  steal a look that&apos;s working.
                 </h2>
               </div>
               <div className="flex items-center gap-2">
@@ -424,28 +307,25 @@ export default function HomePage() {
                   ⚔️ Aura Battle <span className="rounded-full bg-purple-500/20 px-1.5 py-0.5 text-[9px] text-purple-300">new</span>
                 </Link>
                 <Button asChild size="sm" variant="outline">
-                  <Link href="/wardrobe/search">Shop all trends</Link>
+                  <Link href="/wardrobe/search">shop all</Link>
                 </Button>
               </div>
             </div>
 
             <div className="overflow-hidden">
-              <div className="marquee-track gap-4 pr-4">
+              <div className="marquee-track gap-3 pr-3">
                 {marqueeStyles.map((preset, index) => (
                   <Link
                     key={`${preset.id}-${index}`}
-                    href={`/wardrobe/search?preset=${preset.id}`}
-                    className="glass-card float-card block w-[250px] min-w-[250px] overflow-hidden rounded-[28px] p-3 hover:-translate-y-1"
+                    href={`/wardrobe/search?preset=${preset.id}&sort=cheapest`}
+                    className="glass-card float-card block w-[220px] min-w-[220px] overflow-hidden rounded-[24px] p-2.5 hover:-translate-y-1"
                   >
-                    <div className="overflow-hidden rounded-[22px]">
-                      <img src={preset.imageSrc} alt={preset.celebrity} className="h-[300px] w-full object-cover" loading="lazy" />
+                    <div className="overflow-hidden rounded-[20px]">
+                      <img src={preset.imageSrc} alt={preset.celebrity} className="h-[260px] w-full object-cover" />
                     </div>
-                    <div className="px-1 pb-1 pt-3">
+                    <div className="px-1 pb-1 pt-2">
                       <h3 className="text-sm font-semibold text-white">{preset.celebrity}</h3>
-                      <p className="mt-1 text-xs text-sky-200">{preset.label}</p>
-                      <span className="mt-2 inline-block rounded-full bg-sky-400/15 px-2.5 py-0.5 text-[10px] font-semibold text-sky-300">
-                        Shop this look →
-                      </span>
+                      <p className="mt-0.5 text-xs text-sky-200">{preset.label}</p>
                     </div>
                   </Link>
                 ))}
@@ -455,58 +335,19 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ─── All Trending Looks Grid ─── */}
-      <section className="pb-16">
+      {/* ─── MORE WAYS TO PLAY ─── */}
+      <section className="pb-14">
         <Container>
-          <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="premium">all trending looks</Badge>
-            <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              Every look. Broken into buyable parts.
-            </h2>
+          <div className="mx-auto max-w-2xl text-center">
+            <Badge>more than a score</Badge>
           </div>
-          <div className="mt-8 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
-            {CELEBRITY_TREND_PRESETS.map((preset) => (
-              <Link
-                key={preset.id}
-                href={`/wardrobe/search?preset=${preset.id}`}
-                className="glass-card float-card group overflow-hidden rounded-[22px] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]"
-              >
-                <div className="overflow-hidden">
-                  <img
-                    src={preset.imageSrc}
-                    alt={preset.label}
-                    className="h-[200px] w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="p-3">
-                  <h3 className="text-sm font-semibold text-white">{preset.label}</h3>
-                  <p className="mt-1 text-[11px] text-white/50">{preset.celebrity}</p>
-                  <span className="mt-2 inline-block text-[10px] font-semibold text-sky-300 group-hover:text-sky-200">
-                    Shop this look →
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      <section className="pb-16">
-        <Container>
-          <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="default">explore</Badge>
-            <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              More tools. Same goal.
-            </h2>
-          </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {exploreCards.map((item) => (
-              <Card key={item.title} hover className="float-card group p-6">
-                <div className="text-xs uppercase tracking-[0.2em] text-sky-300/80">{item.tag}</div>
-                <h3 className="display-font mt-3 text-2xl font-bold text-white">{item.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-white/62">{item.body}</p>
-                <div className="mt-5">
+              <Card key={item.title} hover className="float-card group p-5">
+                <div className="text-[10px] uppercase tracking-[0.2em] text-sky-300/70">{item.tag}</div>
+                <h3 className="display-font mt-2 text-xl font-bold text-white">{item.title}</h3>
+                <p className="mt-2 text-sm leading-5 text-white/55">{item.body}</p>
+                <div className="mt-4">
                   <Button asChild size="sm" variant="secondary" className="w-full">
                     <Link href={item.href}>Open</Link>
                   </Button>
@@ -517,68 +358,75 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ─── Real Results Gallery ─── */}
-      <section className="pb-16">
+      {/* ─── SOCIAL PROOF ─── */}
+      <section className="pb-14">
         <Container>
-          <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="default" className="mb-4">real results</Badge>
-            <h2 className="display-font text-4xl font-bold text-white sm:text-5xl">
-              Real people. Real scores. Real fixes.
+          <div className="mx-auto max-w-2xl text-center">
+            <Badge className="mb-3">real vibe checks</Badge>
+            <h2 className="display-font text-3xl font-bold text-white sm:text-4xl">
+              small changes, sharp jumps.
             </h2>
-            <p className="mt-3 text-sm text-white/55 sm:text-base">
-              <Link href="/gallery" className="text-purple-400 hover:text-purple-300 underline">View full gallery →</Link>
+            <p className="mt-1.5 text-sm text-gray-500">
+              <Link href="/gallery" className="text-purple-400 hover:text-purple-300 underline">
+                view full gallery →
+              </Link>
             </p>
           </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {(() => {
               const realEntries = typeof window !== "undefined" ? getGalleryEntries("recent", 6) : [];
               if (realEntries.length >= 3) {
                 return realEntries.map((entry) => (
-                  <div key={entry.id} className="prism-panel float-card group rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]">
+                  <div
+                    key={entry.id}
+                    className="prism-panel float-card group rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]"
+                  >
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-pink-500 text-xs font-bold text-white">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-pink-500 text-xs font-bold text-white">
                         {entry.nickname.slice(0, 2).toUpperCase()}
                       </div>
                       <div>
                         <div className="text-xs font-semibold text-white">{entry.nickname}</div>
-                        {entry.city && <div className="text-[10px] text-white/45">{entry.city}</div>}
+                        {entry.city && <div className="text-[10px] text-white/40">{entry.city}</div>}
                       </div>
                     </div>
-                    <div className="mt-4">
+                    <div className="mt-3">
                       <span className="text-2xl font-bold text-white">{entry.score}</span>
                       <span className="text-xs text-gray-500">/100</span>
                     </div>
-                    <div className="mt-2 flex items-center gap-2 text-xs">
-                      <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-400">{entry.strongestSignal}</span>
+                    <div className="mt-1.5 flex items-center gap-2 text-xs">
+                      <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-400">
+                        {entry.strongestSignal}
+                      </span>
                     </div>
-                    <div className="mt-2 text-[11px] text-white/55 italic">"{entry.oneLineVerdict}"</div>
-                    <div className="mt-3">
-                      <Link href="/gallery" className="text-[10px] text-purple-400 hover:text-purple-300">See full gallery →</Link>
-                    </div>
+                    <div className="mt-1.5 text-[11px] text-white/50 italic">&quot;{entry.oneLineVerdict}&quot;</div>
                   </div>
                 ));
               }
-              // Fallback to static proof entries
               return getDailySubset(getHomepageProofEntries(), 6).map((entry) => (
-                <div key={entry.initials} className="prism-panel float-card group rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]">
+                <div
+                  key={entry.initials}
+                  className="prism-panel float-card group rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]"
+                >
                   <div className="flex items-center gap-3">
-                    <div className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${entry.gradient} text-xs font-bold text-white`}>
+                    <div
+                      className={`flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br ${entry.gradient} text-xs font-bold text-white`}
+                    >
                       {entry.initials}
                     </div>
-                    <div>
-                      <div className="text-xs text-white/45">{entry.city}</div>
-                    </div>
+                    <div className="text-[10px] text-white/40">{entry.city}</div>
                   </div>
-                  <div className="mt-4 flex items-center gap-2">
+                  <div className="mt-3 flex items-center gap-2">
                     <span className="text-lg font-bold text-white/50">{entry.beforeScore}</span>
-                    <svg className="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                    <svg className="h-3.5 w-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
                     <span className="text-lg font-bold text-white">{entry.afterScore}</span>
                   </div>
-                  <div className="mt-2 flex items-center gap-2 text-xs">
+                  <div className="mt-1.5 flex items-center gap-2 text-xs">
                     <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-400">{entry.leakLabel}</span>
-                    <span className="text-emerald-400 font-medium">+{entry.pointsGained} pts</span>
+                    <span className="font-medium text-emerald-400">+{entry.pointsGained} pts</span>
                   </div>
-                  <div className="mt-3 text-[10px] text-white/35">{entry.timeframe}</div>
                 </div>
               ));
             })()}
@@ -586,108 +434,36 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* ─── Quick Fixes People Actually Buy ─── */}
-      <section className="pb-16">
+      {/* ─── PRICING — playful, not corporate ─── */}
+      <section className="pb-14">
         <Container>
-          <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="premium">quick fixes</Badge>
-            <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              Most-bought after seeing their score.
-            </h2>
-          </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {quickFixProducts.map((prod) => (
-              <a
-                key={prod.label}
-                href={prod.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="prism-panel float-card group flex gap-4 rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]"
-              >
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[14px] bg-white/5 text-3xl">
-                  {prod.emoji}
-                </div>
-                <div className="flex flex-col justify-between">
-                  <div>
-                    <div className="text-sm font-semibold text-white">{prod.label}</div>
-                    <div className="text-xs text-white/45">{prod.leak}</div>
-                    <div className="mt-1 flex items-center gap-2 text-xs">
-                      <span className="text-white/50">from {prod.price}</span>
-                      <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-400">{prod.points}</span>
-                    </div>
-                  </div>
-                  <span className="mt-2 text-[11px] font-semibold text-sky-300 group-hover:text-sky-200">
-                    Buy on Amazon →
-                  </span>
-                </div>
-              </a>
-            ))}
-          </div>
-          <div className="mt-6 text-center">
-            <Button asChild size="sm" variant="outline">
-              <Link href="/shop">See all fixes by leak type →</Link>
-            </Button>
-          </div>
-        </Container>
-      </section>
-
-      {/* ─── Shop by Occasion ─── */}
-      <section className="pb-16">
-        <Container>
-          <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="default">shop by occasion</Badge>
-            <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              Where are you going? Dress for it.
-            </h2>
-          </div>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {occasionShops.map((occ) => (
-              <Link
-                key={occ.label}
-                href={`/wardrobe/search?query=${encodeURIComponent(occ.query)}&sort=aura_best`}
-                className="prism-panel float-card group rounded-[22px] p-5 transition-all duration-300 hover:shadow-[0_0_30px_rgba(147,51,234,0.1)]"
-              >
-                <div className="text-3xl">{occ.emoji}</div>
-                <h3 className="display-font mt-3 text-xl font-bold text-white">{occ.label}</h3>
-                <p className="mt-2 text-sm text-white/55 italic">&ldquo;{occ.hook}&rdquo;</p>
-                <span className="mt-3 inline-block text-[11px] font-semibold text-purple-300 group-hover:text-purple-200">
-                  Shop this occasion →
-                </span>
-              </Link>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      <section className="pb-16">
-        <Container>
-          <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="default">pricing</Badge>
-            <h2 className="display-font mt-4 text-4xl font-bold text-white sm:text-5xl">
-              Free to find out. Cheap to fix.
+          <div className="mx-auto max-w-2xl text-center">
+            <Badge variant="premium">simple pricing</Badge>
+            <h2 className="display-font mt-3 text-3xl font-bold text-white sm:text-4xl">
+              free scores. small money for the fix.
             </h2>
           </div>
 
-          <div className="mt-8 grid gap-4 lg:grid-cols-4">
+          <div className="mt-6 grid gap-3 lg:grid-cols-4">
             {offerCards.map((offer) => (
               <Card
                 key={offer.name}
                 hover
-                className={`float-card ${offer.featured ? "border-sky-200/28 shadow-[0_26px_90px_rgba(56,189,248,0.16)]" : ""}`}
+                className={`float-card ${offer.featured ? "border-sky-200/25 shadow-[0_20px_70px_rgba(56,189,248,0.14)]" : ""}`}
               >
-                <div className="flex items-center justify-between gap-2">
-                  <div className="text-xs uppercase tracking-[0.2em] text-white/40">{offer.price}</div>
+                <div className="flex items-center justify-between">
+                  <div className="display-font text-2xl font-bold text-white">{offer.price}</div>
                   {offer.featured && (
-                    <span className="rounded-full bg-sky-400/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-300">
+                    <span className="rounded-full bg-sky-400/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-300">
                       most picked
                     </span>
                   )}
                 </div>
-                <h3 className="display-font mt-3 text-3xl font-bold text-white">{offer.name}</h3>
-                <p className="mt-3 text-sm leading-6 text-white/62">{offer.body}</p>
-                <p className="mt-1.5 text-[10px] italic text-gray-500">{offer.sub}</p>
-                <div className="mt-6">
-                  <Button asChild className="w-full" variant={offer.featured ? "primary" : "secondary"}>
+                <h3 className="display-font mt-2 text-lg font-bold text-white">{offer.name}</h3>
+                <p className="mt-1.5 text-[13px] leading-5 text-white/55">{offer.body}</p>
+                <p className="mt-1 text-[10px] italic text-gray-500">{offer.sub}</p>
+                <div className="mt-4">
+                  <Button asChild className="w-full" variant={offer.featured ? "primary" : "secondary"} size="sm">
                     <Link href={offer.href}>{offer.cta}</Link>
                   </Button>
                 </div>
@@ -697,22 +473,23 @@ export default function HomePage() {
         </Container>
       </section>
 
-      <section className="pb-12">
+      {/* ─── FINAL CTA ─── */}
+      <section className="pb-10">
         <Container>
-          <div className="glass-panel glow-frame shine-sweep relative overflow-hidden rounded-[36px] px-6 py-10 text-center sm:px-10 sm:py-14">
-            <Badge variant="premium">free</Badge>
-            <h2 className="display-font mt-5 text-4xl font-bold text-white sm:text-5xl">
-              One photo. Eight seconds. Free.
+          <div className="glass-panel glow-frame shine-sweep relative overflow-hidden rounded-[32px] px-6 py-10 text-center sm:px-10 sm:py-12">
+            <Badge variant="premium">free to try</Badge>
+            <h2 className="display-font mt-4 text-3xl font-bold text-white sm:text-4xl">
+              your next photo could hit different.
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-sm leading-7 text-white/60 sm:text-base">
-              Find out now or keep wondering.
+            <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-white/50">
+              find the leak. fix the vibe. one photo, zero sign-ups.
             </p>
-            <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
+            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
               <Button asChild size="lg">
-                <Link href="/audit/new">Find out now — free</Link>
+                <Link href="/audit/new">get my aura score — free</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link href="/shop">Shop this vibe</Link>
+                <Link href="/shop">shop this vibe</Link>
               </Button>
             </div>
           </div>
