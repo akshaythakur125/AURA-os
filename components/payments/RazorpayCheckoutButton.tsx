@@ -187,7 +187,7 @@ export function RazorpayCheckoutButton({
         className="w-full"
         size="lg"
       >
-        {loading ? "Processing…" : `Pay ₹${amount} securely with Razorpay`}
+        {loading ? "Processing…" : `Pay ₹${amount} via UPI/GPay →`}
       </Button>
       {error && (
         <Card className="border-red-500/20 bg-red-500/5 p-3">

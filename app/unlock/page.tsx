@@ -268,40 +268,9 @@ function UnlockContent() {
         <div className="mb-6">
           <p className="mb-2 text-xs text-gray-500">See what this product is designed to solve.</p>
           <BeforeAfterCard example={proofExample} compact />
-        </div>
-
-        {/* ─── Offer Code ─── */}
-        <Card className="mb-6">
-          <h3 className="mb-4 text-sm font-semibold text-white">Have an Offer Code?</h3>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={offerCodeInput}
-              onChange={(e) => setOfferCodeInput(e.target.value.toUpperCase())}
-              placeholder="Enter code"
-              className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:border-purple-500/50 focus:outline-none"
-            />
-            <Button variant="outline" size="sm" onClick={handleApplyOffer}>Apply</Button>
           </div>
-          {offerResult?.valid && (
-            <div className="mt-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-xs">
-              <div className="text-emerald-400">{offerResult.message}</div>
-              <div className="mt-1 flex justify-between text-gray-300">
-                <span>Original</span>
-                <span className="line-through text-gray-500">₹{offerResult.originalAmount}</span>
-              </div>
-              <div className="flex justify-between text-emerald-300">
-                <span>You pay</span>
-                <span className="font-bold">₹{offerResult.finalAmount}</span>
-              </div>
-            </div>
-          )}
-          {offerError && (
-            <div className="mt-3 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-300">{offerError}</div>
-          )}
-        </Card>
 
-        {/* ─── Razorpay Payment ─── */}
+          {/* ─── Razorpay Payment ─── */}
         {razorpayAvailable ? (
           <Card className="mb-6 border-purple-500/20">
             <h3 className="mb-4 text-sm font-semibold text-purple-400">Pay Securely</h3>
