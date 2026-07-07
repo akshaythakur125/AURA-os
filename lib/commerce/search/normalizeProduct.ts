@@ -83,11 +83,11 @@ export function normalizeCommerceProduct(
         : undefined);
 
     const normalized: CommerceSearchItem = {
-      id: `${product.id}__${offer.id}`,
-      sourceProductId: product.id,
-      normalizedTitle: product.title.toLowerCase().trim(),
-      originalTitle: product.title,
-      category: product.category,
+          id: `${product.id}__${offer.id}`,
+          sourceProductId: product.id,
+          normalizedTitle: offer.productName.toLowerCase().trim(),
+          originalTitle: offer.productName,
+          category: product.category,
       subCategory: undefined,
       storeKey: offer.storeKey,
       storeName: offer.storeName,
