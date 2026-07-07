@@ -162,7 +162,7 @@ export default function PricingPage() {
             <div className="mt-1 text-emerald-300/70">Gives the fastest first move</div>
           </div>
           <div className="float-card rounded-lg border border-purple-500/10 bg-purple-500/[0.03] p-3">
-            <div className="font-semibold text-purple-400">3. Rs 44 Full Report</div>
+            <div className="font-semibold text-purple-400">3. Rs 50 Full Report</div>
             <div className="mt-1 text-purple-300/70">Explains the full reason and roadmap</div>
           </div>
           <div className="float-card rounded-lg border border-amber-500/10 bg-amber-500/[0.03] p-3">
@@ -239,7 +239,7 @@ export default function PricingPage() {
             <div className="mt-1 text-emerald-300/70">Shows fastest fix path</div>
           </div>
           <div className="rounded-lg border border-purple-500/10 bg-purple-500/[0.03] p-3">
-            <div className="font-semibold text-purple-400">Rs 44</div>
+            <div className="font-semibold text-purple-400">Rs 50</div>
             <div className="mt-1 text-purple-300/70">Shows full reasoning and roadmap</div>
           </div>
           <div className="rounded-lg border border-rose-500/10 bg-rose-500/[0.03] p-3">
