@@ -21,6 +21,22 @@ const ALL_STORES = [
   "auracheck:v1:user_preferences",
   "auracheck:v1:onboarding",
   "auracheck:v1:founder_checklist",
+  "auracheck:v1:aura_twins",
+  "auracheck:v1:battles",
+  "auracheck:v1:habits",
+  "auracheck:v1:streak_freezes",
+  "auracheck:v1:gallery",
+  "auracheck:v1:gallery_reactions",
+  "auracheck:v1:funnel_events",
+  "auracheck:v1:commerce_admin_catalog",
+  "auracheck:v1:commerce_clicks",
+  "auracheck:v1:commerce_views",
+  "auracheck:v1:commerce_search_index",
+  "auracheck:v1:search_index_meta",
+  "auracheck:v1:search_clicks",
+  "auracheck:v1:import_runs",
+  "auracheck:v1:visual_wardrobe_diagnoses",
+  "auracheck:v1:connector_statuses",
 ];
 
 export function safeJsonParse<T>(raw: string | null, fallback: T): T {

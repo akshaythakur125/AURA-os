@@ -104,7 +104,7 @@ export function getMissionDetail(day: number): { title: string; reason: string; 
     title: getMissionTitle(day),
     reason: getMissionReason(day),
     task: getMissionTask(day),
-    weekNumber: Math.min(weekNumber, 4),
+    weekNumber: Math.min(weekNumber, 5),
     theme: themes[Math.min(weekNumber, 5)] || "Bonus",
   };
 }

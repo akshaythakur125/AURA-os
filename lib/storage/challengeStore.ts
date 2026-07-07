@@ -2,7 +2,12 @@ import { getItem, setItem } from "@/lib/storage/localStore";
 import type { ChallengeEntry } from "@/types/challenge";
 
 const ENTRIES_KEY = "auracheck:v1:challenge_entries";
-const STREAK_KEY = "auracheck.challengeStreak";
+const STREAK_KEY = "auracheck:v1:challenge_streak";
+// migrate old key
+try {
+  const old = localStorage.getItem("auracheck.challengeStreak");
+  if (old && !localStorage.getItem(STREAK_KEY)) localStorage.setItem(STREAK_KEY, old);
+} catch { /* ponytail: SSR guard */ }
 
 export interface ChallengeStreak {
   currentStreak: number;

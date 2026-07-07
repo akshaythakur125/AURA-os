@@ -70,9 +70,9 @@ export function getReferralStats(): ReferralStats {
   const claims = getReferralClaims();
   return {
     totalInvitesLocal: profile?.totalInvitesLocal ?? 0,
-    totalClaimsLocal: profile?.totalClaimsLocal ?? claims.length,
+    totalClaimsLocal: profile?.totalClaimsLocal ?? 0,
     claimRate: (profile?.totalInvitesLocal ?? 0) > 0
-      ? ((profile?.totalClaimsLocal ?? claims.length) / (profile?.totalInvitesLocal ?? 1)) * 100
+      ? ((profile?.totalClaimsLocal ?? 0) / (profile?.totalInvitesLocal ?? 1)) * 100
       : 0,
   };
 }
