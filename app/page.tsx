@@ -12,6 +12,32 @@ import { getMarqueePresets, getDailySubset } from "@/lib/marketing/rotatingPrese
 import { getHomepageProofEntries } from "@/data/homepageProof";
 import { getGalleryEntries } from "@/lib/storage/galleryStore";
 
+// ponytail: pure-CSS visual identity per feature — no images
+const FEATURE_GRADIENTS: Record<string, string> = {
+  "Aura Twin": "from-cyan-400/20 via-teal-500/10 to-transparent",
+  "Wardrobe Scan": "from-emerald-400/20 via-green-500/10 to-transparent",
+  "Glow-Up Challenges": "from-amber-400/20 via-orange-500/10 to-transparent",
+  "Trend Shop": "from-sky-400/20 via-blue-500/10 to-transparent",
+};
+const FEATURE_EMOJI: Record<string, string> = {
+  "Aura Twin": "👯",
+  "Wardrobe Scan": "👕",
+  "Glow-Up Challenges": "🔥",
+  "Trend Shop": "🛍️",
+};
+const OFFER_GRADIENTS: Record<string, string> = {
+  "Vibe Check": "from-sky-400/20 via-blue-500/10 to-transparent",
+  "Fast Fix": "from-emerald-400/20 via-green-500/10 to-transparent",
+  "Full Read": "from-violet-400/20 via-purple-500/10 to-transparent",
+  "30-Day Reset": "from-amber-400/20 via-orange-500/10 to-transparent",
+};
+const OFFER_EMOJI: Record<string, string> = {
+  "Vibe Check": "✨",
+  "Fast Fix": "⚡",
+  "Full Read": "📋",
+  "30-Day Reset": "📅",
+};
+
 const marqueeStyles = getMarqueePresets();
 
 const steps = [
@@ -255,14 +281,15 @@ export default function HomePage() {
             </h2>
           </div>
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            {steps.map((step) => (
-              <Card key={step.number} hover className="float-card stagger-in p-5">
-                <div className="display-font text-sm font-bold text-sky-300">{step.number}</div>
-                <h3 className="display-font mt-2 text-xl font-bold text-white">{step.title}</h3>
-                <p className="mt-2 text-sm leading-5 text-white/55">{step.body}</p>
-              </Card>
-            ))}
-          </div>
+                      {steps.map((step) => (
+                        <Card key={step.number} hover className="float-card stagger-in p-5 overflow-hidden">
+                          <div className="h-1.5 bg-gradient-to-r from-sky-400/20 via-blue-500/10 to-transparent" />
+                          <div className="display-font text-sm font-bold text-sky-300">{step.number}</div>
+                          <h3 className="display-font mt-2 text-xl font-bold text-white">{step.title}</h3>
+                          <p className="mt-2 text-sm leading-5 text-white/55">{step.body}</p>
+                        </Card>
+                      ))}
+                    </div>
         </Container>
       </section>
 
@@ -357,17 +384,18 @@ export default function HomePage() {
           </div>
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {exploreCards.map((item) => (
-              <Card key={item.title} hover className="float-card stagger-in neon-hover group p-5">
-                <div className="text-[10px] uppercase tracking-[0.2em] text-sky-300/70">{item.tag}</div>
-                <h3 className="display-font mt-2 text-xl font-bold text-white">{item.title}</h3>
-                <p className="mt-2 text-sm leading-5 text-white/55">{item.body}</p>
-                <div className="mt-4">
-                  <Button asChild size="sm" variant="secondary" className="w-full">
-                    <Link href={item.href}>Open</Link>
-                  </Button>
-                </div>
-              </Card>
-            ))}
+                          <Card key={item.title} hover className="float-card stagger-in neon-hover group p-5 overflow-hidden">
+                            <div className={`h-1.5 bg-gradient-to-r ${FEATURE_GRADIENTS[item.title] || "from-white/5 to-transparent"}`} />
+                            <div className="text-[10px] uppercase tracking-[0.2em] text-sky-300/70">{item.tag}</div>
+                            <h3 className="display-font mt-2 text-xl font-bold text-white">{FEATURE_EMOJI[item.title] || "✨"} {item.title}</h3>
+                            <p className="mt-2 text-sm leading-5 text-white/55">{item.body}</p>
+                            <div className="mt-4">
+                              <Button asChild size="sm" variant="secondary" className="w-full">
+                                <Link href={item.href}>Open</Link>
+                              </Button>
+                            </div>
+                          </Card>
+                        ))}
           </div>
         </Container>
       </section>
@@ -459,31 +487,32 @@ export default function HomePage() {
           </div>
 
           <div className="mt-6 grid gap-3 lg:grid-cols-4">
-            {offerCards.map((offer) => (
-              <Card
-                key={offer.name}
-                hover
-                className={`float-card stagger-in ${offer.featured ? "border-sky-200/25 shadow-[0_20px_70px_rgba(56,189,248,0.14)]" : ""}`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="display-font text-2xl font-bold text-white">{offer.price}</div>
-                  {offer.featured && (
-                    <span className="rounded-full bg-sky-400/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-300">
-                      most picked
-                    </span>
-                  )}
-                </div>
-                <h3 className="display-font mt-2 text-lg font-bold text-white">{offer.name}</h3>
-                <p className="mt-1.5 text-[13px] leading-5 text-white/55">{offer.body}</p>
-                <p className="mt-1 text-[10px] italic text-gray-500">{offer.sub}</p>
-                <div className="mt-4">
-                  <Button asChild className="w-full" variant={offer.featured ? "primary" : "secondary"} size="sm">
-                    <Link href={offer.href}>{offer.cta}</Link>
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </div>
+                      {offerCards.map((offer) => (
+                        <Card
+                          key={offer.name}
+                          hover
+                          className={`float-card stagger-in overflow-hidden ${offer.featured ? "border-sky-200/25 shadow-[0_20px_70px_rgba(56,189,248,0.14)]" : ""}`}
+                        >
+                          <div className={`h-1.5 bg-gradient-to-r ${OFFER_GRADIENTS[offer.name] || "from-white/5 to-transparent"}`} />
+                          <div className="flex items-center justify-between">
+                            <div className="display-font text-2xl font-bold text-white">{offer.price}</div>
+                            {offer.featured && (
+                              <span className="rounded-full bg-sky-400/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-300">
+                                most picked
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="display-font mt-2 text-lg font-bold text-white">{OFFER_EMOJI[offer.name] || "💎"} {offer.name}</h3>
+                          <p className="mt-1.5 text-[13px] leading-5 text-white/55">{offer.body}</p>
+                          <p className="mt-1 text-[10px] italic text-gray-500">{offer.sub}</p>
+                          <div className="mt-4">
+                            <Button asChild className="w-full" variant={offer.featured ? "primary" : "secondary"} size="sm">
+                              <Link href={offer.href}>{offer.cta}</Link>
+                            </Button>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
         </Container>
       </section>
 
