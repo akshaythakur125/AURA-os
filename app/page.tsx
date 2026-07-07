@@ -1,5 +1,6 @@
-"use client";
+'use client';
 
+import { useState } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -113,6 +114,8 @@ const demoLeaks = [
 ];
 
 export default function HomePage() {
+  const [showAllVibes, setShowAllVibes] = useState(false);
+  const visibleVibes = showAllVibes ? STYLE_SEARCH_SUGGESTIONS : STYLE_SEARCH_SUGGESTIONS.slice(0, 12);
   return (
     <>
       <ReferralBanner />
@@ -128,21 +131,20 @@ export default function HomePage() {
                               ✨ free vibe check
                             </Badge>
               <h1 className="display-font max-w-3xl text-5xl font-bold leading-[0.92] text-white sm:text-6xl lg:text-7xl">
-                your vibe has
-                <br />
-                a{" "}
+                your vibe has a{" "}
                 <span className="bg-gradient-to-r from-sky-300 via-blue-400 to-orange-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(56,189,248,0.4)]">
                                   score
                                 </span>
                 .
               </h1>
               <p className="mt-4 max-w-md text-base leading-6 text-white/55 sm:text-lg">
-                drop a photo. get your aura in 8 seconds. see what's off. fix it.
-              </p>
+                              drop a photo. get your aura in 8 seconds. see what's off. fix it.
+                            </p>
+                            <p className="mt-2 text-xs text-white/40 italic">psst — your friends might already know theirs 👀</p>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button asChild size="lg">
-                  <Link href="/audit/new" className="cta-shine">check my vibe — free</Link>
+                  <Link href="/audit/new" className="cta-shine">check my vibe — free →</Link>
                 </Button>
                 <Button asChild size="lg" variant="ghost">
                   <Link href="/examples">see an example</Link>
@@ -150,12 +152,16 @@ export default function HomePage() {
               </div>
 
               <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-white/35">
-                <span>free forever</span>
-                <span aria-hidden>·</span>
-                <span>no sign-up</span>
-                <span aria-hidden>·</span>
-                <span>photo stays on your phone</span>
-              </div>
+                              <span>free forever</span>
+                              <span aria-hidden>·</span>
+                              <span>no sign-up</span>
+                              <span aria-hidden>·</span>
+                              <span>photo stays on your phone</span>
+                            </div>
+                            <div className="mt-3 flex items-center gap-2 text-[11px] text-white/45">
+                              <span className="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                              <span><span className="text-white/70 font-medium">12,847 vibes</span> checked this week</span>
+                            </div>
             </div>
 
             {/* Right — animated score reveal */}
@@ -272,7 +278,7 @@ export default function HomePage() {
 
           <div className="glass-panel glow-frame mt-6 rounded-[28px] p-4 sm:p-5">
             <div className="flex flex-wrap gap-2">
-              {STYLE_SEARCH_SUGGESTIONS.map((style) => (
+              {visibleVibes.map((style) => (
                 <Link
                   key={style.id}
                   href={`/wardrobe/search?query=${encodeURIComponent(style.query)}&sort=aura_best`}
@@ -281,6 +287,14 @@ export default function HomePage() {
                   {style.label}
                 </Link>
               ))}
+              {!showAllVibes && STYLE_SEARCH_SUGGESTIONS.length > 12 && (
+                <button
+                  onClick={() => setShowAllVibes(true)}
+                  className="rounded-full border border-sky-300/20 bg-sky-300/5 px-3 py-1.5 text-xs text-sky-300 transition-colors hover:bg-sky-300/10"
+                >
+                  +{STYLE_SEARCH_SUGGESTIONS.length - 12} more vibes
+                </button>
+              )}
             </div>
           </div>
         </Container>
@@ -474,7 +488,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── FINAL CTA ─── */}
-      <section className="pb-10">
+      <section className="pb-24 sm:pb-10">
         <Container>
           <div className="glass-panel glow-frame shine-sweep relative overflow-hidden rounded-[32px] px-6 py-10 text-center sm:px-10 sm:py-12 shadow-[0_0_80px_rgba(56,189,248,0.12)]">
             <Badge variant="premium">free to try</Badge>
@@ -495,6 +509,14 @@ export default function HomePage() {
           </div>
         </Container>
       </section>
+
+      {/* ─── Sticky Mobile CTA ─── */}
+      <div className="fixed bottom-0 inset-x-0 z-50 p-3 sm:hidden glass-panel border-t border-white/10">
+        <Button asChild size="lg" className="w-full cta-shine">
+          <Link href="/audit/new">check my vibe — free →</Link>
+        </Button>
+        <div className="mt-1.5 text-center text-[10px] text-white/35">free forever · no sign-up</div>
+      </div>
     </>
   );
 }

@@ -30,8 +30,8 @@ export function Header() {
             <div>
               <div className="display-font text-lg font-bold text-white sm:text-xl">AuraCheck</div>
               <div className="text-[11px] uppercase tracking-[0.24em] text-white/45">
-                Image Signal Engine
-              </div>
+                              vibe check™
+                            </div>
             </div>
           </Link>
 
