@@ -28,6 +28,37 @@ const TABS: { id: TabId; label: string }[] = [
   { id: "full_outfit", label: "Full Outfit Bundles" },
 ];
 
+// ponytail: pure-CSS visual identity per category — no images needed
+const CATEGORY_GRADIENTS: Record<WardrobeCategory, string> = {
+  tshirt: "from-sky-500/20 via-blue-500/10 to-transparent",
+  shirt: "from-emerald-500/20 via-teal-500/10 to-transparent",
+  jacket: "from-violet-500/20 via-purple-500/10 to-transparent",
+  hoodie: "from-slate-400/20 via-gray-500/10 to-transparent",
+  overshirt: "from-amber-500/20 via-orange-500/10 to-transparent",
+  jeans: "from-blue-500/20 via-indigo-500/10 to-transparent",
+  trousers: "from-stone-400/20 via-stone-500/10 to-transparent",
+  chinos: "from-amber-400/20 via-yellow-500/10 to-transparent",
+  sneakers: "from-rose-400/20 via-pink-500/10 to-transparent",
+  formal_shoes: "from-zinc-400/20 via-zinc-500/10 to-transparent",
+  watch: "from-cyan-400/20 via-teal-500/10 to-transparent",
+  sunglasses: "from-gray-400/20 via-gray-500/10 to-transparent",
+  belt: "from-amber-700/20 via-amber-800/10 to-transparent",
+  wallet: "from-orange-600/20 via-amber-700/10 to-transparent",
+  accessory: "from-fuchsia-400/20 via-pink-500/10 to-transparent",
+  jewellery: "from-orange-300/20 via-yellow-400/10 to-transparent",
+  grooming: "from-emerald-400/20 via-green-500/10 to-transparent",
+  perfume: "from-purple-400/20 via-violet-500/10 to-transparent",
+  kurta: "from-orange-400/20 via-red-500/10 to-transparent",
+  background_item: "from-teal-400/20 via-cyan-500/10 to-transparent",
+  photo_accessory: "from-sky-300/20 via-blue-400/10 to-transparent",
+};
+const CATEGORY_EMOJI: Record<WardrobeCategory, string> = {
+  tshirt: "👕", shirt: "👔", jacket: "🧥", hoodie: "🏋️", overshirt: "👕",
+  jeans: "👖", trousers: "👖", chinos: "👖", sneakers: "👟", formal_shoes: "👞",
+  watch: "⌚", sunglasses: "🕶️", belt: "🔗", wallet: "👛", accessory: "💍",
+  jewellery: "💎", grooming: "💈", perfume: "🧴", kurta: "🇮🇳",
+  background_item: "🏠", photo_accessory: "📸",
+};
 const CATEGORY_LABELS: Record<WardrobeCategory, string> = {
   tshirt: "T-Shirts",
   shirt: "Shirts",
@@ -314,12 +345,14 @@ export default function ShopPage() {
           {filtered.map((product) => {
             const comparison = buildComparisonForProduct(product);
             return (
-              <Card key={product.id} className="float-card">
-                <div className="flex flex-wrap items-start justify-between gap-4">
+              <Card key={product.id} className="float-card overflow-hidden">
+                    <div className={`h-1.5 bg-gradient-to-r ${CATEGORY_GRADIENTS[product.category] || "from-white/5 to-transparent"}`} />
+                    <div className="p-4">
+                    <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
                     <div className="mb-1 flex flex-wrap items-center gap-2">
-                      <span className="font-semibold text-white">{product.title}</span>
-                      <span className="text-xs text-gray-500">{CATEGORY_LABELS[product.category]}</span>
+                      <span className="text-base">{CATEGORY_EMOJI[product.category] || "✨"} </span><span className="font-semibold text-white">{product.title}</span>
+                                            <span className="text-xs text-gray-500">{CATEGORY_LABELS[product.category]}</span>
                       {product.isSponsored ? (
                         <Badge variant="default" className="text-[10px]">
                           Sponsored
@@ -410,6 +443,7 @@ export default function ShopPage() {
                     ) : null}
                   </div>
                 ) : null}
+              </div>
               </Card>
             );
           })}
