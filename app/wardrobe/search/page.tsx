@@ -210,8 +210,9 @@ function WardrobeSearchContent() {
   function handleStyleSelect(style: StyleSearchSuggestion) {
     setSelectedStyleId(style.id);
     setQuery(style.query);
+    setCategory(style.primaryCategory || "");
     setSort("aura_best");
-    void runSearch({ query: style.query, sort: "aura_best", limit: 50 });
+    void runSearch({ query: style.query, category: style.primaryCategory, sort: "aura_best", limit: 50 });
     if (typeof window !== "undefined") {
       window.history.replaceState(null, "", `/wardrobe/search?styleId=${style.id}`);
       requestAnimationFrame(() => {

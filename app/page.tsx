@@ -121,24 +121,6 @@ const offerCards = [
   },
 ];
 
-const demoLeaks = [
-  {
-    kind: "leak",
-    label: "Washed-out top drains your skin tone",
-    delta: "+9 pts",
-  },
-  {
-    kind: "leak",
-    label: "Oversized fit hides your frame",
-    delta: "+6 pts",
-  },
-  {
-    kind: "pass",
-    label: "Grooming — clean, on point",
-    delta: "✓",
-  },
-];
-
 export default function HomePage() {
   const [showAllVibes, setShowAllVibes] = useState(false);
   const visibleVibes = showAllVibes ? STYLE_SEARCH_SUGGESTIONS : STYLE_SEARCH_SUGGESTIONS.slice(0, 12);
@@ -190,81 +172,18 @@ export default function HomePage() {
                             </div>
             </div>
 
-            {/* Right — animated score reveal */}
-            <div className="relative mx-auto w-full max-w-[340px]">
-              {/* Outer glow ring */}
+            {/* Right — greeting image */}
+            <div className="relative mx-auto w-full max-w-[400px]">
               <div className="absolute -inset-10 rounded-full bg-gradient-to-br from-sky-400/30 via-blue-500/20 to-orange-400/25 blur-3xl" />
-
-              <div className="prism-panel glow-frame spotlight relative overflow-hidden rounded-[32px] p-6">
-                <div className="flex items-center justify-between">
-                  <div className="text-[10px] uppercase tracking-[0.22em] text-white/40">
-                    aura report
-                  </div>
-                  <span className="rounded-full bg-emerald-400/15 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-300">
-                    sample
-                  </span>
-                </div>
-
-                {/* Score ring — hero visual */}
-                <div className="mt-5 flex justify-center">
-                  <div className="score-ring-container relative h-36 w-36">
-                    <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
-                      <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="8" />
-                      <circle
-                        cx="60"
-                        cy="60"
-                        r="52"
-                        fill="none"
-                        stroke="url(#heroScoreGradient)"
-                        strokeWidth="8"
-                        strokeLinecap="round"
-                        strokeDasharray="0 327"
-                        className="score-ring-progress"
-                      />
-                      <defs>
-                        <linearGradient id="heroScoreGradient" x1="0" y1="0" x2="1" y2="1">
-                          <stop offset="0%" stopColor="#38bdf8" />
-                          <stop offset="50%" stopColor="#818cf8" />
-                          <stop offset="100%" stopColor="#f97316" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <div className="score-number display-font text-6xl font-bold text-white drop-shadow-[0_0_20px_rgba(56,189,248,0.5)]">0</div>
-                      <div className="text-[9px] uppercase tracking-[0.25em] text-white/40">aura score</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Leaks */}
-                <div className="mt-4 grid gap-2">
-                  {demoLeaks.map((leak) => (
-                    <div key={leak.label} className="flex items-center justify-between gap-2 rounded-2xl bg-white/5 px-3 py-2.5">
-                      <div className="flex items-center gap-2.5">
-                        <span
-                          className={`h-1.5 w-1.5 shrink-0 rounded-full ${
-                            leak.kind === "leak" ? "bg-amber-400" : "bg-emerald-400"
-                          }`}
-                        />
-                        <span className="text-[11px] leading-tight text-white/70">{leak.label}</span>
-                      </div>
-                      <span
-                        className={`shrink-0 text-[10px] font-bold ${
-                          leak.kind === "leak" ? "text-sky-300" : "text-emerald-300"
-                        }`}
-                      >
-                        {leak.delta}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-3 rounded-2xl bg-sky-400/8 px-3 py-2.5 text-center">
-                  <span className="text-[11px] font-semibold text-sky-200">
-                    fix both → est. score{" "}
-                    <span className="text-lg font-bold text-white">93</span>
-                  </span>
-                </div>
+              <img
+                src="https://images.unsplash.com/photo-1617791160536-598cf32026fb?w=500&q=80&auto=format"
+                alt="welcome to auracheck"
+                className="relative w-full rounded-[32px] object-cover shadow-2xl"
+                style={{ aspectRatio: "4/5" }}
+              />
+              <div className="absolute bottom-4 left-4 right-4 rounded-2xl bg-black/50 backdrop-blur-sm px-4 py-3 text-center">
+                <p className="text-sm font-semibold text-white">👋 welcome — ready for your vibe check?</p>
+                <p className="mt-0.5 text-xs text-white/60">free, 8 seconds, no sign-up</p>
               </div>
             </div>
           </div>
