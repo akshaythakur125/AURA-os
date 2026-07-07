@@ -1336,7 +1336,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
 
                   <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} className="block">
                     <Button variant="outline" className="w-full border-purple-500/30 text-purple-300 hover:bg-purple-500/10" size="lg">
-                      Full report with upgrade roadmap — ₹44
+                      Full report with upgrade roadmap — ₹50
                     </Button>
                   </Link>
                 </div>
@@ -1397,7 +1397,7 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
                 <div className="relative overflow-hidden rounded-2xl border border-white/10">
                   <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 bg-[#0a0a0f]/70 backdrop-blur-[3px]">
                     <Link href={`/unlock?auditId=${audit.id}&product=aura_report`}>
-                      <Button size="sm">Full budget plan — ₹44</Button>
+                      <Button size="sm">Full budget plan — ₹50</Button>
                     </Link>
                     <span className="text-[10px] text-white/25">Personalized to your ₹{audit.budgetRange || "5,000"} budget</span>
                   </div>
@@ -1546,13 +1546,13 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
             <Card className="mb-8 border-purple-500/20 ring-1 ring-purple-500/20">
               <h3 className="mb-2 text-lg font-bold text-white">Want the full reason behind this fix?</h3>
               <p className="mb-4 text-sm text-gray-400">
-                The ₹25 Quick Fix tells you the fastest move. The ₹44 Full Aura Report gives the full visual breakdown, archetype, mismatch map, and budget upgrade plan.
+                The ₹25 Quick Fix tells you the fastest move. The ₹50 Full Aura Report gives the full visual breakdown, archetype, mismatch map, and budget upgrade plan.
               </p>
               <div className="flex flex-wrap gap-3">
                 {!unlockedProducts.includes("aura_report") && (
                   <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} onClick={() => trackEvent("quick_fix_upsell_full_report_clicked", { auditId: audit.id })}>
                     <Button className="bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-500 hover:to-pink-400" size="sm">
-                      Upgrade to Full Aura Report — ₹44
+                      Upgrade to Full Aura Report — ₹50
                     </Button>
                   </Link>
                 )}

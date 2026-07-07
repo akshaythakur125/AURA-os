@@ -145,7 +145,7 @@ export default function AuraReportPage() {
           <h2 className="mb-4 text-2xl font-bold text-white">Get your full breakdown.</h2>
           <p className="mb-6 text-gray-400">Takes minutes. Fixes everything.</p>
           {upsell && !alreadyUnlocked ? (
-            <Button asChild size="lg"><Link href={`/unlock?auditId=${upsell.auditId}&product=aura_report`}>Unlock Now — ₹44</Link></Button>
+            <Button asChild size="lg"><Link href={`/unlock?auditId=${upsell.auditId}&product=aura_report`}>Unlock Now — ₹50</Link></Button>
           ) : (
             <Button asChild size="lg"><Link href="/audit/new">Start Free Aura Check</Link></Button>
           )}

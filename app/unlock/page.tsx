@@ -24,7 +24,7 @@ import { getPublicRazorpayKeyId } from "@/lib/razorpay/env";
 
 const PRODUCT_INFO: Record<ProductType, { name: string; price: number; desc: string }> = {
   quick_fix: { name: "Fast Fix", price: 25, desc: "Your biggest status leak and the fastest fix path." },
-  aura_report: { name: "Full Read", price: 44, desc: "Deep visual analysis with upgrade roadmap." },
+  aura_report: { name: "Full Read", price: 50, desc: "Deep visual analysis with upgrade roadmap." },
   dating_audit: { name: "Dating/Profile Audit", price: 299, desc: "Profile presentation score, bio feedback, and photo order strategy." },
   glowup_plan: { name: "30-Day Reset", price: 499, desc: "Structured 30-day roadmap with daily missions and budget roadmap." },
 };
@@ -333,7 +333,7 @@ function UnlockContent() {
         {/* ─── Post-Purchase Upsell ─── */}
         {success && (() => {
           const nextTier = product === "quick_fix"
-            ? { product: "aura_report" as const, name: "Full Read", price: 44, desc: "Deep dive — every leak, every fix, priority order." }
+            ? { product: "aura_report" as const, name: "Full Read", price: 50, desc: "Deep dive — every leak, every fix, priority order." }
             : product === "aura_report"
             ? { product: "dating_audit" as const, name: "Dating/Profile Audit", price: 299, desc: "Bio feedback, photo order strategy, profile score." }
             : product === "dating_audit"

@@ -24,7 +24,7 @@ const DEFAULT_CHECKLIST: LaunchChecklistItem[] = [
   { id: "product_links", label: "Product links checked", category: "commerce", checked: false },
   { id: "mobile_test", label: "Mobile upload tested", category: "testing", checked: false },
   { id: "test_25", label: "₹25 product tested", category: "testing", checked: false },
-  { id: "test_44", label: "₹44 product tested", category: "testing", checked: false },
+  { id: "test_44", label: "₹50 product tested", category: "testing", checked: false },
   { id: "test_299", label: "₹299 product tested", category: "testing", checked: false },
   { id: "test_499", label: "₹499 product tested", category: "testing", checked: false },
   { id: "backup_export", label: "Backup/export tested", category: "testing", checked: false },

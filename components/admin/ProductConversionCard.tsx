@@ -10,7 +10,7 @@ interface Props {
 
 const PRODUCT_LABELS: Record<string, string> = {
   quick_fix: "Quick Fix (₹25)",
-  aura_report: "Aura Report (₹44)",
+  aura_report: "Aura Report (₹50)",
   dating_audit: "Dating Audit (₹299)",
   glowup_plan: "30-Day Reset (₹499)",
 };

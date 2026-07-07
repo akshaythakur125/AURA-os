@@ -40,7 +40,7 @@ const plans = [
   },
   {
     name: "Full Aura Report",
-    price: "44",
+    price: "50",
     tagline: "every leak. every fix. priority order.",
     features: [
       "Up to 3 photos analyzed",
