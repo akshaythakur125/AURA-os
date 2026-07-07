@@ -139,7 +139,9 @@ export default function ShopPage() {
     <Container className="py-8 sm:py-12">
       <div className="mx-auto max-w-6xl">
         <div className="prism-panel glow-frame shine-sweep mb-8 rounded-[34px] px-6 py-8 text-center sm:px-10">
-          <h1 className="mb-3 text-3xl font-bold text-white">Everyone shopping here just found out something uncomfortable about how they look.</h1>
+          <h1 className="display-font mb-3 text-3xl font-bold text-white sm:text-4xl">Everyone shopping here just found out
+              <span className="block bg-gradient-to-r from-sky-300 via-purple-400 to-orange-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(56,189,248,0.3)]">something uncomfortable</span>
+              about how they look.</h1>
           <p className="mx-auto max-w-xl text-sm text-gray-400">
             They saw their score. They saw the leak. Now they&apos;re fixing it — for less than a movie ticket. Every piece here patches a real aura leak. Price-compared across 6 stores.
           </p>
@@ -152,7 +154,7 @@ export default function ShopPage() {
 
         <Card className="glow-frame mb-8">
           <div className="mb-4">
-            <h2 className="text-lg font-semibold text-white">Latest celebrity styles now trending</h2>
+            <h2 className="display-font text-xl font-bold text-white">Latest celebrity styles now trending 🔥</h2>
             <p className="text-xs text-gray-500">
               India + global looks mapped to Indian shopping sites in one click.
             </p>
@@ -207,7 +209,7 @@ export default function ShopPage() {
 
         <Card className="mb-8">
           <div className="mb-4">
-            <h2 className="text-lg font-semibold text-white">Choose from 100 styles</h2>
+            <h2 className="display-font text-xl font-bold text-white">Choose from 100+ styles ✨</h2>
             <p className="text-xs text-gray-500">
               Users can jump into any vibe without guessing the right search words.
             </p>

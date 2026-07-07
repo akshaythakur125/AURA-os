@@ -124,16 +124,16 @@ export default function HomePage() {
           <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
             {/* Left — punchy copy */}
             <div className="max-w-2xl">
-              <Badge variant="premium" className="mb-4">
-                free vibe check
-              </Badge>
+              <Badge variant="premium" className="mb-4 animate-pulse">
+                              ✨ free vibe check
+                            </Badge>
               <h1 className="display-font max-w-3xl text-5xl font-bold leading-[0.92] text-white sm:text-6xl lg:text-7xl">
                 your vibe has
                 <br />
                 a{" "}
-                <span className="bg-gradient-to-r from-sky-300 via-blue-400 to-orange-400 bg-clip-text text-transparent">
-                  score
-                </span>
+                <span className="bg-gradient-to-r from-sky-300 via-blue-400 to-orange-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(56,189,248,0.4)]">
+                                  score
+                                </span>
                 .
               </h1>
               <p className="mt-4 max-w-md text-base leading-6 text-white/55 sm:text-lg">
@@ -142,7 +142,7 @@ export default function HomePage() {
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button asChild size="lg">
-                  <Link href="/audit/new">check my vibe — free</Link>
+                  <Link href="/audit/new" className="cta-shine">check my vibe — free</Link>
                 </Button>
                 <Button asChild size="lg" variant="ghost">
                   <Link href="/examples">see an example</Link>
@@ -161,7 +161,7 @@ export default function HomePage() {
             {/* Right — animated score reveal */}
             <div className="relative mx-auto w-full max-w-[340px]">
               {/* Outer glow ring */}
-              <div className="absolute -inset-6 rounded-full bg-gradient-to-br from-sky-400/20 via-blue-500/10 to-orange-400/15 blur-2xl" />
+              <div className="absolute -inset-10 rounded-full bg-gradient-to-br from-sky-400/30 via-blue-500/20 to-orange-400/25 blur-3xl" />
 
               <div className="prism-panel glow-frame spotlight relative overflow-hidden rounded-[32px] p-6">
                 <div className="flex items-center justify-between">
@@ -198,7 +198,7 @@ export default function HomePage() {
                       </defs>
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <div className="score-number display-font text-5xl font-bold text-white">0</div>
+                      <div className="score-number display-font text-6xl font-bold text-white drop-shadow-[0_0_20px_rgba(56,189,248,0.5)]">0</div>
                       <div className="text-[9px] uppercase tracking-[0.25em] text-white/40">aura score</div>
                     </div>
                   </div>
@@ -250,7 +250,7 @@ export default function HomePage() {
           </div>
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             {steps.map((step) => (
-              <Card key={step.number} hover className="float-card p-5">
+              <Card key={step.number} hover className="float-card stagger-in p-5">
                 <div className="display-font text-sm font-bold text-sky-300">{step.number}</div>
                 <h3 className="display-font mt-2 text-xl font-bold text-white">{step.title}</h3>
                 <p className="mt-2 text-sm leading-5 text-white/55">{step.body}</p>
@@ -343,7 +343,7 @@ export default function HomePage() {
           </div>
           <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {exploreCards.map((item) => (
-              <Card key={item.title} hover className="float-card group p-5">
+              <Card key={item.title} hover className="float-card stagger-in neon-hover group p-5">
                 <div className="text-[10px] uppercase tracking-[0.2em] text-sky-300/70">{item.tag}</div>
                 <h3 className="display-font mt-2 text-xl font-bold text-white">{item.title}</h3>
                 <p className="mt-2 text-sm leading-5 text-white/55">{item.body}</p>
@@ -379,7 +379,7 @@ export default function HomePage() {
                 return realEntries.map((entry) => (
                   <div
                     key={entry.id}
-                    className="prism-panel float-card group rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]"
+                    className="prism-panel float-card stagger-in neon-hover group rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]"
                   >
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-pink-500 text-xs font-bold text-white">
@@ -406,7 +406,7 @@ export default function HomePage() {
               return getDailySubset(getHomepageProofEntries(), 6).map((entry) => (
                 <div
                   key={entry.initials}
-                  className="prism-panel float-card group rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]"
+                  className="prism-panel float-card stagger-in neon-hover group rounded-[22px] p-4 transition-all duration-300 hover:shadow-[0_0_30px_rgba(56,189,248,0.1)]"
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -449,7 +449,7 @@ export default function HomePage() {
               <Card
                 key={offer.name}
                 hover
-                className={`float-card ${offer.featured ? "border-sky-200/25 shadow-[0_20px_70px_rgba(56,189,248,0.14)]" : ""}`}
+                className={`float-card stagger-in ${offer.featured ? "border-sky-200/25 shadow-[0_20px_70px_rgba(56,189,248,0.14)]" : ""}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="display-font text-2xl font-bold text-white">{offer.price}</div>
@@ -476,7 +476,7 @@ export default function HomePage() {
       {/* ─── FINAL CTA ─── */}
       <section className="pb-10">
         <Container>
-          <div className="glass-panel glow-frame shine-sweep relative overflow-hidden rounded-[32px] px-6 py-10 text-center sm:px-10 sm:py-12">
+          <div className="glass-panel glow-frame shine-sweep relative overflow-hidden rounded-[32px] px-6 py-10 text-center sm:px-10 sm:py-12 shadow-[0_0_80px_rgba(56,189,248,0.12)]">
             <Badge variant="premium">free to try</Badge>
             <h2 className="display-font mt-4 text-3xl font-bold text-white sm:text-4xl">
               your next photo could hit different.

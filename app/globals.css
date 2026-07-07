@@ -409,6 +409,73 @@ button {
    and the ring does the visual heavy-lifting. If you want the number to
    actually count up, swap in a tiny JS counter or framer-motion. */
 
+/* ─── Animated gradient text ─── */
+.gradient-text-animated {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease-in-out infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ─── Staggered fade-in for cards ─── */
+.stagger-in {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: stagger-fade 0.5s ease forwards;
+}
+
+.stagger-in:nth-child(1) { animation-delay: 0.05s; }
+.stagger-in:nth-child(2) { animation-delay: 0.1s; }
+.stagger-in:nth-child(3) { animation-delay: 0.15s; }
+.stagger-in:nth-child(4) { animation-delay: 0.2s; }
+.stagger-in:nth-child(5) { animation-delay: 0.25s; }
+.stagger-in:nth-child(6) { animation-delay: 0.3s; }
+
+@keyframes stagger-fade {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Neon glow on hover for cards ─── */
+.neon-hover {
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.neon-hover:hover {
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.15), 0 0 60px rgba(56, 189, 248, 0.05);
+}
+
+/* ─── Shimmer loading effect ─── */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.06), transparent);
+  animation: shimmer-slide 2s ease-in-out infinite;
+}
+
+@keyframes shimmer-slide {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ─── Pulse border for CTAs ─── */
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(125, 211, 252, 0.3); }
+  50% { border-color: rgba(125, 211, 252, 0.6); }
+}
+
+.pulse-border {
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
