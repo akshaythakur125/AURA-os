@@ -6,7 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
+import { getAudits, getAuditById, updateAudit } from "@/lib/storage/auditStore";
 import { shouldUseSupabase } from "@/lib/storage/storageMode";
 
 import { generateFreeAuraReport, generateFreeReportWithPersonalization } from "@/lib/aura-engine/generateFreeAuraReport";
@@ -651,6 +651,34 @@ export default function AuditDetailPage({ params }: { params: Promise<{ id: stri
     if (hasAllLeaks) { setLeaksVisible(true); return; }
     setLeaksVisible(localStorage.getItem(`auracheck:v1:revealed:${audit.id}`) === "true");
   }, [audit]);
+
+  // Auto-create before/after comparison when coming from glow-up completion
+  useEffect(() => {
+    if (!audit?.freeScore) return;
+    try {
+      const pendingBeforeId = localStorage.getItem("aura_pending_glowup_before");
+      if (!pendingBeforeId) return;
+      const beforeAudit = getAuditById(pendingBeforeId);
+      if (!beforeAudit?.freeScore) return;
+      // Auto-create progress comparison
+      const comparisonId = `glowup-${beforeAudit.id}-${audit.id}`;
+      const existing = getAudits().find(a => a.id === comparisonId);
+      if (!existing) {
+        const { createProgressComparison } = require("@/lib/storage/progressStore");
+        createProgressComparison({
+          id: comparisonId,
+          beforeAuditId: beforeAudit.id,
+          afterAuditId: audit.id,
+          beforeScore: beforeAudit.freeScore,
+          afterScore: audit.freeScore,
+          daysBetween: 30,
+          label: "30-Day Glow-Up",
+          createdAt: Date.now(),
+        });
+      }
+      localStorage.removeItem("aura_pending_glowup_before");
+    } catch {}
+  }, [audit?.freeScore]);
 
   if (!checkedLocal) {
     return (

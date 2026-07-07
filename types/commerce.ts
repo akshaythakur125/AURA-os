@@ -73,6 +73,7 @@ export type WardrobeCategory =
   | "background_item"
   | "photo_accessory"
   | "jewellery"
+  | "accessory"
   | "wallet";
 
 export type AvailabilityStatus = "available" | "unknown" | "out_of_stock";

@@ -49,6 +49,7 @@ const CATEGORY_LABELS: Record<WardrobeCategory, string> = {
   photo_accessory: "Photo Gear",
   jewellery: "Jewellery",
   wallet: "Wallets",
+  accessory: "Accessories",
 };
 
 const BUDGET_OPTIONS = [

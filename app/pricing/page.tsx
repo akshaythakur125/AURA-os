@@ -11,7 +11,7 @@ const plans = [
   {
     name: "Free Aura Score",
     price: "0",
-    tagline: "See the problem. Free.",
+    tagline: "see the damage. free.",
     features: [
       "Basic aura score out of 100",
       "Your single biggest status leak",
@@ -24,7 +24,7 @@ const plans = [
   {
     name: "Quick Aura Fix",
     price: "25",
-    tagline: "Your fastest next move.",
+    tagline: "fastest glow-up move.",
     features: [
       "Biggest status leak identified",
       "Fastest free fix for immediate improvement",
@@ -41,7 +41,7 @@ const plans = [
   {
     name: "Full Aura Report",
     price: "44",
-    tagline: "Full breakdown. Full roadmap.",
+    tagline: "every leak. every fix. priority order.",
     features: [
       "Up to 3 photos analyzed",
       "Detailed visual breakdown per photo",
@@ -63,7 +63,7 @@ const plans = [
   {
     name: "Dating / Profile Audit",
     price: "299",
-    tagline: "Make your profile work harder.",
+    tagline: "make your profile stop fumbling.",
     features: [
       "Profile presentation score",
       "Bio and prompt feedback with suggestions",

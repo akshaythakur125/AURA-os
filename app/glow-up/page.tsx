@@ -268,6 +268,73 @@ export default function GlowUpPage() {
           </Card>
         )}
 
+        {/* ─── 30-Day Complete: Before/After Compare ─── */}
+        {completed && (
+          <Card className="p-6 border-emerald-500/20 bg-emerald-500/5">
+            <div className="text-center mb-6">
+              <div className="text-4xl mb-2">🎉</div>
+              <h3 className="text-xl font-bold text-white">You finished all 30 days.</h3>
+              <p className="mt-2 text-sm text-gray-400">
+                Now let&apos;s see what changed. Re-audit your face and we&apos;ll auto-compare your before &amp; after scores.
+              </p>
+            </div>
+
+            {(() => {
+              const audits = getAudits();
+              const beforeAudit = audits.find(a => a.freeResult && a.freeScore);
+              if (beforeAudit) {
+                return (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-center gap-8">
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500 mb-1">BEFORE</div>
+                        <div className="text-3xl font-bold text-gray-400">{beforeAudit.freeScore}</div>
+                        <div className="text-[10px] text-gray-600">Day 0</div>
+                      </div>
+                      <div className="text-2xl text-emerald-400">→</div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-500 mb-1">AFTER</div>
+                        <div className="text-3xl font-bold text-emerald-400">???</div>
+                        <div className="text-[10px] text-gray-600">Day 30</div>
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-500 mb-3">
+                        Your before score was <span className="text-white font-semibold">{beforeAudit.freeScore}</span>. Take a new photo to see how much you&apos;ve improved.
+                      </p>
+                      <Button asChild className="bg-emerald-600 hover:bg-emerald-500">
+                        <Link
+                          href={`/audit/new?beforeAuditId=${beforeAudit.id}`}
+                          onClick={() => {
+                            try { localStorage.setItem("aura_pending_glowup_before", beforeAudit.id); } catch {}
+                            trackEvent("glowup_before_after_started", { beforeAuditId: beforeAudit.id });
+                          }}
+                        >
+                          Re-audit Now → See Your Glow-Up
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                );
+              }
+              return (
+                <div className="text-center">
+                  <p className="text-xs text-gray-500 mb-3">Take a new photo to compare your Day 0 vs Day 30.</p>
+                  <Button asChild className="bg-emerald-600 hover:bg-emerald-500">
+                    <Link href="/audit/new">Re-audit Now → See Your Glow-Up</Link>
+                  </Button>
+                </div>
+              );
+            })()}
+
+            <div className="mt-6 pt-4 border-t border-white/5">
+              <p className="text-[10px] text-gray-600 text-center">
+                Your before photo is saved from your first audit. The comparison is automatic.
+              </p>
+            </div>
+          </Card>
+        )}
+
         <ShareModal
           open={shareOpen}
           onClose={() => { setShareOpen(false); setMilestone(null); }}

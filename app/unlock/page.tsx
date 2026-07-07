@@ -330,6 +330,32 @@ function UnlockContent() {
         {error && <div className="mb-6 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">{error}</div>}
         {success && <div className="mb-6 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">{success}</div>}
 
+        {/* ─── Post-Purchase Upsell ─── */}
+        {success && (() => {
+          const nextTier = product === "quick_fix"
+            ? { product: "aura_report" as const, name: "Full Read", price: 44, desc: "Deep dive — every leak, every fix, priority order." }
+            : product === "aura_report"
+            ? { product: "dating_audit" as const, name: "Dating/Profile Audit", price: 299, desc: "Bio feedback, photo order strategy, profile score." }
+            : product === "dating_audit"
+            ? { product: "glowup_plan" as const, name: "30-Day Reset", price: 499, desc: "Structured daily missions + budget roadmap." }
+            : null;
+          if (!nextTier) return null;
+          return (
+            <Card className="mb-6 border-purple-500/20 bg-purple-500/5">
+              <div className="mb-2 text-xs font-semibold text-purple-300">Level up your glow-up ✨</div>
+              <p className="text-sm text-white font-semibold">{nextTier.name} — ₹{nextTier.price}</p>
+              <p className="mt-1 text-xs text-gray-400">{nextTier.desc}</p>
+              <div className="mt-3">
+                <Button asChild size="sm">
+                  <Link href={`/unlock?auditId=${auditId}&product=${nextTier.product}`}>
+                    Unlock {nextTier.name} →
+                  </Link>
+                </Button>
+              </div>
+            </Card>
+          );
+        })()}
+
         {unlocking && (
           <div className="mb-6 text-center text-sm text-purple-300">Generating your report...</div>
         )}

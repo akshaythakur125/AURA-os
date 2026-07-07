@@ -57,7 +57,8 @@ export type AnalyticsEvent =
   | "share_card_shared"
   | "share_platform_clicked"
   | "share_card_viewed"
-  | "share_tip_unlocked";
+  | "share_tip_unlocked"
+  | "glowup_before_after_started";
 
 export interface AnalyticsRecord {
   id: string;
