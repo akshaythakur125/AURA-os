@@ -24,6 +24,33 @@ export default function ExamplesPage() {
         </div>
 
         <div className="mb-12">
+          <h2 className="mb-6 text-2xl font-bold text-white">Example Vibe Checks</h2>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="group relative overflow-hidden rounded-[24px]">
+              <img src="/celebs/deepika-soft-luxury.jpg" alt="example: soft luxury vibe" className="h-72 w-full object-cover transition duration-500 group-hover:scale-105" />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 pt-12">
+                <div className="text-sm font-bold text-white">Soft Luxury</div>
+                <div className="text-xs text-white/60">Aura Score: 87 → 94</div>
+              </div>
+            </div>
+            <div className="group relative overflow-hidden rounded-[24px]">
+              <img src="/celebs/hrithik-dating-warm.jpg" alt="example: dating profile glow-up" className="h-72 w-full object-cover transition duration-500 group-hover:scale-105" />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 pt-12">
+                <div className="text-sm font-bold text-white">Dating Profile</div>
+                <div className="text-xs text-white/60">Aura Score: 72 → 88</div>
+              </div>
+            </div>
+            <div className="group relative overflow-hidden rounded-[24px]">
+              <img src="/celebs/kartik-mumbai-street.jpg" alt="example: street style casual" className="h-72 w-full object-cover transition duration-500 group-hover:scale-105" />
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 pt-12">
+                <div className="text-sm font-bold text-white">Street Style</div>
+                <div className="text-xs text-white/60">Aura Score: 65 → 83</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-12">
           <h2 className="mb-6 text-2xl font-bold text-white">At a Glance</h2>
           <ReportComparison />
         </div>
