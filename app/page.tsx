@@ -176,7 +176,7 @@ export default function HomePage() {
             <div className="relative mx-auto w-full max-w-[400px]">
               <div className="absolute -inset-10 rounded-full bg-gradient-to-br from-sky-400/30 via-blue-500/20 to-orange-400/25 blur-3xl" />
               <img
-                src="https://images.unsplash.com/photo-1617791160536-598cf32026fb?w=500&q=80&auto=format"
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&q=80&auto=format"
                 alt="welcome to auracheck"
                 className="relative w-full rounded-[32px] object-cover shadow-2xl"
                 style={{ aspectRatio: "4/5" }}
