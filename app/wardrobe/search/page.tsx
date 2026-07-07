@@ -18,6 +18,107 @@ import { buildStoreSearchUrl } from "@/config/storeDirectory";
 
 // Stores worth linking a whole style search to. Native search pages always
 // resolve, so these links work for any style label.
+// ponytail: style-id → hero image lookup (celeb photos reused per vibe)
+const STYLE_IMAGES: Record<string, string> = {
+  "airport_fit": "/celebs/airport-lounge-look.jpg",
+  "all_black": "/celebs/nightclub-dark-luxe.jpg",
+  "all_white": "/celebs/timothee-clean-minimal.jpg",
+  "beach_club": "/celebs/goa-beach-vacation.jpg",
+  "beige_luxury": "/celebs/harry-quiet-luxury.jpg",
+  "blokecore": "/celebs/kartik-mumbai-street.jpg",
+  "blue_tones": "/celebs/shahid-corporate-sharp.jpg",
+  "boardroom": "/celebs/shahid-corporate-sharp.jpg",
+  "boho": "/celebs/deepika-soft-luxury.jpg",
+  "boho_luxe": "/celebs/deepika-soft-luxury.jpg",
+  "bollywood_glam": "/celebs/siddharth-ethnic-clean.jpg",
+  "business_casual": "/celebs/shahid-corporate-sharp.jpg",
+  "campus_casual": "/celebs/virat-gym-casual.jpg",
+  "cargo_pants": "/celebs/kartik-mumbai-street.jpg",
+  "celebrity_errand": "/celebs/instagram-photoshoot.jpg",
+  "clean_boy": "/celebs/timothee-clean-minimal.jpg",
+  "clean_girl": "/celebs/deepika-soft-luxury.jpg",
+  "coastal_grandpa": "/celebs/oscars-wide-leg-tailoring.jpg",
+  "coffee_date": "/celebs/hrithik-dating-warm.jpg",
+  "college_core": "/celebs/kartik-mumbai-street.jpg",
+  "color_pop": "/celebs/ranveer-creator-bold.jpg",
+  "concert": "/celebs/ranveer-creator-bold.jpg",
+  "corporate_sharp": "/celebs/shahid-corporate-sharp.jpg",
+  "creative_office": "/celebs/shahid-corporate-sharp.jpg",
+  "creator_fit": "/celebs/instagram-photoshoot.jpg",
+  "dark_academia": "/celebs/shahid-corporate-sharp.jpg",
+  "date_night": "/celebs/hrithik-dating-warm.jpg",
+  "delhi_party": "/celebs/siddharth-ethnic-clean.jpg",
+  "denim_on_denim": "/celebs/kartik-mumbai-street.jpg",
+  "dinner_date": "/celebs/hrithik-dating-warm.jpg",
+  "earth_tones": "/celebs/harry-quiet-luxury.jpg",
+  "ethnic_clean": "/celebs/siddharth-ethnic-clean.jpg",
+  "festival": "/celebs/ranveer-creator-bold.jpg",
+  "first_date": "/celebs/hrithik-dating-warm.jpg",
+  "flannel": "/celebs/kartik-mumbai-street.jpg",
+  "golf_core": "/celebs/kendall-hailey-track.jpg",
+  "gorpcore": "/celebs/kartik-mumbai-street.jpg",
+  "goth_minimal": "/celebs/kartik-mumbai-street.jpg",
+  "grunge": "/celebs/kartik-mumbai-street.jpg",
+  "gym_casual": "/celebs/virat-gym-casual.jpg",
+  "haldi": "/celebs/siddharth-ethnic-clean.jpg",
+  "hiking_core": "/celebs/virat-gym-casual.jpg",
+  "indie_sleaze": "/celebs/ranveer-creator-bold.jpg",
+  "indo_western": "/celebs/siddharth-ethnic-clean.jpg",
+  "influencer_core": "/celebs/instagram-photoshoot.jpg",
+  "interview": "/celebs/shahid-corporate-sharp.jpg",
+  "italian_summer": "/celebs/oscars-wide-leg-tailoring.jpg",
+  "japanese_minimal": "/celebs/timothee-clean-minimal.jpg",
+  "korean_casual": "/celebs/kartik-mumbai-street.jpg",
+  "korean_street": "/celebs/kartik-mumbai-street.jpg",
+  "leather_jacket": "/celebs/biker-edge-casual.jpg",
+  "light_academia": "/celebs/timothee-clean-minimal.jpg",
+  "linen_shirt": "/celebs/oscars-wide-leg-tailoring.jpg",
+  "luxury_streetwear": "/celebs/kartik-mumbai-street.jpg",
+  "mehendi": "/celebs/siddharth-ethnic-clean.jpg",
+  "minimal_street": "/celebs/timothee-clean-minimal.jpg",
+  "mob_wife": "/celebs/deepika-soft-luxury.jpg",
+  "model_off_duty": "/celebs/dev-effortless-date.jpg",
+  "monochrome": "/celebs/nightclub-dark-luxe.jpg",
+  "monsoon": "/celebs/monsoon-ready-casual.jpg",
+  "mumbai_casual": "/celebs/kartik-mumbai-street.jpg",
+  "neutral_capsule": "/celebs/timothee-clean-minimal.jpg",
+  "office_core": "/celebs/shahid-corporate-sharp.jpg",
+  "old_money": "/celebs/harry-quiet-luxury.jpg",
+  "overshirt": "/celebs/dev-effortless-date.jpg",
+  "parisian": "/celebs/timothee-clean-minimal.jpg",
+  "party": "/celebs/ranveer-creator-bold.jpg",
+  "pilates_princess": "/celebs/kendall-hailey-track.jpg",
+  "pleated_trousers": "/celebs/oscars-wide-leg-tailoring.jpg",
+  "preppy": "/celebs/harry-quiet-luxury.jpg",
+  "presentation_day": "/celebs/shahid-corporate-sharp.jpg",
+  "quiet_luxury": "/celebs/harry-quiet-luxury.jpg",
+  "rainy_day": "/celebs/monsoon-ready-casual.jpg",
+  "red_statement": "/celebs/ranveer-creator-bold.jpg",
+  "resort": "/celebs/goa-beach-vacation.jpg",
+  "retro_sports": "/celebs/kartik-mumbai-street.jpg",
+  "riviera": "/celebs/oscars-wide-leg-tailoring.jpg",
+  "runner_style": "/celebs/virat-gym-casual.jpg",
+  "sangeet": "/celebs/siddharth-ethnic-clean.jpg",
+  "scandi_minimal": "/celebs/timothee-clean-minimal.jpg",
+  "skater": "/celebs/kartik-mumbai-street.jpg",
+  "smart_casual": "/celebs/shahid-corporate-sharp.jpg",
+  "sneakerhead": "/celebs/kartik-mumbai-street.jpg",
+  "soft_grunge": "/celebs/kartik-mumbai-street.jpg",
+  "south_bombay": "/celebs/siddharth-ethnic-clean.jpg",
+  "sporty_luxe": "/celebs/kendall-hailey-track.jpg",
+  "startup_founder": "/celebs/shahid-corporate-sharp.jpg",
+  "streetwear": "/celebs/kartik-mumbai-street.jpg",
+  "summer_linen": "/celebs/summer-minimal.jpg",
+  "techwear": "/celebs/kartik-mumbai-street.jpg",
+  "tennis_core": "/celebs/kendall-hailey-track.jpg",
+  "vacation": "/celebs/goa-beach-vacation.jpg",
+  "vintage_denim": "/celebs/hrithik-dating-warm.jpg",
+  "wedding_guest": "/celebs/siddharth-ethnic-clean.jpg",
+  "wide_leg": "/celebs/oscars-wide-leg-tailoring.jpg",
+  "winter_layers": "/celebs/layered-winter-smart.jpg",
+  "y2k": "/celebs/ranveer-creator-bold.jpg",
+};
+
 const STYLE_STORE_LINKS: { key: StoreKey; name: string }[] = [
   { key: "myntra", name: "Myntra" },
   { key: "amazon_fashion", name: "Amazon" },
@@ -264,33 +365,54 @@ function WardrobeSearchContent() {
               </div>
             </Card>
           </div>
-        ) : selectedStyleId || searchParams.get("query") ? (
-          <div className="mb-8 text-center">
-            <h1 className="mb-3 text-3xl font-bold text-white">
-              {selectedStyle ? `${selectedStyle.label} — shop the look` : "Search results"}
-            </h1>
-            <p className="mx-auto max-w-2xl text-sm text-gray-400">
-              {selectedStyle
-                ? "Matching clothes from Indian stores below. Tap any store button to browse more on their site."
-                : "Prices come from AuraCheck’s catalog and should be verified on the store before buying."}
-            </p>
-            {selectedStyle && (
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-                {STYLE_STORE_LINKS.map((store) => (
-                  <a
-                    key={store.key}
-                    href={buildStoreSearchUrl(store.key, `${selectedStyle.label} outfit`)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-full border border-sky-300/25 bg-sky-400/10 px-3 py-1.5 text-xs font-medium text-sky-200 hover:bg-sky-400/20"
-                  >
-                    {store.name}
-                    <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
+                ) : selectedStyleId || searchParams.get("query") ? (
+                  <div className="mb-8">
+                    {selectedStyle && STYLE_IMAGES[selectedStyleId || ""] ? (
+                      <Card className="mb-6 overflow-hidden border-white/10">
+                        <div className="relative h-[200px] w-full sm:h-[260px]">
+                          <Image
+                            src={STYLE_IMAGES[selectedStyleId || ""]}
+                            alt={selectedStyle.label}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 768px"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                          <div className="absolute bottom-0 left-0 p-5">
+                            <h1 className="text-2xl font-bold text-white sm:text-3xl">{selectedStyle.label}</h1>
+                            <p className="mt-1 text-sm text-purple-300">Style direction</p>
+                          </div>
+                        </div>
+                      </Card>
+                    ) : (
+                      <div className="mb-8 text-center">
+                        <h1 className="mb-3 text-3xl font-bold text-white">
+                          {selectedStyle ? `${selectedStyle.label} — shop the look` : "Search results"}
+                        </h1>
+                      </div>
+                    )}
+                    <p className="mx-auto max-w-2xl text-center text-sm text-gray-400">
+                      {selectedStyle
+                        ? "Matching clothes from Indian stores below. Tap any store button to browse more on their site."
+                        : "Prices come from AuraCheck's catalog and should be verified on the store before buying."}
+                    </p>
+                    {selectedStyle && (
+                      <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                        {STYLE_STORE_LINKS.map((store) => (
+                          <a
+                            key={store.key}
+                            href={buildStoreSearchUrl(store.key, `${selectedStyle.label} outfit`)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 rounded-full border border-sky-300/25 bg-sky-400/10 px-3 py-1.5 text-xs font-medium text-sky-200 hover:bg-sky-400/20"
+                          >
+                            {store.name}
+                            <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
         ) : (
           <>
             {/* Landing hero — shown only when no search is active. */}
