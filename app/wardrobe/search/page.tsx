@@ -255,6 +255,15 @@ function WardrobeSearchContent() {
         setInitializedFromUrl(true);
         return;
       }
+      // ponytail: preset not a celeb ID — try matching as a style suggestion
+      const styleMatch = STYLE_SEARCH_SUGGESTIONS.find((s) => s.id === presetParam);
+      if (styleMatch) {
+        setSelectedStyleId(styleMatch.id);
+        setQuery(styleMatch.query);
+        setSort(sortParam || "aura_best");
+        setInitializedFromUrl(true);
+        return;
+      }
     }
 
     // Old-style ?query= deep links that match a style chip highlight it too
