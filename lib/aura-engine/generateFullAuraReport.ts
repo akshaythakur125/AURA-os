@@ -34,7 +34,7 @@ export async function generateFullAuraReport(
   }
 
   const m = freeResult.imageMetrics;
-  const fullScore = clamp(freeResult.auraScore + Math.round(Math.random() * 4 + 1), 35, 95);
+  const fullScore = clamp(freeResult.auraScore + 2, 35, 95); // ponytail: deterministic +2 for depth analysis
 
   const visualBreakdown: VisualBreakdown = {
     lighting: m.lightingScore,
@@ -154,13 +154,13 @@ export async function generateFullAuraReport(
     detailedVerdict += ` Your status archetype is "${audit.personalization.archetype}". ${audit.personalization.archetypeExplanation}`;
   }
 
-  let finalVerdict = `Your Full Aura Score of ${fullScore}/100 places you in the "${freeResult.category}" category. ${
-    fullScore >= 70
-      ? "Your visual presentation is generally strong. Focus on small refinements and consistency across all photos."
-      : fullScore >= 50
-        ? "You have a solid foundation. Addressing the priority areas above will noticeably improve your first impression."
-        : "Small targeted changes can significantly improve your visual signal. Start with the highest-priority fix listed above."
-  }`;
+  let finalVerdict = `Your Full Aura Score of ${fullScore}/100 places you in "${freeResult.category}". ${
+      fullScore >= 70
+        ? "Your presentation reads as intentional. A photographer would say your lighting and composition are above average. A designer would note your colour story is coherent. A stylist's final polish — one premium accessory or a bolder colour accent — takes you from good to memorable."
+        : fullScore >= 50
+          ? "You have a functional foundation, but the details that separate 'fine' from 'photogenic' are missing. A pro photographer would start with lighting direction. A designer would look at colour balance. A stylist would fix outfit-to-background contrast. Each one is a ₹0-500 fix."
+          : "The fundamentals need work before anything else matters. A photographer would redo the lighting first — it's the most impactful fix. A designer would simplify the background. A stylist would recommend starting with a clean, structured outfit. All three are achievable in one reshoot."
+      }`;
   if (audit?.personalization) {
     finalVerdict += ` Your priority is: ${audit.personalization.userPriority}.`;
   }

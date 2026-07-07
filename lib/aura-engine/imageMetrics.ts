@@ -196,6 +196,17 @@ export function extractImageMetrics(imageDataUrl: string): Promise<ImageMetrics>
           100
         );
 
+        // ponytail: extract enhanced analysis fields
+        const dominantColors = extractDominantColors(data, pixelCount, width, height);
+        const upperBodyColor = extractRegionColors(data, width, height, 0.25, 0.55);
+        const lowerBodyColor = extractRegionColors(data, width, height, 0.55, 0.85);
+        const colorHarmonyScore = computeColorHarmony(dominantColors);
+        const colorMood = computeColorMood(avgR, avgG, avgB, saturation);
+        const ruleOfThirdsScore = computeRuleOfThirds(skinPixels, pixelCount, width, height, data);
+        const textureComplexity = clamp(edgeDensity * 0.7 + contrast * 0.3, 0, 100);
+        const outfitColorContrast = clamp(Math.abs(centerBrightness - peripheryBrightness) * 0.6 + contrast * 0.4, 0, 100);
+        const styleArchetype = detectStyleArchetype(saturation, contrast, edgeDensity, warmth, brightness);
+
         resolve({
           width: img.width,
           height: img.height,
@@ -223,6 +234,15 @@ export function extractImageMetrics(imageDataUrl: string): Promise<ImageMetrics>
           backgroundClutterZone,
           subjectContrast: Math.round(subjectContrast),
           warmth: Math.round(warmth),
+          dominantColors,
+          upperBodyColor,
+          lowerBodyColor,
+          colorHarmonyScore: Math.round(colorHarmonyScore),
+          colorMood,
+          ruleOfThirdsScore: Math.round(ruleOfThirdsScore),
+          textureComplexity: Math.round(textureComplexity),
+          outfitColorContrast: Math.round(outfitColorContrast),
+          styleArchetype,
         });
       } catch {
         resolve(getFallbackMetrics(img.width, img.height));
@@ -272,6 +292,112 @@ function detectClutterZone(
   return "none";
 }
 
+// ponytail: color name mapping for dominant colors
+const COLOR_NAMES: [string, [number, number, number]][] = [
+  ["black", [30, 30, 30]], ["white", [240, 240, 240]], ["red", [200, 50, 50]],
+  ["blue", [50, 80, 180]], ["green", [50, 150, 70]], ["yellow", [230, 210, 60]],
+  ["orange", [220, 130, 40]], ["pink", [210, 120, 150]], ["purple", [120, 60, 170]],
+  ["brown", [140, 90, 50]], ["grey", [130, 130, 130]], ["beige", [200, 185, 160]],
+  ["navy", [30, 50, 100]], ["maroon", [120, 30, 50]], ["olive", [100, 110, 50]],
+  ["teal", [50, 140, 140]], ["cream", [230, 220, 190]], ["lavender", [170, 150, 200]],
+  ["burgundy", [100, 25, 45]], ["charcoal", [65, 65, 65]], ["khaki", [170, 160, 120]],
+  ["coral", [220, 100, 80]], ["mustard", [200, 170, 50]], ["rust", [170, 80, 40]],
+];
+
+function closestColorName(r: number, g: number, b: number): string {
+  let best = "unknown", bestDist = Infinity;
+  for (const [name, [cr, cg, cb]] of COLOR_NAMES) {
+    const d = (r - cr) ** 2 + (g - cg) ** 2 + (b - cb) ** 2;
+    if (d < bestDist) { bestDist = d; best = name; }
+  }
+  return best;
+}
+
+function rgbToHex(r: number, g: number, b: number): string {
+  return "#" + [r, g, b].map(c => c.toString(16).padStart(2, "0")).join("");
+}
+
+function extractDominantColors(data: Uint8ClampedArray, pixelCount: number, width: number, height: number) {
+  // ponytail: simple k-means-lite — bucket pixels into 8×8×8 bins, pick top 5
+  const bins = new Map<string, { r: number; g: number; b: number; count: number }>();
+  for (let i = 0; i < pixelCount; i++) {
+    const idx = i * 4;
+    const r = data[idx] >> 5, g = data[idx + 1] >> 5, b = data[idx + 2] >> 5;
+    const key = `${r},${g},${b}`;
+    const existing = bins.get(key);
+    if (existing) { existing.count++; existing.r += data[idx]; existing.g += data[idx + 1]; existing.b += data[idx + 2]; }
+    else bins.set(key, { r: data[idx], g: data[idx + 1], b: data[idx + 2], count: 1 });
+  }
+  const sorted = [...bins.values()].sort((a, b) => b.count - a.count).slice(0, 8);
+  const total = sorted.reduce((s, b) => s + b.count, 0);
+  return sorted.map(b => ({
+    hex: rgbToHex(Math.round(b.r / b.count), Math.round(b.g / b.count), Math.round(b.b / b.count)),
+    percent: Math.round((b.count / total) * 100),
+    region: "full" as const,
+  }));
+}
+
+function extractRegionColors(data: Uint8ClampedArray, width: number, height: number, yStart: number, yEnd: number) {
+  let rSum = 0, gSum = 0, bSum = 0, count = 0;
+  const xStart = Math.floor(width * 0.2), xEnd = Math.floor(width * 0.8);
+  for (let y = Math.floor(height * yStart); y < Math.floor(height * yEnd); y++) {
+    for (let x = xStart; x < xEnd; x++) {
+      const idx = (y * width + x) * 4;
+      rSum += data[idx]; gSum += data[idx + 1]; bSum += data[idx + 2]; count++;
+    }
+  }
+  if (!count) return undefined;
+  const r = Math.round(rSum / count), g = Math.round(gSum / count), b = Math.round(bSum / count);
+  return { hex: rgbToHex(r, g, b), name: closestColorName(r, g, b) };
+}
+
+function computeColorHarmony(dominantColors: { hex: string; percent: number }[]): number {
+  // ponytail: simple harmony — fewer dominant colors = more harmonious
+  if (dominantColors.length <= 2) return 85;
+  if (dominantColors.length <= 3) return 70;
+  if (dominantColors.length <= 5) return 55;
+  return 40;
+}
+
+function computeColorMood(avgR: number, avgG: number, avgB: number, saturation: number): ImageMetrics["colorMood"] {
+  const warmth = (avgR * 0.6 + avgG * 0.3 - avgB * 0.4) / 255;
+  if (saturation > 60) return "high_energy";
+  if (saturation < 20) return "muted";
+  if (warmth > 0.15) return "warm";
+  if (warmth < -0.05) return "cool";
+  return "neutral";
+}
+
+function computeRuleOfThirds(skinPixels: number, pixelCount: number, width: number, height: number, data: Uint8ClampedArray): number {
+  // ponytail: check if skin-tone pixels cluster near rule-of-thirds intersections
+  const thirdW = width / 3, thirdH = height / 3;
+  const zones = new Array(9).fill(0);
+  for (let i = 0; i < pixelCount; i++) {
+    if (!isSkinTone(data[i * 4], data[i * 4 + 1], data[i * 4 + 2])) continue;
+    const px = i % width, py = Math.floor(i / width);
+    const col = Math.min(2, Math.floor(px / thirdW));
+    const row = Math.min(2, Math.floor(py / thirdH));
+    zones[row * 3 + col]++;
+  }
+  const hotspots = [zones[0], zones[2], zones[6], zones[8]]; // corners = thirds intersections
+  const center = zones[4];
+  const hotSum = hotspots.reduce((a, b) => a + b, 0);
+  if (skinPixels === 0) return 50;
+  const hotRatio = hotSum / skinPixels;
+  const centerRatio = center / skinPixels;
+  // Good: subject near intersections, not dead center
+  return Math.round(clamp(50 + hotRatio * 80 - centerRatio * 30, 20, 95));
+}
+
+function detectStyleArchetype(saturation: number, contrast: number, edgeDensity: number, warmth: number, brightness: number): ImageMetrics["styleArchetype"] {
+  if (saturation < 25 && contrast < 40) return "minimal";
+  if (saturation > 55 && contrast > 50) return "bold";
+  if (brightness > 60 && warmth > 50 && saturation < 45) return "classic";
+  if (edgeDensity > 35 && contrast > 45) return "street";
+  if (brightness > 55 && saturation < 30 && contrast > 35) return "formal";
+  return "eclectic";
+}
+
 function getFallbackMetrics(width: number, height: number): ImageMetrics {
   return {
     width,
@@ -287,5 +413,13 @@ function getFallbackMetrics(width: number, height: number): ImageMetrics {
     compositionScore: 55,
     backgroundComplexityEstimate: 50,
     overallImageQualityScore: 55,
+    dominantColors: [{ hex: "#808080", percent: 100, region: "full" }],
+    colorHarmonyScore: 50,
+    colorMood: "neutral",
+    ruleOfThirdsScore: 50,
+    visualWeightBalance: 50,
+    textureComplexity: 40,
+    outfitColorContrast: 40,
+    styleArchetype: "eclectic",
   };
 }

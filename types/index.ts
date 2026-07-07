@@ -108,6 +108,17 @@ export interface ImageMetrics {
   backgroundClutterZone?: "full" | "top" | "bottom" | "sides" | "none";
   subjectContrast?: number;
   warmth?: number;
+  // ponytail: enhanced analysis fields — all optional for backward compat
+  dominantColors?: { hex: string; percent: number; region: "full" | "center" | "edges" }[];
+  upperBodyColor?: { hex: string; name: string };
+  lowerBodyColor?: { hex: string; name: string };
+  colorHarmonyScore?: number;        // 0-100, how harmonious the palette is
+  colorMood?: "warm" | "cool" | "neutral" | "high_energy" | "muted";
+  ruleOfThirdsScore?: number;        // 0-100, how well subject aligns with thirds
+  visualWeightBalance?: number;      // 0-100, left-right symmetry of visual weight
+  textureComplexity?: number;        // 0-100, pattern/texture density
+  outfitColorContrast?: number;      // 0-100, contrast between outfit and background
+  styleArchetype?: "minimal" | "bold" | "classic" | "street" | "formal" | "eclectic";
 }
 
 export interface StatusLeak {
@@ -126,12 +137,14 @@ export interface BudgetAction {
 }
 
 export type Category =
-  | "Clean but Basic"
-  | "Urban Aspirational"
-  | "Premium Potential"
-  | "Strong Visual Signal"
-  | "Overdone / Busy Signal"
-  | "Low-Clarity Presentation";
+  | "Underexposed / Needs Work"
+  | "Rough Draft — Immediate Fixes"
+  | "Decent Start — Polish Needed"
+  | "Solid Casual — Nearly Intentional"
+  | "Intentional Look — Minor Tweaks"
+  | "Premium Signal — Profile Ready"
+  | "Editorial Grade — Very Strong"
+  | "Polished / Styled — Elite Level";
 
 export interface FreeAuraResult {
   auraScore: number;
