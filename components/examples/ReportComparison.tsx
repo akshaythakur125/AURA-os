@@ -14,40 +14,36 @@ export function ReportComparison() {
       >
         <p className="mb-3 text-xs text-gray-400">{SAMPLE_FULL_REPORT.oneLineVerdict}</p>
 
-        {/* Expert Voices */}
-        <div className="mb-3 space-y-2">
+        {/* Expert Voices — conversational */}
+        <div className="mb-3 space-y-3">
           {Object.entries(SAMPLE_FULL_REPORT.expertAnalysis).map(([key, expert]) => (
-            <div key={key} className="rounded-lg bg-purple-500/5 p-2 border border-purple-500/10">
-              <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-purple-300">{expert.title}</div>
-              <p className="mb-1 text-[10px] text-gray-400">{expert.diagnosis}</p>
-              <ul className="space-y-0.5">
-                {expert.actionItems.map((item, i) => (
-                  <li key={i} className="flex items-start gap-1 text-[10px] text-gray-500">
-                    <span className="mt-0.5 text-purple-400">→</span>
-                    <span>{item}</span>
-                  </li>
+            <div key={key} className="rounded-lg bg-purple-500/5 p-2.5 border border-purple-500/10">
+              <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-purple-300">{expert.title}</div>
+              <div className="space-y-2">
+                {expert.lines.map((line, i) => (
+                  <p key={i} className="text-[11px] leading-relaxed text-gray-300">{line}</p>
                 ))}
-              </ul>
+              </div>
             </div>
           ))}
         </div>
 
         {/* Color Season */}
-        <div className="mb-2 rounded-lg bg-amber-500/5 p-2 border border-amber-500/10">
-          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-amber-300">Color Season</div>
-          <p className="text-[10px] text-gray-400">{SAMPLE_FULL_REPORT.colorSeasonAnalysis}</p>
+        <div className="mb-2 rounded-lg bg-amber-500/5 p-2.5 border border-amber-500/10">
+          <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-amber-300">Color Season Analysis</div>
+          <p className="text-[11px] leading-relaxed text-gray-300">{SAMPLE_FULL_REPORT.colorSeasonAnalysis}</p>
         </div>
 
         {/* Grooming */}
-        <div className="mb-2 rounded-lg bg-emerald-500/5 p-2 border border-emerald-500/10">
-          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">Grooming</div>
-          <p className="text-[10px] text-gray-400">{SAMPLE_FULL_REPORT.groomingAdvice}</p>
+        <div className="mb-2 rounded-lg bg-emerald-500/5 p-2.5 border border-emerald-500/10">
+          <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">Grooming</div>
+          <p className="text-[11px] leading-relaxed text-gray-300">{SAMPLE_FULL_REPORT.groomingAdvice}</p>
         </div>
 
         {/* Expression */}
-        <div className="rounded-lg bg-sky-500/5 p-2 border border-sky-500/10">
-          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-sky-300">Expression</div>
-          <p className="text-[10px] text-gray-400">{SAMPLE_FULL_REPORT.expressionCoaching}</p>
+        <div className="rounded-lg bg-sky-500/5 p-2.5 border border-sky-500/10">
+          <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-sky-300">Expression Coaching</div>
+          <p className="text-[11px] leading-relaxed text-gray-300">{SAMPLE_FULL_REPORT.expressionCoaching}</p>
         </div>
       </SampleReportCard>
 
@@ -81,43 +77,42 @@ export function ReportComparison() {
           </div>
         </div>
 
-        {/* Expert Voices */}
-        <div className="mb-3 space-y-2">
+        {/* Expert Voices — conversational */}
+        <div className="mb-3 space-y-3">
           {Object.entries(SAMPLE_DATING_AUDIT.expertAnalysis).map(([key, expert]) => (
-            <div key={key} className="rounded-lg bg-rose-500/5 p-2 border border-rose-500/10">
-              <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-rose-300">{expert.title}</div>
-              <p className="text-[10px] text-gray-400">{"advice" in expert ? expert.advice : "diagnosis" in expert ? (expert as { diagnosis: string }).diagnosis : ""}</p>
-              {"photoOrder" in expert && (
-                <ul className="mt-1 space-y-0.5">
-                  {(expert as { photoOrder: string[] }).photoOrder.map((item: string, i: number) => (
-                    <li key={i} className="flex items-start gap-1 text-[10px] text-gray-500">
-                      <span className="mt-0.5 text-rose-400">→</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+            <div key={key} className="rounded-lg bg-rose-500/5 p-2.5 border border-rose-500/10">
+              <div className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-rose-300">{expert.title}</div>
+              <div className="space-y-2">
+                {"lines" in expert ? (expert as { lines: string[] }).lines.map((line: string, i: number) => (
+                  <p key={i} className="text-[11px] leading-relaxed text-gray-300">{line}</p>
+                )) : null}
+              </div>
               {"rewriteExamples" in expert && (
-                <ul className="mt-1 space-y-1">
+                <div className="mt-2 space-y-1">
                   {(expert as { rewriteExamples: Array<{ original: string; rewrite: string }> }).rewriteExamples.map((ex, i) => (
-                    <li key={i} className="text-[10px]">
+                    <div key={i} className="text-[10px]">
                       <span className="text-red-400 line-through">{ex.original}</span>
                       <span className="text-gray-500"> → </span>
                       <span className="text-emerald-400">{ex.rewrite}</span>
-                    </li>
+                    </div>
                   ))}
-                </ul>
+                </div>
               )}
             </div>
           ))}
         </div>
 
-        {/* Cliche Flags */}
-        <div className="rounded-lg bg-red-500/5 p-2 border border-red-500/10">
-          <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-red-300">Clichés Detected</div>
-          <div className="flex flex-wrap gap-1">
-            {SAMPLE_DATING_AUDIT.expertAnalysis.copywriter.clicheFlags.map((c) => (
-              <span key={c} className="rounded bg-red-500/10 px-1.5 py-0.5 text-[10px] text-red-300 line-through">{c}</span>
+        {/* Photo Analysis */}
+        <div className="rounded-lg bg-sky-500/5 p-2.5 border border-sky-500/10">
+          <div className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-sky-300">Photo-by-Photo Fix</div>
+          <div className="space-y-1.5">
+            {SAMPLE_DATING_AUDIT.photoAnalysis.map((p) => (
+              <div key={p.photo} className="text-[10px]">
+                <span className="font-medium text-sky-300">Photo {p.photo}:</span>
+                <span className="text-red-300"> {p.issue}</span>
+                <span className="text-gray-500"> → </span>
+                <span className="text-emerald-300">{p.fix}</span>
+              </div>
             ))}
           </div>
         </div>
@@ -153,17 +148,20 @@ export function ReportComparison() {
           </div>
         </div>
 
-        {/* Weekly Breakdown */}
+        {/* Weekly Breakdown with expert voice */}
         <div className="mb-3 space-y-2">
           {SAMPLE_GLOWUP_PLAN.weeklyBreakdown.map((week) => (
-            <div key={week.week} className="rounded-lg bg-amber-500/5 p-2 border border-amber-500/10">
+            <div key={week.week} className="rounded-lg bg-amber-500/5 p-2.5 border border-amber-500/10">
               <div className="mb-1 flex items-center justify-between">
                 <span className="text-[10px] font-semibold text-amber-300">Week {week.week}</span>
                 <span className="text-[10px] text-gray-500">{week.dailyMissions.length} days</span>
               </div>
-              <div className="text-[10px] font-medium text-white">{week.focus}</div>
-              <p className="mt-0.5 text-[10px] text-gray-500">{week.whyThisWeek}</p>
-              <div className="mt-1 space-y-0.5">
+              <div className="text-[11px] font-medium text-white">{week.focus}</div>
+              <p className="mt-1 text-[11px] leading-relaxed text-gray-300">{week.whyThisWeek}</p>
+              {week.expertVoice && (
+                <p className="mt-1.5 text-[10px] leading-relaxed text-gray-400 italic">{week.expertVoice}</p>
+              )}
+              <div className="mt-2 space-y-0.5">
                 {week.dailyMissions.slice(0, 3).map((m) => (
                   <div key={m.day} className="flex items-start gap-1 text-[10px] text-gray-500">
                     <span className="mt-0.5 text-amber-400">D{m.day}</span>
@@ -179,9 +177,10 @@ export function ReportComparison() {
         </div>
 
         {/* Budget */}
-        <div className="rounded-lg bg-emerald-500/5 p-2 border border-emerald-500/10">
+        <div className="rounded-lg bg-emerald-500/5 p-2.5 border border-emerald-500/10">
           <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-300">Budget</div>
           <div className="text-[10px] font-medium text-emerald-400">{SAMPLE_GLOWUP_PLAN.budgetRoadmap.total}</div>
+          <p className="mt-1 text-[10px] leading-relaxed text-gray-400">{SAMPLE_GLOWUP_PLAN.expectedOutcome}</p>
         </div>
       </SampleReportCard>
     </div>
