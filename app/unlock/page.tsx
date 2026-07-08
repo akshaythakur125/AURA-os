@@ -26,7 +26,7 @@ const PRODUCT_INFO: Record<ProductType, { name: string; price: number; desc: str
   quick_fix: { name: "Fast Fix", price: 25, desc: "Your biggest status leak and the fastest fix path." },
   aura_report: { name: "Full Read", price: 50, desc: "Deep visual analysis with upgrade roadmap." },
   dating_audit: { name: "Dating/Profile Audit", price: 299, desc: "Profile presentation score, bio feedback, and photo order strategy." },
-  glowup_plan: { name: "30-Day Reset", price: 499, desc: "Structured 30-day roadmap with daily missions and budget roadmap." },
+  glowup_plan: { name: "30-Day Reset", price: 300, desc: "Structured 30-day roadmap with daily missions and budget roadmap." },
 };
 
 export default function UnlockPage() {
@@ -306,7 +306,7 @@ function UnlockContent() {
             : product === "aura_report"
             ? { product: "dating_audit" as const, name: "Dating/Profile Audit", price: 299, desc: "Bio feedback, photo order strategy, profile score." }
             : product === "dating_audit"
-            ? { product: "glowup_plan" as const, name: "30-Day Reset", price: 499, desc: "Structured daily missions + budget roadmap." }
+            ? { product: "glowup_plan" as const, name: "30-Day Reset", price: 300, desc: "Structured daily missions + budget roadmap." }
             : null;
           if (!nextTier) return null;
           return (
