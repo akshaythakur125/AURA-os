@@ -1900,7 +1900,7 @@ const BAGS: CommerceProduct[] = [
   {
     id: "crossbody_bag",
     title: "Minimal Crossbody Bag",
-    category: "wallet",
+    category: "bag",
     styleDirections: ["street_smart", "urban_aspirational", "college_casual"],
     auraLeakTags: ["over_flex", "outfit_inconsistency"],
     goalTags: ["casual", "everyday", "social", "college"],
@@ -1924,7 +1924,7 @@ const BAGS: CommerceProduct[] = [
   {
     id: "laptop_backpack",
     title: "Clean Laptop Backpack",
-    category: "wallet",
+    category: "bag",
     styleDirections: ["clean_basic", "college_casual", "corporate_sharp"],
     auraLeakTags: ["too_plain", "outfit_inconsistency"],
     goalTags: ["college", "office", "everyday"],
@@ -2180,7 +2180,7 @@ const BASICS: CommerceProduct[] = [
   {
     id: "ankle_socks",
     title: "No-Show Ankle Socks",
-    category: "sneakers",
+    category: "socks",
     styleDirections: ["clean_basic", "dating_warm", "college_casual"],
     auraLeakTags: ["outfit_inconsistency"],
     goalTags: ["casual", "everyday", "dating"],
@@ -2204,7 +2204,7 @@ const BASICS: CommerceProduct[] = [
   {
     id: "crew_socks",
     title: "Crew Socks (Visible Style)",
-    category: "sneakers",
+    category: "socks",
     styleDirections: ["street_smart", "college_casual", "creator_bold"],
     auraLeakTags: [],
     goalTags: ["casual", "social", "college"],

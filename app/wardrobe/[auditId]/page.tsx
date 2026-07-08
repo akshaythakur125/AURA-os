@@ -10,6 +10,7 @@ import { getAuditById } from "@/lib/storage/auditStore";
 import { buildAuraCommercePlan } from "@/lib/wardrobe/auraCommerceEngine";
 import { formatPrice } from "@/lib/commerce/dealScoring";
 import { trackStoreClick } from "@/lib/commerce/commerceTracking";
+import { getClickUrl } from "@/lib/commerce/affiliateLinks";
 import type { AuraCommercePlan, StoreKey } from "@/types/commerce";
 
 export default function AuditWardrobePage({ params }: { params: Promise<{ auditId: string }> }) {
@@ -115,11 +116,11 @@ export default function AuditWardrobePage({ params }: { params: Promise<{ auditI
               </div>
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
-              <Button size="sm" onClick={() => handleStoreClick(plan.bestSingleUpgrade!.cheapestOffer.url, plan.bestSingleUpgrade!.cheapestOffer.storeKey, plan.bestSingleUpgrade!.product.id, plan.bestSingleUpgrade!.cheapestOffer.id, plan.bestSingleUpgrade!.cheapestOffer.price, plan.bestSingleUpgrade!.cheapestOffer.isAffiliate)}>
+              <Button size="sm" onClick={() => handleStoreClick(getClickUrl(plan.bestSingleUpgrade!.cheapestOffer), plan.bestSingleUpgrade!.cheapestOffer.storeKey, plan.bestSingleUpgrade!.product.id, plan.bestSingleUpgrade!.cheapestOffer.id, plan.bestSingleUpgrade!.cheapestOffer.price, plan.bestSingleUpgrade!.cheapestOffer.isAffiliate)}>
                 View on {plan.bestSingleUpgrade.cheapestOffer.storeName}
               </Button>
               {plan.bestSingleUpgrade.bestValueOffer.storeKey !== plan.bestSingleUpgrade.cheapestOffer.storeKey && (
-                <Button size="sm" variant="outline" onClick={() => handleStoreClick(plan.bestSingleUpgrade!.bestValueOffer.url, plan.bestSingleUpgrade!.bestValueOffer.storeKey, plan.bestSingleUpgrade!.product.id, plan.bestSingleUpgrade!.bestValueOffer.id, plan.bestSingleUpgrade!.bestValueOffer.price, plan.bestSingleUpgrade!.bestValueOffer.isAffiliate)}>
+                <Button size="sm" variant="outline" onClick={() => handleStoreClick(getClickUrl(plan.bestSingleUpgrade!.bestValueOffer), plan.bestSingleUpgrade!.bestValueOffer.storeKey, plan.bestSingleUpgrade!.product.id, plan.bestSingleUpgrade!.bestValueOffer.id, plan.bestSingleUpgrade!.bestValueOffer.price, plan.bestSingleUpgrade!.bestValueOffer.isAffiliate)}>
                   Best value: {plan.bestSingleUpgrade.bestValueOffer.storeName} (₹{plan.bestSingleUpgrade.bestValueOffer.price})
                 </Button>
               )}
@@ -148,11 +149,11 @@ export default function AuditWardrobePage({ params }: { params: Promise<{ auditI
                 </div>
               </div>
               <div className="mt-2 flex flex-wrap gap-2">
-                <Button size="sm" onClick={() => handleStoreClick(rec.cheapestOffer.url, rec.cheapestOffer.storeKey, rec.product.id, rec.cheapestOffer.id, rec.cheapestOffer.price, rec.cheapestOffer.isAffiliate)}>
-                  {rec.cheapestOffer.url === "#" ? "Link coming soon" : `View at ${rec.cheapestOffer.price}`}
+                <Button size="sm" onClick={() => handleStoreClick(getClickUrl(rec.cheapestOffer), rec.cheapestOffer.storeKey, rec.product.id, rec.cheapestOffer.id, rec.cheapestOffer.price, rec.cheapestOffer.isAffiliate)}>
+                  View at {formatPrice(rec.cheapestOffer.price)}
                 </Button>
                 {rec.bestValueOffer.storeKey !== rec.cheapestOffer.storeKey && (
-                  <Button size="sm" variant="ghost" onClick={() => handleStoreClick(rec.bestValueOffer.url, rec.bestValueOffer.storeKey, rec.product.id, rec.bestValueOffer.id, rec.bestValueOffer.price, rec.bestValueOffer.isAffiliate)}>
+                  <Button size="sm" variant="ghost" onClick={() => handleStoreClick(getClickUrl(rec.bestValueOffer), rec.bestValueOffer.storeKey, rec.product.id, rec.bestValueOffer.id, rec.bestValueOffer.price, rec.bestValueOffer.isAffiliate)}>
                     Also at {rec.bestValueOffer.storeName}: {formatPrice(rec.bestValueOffer.price)}
                   </Button>
                 )}

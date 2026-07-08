@@ -51,13 +51,16 @@ const CATEGORY_GRADIENTS: Record<WardrobeCategory, string> = {
   kurta: "from-orange-400/20 via-red-500/10 to-transparent",
   background_item: "from-teal-400/20 via-cyan-500/10 to-transparent",
   photo_accessory: "from-sky-300/20 via-blue-400/10 to-transparent",
+  bag: "from-indigo-400/20 via-purple-500/10 to-transparent",
+  socks: "from-pink-300/20 via-rose-400/10 to-transparent",
+  cap: "from-lime-400/20 via-green-500/10 to-transparent",
 };
 const CATEGORY_EMOJI: Record<WardrobeCategory, string> = {
   tshirt: "👕", shirt: "👔", jacket: "🧥", hoodie: "🏋️", overshirt: "👕",
   jeans: "👖", trousers: "👖", chinos: "👖", sneakers: "👟", formal_shoes: "👞",
   watch: "⌚", sunglasses: "🕶️", belt: "🔗", wallet: "👛", accessory: "💍",
   jewellery: "💎", grooming: "💈", perfume: "🧴", kurta: "🇮🇳",
-  background_item: "🏠", photo_accessory: "📸",
+  background_item: "🏠", photo_accessory: "📸", bag: "🎒", socks: "🧦", cap: "🧢",
 };
 const CATEGORY_LABELS: Record<WardrobeCategory, string> = {
   tshirt: "T-Shirts",
@@ -81,6 +84,9 @@ const CATEGORY_LABELS: Record<WardrobeCategory, string> = {
   jewellery: "Jewellery",
   wallet: "Wallets",
   accessory: "Accessories",
+  bag: "Bags",
+  socks: "Socks",
+  cap: "Caps",
 };
 
 const BUDGET_OPTIONS = [

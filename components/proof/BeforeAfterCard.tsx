@@ -5,12 +5,25 @@ import { trackEvent } from "@/lib/storage/analyticsStore";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { PhotoIllustration } from "./PhotoIllustration";
 import type { ProofExample } from "@/types/proof";
 
 interface BeforeAfterCardProps {
   example: ProofExample;
   compact?: boolean;
   onCtaClick?: () => void;
+}
+
+function getScenarioFromExample(id: string): "lighting" | "background" | "outfit" | "framing" | "profile" | "consistency" | "glowup" | "waste" {
+  if (id.includes("lighting")) return "lighting";
+  if (id.includes("background")) return "background";
+  if (id.includes("crop") || id.includes("framing")) return "framing";
+  if (id.includes("premium") || id.includes("minimal")) return "outfit";
+  if (id.includes("dating") || id.includes("profile")) return "profile";
+  if (id.includes("instagram") || id.includes("consistency")) return "consistency";
+  if (id.includes("glowup") || id.includes("30")) return "glowup";
+  if (id.includes("waste") || id.includes("avoid")) return "waste";
+  return "lighting";
 }
 
 export function BeforeAfterCard({ example, compact, onCtaClick }: BeforeAfterCardProps) {
@@ -34,15 +47,8 @@ export function BeforeAfterCard({ example, compact, onCtaClick }: BeforeAfterCar
             <Badge variant="danger">Before</Badge>
             <span className="text-lg font-bold text-red-400">{example.beforeScore}</span>
           </div>
-          <div className="mb-2 h-20 overflow-hidden rounded-lg bg-red-950/40">
-            <svg className="h-full w-full opacity-40" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="100" height="80" fill="#1a1a2e" />
-              <circle cx="50" cy="35" r="15" fill="#2a1a1a" opacity="0.6" />
-              <rect x="10" y="55" width="30" height="20" rx="2" fill="#2a1a1a" opacity="0.4" />
-              <rect x="60" y="50" width="30" height="25" rx="2" fill="#2a1a1a" opacity="0.3" />
-              <line x1="20" y1="10" x2="80" y2="70" stroke="#3a1a1a" strokeWidth="0.5" opacity="0.3" />
-              <line x1="10" y1="20" x2="90" y2="60" stroke="#3a1a1a" strokeWidth="0.5" opacity="0.2" />
-            </svg>
+          <div className="mb-2 h-28 overflow-hidden rounded-lg bg-red-950/40">
+            <PhotoIllustration variant="before" scenario={getScenarioFromExample(example.id)} />
           </div>
           <div className="text-xs text-red-300">{example.beforeVisualDescription}</div>
         </div>
@@ -52,16 +58,8 @@ export function BeforeAfterCard({ example, compact, onCtaClick }: BeforeAfterCar
             <Badge variant="success">After</Badge>
             <span className="text-lg font-bold text-emerald-400">{example.afterScore}</span>
           </div>
-          <div className="mb-2 h-20 overflow-hidden rounded-lg bg-emerald-950/30">
-            <svg className="h-full w-full opacity-50" viewBox="0 0 100 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="100" height="80" fill="#0a1a0a" />
-              <circle cx="50" cy="35" r="18" fill="#1a3a1a" opacity="0.7" />
-              <rect x="15" y="58" width="20" height="18" rx="2" fill="#1a3a1a" opacity="0.5" />
-              <rect x="40" y="3" width="20" height="8" rx="2" fill="#1a3a1a" opacity="0.3" />
-              <circle cx="38" cy="22" r="3" fill="#0a2a0a" opacity="0.4" />
-              <circle cx="62" cy="22" r="3" fill="#0a2a0a" opacity="0.4" />
-              <path d="M38 28 Q50 32 62 28" stroke="#1a4a1a" strokeWidth="0.5" fill="none" opacity="0.4" />
-            </svg>
+          <div className="mb-2 h-28 overflow-hidden rounded-lg bg-emerald-950/30">
+            <PhotoIllustration variant="after" scenario={getScenarioFromExample(example.id)} />
           </div>
           <div className="text-xs text-emerald-300">{example.afterVisualDescription}</div>
         </div>
