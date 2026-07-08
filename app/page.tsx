@@ -388,6 +388,7 @@ export default function HomePage() {
                     <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-emerald-400">{entry.leakLabel}</span>
                     <span className="font-medium text-emerald-400">+{entry.pointsGained} pts</span>
                   </div>
+                  <p className="mt-2 text-[10px] leading-relaxed text-gray-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100">{entry.expertDetail}</p>
                 </div>
               ));
             })()}
