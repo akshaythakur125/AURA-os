@@ -14,6 +14,8 @@ import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
 import { RecommendationSection } from "@/components/products/RecommendationSection";
+import { PersonalizedShop } from "@/components/shop/PersonalizedShop";
+import { getPersonalizedLooks } from "@/lib/shop/catalog";
 import type { Audit, FreeAuraResult, FullAuraReportContent } from "@/types/audit";
 import type { PersonalizationResult, SignalMismatch, GoalStrategy } from "@/types/personalization";
 
@@ -585,6 +587,21 @@ export default function AuditDetailPage() {
                 <RecommendationSection audit={audit!} isPremium />
               </div>
 
+              {/* Personalized shopping looks */}
+              {personalization && displayResult && (
+                <PersonalizedShop
+                  looks={getPersonalizedLooks({
+                    styleArchetypes: [personalization.archetype === "Corporate Sharp" ? "professional" : personalization.archetype === "Creator Vibe" ? "creator" : personalization.archetype === "College Casual" ? "college" : personalization.archetype === "Premium Minimalist" ? "premium" : personalization.archetype === "Urban Aspirational" ? "confident" : personalization.archetype === "Loud Flex" ? "bold" : personalization.archetype === "Soft Luxury" ? "understated" : "clean"],
+                    statusLeakTags: displayResult.statusLeaks.map((l) => l.category as any).filter(Boolean),
+                    goalTags: audit!.goal ? [audit!.goal as any] : undefined,
+                    budgetMax: audit!.budgetRange as any,
+                  })}
+                  userScore={displayResult.auraScore}
+                  archetype={personalization.archetype}
+                  leakTags={displayResult.statusLeaks.map((l) => l.category)}
+                />
+              )}
+
               {/* Disclaimers */}
               <div className="space-y-2 text-center text-xs text-gray-600">
                 <p>AuraCheck analyzes presentation signals, not human worth.</p>
@@ -914,6 +931,21 @@ export default function AuditDetailPage() {
               <div className="mb-6">
                 <RecommendationSection audit={audit!} />
               </div>
+
+              {/* Personalized shopping looks (free result) */}
+              {personalization && displayResult && (
+                <PersonalizedShop
+                  looks={getPersonalizedLooks({
+                    styleArchetypes: [personalization.archetype === "Corporate Sharp" ? "professional" : personalization.archetype === "Creator Vibe" ? "creator" : personalization.archetype === "College Casual" ? "college" : personalization.archetype === "Premium Minimalist" ? "premium" : personalization.archetype === "Urban Aspirational" ? "confident" : personalization.archetype === "Loud Flex" ? "bold" : personalization.archetype === "Soft Luxury" ? "understated" : "clean"],
+                    statusLeakTags: displayResult.statusLeaks.map((l) => l.category as any).filter(Boolean),
+                    goalTags: audit!.goal ? [audit!.goal as any] : undefined,
+                    budgetMax: audit!.budgetRange as any,
+                  })}
+                  userScore={displayResult.auraScore}
+                  archetype={personalization.archetype}
+                  leakTags={displayResult.statusLeaks.map((l) => l.category)}
+                />
+              )}
 
               <div className="space-y-2 text-center text-xs text-gray-600">
                 <p>
