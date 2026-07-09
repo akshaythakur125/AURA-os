@@ -37,7 +37,7 @@ export function ProductCard({ product, recommendation, auditId, source = "audit"
   }
 
   return (
-    <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 transition-colors hover:border-white/10">
+    <div className="rounded-xl border border-white/[0.04] bg-white/[0.02] p-4 transition-colors hover:border-white/10">
       {/* Category + Sponsored */}
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium ${colorMap[color] || colorMap.purple}`}>
@@ -89,7 +89,7 @@ export function ProductCard({ product, recommendation, auditId, source = "audit"
           <Button size="sm" className="w-full">View Upgrade</Button>
         </a>
       ) : (
-        <span className="block rounded-lg border border-white/5 px-3 py-2 text-center text-xs text-gray-500">
+        <span className="block rounded-lg border border-white/[0.04] px-3 py-2 text-center text-xs text-gray-500">
           Coming soon
         </span>
       )}

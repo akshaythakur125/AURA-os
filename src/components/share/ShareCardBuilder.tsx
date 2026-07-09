@@ -143,7 +143,7 @@ export function ShareCardBuilder({ audit, type }: Props) {
         ].map((t) => (
           <label
             key={t.key}
-            className="flex cursor-pointer items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2"
+            className="flex cursor-pointer items-center gap-3 rounded-lg border border-white/[0.04] bg-white/[0.03] px-3 py-2"
           >
             <input
               type="checkbox"
@@ -157,7 +157,7 @@ export function ShareCardBuilder({ audit, type }: Props) {
       </div>
 
       {/* Preview */}
-      <div className="mb-4 overflow-hidden rounded-xl border border-white/5 bg-black">
+      <div className="mb-4 overflow-hidden rounded-xl border border-white/[0.04] bg-black">
         <canvas
           ref={previewRef}
           width={1080}

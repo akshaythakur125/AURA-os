@@ -129,21 +129,21 @@ export default function DataPage() {
       <Card className="mb-8">
         <h3 className="mb-4 text-sm font-semibold text-white">Storage Health</h3>
         <div className="grid gap-4 sm:grid-cols-4">
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">localStorage Available</div>
             <div className="mt-1 text-sm font-medium text-white">{storageAvail.available ? "Yes" : "No"}</div>
             {storageAvail.error && <p className="mt-1 text-[10px] text-amber-400">{storageAvail.error}</p>}
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Estimated Usage</div>
             <div className="mt-1 text-sm font-medium text-white">{formatStorageBytes(storageUsage.totalBytes)}</div>
             {lowStorage && <p className="mt-1 text-[10px] text-amber-400">Storage is running low</p>}
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Total Items</div>
             <div className="mt-1 text-sm font-medium text-white">{totalItems}</div>
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Private Mode</div>
             <div className="mt-1 text-sm font-medium text-white">{storageAvail.isPrivateMode === null ? "Unknown" : storageAvail.isPrivateMode ? "Likely" : "No"}</div>
           </div>
@@ -159,7 +159,7 @@ export default function DataPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-white/5 text-gray-500">
+              <tr className="border-b border-white/[0.04] text-gray-500">
                 <th className="pb-2 pr-4 font-medium">Data Type</th>
                 <th className="pb-2 pr-4 font-medium">Count</th>
                 <th className="pb-2 pr-4 font-medium">Estimated Size</th>
@@ -169,7 +169,7 @@ export default function DataPage() {
             </thead>
             <tbody>
               {dataTypes.map((dt) => (
-                <tr key={dt.key} className="border-b border-white/5 text-gray-300">
+                <tr key={dt.key} className="border-b border-white/[0.04] text-gray-300">
                   <td className="py-2 pr-4 text-white">{dt.label}</td>
                   <td className="py-2 pr-4">{dt.count}</td>
                   <td className="py-2 pr-4 text-gray-500">{formatStorageBytes(dt.size)}</td>
@@ -258,7 +258,7 @@ export default function DataPage() {
         </div>
       </Card>
 
-      <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center text-xs text-gray-600">
+      <div className="rounded-xl border border-white/[0.04] bg-white/[0.02] p-4 text-center text-xs text-gray-600">
         AuraCheck MVP stores data locally in this browser. Nothing is uploaded to an external server.
         Clearing browser data may remove your audits and reports.
       </div>

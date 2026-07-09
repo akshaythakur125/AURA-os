@@ -57,7 +57,7 @@ export function ComparisonTable() {
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-white/5">
+            <tr className="border-b border-white/[0.04]">
               <th className="pb-3 pr-4 font-medium text-gray-500">Feature</th>
               {HEADERS.map((h) => (
                 <th key={h.label} className={`pb-3 px-2 text-center font-medium ${h.className || "text-gray-500"}`}>
@@ -68,7 +68,7 @@ export function ComparisonTable() {
           </thead>
           <tbody>
             {ROWS.map((row) => (
-              <tr key={row.label} className="border-b border-white/5">
+              <tr key={row.label} className="border-b border-white/[0.04]">
                 <td className="py-3 pr-4 text-gray-300">{row.label}</td>
                 <td className="py-3 px-2 text-center"><Cell value={row.free} /></td>
                 <td className="py-3 px-2 text-center"><Cell value={row.auraReport} /></td>

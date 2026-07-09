@@ -42,7 +42,7 @@ export function RecommendationSection({ audit, isPremium }: Props) {
         {products.length > 4 && (
           <button
             onClick={() => setShowAll(!showAll)}
-            className="mt-4 w-full rounded-lg border border-white/5 px-4 py-2 text-xs text-gray-400 transition-colors hover:border-white/10"
+            className="mt-4 w-full rounded-lg border border-white/[0.04] px-4 py-2 text-xs text-gray-400 transition-colors hover:border-white/10"
           >
             {showAll ? "Show Less" : `Show All ${products.length} Recommendations`}
           </button>

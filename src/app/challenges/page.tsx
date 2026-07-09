@@ -53,7 +53,7 @@ export default function ChallengesPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <SectionHeading title="Active Challenges" subtitle="Choose a challenge that matches your goal." />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -83,7 +83,7 @@ export default function ChallengesPage() {
       </section>
 
       {allEntries.length > 0 && (
-        <section className="border-t border-white/5 py-20">
+        <section className="border-t border-white/[0.04] py-24">
           <Container>
             <SectionHeading title="All Challenge Entries" subtitle="Local leaderboard across all challenges." />
             <div className="mx-auto max-w-2xl">
@@ -93,9 +93,9 @@ export default function ChallengesPage() {
         </section>
       )}
 
-      <section className="border-t border-white/5 py-12">
+      <section className="border-t border-white/[0.04] py-12">
         <Container>
-          <div className="mx-auto max-w-2xl rounded-xl border border-white/5 bg-white/[0.02] p-6 text-center text-xs text-gray-500">
+          <div className="mx-auto max-w-2xl rounded-xl border border-white/[0.04] bg-white/[0.02] p-6 text-center text-xs text-gray-500">
             <p>Challenges are for self-improvement and entertainment. No public posting happens automatically.</p>
             <p className="mt-2">Local MVP: challenge entries are stored in this browser only.</p>
           </div>

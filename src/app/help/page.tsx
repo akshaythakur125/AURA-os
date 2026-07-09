@@ -76,7 +76,7 @@ export default function HelpPage() {
 
         <div className="space-y-4">
           {faqs.map((faq) => (
-            <details key={faq.q} className="group rounded-xl border border-white/5 bg-white/[0.02]">
+            <details key={faq.q} className="group rounded-xl border border-white/[0.04] bg-white/[0.02]">
               <summary className="flex cursor-pointer items-center gap-2 px-5 py-4 text-sm font-medium text-white hover:bg-white/[0.03]">
                 <svg className="h-4 w-4 shrink-0 text-purple-400 transition-transform group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

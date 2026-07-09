@@ -43,7 +43,7 @@ export function LocalLeaderboard({
         {sorted.map((entry, idx) => (
           <div
             key={entry.id}
-            className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2"
+            className="flex items-center justify-between rounded-lg border border-white/[0.04] bg-white/[0.03] px-3 py-2"
           >
             <div className="flex items-center gap-3">
               <span

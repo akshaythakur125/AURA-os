@@ -50,7 +50,7 @@ export default function DatingAuditPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
@@ -87,7 +87,7 @@ export default function DatingAuditPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <SectionHeading title="What you get for ₹299" />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -108,7 +108,7 @@ export default function DatingAuditPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
@@ -145,7 +145,7 @@ export default function DatingAuditPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <SectionHeading title="Free vs Paid" />
           <div className="mx-auto max-w-4xl">
@@ -154,9 +154,9 @@ export default function DatingAuditPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-12">
+      <section className="border-t border-white/[0.04] py-12">
         <Container>
-          <div className="mx-auto max-w-2xl rounded-xl border border-white/5 bg-white/[0.02] p-6 text-center text-xs text-gray-500">
+          <div className="mx-auto max-w-2xl rounded-xl border border-white/[0.04] bg-white/[0.02] p-6 text-center text-xs text-gray-500">
             <p>AuraCheck analyzes presentation signals, not attractiveness. No guaranteed matches or dating outcomes.</p>
             <p className="mt-2">Manual UPI unlock flow — payment is not automatically verified. Contact support if you have issues.</p>
           </div>

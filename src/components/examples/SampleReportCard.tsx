@@ -85,7 +85,7 @@ export function SampleReportCard({ report }: { report: SampleReport }) {
         </ul>
       </div>
 
-      <div className="mt-auto flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.03] px-3 py-2">
+      <div className="mt-auto flex items-center justify-between rounded-lg border border-white/[0.04] bg-white/[0.03] px-3 py-2">
         <span className="text-xs text-gray-500">
           Budget range:{" "}
           <span className="text-amber-400">{report.budgetRange}</span>

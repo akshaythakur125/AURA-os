@@ -106,11 +106,11 @@ export default function ChallengeDetailPage() {
           <p className="mb-6 text-sm leading-relaxed text-gray-400">{challenge.description}</p>
 
           <div className="mb-6 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+            <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
               <div className="text-xs text-gray-500">Requirement</div>
               <p className="mt-1 text-sm text-gray-300">{challenge.entryRequirement}</p>
             </div>
-            <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+            <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
               <div className="text-xs text-gray-500">Reward</div>
               <p className="mt-1 text-sm text-amber-400">{challenge.rewardText}</p>
             </div>
@@ -164,7 +164,7 @@ export default function ChallengeDetailPage() {
 
         <LocalLeaderboard entries={entries} />
 
-        <div className="mt-8 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center text-xs text-gray-600">
+        <div className="mt-8 rounded-xl border border-white/[0.04] bg-white/[0.02] p-4 text-center text-xs text-gray-600">
           <p>Local MVP: challenge entries are stored in this browser only.</p>
           <p className="mt-1">AuraCheck does not judge human worth. Challenges are for self-improvement and entertainment.</p>
         </div>

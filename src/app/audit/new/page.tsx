@@ -651,7 +651,7 @@ export default function NewAuditPage() {
               </div>
             ) : (
               <div className="relative">
-                <div className="overflow-hidden rounded-2xl border border-white/5">
+                <div className="overflow-hidden rounded-2xl border border-white/[0.04]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={previewUrl}
@@ -740,7 +740,7 @@ export default function NewAuditPage() {
             )}
 
             <div className="space-y-3">
-              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-4">
+              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/[0.04] bg-white/[0.02] p-4">
                 <input
                   type="checkbox"
                   checked={consent}
@@ -751,7 +751,7 @@ export default function NewAuditPage() {
                   I confirm I own this image or have permission to analyze it.
                 </span>
               </label>
-              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-4">
+              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/[0.04] bg-white/[0.02] p-4">
                 <input
                   type="checkbox"
                   checked={consent}
@@ -762,7 +762,7 @@ export default function NewAuditPage() {
                   I am using AuraCheck for self-improvement and presentation guidance.
                 </span>
               </label>
-              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/5 bg-white/[0.02] p-4">
+              <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/[0.04] bg-white/[0.02] p-4">
                 <input
                   type="checkbox"
                   checked={consent}

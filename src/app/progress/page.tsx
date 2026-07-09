@@ -228,7 +228,7 @@ export default function ProgressPage() {
         </Card>
       )}
 
-      <div className="mt-8 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center text-xs text-gray-600">
+      <div className="mt-8 rounded-xl border border-white/[0.04] bg-white/[0.02] p-4 text-center text-xs text-gray-600">
         <p>AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
       </div>
       </Container>

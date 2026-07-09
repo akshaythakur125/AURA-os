@@ -82,7 +82,7 @@ export default function InstallPage() {
           </ol>
         </Card>
 
-        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center text-xs text-gray-600">
+        <div className="rounded-xl border border-white/[0.04] bg-white/[0.02] p-4 text-center text-xs text-gray-600">
           <p>AuraCheck is a progressive web app. Once installed, it works like a native app on your device.</p>
           <p className="mt-1">Your data remains local in your browser. No uploads, no servers.</p>
         </div>

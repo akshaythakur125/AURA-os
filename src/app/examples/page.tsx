@@ -32,7 +32,7 @@ export default function ExamplesPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <SectionHeading title="Sample reports" subtitle="Three products, three different outputs. All generated locally." />
           <div className="grid gap-8 md:grid-cols-3">
@@ -43,7 +43,7 @@ export default function ExamplesPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <SectionHeading title="Free vs Paid comparison" subtitle="See exactly what changes when you unlock." />
           <div className="mx-auto max-w-4xl">
@@ -52,7 +52,7 @@ export default function ExamplesPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <SectionHeading title="What a full report looks like" subtitle="Expanded insights from a sample Full Aura Report." />
           <div className="grid gap-6 lg:grid-cols-2">
@@ -84,7 +84,7 @@ export default function ExamplesPage() {
                 <p className="mb-3 text-xs text-gray-400">
                   You invest in visible status items (phone, watch, shoes) but often miss the framing — background, lighting, and fit. Your upgrade path is about polishing the details around your assets.
                 </p>
-                <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+                <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
                   <div className="text-xs text-gray-500">Biggest signal mismatch</div>
                   <div className="text-sm text-gray-300">Premium watch + cluttered background</div>
                   <div className="mt-2 text-xs text-gray-500">Fix: Crop tight or shoot against a clean wall</div>
@@ -96,7 +96,7 @@ export default function ExamplesPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <Card className="mx-auto max-w-lg text-center">
             <h3 className="mb-2 text-lg font-semibold text-white">Ready to see your own report?</h3>
@@ -111,9 +111,9 @@ export default function ExamplesPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-12">
+      <section className="border-t border-white/[0.04] py-12">
         <Container>
-          <div className="mx-auto max-w-2xl rounded-xl border border-white/5 bg-white/[0.02] p-6 text-center text-xs text-gray-500">
+          <div className="mx-auto max-w-2xl rounded-xl border border-white/[0.04] bg-white/[0.02] p-6 text-center text-xs text-gray-500">
             <p>AuraCheck analyzes presentation, not human worth. Scores are guidance, not objective truth.</p>
             <p className="mt-2">No external AI service is used in this MVP. No data is uploaded to any server.</p>
           </div>

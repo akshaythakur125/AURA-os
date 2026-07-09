@@ -75,11 +75,11 @@ function ArchetypeCard({ personalization }: { personalization: PersonalizationRe
         <p className="mt-2 text-xs text-gray-300">{personalization.archetypeExplanation}</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+        <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
           <div className="text-xs text-purple-400">Priority</div>
           <p className="mt-1 text-xs text-gray-300">{personalization.userPriority}</p>
         </div>
-        <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+        <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
           <div className="text-xs text-purple-400">Focus Areas</div>
           <p className="mt-1 text-xs text-gray-300">{personalization.recommendedFocus}</p>
         </div>
@@ -95,7 +95,7 @@ function SignalMismatchCard({ mismatches }: { mismatches: SignalMismatch[] }) {
       <h3 className="mb-4 text-sm font-semibold text-white">Signal Mismatches</h3>
       <div className="space-y-4">
         {mismatches.map((m) => (
-          <div key={m.title} className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
+          <div key={m.title} className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
             <div className="mb-2 flex items-start justify-between gap-2">
               <h4 className="text-sm font-medium text-white">{m.title}</h4>
               <Badge variant={m.severity === "high" ? "danger" : m.severity === "medium" ? "warning" : "default"}>
@@ -138,11 +138,11 @@ function GoalStrategyCard({ strategy }: { strategy: GoalStrategy }) {
           <p className="text-xs text-gray-300">{strategy.bestNextMove}</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="mb-1 text-xs text-gray-500">Photo Direction</div>
             <p className="text-xs text-gray-300">{strategy.suggestedPhotoDirection}</p>
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="mb-1 text-xs text-gray-500">Style Direction</div>
             <p className="text-xs text-gray-300">{strategy.suggestedStyleDirection}</p>
           </div>
@@ -318,7 +318,7 @@ export default function AuditDetailPage() {
             </div>
 
             {audit.imageDataUrl && (
-              <div className="mb-6 overflow-hidden rounded-xl border border-white/5">
+              <div className="mb-6 overflow-hidden rounded-xl border border-white/[0.04]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={audit.imageDataUrl}
@@ -329,7 +329,7 @@ export default function AuditDetailPage() {
             )}
 
             {audit.imageMeta && (
-              <div className="mb-6 grid grid-cols-2 gap-3 rounded-xl border border-white/5 bg-white/[0.03] p-4 sm:grid-cols-4">
+              <div className="mb-6 grid grid-cols-2 gap-3 rounded-xl border border-white/[0.04] bg-white/[0.03] p-4 sm:grid-cols-4">
                 <div>
                   <div className="text-xs text-gray-500">Width</div>
                   <div className="text-sm text-white">{audit.imageMeta.width || "—"} px</div>
@@ -352,17 +352,17 @@ export default function AuditDetailPage() {
             )}
 
             <div className="grid gap-4 sm:grid-cols-3">
-              <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
+              <div className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
                 <div className="text-xs text-gray-500">Goal</div>
                 <div className="mt-1 text-sm font-medium capitalize text-white">{audit.goal}</div>
               </div>
-              <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
+              <div className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
                 <div className="text-xs text-gray-500">Budget Range</div>
                 <div className="mt-1 text-sm font-medium text-amber-400">
                   &#8377;{audit.budgetRange.toLocaleString()}
                 </div>
               </div>
-              <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
+              <div className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
                 <div className="text-xs text-gray-500">Unlock Status</div>
                 <div className="mt-1 text-sm font-medium capitalize text-white">{audit.unlockStatus}</div>
               </div>
@@ -421,7 +421,7 @@ export default function AuditDetailPage() {
                     { label: "Premium Signal", value: displayFull.visualBreakdown.premiumSignal },
                     { label: "Overall Consistency", value: displayFull.visualBreakdown.overallConsistency, span: true },
                   ].map((m) => (
-                    <div key={m.label} className={`rounded-lg border border-white/5 bg-white/[0.03] p-3 ${m.span ? "col-span-2 sm:col-span-4" : ""}`}>
+                    <div key={m.label} className={`rounded-lg border border-white/[0.04] bg-white/[0.03] p-3 ${m.span ? "col-span-2 sm:col-span-4" : ""}`}>
                       <div className="text-xs text-gray-500">{m.label}</div>
                       <div className="mt-1 flex items-center gap-2">
                         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
@@ -449,7 +449,7 @@ export default function AuditDetailPage() {
                 <h3 className="mb-4 text-sm font-semibold text-white">Biggest Status Leaks</h3>
                 <div className="space-y-4">
                   {displayFull.biggestStatusLeaks.map((leak) => (
-                    <div key={leak.title} className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
+                    <div key={leak.title} className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
                       <div className="mb-2 flex items-start justify-between gap-2">
                         <h4 className="text-sm font-medium text-white">{leak.title}</h4>
                         <Badge variant={leak.severity === "high" ? "danger" : leak.severity === "medium" ? "warning" : "default"}>
@@ -500,7 +500,7 @@ export default function AuditDetailPage() {
                   { label: "Under ₹25,000+", items: displayFull.budgetUpgradePlan.under25000, color: "pink" },
                 ].map((tier) => (
                   <details key={tier.label} className="group mb-2">
-                    <summary className="flex cursor-pointer items-center gap-2 rounded-lg border border-white/5 bg-white/[0.03] px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.05]">
+                    <summary className="flex cursor-pointer items-center gap-2 rounded-lg border border-white/[0.04] bg-white/[0.03] px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.05]">
                       <svg className={`h-4 w-4 text-${tier.color}-400 transition-transform group-open:rotate-90`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
@@ -529,7 +529,7 @@ export default function AuditDetailPage() {
                     { label: "Posing / Presentation", value: displayFull.photoGuidance.posingOrPresentation },
                     { label: "Editing", value: displayFull.photoGuidance.editing, span: true },
                   ].map((g) => (
-                    <div key={g.label} className={`rounded-lg border border-white/5 bg-white/[0.03] p-3 ${g.span ? "sm:col-span-2" : ""}`}>
+                    <div key={g.label} className={`rounded-lg border border-white/[0.04] bg-white/[0.03] p-3 ${g.span ? "sm:col-span-2" : ""}`}>
                       <div className="mb-1 text-xs text-purple-400">{g.label}</div>
                       <p className="text-xs text-gray-300">{g.value}</p>
                     </div>
@@ -637,7 +637,7 @@ export default function AuditDetailPage() {
                 </h3>
                 <div className="space-y-4">
                   {displayResult.statusLeaks.map((leak) => (
-                    <div key={leak.id} className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
+                    <div key={leak.id} className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
                       <div className="mb-2 flex items-start justify-between gap-2">
                         <h4 className="text-sm font-medium text-white">
                           {leak.title}
@@ -720,7 +720,7 @@ export default function AuditDetailPage() {
                     { label: "Saturation", value: displayResult.imageMetrics.saturation },
                     { label: "Resolution", value: displayResult.imageMetrics.resolutionScore },
                   ].map((m) => (
-                    <div key={m.label} className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+                    <div key={m.label} className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
                       <div className="text-xs text-gray-500">{m.label}</div>
                       <div className="mt-1 flex items-center gap-2">
                         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
@@ -790,20 +790,20 @@ export default function AuditDetailPage() {
                     <div className="text-4xl font-bold text-white">{audit.datingProfileReport.textScore}</div>
                     <div className="text-xs text-gray-500">Text Score / 100</div>
                   </div>
-                  <div className="mb-4 rounded-lg border border-white/5 bg-white/[0.03] p-4">
+                  <div className="mb-4 rounded-lg border border-white/[0.04] bg-white/[0.03] p-4">
                     <p className="text-xs text-gray-300">{audit.datingProfileReport.overallAdvice}</p>
                   </div>
                   {audit.datingProfileReport.bioAnalysis && (
                     <div className="mb-4 grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+                      <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
                         <div className="text-xs text-gray-500">Bio Length</div>
                         <div className="text-sm text-white capitalize">{audit.datingProfileReport.bioAnalysis.length.replace(/_/g, " ")}</div>
                       </div>
-                      <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+                      <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
                         <div className="text-xs text-gray-500">Effort</div>
                         <div className="text-sm text-white capitalize">{audit.datingProfileReport.bioAnalysis.effort}</div>
                       </div>
-                      <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3 sm:col-span-2">
+                      <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3 sm:col-span-2">
                         <div className="text-xs text-purple-400">Feedback</div>
                         <p className="mt-1 text-xs text-gray-300">{audit.datingProfileReport.bioAnalysis.feedback}</p>
                       </div>
@@ -849,7 +849,7 @@ export default function AuditDetailPage() {
                   <h3 className="mb-4 text-sm font-semibold text-white">Your 4-Week Roadmap</h3>
                   <div className="mb-4 grid gap-4 sm:grid-cols-2">
                     {[audit.glowupPlan.week1, audit.glowupPlan.week2, audit.glowupPlan.week3, audit.glowupPlan.week4].map((week, wi) => (
-                      <details key={wi} className="group rounded-lg border border-white/5 bg-white/[0.03]">
+                      <details key={wi} className="group rounded-lg border border-white/[0.04] bg-white/[0.03]">
                         <summary className="flex cursor-pointer items-center gap-2 px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.05]">
                           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">W{wi + 1}</span>
                           {week.title}
@@ -869,7 +869,7 @@ export default function AuditDetailPage() {
                       </details>
                     ))}
                   </div>
-                  <div className="rounded-lg border border-white/5 bg-white/[0.03] p-4">
+                  <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-4">
                     <h4 className="mb-2 text-xs font-semibold text-white">Budget Roadmap</h4>
                     <div className="space-y-2 text-xs">
                       {audit.glowupPlan.budgetRoadmap.free.length > 0 && (
@@ -896,7 +896,7 @@ export default function AuditDetailPage() {
                           <ul className="ml-3 list-disc text-gray-400">{audit.glowupPlan.budgetRoadmap.under10000.map((a) => <li key={a}>{a}</li>)}</ul>
                         </div>
                       )}
-                      <div className="mt-2 border-t border-white/5 pt-2">
+                      <div className="mt-2 border-t border-white/[0.04] pt-2">
                         <span className="text-gray-500">Estimated total: </span>
                         <span className="text-amber-400">₹{audit.glowupPlan.budgetRoadmap.totalEstimatedCost}</span>
                       </div>
@@ -940,7 +940,7 @@ export default function AuditDetailPage() {
           )}
 
           {/* Report Management */}
-          <Card className="mt-10 border-white/5">
+          <Card className="mt-10 border-white/[0.04]">
             <h3 className="mb-4 text-sm font-semibold text-white">Report Management</h3>
             <div className="flex flex-wrap gap-3">
               <Button

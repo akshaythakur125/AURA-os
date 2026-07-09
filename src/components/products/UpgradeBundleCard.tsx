@@ -16,19 +16,19 @@ export function UpgradeBundleCard({ bundle, budget }: Props) {
       <h3 className="mb-4 text-sm font-semibold text-white">Your Upgrade Bundle</h3>
 
       <div className="mb-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3 text-center">
+        <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3 text-center">
           <div className="text-xs text-gray-500">Budget</div>
           <div className="text-sm font-medium text-amber-400">₹{budget.toLocaleString()}</div>
         </div>
-        <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3 text-center">
+        <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3 text-center">
           <div className="text-xs text-gray-500">Estimated Cost</div>
           <div className="text-sm font-medium text-white">₹{bundle.totalEstimatedCost.toLocaleString()}</div>
         </div>
-        <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3 text-center">
+        <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3 text-center">
           <div className="text-xs text-gray-500">Recommendations</div>
           <div className="text-sm font-medium text-white">{bundle.products.length}</div>
         </div>
-        <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3 text-center">
+        <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3 text-center">
           <div className="text-xs text-gray-500">Status ROI Score</div>
           <div className={`text-sm font-medium text-${roiColor}-400`}>{bundle.statusRoiScore}/100</div>
         </div>

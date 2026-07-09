@@ -273,7 +273,7 @@ export default function DashboardPage() {
                 <Card key={audit.id} className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex min-w-0 flex-1 items-center gap-4">
                     {audit.imageDataUrl && (
-                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-white/5">
+                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-white/[0.04]">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={audit.imageDataUrl}
@@ -344,7 +344,7 @@ export default function DashboardPage() {
         <Link href="/privacy-center"><Button variant="ghost" size="sm">Privacy Center</Button></Link>
       </div>
 
-      <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center text-xs text-gray-600">
+      <div className="rounded-xl border border-white/[0.04] bg-white/[0.02] p-4 text-center text-xs text-gray-600">
         Local-only MVP: your data is stored in your browser, not uploaded to a server. Referral and challenge tracking is local — no real social network.
       </div>
 

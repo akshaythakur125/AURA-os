@@ -437,7 +437,7 @@ function UnlockForm() {
 
             <Card className="mb-6">
               <h3 className="mb-4 text-sm font-semibold text-white">Step 1: Pay via UPI</h3>
-              <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
+              <div className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
                 <p className="mb-2 text-xs text-gray-500">Send <span className="text-amber-400">{finalPriceLabel}</span> to:</p>
                 <div className="flex items-center justify-between gap-2">
                   <p className="font-mono text-lg text-purple-300">{upiId}</p>
@@ -448,7 +448,7 @@ function UnlockForm() {
               </div>
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+                <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
                   <div className="text-xs text-gray-500">Amount</div>
                   <div className="mt-1 flex items-center justify-between">
                     <span className="text-lg font-bold text-amber-400">{productPriceLabel}</span>
@@ -457,7 +457,7 @@ function UnlockForm() {
                     </button>
                   </div>
                 </div>
-                <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+                <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
                   <div className="text-xs text-gray-500">Audit ID</div>
                   <div className="mt-1 flex items-center justify-between">
                     <span className="text-sm text-white truncate">{auditId.slice(0, 12)}...</span>
@@ -546,7 +546,7 @@ function UnlockForm() {
             <Card className="mb-6 border-emerald-500/20">
               <Badge variant="success" className="mb-3">Payment Submitted</Badge>
               <h3 className="mb-4 text-sm font-semibold text-white">Payment Request Summary</h3>
-              <div className="space-y-3 rounded-xl border border-white/5 bg-white/[0.03] p-4">
+              <div className="space-y-3 rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
                 <div className="flex justify-between text-sm"><span className="text-gray-500">Product</span><span className="text-white">{productName}</span></div>
                 <div className="flex justify-between text-sm"><span className="text-gray-500">Amount</span><span className="text-amber-400">{finalPriceLabel}</span></div>
               {offerResult?.isValid && offerResult.finalAmount !== productPrice && (

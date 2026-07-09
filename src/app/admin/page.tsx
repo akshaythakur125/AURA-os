@@ -387,35 +387,35 @@ export default function AdminPage() {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Total Events</div>
             <div className="mt-1 text-lg font-bold text-white">{analyticsSummary?.totalEvents ?? 0}</div>
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Free Scores</div>
             <div className="mt-1 text-lg font-bold text-white">{analyticsSummary?.freeScoreGenerated ?? 0}</div>
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Unlock Views</div>
             <div className="mt-1 text-lg font-bold text-white">{analyticsSummary?.unlockPageViewed ?? 0}</div>
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Payment Reqs</div>
             <div className="mt-1 text-lg font-bold text-white">{analyticsSummary?.paymentRequestSaved ?? 0}</div>
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Unlocks</div>
             <div className="mt-1 text-lg font-bold text-emerald-400">{analyticsSummary?.productUnlocked ?? 0}</div>
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Share Downloads</div>
             <div className="mt-1 text-lg font-bold text-white">{analyticsSummary?.shareCardDownloaded ?? 0}</div>
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Affiliate Clicks</div>
             <div className="mt-1 text-lg font-bold text-amber-400">{analyticsSummary?.affiliateClicked ?? 0}</div>
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Printed</div>
             <div className="mt-1 text-lg font-bold text-white">{analyticsSummary?.reportPrinted ?? 0}</div>
           </div>
@@ -438,19 +438,19 @@ export default function AdminPage() {
       <Card className="mb-8">
         <h3 className="mb-4 text-sm font-semibold text-white">Product Funnel</h3>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Aura Report views</div>
             <div className="mt-1 text-lg font-bold text-white">{productPageViews.aura_report}</div>
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Dating Audit views</div>
             <div className="mt-1 text-lg font-bold text-white">{productPageViews.dating_audit}</div>
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Glow-Up Plan views</div>
             <div className="mt-1 text-lg font-bold text-white">{productPageViews.glowup_plan}</div>
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-3">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
             <div className="text-xs text-gray-500">Examples views</div>
             <div className="mt-1 text-lg font-bold text-white">{productPageViews.examples}</div>
           </div>
@@ -486,7 +486,7 @@ export default function AdminPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-white/5 text-gray-500">
+                <tr className="border-b border-white/[0.04] text-gray-500">
                   <th className="pb-2 pr-3 font-medium">Name</th>
                   <th className="pb-2 pr-3 font-medium">Contact</th>
                   <th className="pb-2 pr-3 font-medium">Interest</th>
@@ -498,7 +498,7 @@ export default function AdminPage() {
               </thead>
               <tbody>
                 {leads.map((l) => (
-                  <tr key={l.id} className="border-b border-white/5 text-gray-300">
+                  <tr key={l.id} className="border-b border-white/[0.04] text-gray-300">
                     <td className="py-2 pr-3">{l.name || "—"}</td>
                     <td className="py-2 pr-3">{l.contact || "—"}</td>
                     <td className="py-2 pr-3">{l.interestProduct || "—"}</td>
@@ -534,7 +534,7 @@ export default function AdminPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-white/5 text-gray-500">
+                <tr className="border-b border-white/[0.04] text-gray-500">
                   <th className="pb-2 pr-3 font-medium">Order</th>
                   <th className="pb-2 pr-3 font-medium">Audit</th>
                   <th className="pb-2 pr-3 font-medium">Product</th>
@@ -550,7 +550,7 @@ export default function AdminPage() {
               </thead>
               <tbody>
                 {orders.map((o) => (
-                  <tr key={o.id} className="border-b border-white/5 text-gray-300">
+                  <tr key={o.id} className="border-b border-white/[0.04] text-gray-300">
                     <td className="py-2 pr-3 text-[10px] text-gray-500">{o.id.slice(0, 8)}</td>
                     <td className="py-2 pr-3 text-[10px] text-gray-500">{o.auditId.slice(0, 8)}</td>
                     <td className="py-2 pr-3">{o.productName}</td>
@@ -612,7 +612,7 @@ export default function AdminPage() {
       <Card className="mb-8">
         <h3 className="mb-4 text-sm font-semibold text-white">Growth Dashboard</h3>
         <div className="grid gap-6 sm:grid-cols-3">
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-4">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-4">
             <div className="mb-2 text-xs text-gray-500">Referral Program</div>
             {(() => { const rs = getReferralStats(); return (
               <div className="space-y-1 text-xs">
@@ -623,7 +623,7 @@ export default function AdminPage() {
               </div>
             );})()}
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-4">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-4">
             <div className="mb-2 text-xs text-gray-500">Challenge Entries</div>
             {(() => { const cs = getChallengeStats(); const entries = getChallengeEntries(); const uniqueChallenges = cs ? Object.keys(cs.entriesByChallenge).length : 0; return (
               <div className="space-y-1 text-xs">
@@ -633,7 +633,7 @@ export default function AdminPage() {
               </div>
             );})()}
           </div>
-          <div className="rounded-lg border border-white/5 bg-white/[0.03] p-4">
+          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-4">
             <div className="mb-2 text-xs text-gray-500">Progress Comparisons</div>
             {(() => { const ps = getProgressStats(); const all = getProgressComparisons(); const improved = all.filter((c) => c.scoreDelta > 0).length; const deltas = all.map((c) => c.scoreDelta); const avgDelta = deltas.length > 0 ? Math.round(deltas.reduce((s, d) => s + d, 0) / deltas.length) : null; return (
               <div className="space-y-1 text-xs">
@@ -692,7 +692,7 @@ export default function AdminPage() {
             </div>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {checklistItems.map((item) => (
-                <label key={item.id} className="flex cursor-pointer items-start gap-2 rounded-lg border border-white/5 bg-white/[0.02] p-2.5 hover:bg-white/[0.04]">
+                <label key={item.id} className="flex cursor-pointer items-start gap-2 rounded-lg border border-white/[0.04] bg-white/[0.02] p-2.5 hover:bg-white/[0.04]">
                   <input
                     type="checkbox"
                     checked={!!checklistState[item.id]}
@@ -713,7 +713,7 @@ export default function AdminPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-white/5 text-gray-500">
+              <tr className="border-b border-white/[0.04] text-gray-500">
                 <th className="pb-2 pr-4 font-medium">Title</th>
                 <th className="pb-2 pr-4 font-medium">Category</th>
                 <th className="pb-2 pr-4 font-medium">Price</th>
@@ -724,7 +724,7 @@ export default function AdminPage() {
             </thead>
             <tbody>
               {PRODUCTS.filter((p) => p.isActive).map((p) => (
-                <tr key={p.id} className="border-b border-white/5 text-gray-300">
+                <tr key={p.id} className="border-b border-white/[0.04] text-gray-300">
                   <td className="py-2 pr-4">{p.title}</td>
                   <td className="py-2 pr-4"><Badge variant={CATEGORY_COLORS[p.category] === "premium" ? "premium" : "default"}>{CATEGORY_LABELS[p.category]}</Badge></td>
                   <td className="py-2 pr-4">{p.priceLabel}</td>
@@ -738,7 +738,7 @@ export default function AdminPage() {
         </div>
       </Card>
 
-      <div className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.02] p-4 text-xs text-gray-600">
+      <div className="flex items-center justify-between rounded-xl border border-white/[0.04] bg-white/[0.02] p-4 text-xs text-gray-600">
         <span>⚠ Admin panel — data stored in localStorage. Server-side session auth.</span>
         <button onClick={handleLogout} className="rounded-lg border border-white/10 px-3 py-1.5 text-gray-400 hover:bg-white/5 hover:text-white transition-colors">Logout</button>
       </div>

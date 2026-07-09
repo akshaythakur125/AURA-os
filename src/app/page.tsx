@@ -277,7 +277,7 @@ export default function HomePage() {
                 A composite score across visual, presentation, signal, and
                 cohesion dimensions.
               </p>
-              <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
+              <div className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-500">Overall Score</span>
                   <span className="text-2xl font-bold text-white">68</span>
@@ -303,7 +303,7 @@ export default function HomePage() {
                 Specific elements in your photos and profile that may be
                 weakening your first impression.
               </p>
-              <div className="space-y-2 rounded-xl border border-white/5 bg-white/[0.03] p-4">
+              <div className="space-y-2 rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
                 <div className="flex items-center gap-2 text-sm">
                   <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
                   <span className="text-gray-300">Background quality</span>
@@ -330,7 +330,7 @@ export default function HomePage() {
                 Actionable upgrades ranked by effort and cost — from free tweaks
                 to high-impact investments.
               </p>
-              <div className="space-y-2 rounded-xl border border-white/5 bg-white/[0.03] p-4">
+              <div className="space-y-2 rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-300">Better lighting</span>
                   <span className="text-xs text-emerald-400">Free</span>
@@ -628,7 +628,7 @@ export default function HomePage() {
               Install on your home screen for quick access. Works offline after first visit.
             </p>
           </div>
-          <div className="mx-auto max-w-sm rounded-xl border border-white/5 bg-white/[0.02] p-6 text-center">
+          <div className="mx-auto max-w-sm rounded-xl border border-white/[0.04] bg-white/[0.02] p-6 text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-600 to-pink-500">
               <span className="text-2xl font-bold text-white">A</span>
             </div>
@@ -694,12 +694,12 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-              <div className="rounded-xl border border-white/5 bg-white/[0.03] p-4">
+              <div className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
                 <div className="mb-1 text-xs text-gray-500">Quick Fix</div>
                 <p className="text-sm text-gray-300">
                   Better lighting and cleaner frame
                 </p>
-                <div className="mt-3 border-t border-white/5 pt-3">
+                <div className="mt-3 border-t border-white/[0.04] pt-3">
                   <div className="text-xs text-gray-500">
                     Budget Upgrade:{" "}
                     <span className="text-amber-400">&#8377;2,000–&#8377;5,000</span>
@@ -894,7 +894,7 @@ export default function HomePage() {
       {/* ─── Safety Note ─── */}
       <section className="border-t border-white/[0.04] py-12">
         <Container>
-          <div className="mx-auto max-w-2xl rounded-xl border border-white/5 bg-white/[0.02] p-6 text-center">
+          <div className="mx-auto max-w-2xl rounded-xl border border-white/[0.04] bg-white/[0.02] p-6 text-center">
             <p className="text-sm text-gray-500">
               AuraCheck analyzes presentation, not human worth. Scores are
               guidance, not objective truth.

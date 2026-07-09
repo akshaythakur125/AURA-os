@@ -49,7 +49,7 @@ export default function GlowupPlanPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <SectionHeading title="What the 30-day plan includes" />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -68,7 +68,7 @@ export default function GlowupPlanPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <SectionHeading title="Daily mission preview" subtitle="Every day has one specific action across 5 categories." />
           <div className="grid gap-4 sm:grid-cols-5">
@@ -96,7 +96,7 @@ export default function GlowupPlanPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
@@ -108,7 +108,7 @@ export default function GlowupPlanPage() {
                   { tier: "₹5,000", items: "2 outfit formulas, basic skincare, photo backdrop" },
                   { tier: "₹10,000+", items: "Wardrobe refresh, professional haircut, premium photo setup" },
                 ].map((t) => (
-                  <div key={t.tier} className="rounded-lg border border-white/5 bg-white/[0.03] px-4 py-3">
+                  <div key={t.tier} className="rounded-lg border border-white/[0.04] bg-white/[0.03] px-4 py-3">
                     <div className="mb-1 text-xs text-amber-400">Up to {t.tier}</div>
                     <p className="text-xs text-gray-400">{t.items}</p>
                   </div>
@@ -134,7 +134,7 @@ export default function GlowupPlanPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <SectionHeading title="Sample report preview" />
           <Card className="mx-auto max-w-lg">
@@ -154,7 +154,7 @@ export default function GlowupPlanPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <SectionHeading title="Free vs Paid" />
           <div className="mx-auto max-w-4xl">
@@ -163,9 +163,9 @@ export default function GlowupPlanPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/5 py-12">
+      <section className="border-t border-white/[0.04] py-12">
         <Container>
-          <div className="mx-auto max-w-2xl rounded-xl border border-white/5 bg-white/[0.02] p-6 text-center text-xs text-gray-500">
+          <div className="mx-auto max-w-2xl rounded-xl border border-white/[0.04] bg-white/[0.02] p-6 text-center text-xs text-gray-500">
             <p>AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
             <p className="mt-2">No guaranteed transformation — the plan gives you a system, consistency is up to you.</p>
             <p className="mt-2">Manual UPI unlock flow — payment is not automatically verified.</p>
