@@ -3,6 +3,8 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { GlowOrb } from "@/components/ui/GlowOrb";
+import { FadeInView } from "@/components/ui/FadeInView";
 
 const leaks = [
   {
@@ -91,55 +93,74 @@ const products = [
 export default function HomePage() {
   return (
     <>
+      {/* ─── Aurora Mesh ─── */}
+      <div className="aurora-mesh" />
+      <div className="aurora-mesh-third" />
+
       {/* ─── Hero ─── */}
-      <section className="relative overflow-hidden pb-32 pt-24 sm:pt-32">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(147,51,234,0.15),transparent_50%)]" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(236,72,153,0.08),transparent_50%)]" />
+      <section className="parallax-section relative overflow-hidden pb-32 pt-24 sm:pt-32">
+        <GlowOrb color="rgba(147, 51, 234, 0.18)" size={500} className="top-[-10%] left-[10%]" delay={0} />
+        <GlowOrb color="rgba(236, 72, 153, 0.12)" size={400} className="top-[20%] right-[5%]" delay={500} />
+        <GlowOrb color="rgba(14, 165, 233, 0.08)" size={350} className="bottom-[10%] left-[30%]" delay={1000} />
+
         <Container className="relative text-center">
-          <span className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 px-3 py-1 text-xs text-purple-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
-            First-Impression Intelligence
-          </span>
-          <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl md:text-6xl">
-            Find your biggest status leak.
-          </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-400 sm:text-xl">
-            You may have the phone, the outfit, or the profile. AuraCheck shows
-            what is weakening your first impression and how to upgrade your
-            visual signal under your budget.
-          </p>
-          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-            <Link href="/audit/new">
-              <Button size="lg">Start Free Aura Check</Button>
-            </Link>
-            <Link href="/pricing">
-              <Button variant="outline" size="lg">
-                View Pricing
-              </Button>
-            </Link>
-          </div>
-          <p className="mt-6 text-xs text-gray-600">
-            No login. No external API. Your image stays in your browser in this
-            MVP.
-          </p>
+          <FadeInView>
+            <span className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 px-3 py-1 text-xs text-purple-300 badge-embossed">
+              <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
+              First-Impression Intelligence
+            </span>
+          </FadeInView>
+          <FadeInView delay={100}>
+            <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl md:text-6xl" style={{ textShadow: "0 0 80px rgba(147, 51, 234, 0.3)" }}>
+              Find your biggest status leak.
+            </h1>
+          </FadeInView>
+          <FadeInView delay={200}>
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-400 sm:text-xl">
+              You may have the phone, the outfit, or the profile. AuraCheck shows
+              what is weakening your first impression and how to upgrade your
+              visual signal under your budget.
+            </p>
+          </FadeInView>
+          <FadeInView delay={300}>
+            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              <Link href="/audit/new">
+                <Button size="lg">Start Free Aura Check</Button>
+              </Link>
+              <Link href="/pricing">
+                <Button variant="outline" size="lg">
+                  View Pricing
+                </Button>
+              </Link>
+            </div>
+          </FadeInView>
+          <FadeInView delay={400}>
+            <p className="mt-6 text-xs text-gray-600">
+              No login. No external API. Your image stays in your browser in this MVP.
+            </p>
+          </FadeInView>
         </Container>
       </section>
 
       {/* ─── Social Psychology Hook ─── */}
-      <section className="border-t border-white/5 py-20">
-        <Container>
-          <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
-              People do not only buy products. They buy signals.
-            </h2>
-            <p className="mt-4 text-lg text-gray-400">
-              Every visible detail in your photo or profile sends a message —
-              whether you intend it or not.
-            </p>
-          </div>
+      <section className="relative border-t border-white/5 py-20">
+        <GlowOrb color="rgba(147, 51, 234, 0.08)" size={300} className="top-[20%] right-[10%]" delay={200} />
+        <Container className="relative">
+          <FadeInView>
+            <div className="mx-auto mb-14 max-w-2xl text-center">
+              <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+                People do not only buy products. They buy signals.
+              </h2>
+              <p className="mt-4 text-lg text-gray-400">
+                Every visible detail in your photo or profile sends a message —
+                whether you intend it or not.
+              </p>
+            </div>
+          </FadeInView>
           <div className="grid gap-6 md:grid-cols-3">
-            <Card hover>
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-blue-500">
+            <FadeInView delay={0}>
+              <Card hover>
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 shadow-lg shadow-purple-500/20">
                 <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
                 </svg>
@@ -152,37 +173,42 @@ export default function HomePage() {
                 dull case, or outdated model can quietly undermine the story
                 your photo tells.
               </p>
-            </Card>
-            <Card hover>
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500">
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </div>
-              <h3 className="mb-2 text-lg font-semibold text-white">
-                Outfit is a signal
-              </h3>
-              <p className="text-sm leading-relaxed text-gray-400">
-                Fit matters more than brand. A well-fitted basic tee signals
-                self-awareness better than a logo-heavy hoodie that does not sit
-                right.
-              </p>
-            </Card>
-            <Card hover>
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500">
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="mb-2 text-lg font-semibold text-white">
-                Background is a signal
-              </h3>
-              <p className="text-sm leading-relaxed text-gray-400">
-                Your background is the frame of your story. A cluttered room,
-                blank wall, or generic cafe each send different signals about
-                your lifestyle.
-              </p>
-            </Card>
+              </Card>
+            </FadeInView>
+            <FadeInView delay={100}>
+              <Card hover>
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 shadow-lg shadow-pink-500/20">
+                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <h3 className="mb-2 text-lg font-semibold text-white">
+                  Outfit is a signal
+                </h3>
+                <p className="text-sm leading-relaxed text-gray-400">
+                  Fit matters more than brand. A well-fitted basic tee signals
+                  self-awareness better than a logo-heavy hoodie that does not sit
+                  right.
+                </p>
+              </Card>
+            </FadeInView>
+            <FadeInView delay={200}>
+              <Card hover>
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg shadow-amber-500/20">
+                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <h3 className="mb-2 text-lg font-semibold text-white">
+                  Background is a signal
+                </h3>
+                <p className="text-sm leading-relaxed text-gray-400">
+                  Your background is the frame of your story. A cluttered room,
+                  blank wall, or generic cafe each send different signals about
+                  your lifestyle.
+                </p>
+              </Card>
+            </FadeInView>
           </div>
         </Container>
       </section>

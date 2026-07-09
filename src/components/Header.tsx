@@ -23,12 +23,13 @@ export function Header() {
   const [productsOpen, setProductsOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/5 bg-black/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 glass-deep border-b border-white/5">
       <Container>
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 text-sm font-bold text-white">
+          <Link href="/" className="group flex items-center gap-2.5">
+            <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 via-pink-500 to-blue-500 text-sm font-bold text-white shadow-lg shadow-purple-500/30 transition-shadow group-hover:shadow-purple-500/50">
               A
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent" />
             </div>
             <span className="text-lg font-bold text-white">AuraCheck</span>
           </Link>
@@ -38,13 +39,12 @@ export function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm text-gray-400 transition-colors hover:text-white"
+                className="relative text-sm text-gray-400 transition-colors hover:text-white"
               >
                 {link.label}
               </Link>
             ))}
 
-            {/* Products dropdown */}
             <div className="relative">
               <button
                 onClick={() => setProductsOpen(!productsOpen)}
@@ -57,17 +57,19 @@ export function Header() {
                 </svg>
               </button>
               {productsOpen && (
-                <div className="absolute right-0 top-full mt-2 w-52 overflow-hidden rounded-xl border border-white/10 bg-black/90 backdrop-blur-xl">
-                  {productLinks.map((p) => (
-                    <Link
-                      key={p.href}
-                      href={p.href}
-                      onClick={() => setProductsOpen(false)}
-                      className="block px-4 py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/5 hover:text-white"
-                    >
-                      {p.label}
-                    </Link>
-                  ))}
+                <div className="absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-xl glass-card shadow-2xl shadow-black/50">
+                  <div className="p-1.5">
+                    {productLinks.map((p) => (
+                      <Link
+                        key={p.href}
+                        href={p.href}
+                        onClick={() => setProductsOpen(false)}
+                        className="block rounded-lg px-4 py-2.5 text-sm text-gray-300 transition-colors hover:bg-white/5 hover:text-white"
+                      >
+                        {p.label}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

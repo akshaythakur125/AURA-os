@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { ProductCard } from "@/components/products/ProductCard";
+import { GlowOrb } from "@/components/ui/GlowOrb";
 import { PRODUCTS } from "@/config/products";
 import { CATEGORY_LABELS } from "@/types/product";
 import type { ProductCategory, BudgetTag, GoalTag } from "@/types/product";
@@ -41,12 +42,17 @@ export default function ShopPage() {
   }, [category, budget, goal]);
 
   return (
-    <Container className="py-12">
-      {/* Hero */}
-      <div className="mb-10">
-        <h1 className="text-2xl font-bold text-white sm:text-3xl">
-          Upgrade Your Visual Signal
-        </h1>
+    <>
+      <div className="aurora-mesh" />
+      <Container className="relative py-12">
+        <GlowOrb color="rgba(147, 51, 234, 0.1)" size={350} className="top-[5%] right-[5%]" delay={0} />
+        <GlowOrb color="rgba(14, 165, 233, 0.06)" size={250} className="bottom-[20%] left-[10%]" delay={500} />
+
+        {/* Hero */}
+        <div className="mb-10 relative">
+          <h1 className="text-2xl font-bold text-white sm:text-3xl">
+            Upgrade Your Visual Signal
+          </h1>
         <p className="mt-2 text-sm text-gray-400">
           Curated upgrades that target your biggest status leaks — without
           wasting money.
@@ -130,7 +136,7 @@ export default function ShopPage() {
       )}
 
       {/* Trust */}
-      <Card className="mt-8 text-center">
+      <Card className="mt-8 text-center relative">
         <p className="text-xs text-gray-500">
           AuraCheck does not guarantee social, dating, career, or financial
           outcomes. Prices and links are placeholders. Verify details before
@@ -138,5 +144,6 @@ export default function ShopPage() {
         </p>
       </Card>
     </Container>
+    </>
   );
 }

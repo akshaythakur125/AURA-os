@@ -42,13 +42,15 @@ const footerLinks = [
 
 export function Footer() {
   return (
-    <footer className="mt-auto border-t border-white/5 bg-black">
-      <Container className="py-12">
+    <footer className="relative mt-auto border-t border-white/5">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.06),transparent_60%)]" />
+      <Container className="relative py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-pink-500 text-sm font-bold text-white">
+              <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 via-pink-500 to-blue-500 text-sm font-bold text-white">
                 A
+                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/20 to-transparent" />
               </div>
               <span className="text-lg font-bold text-white">AuraCheck</span>
             </div>
@@ -67,7 +69,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-500 transition-colors hover:text-gray-300"
+                      className="text-sm text-gray-500 transition-colors hover:text-purple-300"
                     >
                       {link.label}
                     </Link>

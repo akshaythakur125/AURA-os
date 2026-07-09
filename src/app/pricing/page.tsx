@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ComparisonTable } from "@/components/marketing/ComparisonTable";
+import { GlowOrb } from "@/components/ui/GlowOrb";
+import { FadeInView } from "@/components/ui/FadeInView";
 
 const tiers = [
   {
@@ -86,69 +88,77 @@ const tiers = [
 export default function PricingPage() {
   return (
     <>
-      <section className="relative overflow-hidden py-24 sm:py-32">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(147,51,234,0.1),transparent_50%)]" />
+      <div className="aurora-mesh" />
+      <div className="aurora-mesh-third" />
+
+      <section className="parallax-section relative overflow-hidden py-24 sm:py-32">
+        <GlowOrb color="rgba(147, 51, 234, 0.12)" size={400} className="top-[-5%] right-[10%]" delay={0} />
+        <GlowOrb color="rgba(236, 72, 153, 0.08)" size={300} className="bottom-[10%] left-[5%]" delay={500} />
         <Container className="relative">
-          <SectionHeading
-            title="Simple pricing, real results"
-            subtitle="Start free. Upgrade when you want the full picture."
-          />
+          <FadeInView>
+            <SectionHeading
+              title="Simple pricing, real results"
+              subtitle="Start free. Upgrade when you want the full picture."
+            />
+          </FadeInView>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {tiers.map((tier) => (
-              <Card
-                key={tier.name}
-                className={`relative flex flex-col ${tier.highlighted ? "border-purple-500/30 ring-1 ring-purple-500/20" : ""}`}
-              >
-                {tier.highlighted && (
-                  <Badge variant="premium" className="absolute -top-2 right-4">
-                    Popular
-                  </Badge>
-                )}
-                <div className="mb-1 text-xs text-gray-500">{tier.bestFor}</div>
-                <h3 className="text-lg font-bold text-white">{tier.name}</h3>
-                <div className="mt-2 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-white">
-                    &#8377;{tier.price}
-                  </span>
-                  <span className="text-sm text-gray-500">one-time</span>
-                </div>
-                <p className="mt-2 text-sm text-gray-400">{tier.description}</p>
+            {tiers.map((tier, i) => (
+              <FadeInView key={tier.name} delay={i * 80}>
+                <Card
+                  className={`relative flex flex-col h-full ${tier.highlighted ? "card-3d-lifted aurora-border" : ""}`}
+                  tilt={tier.highlighted}
+                >
+                  {tier.highlighted && (
+                    <Badge variant="premium" className="absolute -top-2 right-4">
+                      Popular
+                    </Badge>
+                  )}
+                  <div className="mb-1 text-xs text-gray-500">{tier.bestFor}</div>
+                  <h3 className="text-lg font-bold text-white">{tier.name}</h3>
+                  <div className="mt-2 flex items-baseline gap-1">
+                    <span className="text-4xl font-bold text-white">
+                      &#8377;{tier.price}
+                    </span>
+                    <span className="text-sm text-gray-500">one-time</span>
+                  </div>
+                  <p className="mt-2 text-sm text-gray-400">{tier.description}</p>
 
-                <ul className="mt-6 flex-1 space-y-3">
-                  {tier.features.map((f) => (
-                    <li
-                      key={f}
-                      className="flex items-start gap-3 text-sm text-gray-300"
-                    >
-                      <svg
-                        className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                  <ul className="mt-6 flex-1 space-y-3">
+                    {tier.features.map((f) => (
+                      <li
+                        key={f}
+                        className="flex items-start gap-3 text-sm text-gray-300"
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
+                        <svg
+                          className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-400"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
 
-                <div className="mt-8">
-                  <Link href={tier.href}>
-                    <Button
-                      variant={tier.highlighted ? "primary" : "outline"}
-                      className="w-full"
-                    >
-                      {tier.cta}
-                    </Button>
-                  </Link>
-                </div>
-              </Card>
+                  <div className="mt-8">
+                    <Link href={tier.href}>
+                      <Button
+                        variant={tier.highlighted ? "primary" : "outline"}
+                        className="w-full"
+                      >
+                        {tier.cta}
+                      </Button>
+                    </Link>
+                  </div>
+                </Card>
+              </FadeInView>
             ))}
           </div>
 
