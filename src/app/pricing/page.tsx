@@ -101,11 +101,15 @@ export default function PricingPage() {
               subtitle="Start free. Upgrade when you want the full picture."
             />
           </FadeInView>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="bento-grid">
             {tiers.map((tier, i) => (
               <FadeInView key={tier.name} delay={i * 80}>
                 <Card
-                  className={`relative flex flex-col h-full ${tier.highlighted ? "card-3d-lifted aurora-border" : ""}`}
+                  className={`relative flex flex-col h-full ${
+                    tier.highlighted
+                      ? "bento-span-2 card-3d-lifted aurora-border glass-elevated"
+                      : ""
+                  }`}
                   tilt={tier.highlighted}
                 >
                   {tier.highlighted && (
@@ -116,7 +120,7 @@ export default function PricingPage() {
                   <div className="mb-1 text-xs text-gray-500">{tier.bestFor}</div>
                   <h3 className="text-lg font-bold text-white">{tier.name}</h3>
                   <div className="mt-2 flex items-baseline gap-1">
-                    <span className="text-4xl font-bold text-white">
+                    <span className={`${tier.highlighted ? "text-5xl" : "text-4xl"} font-bold text-white`}>
                       &#8377;{tier.price}
                     </span>
                     <span className="text-sm text-gray-500">one-time</span>

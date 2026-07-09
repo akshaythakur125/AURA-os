@@ -225,9 +225,9 @@ export default function HomePage() {
               mismatches between what you own and how you present it.
             </p>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {leaks.map((leak) => (
-              <Card key={leak.title} hover>
+          <div className="bento-grid">
+            {leaks.map((leak, i) => (
+              <Card key={leak.title} hover className={i < 2 ? "bento-span-2" : ""}>
                 <div className="mb-3 flex items-start justify-between gap-2">
                   <h3 className="text-sm font-semibold text-white">
                     {leak.title}
@@ -425,11 +425,15 @@ export default function HomePage() {
               Start free. Go deeper when you are ready.
             </p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="bento-grid">
             {products.map((product) => (
               <Card
                 key={product.name}
-                className={`relative flex flex-col ${product.highlighted ? "border-purple-500/30 ring-1 ring-purple-500/20" : ""}`}
+                className={`relative flex flex-col ${
+                  product.highlighted
+                    ? "bento-span-2 border-purple-500/30 ring-1 ring-purple-500/20 glass-elevated"
+                    : ""
+                }`}
               >
                 {product.highlighted && (
                   <Badge variant="premium" className="absolute -top-2 right-4">
@@ -443,7 +447,7 @@ export default function HomePage() {
                   {product.name}
                 </h3>
                 <div className="mt-1 flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-white">
+                  <span className={`${product.highlighted ? "text-4xl" : "text-3xl"} font-bold text-white`}>
                     &#8377;{product.price}
                   </span>
                   <span className="text-xs text-gray-500">one-time</span>
@@ -605,19 +609,19 @@ export default function HomePage() {
               Daily and weekly challenges to improve your visual signal and track your progress against yourself.
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            <Card hover className="text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 text-lg font-bold text-white">1</div>
+          <div className="bento-grid">
+            <Card hover className="bento-span-2 text-center">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 text-lg font-bold text-white shadow-[var(--shadow-glow-purple)]">1</div>
               <h3 className="mb-2 text-lg font-semibold text-white">Photo Challenge</h3>
               <p className="mb-4 text-sm text-gray-400">Upload a new photo with improved lighting and framing. Score yourself against your previous best.</p>
             </Card>
             <Card hover className="text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 text-lg font-bold text-white">2</div>
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 text-lg font-bold text-white shadow-[var(--shadow-glow-pink)]">2</div>
               <h3 className="mb-2 text-lg font-semibold text-white">Consistency Challenge</h3>
               <p className="mb-4 text-sm text-gray-400">Submit the same photo type 3 days in a row. Track how your signal consistency improves.</p>
             </Card>
             <Card hover className="text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-lg font-bold text-white">3</div>
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-lg font-bold text-white shadow-[var(--shadow-glow-blue)]">3</div>
               <h3 className="mb-2 text-lg font-semibold text-white">Profile Refresh</h3>
               <p className="mb-4 text-sm text-gray-400">Redo your dating or Instagram profile and run a new audit to compare the delta.</p>
             </Card>
