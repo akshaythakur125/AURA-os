@@ -14,10 +14,10 @@ import { ImprovementCard } from "@/components/dashboard/ImprovementCard";
 import { getAudits, deleteAudit, getAuditStats } from "@/lib/storage/auditStore";
 import { getLocalUser, updateLocalUser } from "@/lib/storage/userStore";
 import { clearAll } from "@/lib/storage/localStore";
-import { getReferralProfile, getReferralStats } from "@/lib/storage/referralStore";
+import { ReferralProgress } from "@/components/referral/ReferralProgress";
+import { ReferralShare } from "@/components/referral/ReferralShare";
 import type { Audit, AuditStats } from "@/types/audit";
 import type { LocalUser } from "@/types/user";
-import type { ReferralStats } from "@/types/referral";
 
 const auditTypeLabels: Record<string, string> = {
   photo: "Photo Aura Check",
@@ -48,11 +48,10 @@ function formatDate(iso: string): string {
 
 function loadState() {
   if (typeof window === "undefined") {
-    return { audits: [] as Audit[], stats: null as AuditStats | null, user: null as LocalUser | null, referralStats: null as ReferralStats | null, referralCode: "" as string };
+    return { audits: [] as Audit[], stats: null as AuditStats | null, user: null as LocalUser | null };
   }
   const u = getLocalUser();
-  const rp = getReferralProfile();
-  return { audits: getAudits(), stats: getAuditStats(), user: u, referralStats: getReferralStats(), referralCode: rp?.referralCode || "" };
+  return { audits: getAudits(), stats: getAuditStats(), user: u };
 }
 
 export default function DashboardPage() {
@@ -63,8 +62,6 @@ export default function DashboardPage() {
   const [displayName, setDisplayName] = useState(initial.user?.displayName || "");
   const [city, setCity] = useState(initial.user?.city || "");
   const [saved, setSaved] = useState(false);
-  const [referralStats] = useState<ReferralStats | null>(initial.referralStats);
-  const [referralCode] = useState(initial.referralCode);
 
   function refresh() {
     setAudits(getAudits());
@@ -89,11 +86,6 @@ export default function DashboardPage() {
     if (!window.confirm("Delete this audit? This cannot be undone.")) return;
     deleteAudit(id);
     refresh();
-  }
-
-  function handleCopyReferralLink() {
-    const url = `${window.location.origin}/?ref=${referralCode}`;
-    navigator.clipboard.writeText(url);
   }
 
   const hasAudits = audits.length > 0;
@@ -193,31 +185,9 @@ export default function DashboardPage() {
       {/* Onboarding Checklist */}
       <OnboardingChecklist />
 
-      {/* Referral Card */}
-      <Card className="mb-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h3 className="text-sm font-semibold text-white">
-              {referralCode ? "Your Referral Link" : "Referral Program"}
-            </h3>
-            <p className="mt-1 text-xs text-gray-500">
-              {referralCode
-                    ? `Share your link — ${referralStats?.totalClaimsLocal ?? 0} friends have claimed so far`
-                : "Complete an audit to get your referral code"}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            {referralCode && (
-              <>
-                <Button size="sm" variant="secondary" onClick={handleCopyReferralLink}>Copy Invite Link</Button>
-                <Link href={`/?ref=${referralCode}`}>
-                  <Button size="sm">View Public Page</Button>
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </Card>
+      {/* Referral Progress + Share */}
+      <ReferralProgress />
+      {hasAudits && <ReferralShare />}
 
       {/* Upgrade Recommendations Card */}
       {hasAudits && (

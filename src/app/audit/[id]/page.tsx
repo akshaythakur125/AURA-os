@@ -13,6 +13,7 @@ import { getAuditById, updateAudit, deleteAudit, createAudit } from "@/lib/stora
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
+import { ReferralShare } from "@/components/referral/ReferralShare";
 import { RecommendationSection } from "@/components/products/RecommendationSection";
 import { PersonalizedShop } from "@/components/shop/PersonalizedShop";
 import { getPersonalizedLooks } from "@/lib/shop/catalog";
@@ -1037,6 +1038,9 @@ export default function AuditDetailPage() {
               <div className="mb-6">
                 <ShareCardBuilder audit={audit!} type="free_result" />
               </div>
+
+              {/* Referral share */}
+              <ReferralShare variant="inline" />
 
               {/* Recommendations for free result */}
               <div className="mb-6">

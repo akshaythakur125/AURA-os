@@ -1,4 +1,5 @@
-import type { ReferralProfile, ReferralClaim, ReferralStats } from "@/types/referral";
+import type { ReferralProfile, ReferralClaim, ReferralStats, ReferralRewardTier } from "@/types/referral";
+import { REFERRAL_REWARD_TIERS, FRIEND_DISCOUNT_CODE } from "@/types/referral";
 import { createLocalId } from "@/types/audit";
 import { getItem, setItem } from "./localStore";
 
@@ -81,14 +82,36 @@ export function recordReferralClaim(referralCode: string, source?: string): Refe
 export function getReferralStats(): ReferralStats {
   const profile = getProfile();
   const claims = getClaims();
+  const totalClaims = claims.length;
+
+  const earnedRewards: string[] = [];
+  let nextReward: ReferralRewardTier | null = null;
+  let claimsToNextReward = 0;
+
+  for (const tier of REFERRAL_REWARD_TIERS) {
+    if (totalClaims >= tier.claimsNeeded) {
+      earnedRewards.push(tier.reward);
+    } else if (!nextReward) {
+      nextReward = tier;
+      claimsToNextReward = tier.claimsNeeded - totalClaims;
+    }
+  }
+
   return {
     hasProfile: !!profile,
     referralCode: profile?.referralCode || "",
     displayName: profile?.displayName || null,
     totalInvitesLocal: profile?.totalInvitesLocal ?? 0,
-    totalClaimsLocal: claims.length,
+    totalClaimsLocal: totalClaims,
     createdAt: profile?.createdAt || null,
+    nextReward,
+    claimsToNextReward,
+    earnedRewards,
   };
+}
+
+export function getFriendDiscountCode(): string {
+  return FRIEND_DISCOUNT_CODE;
 }
 
 export function clearReferralData(): void {

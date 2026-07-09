@@ -585,18 +585,38 @@ export default function HomePage() {
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
-              Invite friends. Earn rewards.
+              Invite friends. Both get rewarded.
             </h2>
             <p className="mt-4 text-lg text-gray-400">
-              Share your referral code after your first audit. When friends claim it, you both get a boost.
+              Your friend gets 20% off their first unlock. At 3 claims, you get a free Full Report.
             </p>
           </div>
-          <div className="mx-auto max-w-lg rounded-xl border border-purple-500/20 bg-purple-500/5 p-6 text-center">
-            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500">
-              <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+          <div className="mx-auto max-w-lg space-y-4">
+            <div className="rounded-xl border border-purple-500/20 bg-purple-500/5 p-6 text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500">
+                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+              </div>
+              <p className="mb-3 text-sm text-gray-300">Get your unique referral link after completing an audit. Share it — everyone wins.</p>
+              <div className="flex items-center justify-center gap-6 text-xs">
+                <div className="text-center">
+                  <div className="text-lg font-bold text-amber-400">1</div>
+                  <div className="text-gray-500">friend</div>
+                  <div className="text-gray-400">20% off for them</div>
+                </div>
+                <div className="h-8 w-px bg-white/10" />
+                <div className="text-center">
+                  <div className="text-lg font-bold text-emerald-400">3</div>
+                  <div className="text-gray-500">friends</div>
+                  <div className="text-gray-400">Free Full Report for you</div>
+                </div>
+                <div className="h-8 w-px bg-white/10" />
+                <div className="text-center">
+                  <div className="text-lg font-bold text-purple-400">10</div>
+                  <div className="text-gray-500">friends</div>
+                  <div className="text-gray-400">Free Glow-Up Plan</div>
+                </div>
+              </div>
             </div>
-            <p className="mb-4 text-sm text-gray-300">Get your unique referral link after completing an audit. Share it with friends to earn recognition on the leaderboard.</p>
-            <p className="text-xs text-gray-500">Referral tracking is local-only in this MVP. No real rewards — just bragging rights.</p>
           </div>
           <div className="mt-8 text-center">
             <Link href="/dashboard"><Button variant="outline" size="lg">Get Your Referral Link</Button></Link>

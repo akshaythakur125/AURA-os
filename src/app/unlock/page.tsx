@@ -12,6 +12,7 @@ import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
 import { createUnlockRecord } from "@/lib/storage/unlockStore";
 import { createOrder, updateOrder } from "@/lib/storage/orderStore";
 import { getProductName, getProductPrice, getProductPriceLabel } from "@/lib/payments/manualUnlock";
+import { getFriendDiscountCode } from "@/lib/storage/referralStore";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
 import { generateDatingProfileReport } from "@/lib/aura-engine/datingAudit";
@@ -433,6 +434,9 @@ function UnlockForm() {
                   {offerResult.message}
                 </div>
               )}
+              <p className="mt-3 text-[10px] text-gray-600">
+                Referred by a friend? Code <span className="font-mono text-gray-500">{getFriendDiscountCode()}</span> gives you 20% off
+              </p>
             </Card>
 
             <Card className="mb-6">
