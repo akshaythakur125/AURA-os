@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { GlowOrb } from "@/components/ui/GlowOrb";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
 import { getAudits, deleteAudit, getAuditStats } from "@/lib/storage/auditStore";
 import { getLocalUser, updateLocalUser } from "@/lib/storage/userStore";
@@ -100,7 +101,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <Container className="py-12">
+    <>
+      <div className="aurora-mesh" />
+      <Container className="relative py-12">
+        <GlowOrb color="rgba(147, 51, 234, 0.08)" size={300} className="top-[10%] right-[8%]" delay={0} />
+        <GlowOrb color="rgba(236, 72, 153, 0.06)" size={200} className="bottom-[15%] left-[5%]" delay={300} />
       <div className="mb-10 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white sm:text-3xl">
@@ -381,6 +386,7 @@ export default function DashboardPage() {
           </div>
         </Card>
       </div>
-    </Container>
+      </Container>
+    </>
   );
 }

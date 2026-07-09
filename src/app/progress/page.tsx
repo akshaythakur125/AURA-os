@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { GlowOrb } from "@/components/ui/GlowOrb";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getAudits } from "@/lib/storage/auditStore";
 import { getProgressComparisons, createProgressComparison, deleteProgressComparison } from "@/lib/storage/progressStore";
@@ -93,7 +94,11 @@ export default function ProgressPage() {
   }, [comparisons]);
 
   return (
-    <Container className="py-12">
+    <>
+      <div className="aurora-mesh" />
+      <Container className="relative py-12">
+        <GlowOrb color="rgba(16, 185, 129, 0.08)" size={250} className="top-[8%] right-[10%]" delay={0} />
+        <GlowOrb color="rgba(147, 51, 234, 0.06)" size={200} className="bottom-[20%] left-[8%]" delay={400} />
       <SectionHeading title="Track Your Improvement" subtitle="Compare two audits and see your progress over time." />
 
       {stats && (
@@ -226,6 +231,7 @@ export default function ProgressPage() {
       <div className="mt-8 rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center text-xs text-gray-600">
         <p>AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
       </div>
-    </Container>
+      </Container>
+    </>
   );
 }

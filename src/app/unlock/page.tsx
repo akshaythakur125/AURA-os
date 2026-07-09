@@ -7,6 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { GlowOrb } from "@/components/ui/GlowOrb";
 import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
 import { createUnlockRecord } from "@/lib/storage/unlockStore";
 import { createOrder, updateOrder } from "@/lib/storage/orderStore";
@@ -361,10 +362,14 @@ function UnlockForm() {
   }
 
   return (
-    <Container className="py-12">
-      <div className="mb-6">
-        <Link href={`/audit/${auditId}`} className="text-sm text-gray-500 hover:text-gray-300">&larr; Back to Report</Link>
-      </div>
+    <>
+      <div className="aurora-mesh" />
+      <Container className="relative py-12">
+        <GlowOrb color="rgba(147, 51, 234, 0.08)" size={300} className="top-[10%] right-[8%]" delay={0} />
+        <GlowOrb color="rgba(245, 158, 11, 0.06)" size={200} className="bottom-[20%] left-[10%]" delay={400} />
+        <div className="mb-6">
+          <Link href={`/audit/${auditId}`} className="text-sm text-gray-500 hover:text-gray-300">&larr; Back to Report</Link>
+        </div>
 
       <div className="mx-auto max-w-2xl">
         {/* Product Info Card */}
@@ -615,7 +620,8 @@ function UnlockForm() {
           <p>AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
         </div>
       </div>
-    </Container>
+      </Container>
+    </>
   );
 }
 

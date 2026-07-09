@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { GlowOrb } from "@/components/ui/GlowOrb";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getActiveChallenges } from "@/config/challenges";
 import { getChallengeEntries } from "@/lib/storage/challengeStore";
@@ -25,6 +26,9 @@ export default function ChallengesPage() {
   return (
     <>
       <section className="relative overflow-hidden pb-24 pt-24 sm:pt-32">
+        <div className="aurora-mesh" />
+        <GlowOrb color="rgba(147, 51, 234, 0.12)" size={350} className="top-[20%] left-[10%]" delay={0} />
+        <GlowOrb color="rgba(236, 72, 153, 0.08)" size={250} className="top-[30%] right-[15%]" delay={400} />
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(147,51,234,0.12),transparent_50%)]" />
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">

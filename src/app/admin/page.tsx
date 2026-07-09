@@ -5,6 +5,7 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { GlowOrb } from "@/components/ui/GlowOrb";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { PRODUCTS } from "@/config/products";
 import { CATEGORY_LABELS, CATEGORY_COLORS } from "@/types/product";
@@ -93,8 +94,11 @@ function AdminGate({ onUnlock }: { onUnlock: () => void }) {
     }
   }
   return (
-    <Container className="py-24">
-      <Card className="mx-auto max-w-sm py-12 text-center">
+    <>
+      <div className="aurora-mesh" />
+      <Container className="relative py-24">
+        <GlowOrb color="rgba(147, 51, 234, 0.1)" size={350} className="top-[20%] left-[15%]" delay={0} />
+        <Card className="relative mx-auto max-w-sm py-12 text-center">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500">
           <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m0 0v2m0-2h2m-2 0H10" /></svg>
         </div>
@@ -104,7 +108,8 @@ function AdminGate({ onUnlock }: { onUnlock: () => void }) {
         {error && <p className="mb-3 text-sm text-red-400">{error}</p>}
         <Button onClick={handleSubmit} className="w-full" disabled={loading}>{loading ? "Verifying..." : "Unlock Admin Panel"}</Button>
       </Card>
-    </Container>
+      </Container>
+    </>
   );
 }
 
@@ -314,11 +319,15 @@ export default function AdminPage() {
 
   if (checking) {
     return (
-      <Container className="py-24">
-        <Card className="mx-auto max-w-sm py-12 text-center">
-          <p className="text-sm text-gray-500">Verifying admin session...</p>
-        </Card>
-      </Container>
+      <>
+        <div className="aurora-mesh" />
+        <Container className="relative py-24">
+          <GlowOrb color="rgba(147, 51, 234, 0.08)" size={300} className="top-[20%] left-[15%]" delay={0} />
+          <Card className="relative mx-auto max-w-sm py-12 text-center">
+            <p className="text-sm text-gray-500">Verifying admin session...</p>
+          </Card>
+        </Container>
+      </>
     );
   }
 
@@ -327,7 +336,11 @@ export default function AdminPage() {
   }
 
   return (
-    <Container className="py-16">
+    <>
+      <div className="aurora-mesh" />
+      <Container className="relative py-16">
+        <GlowOrb color="rgba(147, 51, 234, 0.06)" size={300} className="top-[5%] right-[5%]" delay={0} />
+        <GlowOrb color="rgba(245, 158, 11, 0.05)" size={200} className="bottom-[10%] left-[10%]" delay={300} />
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <SectionHeading title="Admin Panel" subtitle="Orders, analytics, unlock codes, and exports." />
         <Button variant="ghost" size="sm" onClick={() => { sessionStorage.removeItem("auracheck_admin_auth"); setAuthenticated(false); }}>
@@ -729,6 +742,7 @@ export default function AdminPage() {
         <span>⚠ Admin panel — data stored in localStorage. Server-side session auth.</span>
         <button onClick={handleLogout} className="rounded-lg border border-white/10 px-3 py-1.5 text-gray-400 hover:bg-white/5 hover:text-white transition-colors">Logout</button>
       </div>
-    </Container>
+      </Container>
+    </>
   );
 }

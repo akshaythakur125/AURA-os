@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { GlowOrb } from "@/components/ui/GlowOrb";
 import { createAudit, updateAudit } from "@/lib/storage/auditStore";
 import {
   validateImageFile,
@@ -297,7 +298,11 @@ export default function NewAuditPage() {
   }
 
   return (
-    <Container className="py-12">
+    <>
+      <div className="aurora-mesh" />
+      <Container className="relative py-12">
+        <GlowOrb color="rgba(147, 51, 234, 0.1)" size={300} className="top-[10%] right-[10%]" delay={0} />
+        <GlowOrb color="rgba(236, 72, 153, 0.07)" size={220} className="bottom-[15%] left-[5%]" delay={300} />
       <div className="mx-auto max-w-3xl">
         <div className="mb-8 text-center">
           <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -807,6 +812,7 @@ export default function NewAuditPage() {
           </Button>
         </div>
       </div>
-    </Container>
+      </Container>
+    </>
   );
 }
