@@ -27,43 +27,17 @@ const RETAILER_LABELS: Record<Retailer, string> = {
 const RETAILERS: Retailer[] = ["amazon", "flipkart", "myntra", "ajio"];
 
 /**
- * Category visual — aurora gradient placeholder that represents each category.
- * Uses the existing aurora gradient system from globals.css.
+ * Category visual — renders the look's generated aurora-gradient SVG image.
  */
 function LookImage({ look }: { look: Look }) {
-  const gradients: Record<string, string> = {
-    tshirt: "from-purple-600/40 via-purple-500/20 to-pink-500/30",
-    shirt: "from-blue-600/40 via-blue-500/20 to-indigo-500/30",
-    jeans: "from-indigo-700/40 via-indigo-600/20 to-blue-500/30",
-    trousers: "from-slate-600/40 via-slate-500/20 to-gray-500/30",
-    shorts: "from-amber-600/40 via-amber-500/20 to-orange-500/30",
-    sneakers: "from-white/20 via-gray-100/10 to-gray-200/20",
-    shoes: "from-amber-800/40 via-amber-700/20 to-amber-600/30",
-    watch: "from-gray-400/30 via-gray-300/15 to-gray-500/25",
-    sunglasses: "from-gray-800/40 via-gray-700/20 to-gray-600/30",
-    fragrance: "from-pink-600/30 via-rose-500/15 to-purple-500/25",
-    grooming: "from-emerald-600/30 via-emerald-500/15 to-teal-500/25",
-    dress: "from-rose-600/40 via-rose-500/20 to-pink-500/30",
-    earrings: "from-yellow-500/30 via-amber-400/15 to-yellow-600/25",
-    heels: "from-rose-700/30 via-rose-600/15 to-pink-600/25",
-    flats: "from-stone-600/30 via-stone-500/15 to-stone-400/25",
-    kurta: "from-teal-600/30 via-teal-500/15 to-cyan-500/25",
-    accessory: "from-purple-500/30 via-violet-500/15 to-indigo-500/25",
-    backpack: "from-olive-600/30 via-olive-500/15 to-green-600/25",
-  };
-
-  const gradient = gradients[look.category] || "from-purple-600/30 to-pink-500/20";
-
   return (
-    <div
-      className={`relative flex h-40 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} overflow-hidden`}
-    >
-      {/* Category icon */}
-      <div className="text-3xl font-bold text-white/30 uppercase">
-        {look.category.charAt(0)}
-      </div>
-      {/* Subtle aurora overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(147,51,234,0.08),transparent_70%)]" />
+    <div className="relative h-40 overflow-hidden rounded-xl bg-black/20">
+      <img
+        src={look.imageUrl}
+        alt={look.imageAlt}
+        loading="lazy"
+        className="h-full w-full object-cover"
+      />
     </div>
   );
 }
