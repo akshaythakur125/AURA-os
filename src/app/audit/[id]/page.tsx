@@ -14,6 +14,7 @@ import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
 import { ReferralShare } from "@/components/referral/ReferralShare";
+import { ResultCapture } from "@/components/recovery/ResultCapture";
 import { RecommendationSection } from "@/components/products/RecommendationSection";
 import { PersonalizedShop } from "@/components/shop/PersonalizedShop";
 import { getPersonalizedLooks } from "@/lib/shop/catalog";
@@ -1046,7 +1047,14 @@ export default function AuditDetailPage() {
               </div>
 
               {/* Referral share */}
-              <ReferralShare variant="inline" />
+              <div className="mb-6">
+                <ReferralShare variant="inline" />
+              </div>
+
+              {/* Save result */}
+              <div className="mb-6">
+                <ResultCapture audit={audit!} />
+              </div>
 
               {/* Recommendations for free result */}
               <div className="mb-6">
