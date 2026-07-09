@@ -13,6 +13,7 @@ import { createUnlockRecord } from "@/lib/storage/unlockStore";
 import { createOrder, updateOrder } from "@/lib/storage/orderStore";
 import { getProductName, getProductPrice, getProductPriceLabel } from "@/lib/payments/manualUnlock";
 import { getFriendDiscountCode } from "@/lib/storage/referralStore";
+import { PaymentTrust } from "@/components/trust/PaymentTrust";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
 import { generateDatingProfileReport } from "@/lib/aura-engine/datingAudit";
@@ -387,6 +388,11 @@ function UnlockForm() {
             ))}
           </ul>
         </Card>
+
+        {/* Trust layer */}
+        <div className="mb-6">
+          <PaymentTrust variant="unlock" />
+        </div>
 
         {/* Stage progress indicator */}
         <div className="mb-6 flex items-center justify-center gap-2 text-xs">

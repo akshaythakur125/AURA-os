@@ -19,6 +19,7 @@ import { PersonalizedShop } from "@/components/shop/PersonalizedShop";
 import { getPersonalizedLooks } from "@/lib/shop/catalog";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
 import { PercentileBadge } from "@/components/social-proof/PercentileBadge";
+import { PaymentTrust } from "@/components/trust/PaymentTrust";
 import { getScorePercentile } from "@/lib/social-proof/getScorePercentile";
 import type { Audit, FreeAuraResult, FullAuraReportContent } from "@/types/audit";
 import type { PersonalizationResult, SignalMismatch, GoalStrategy } from "@/types/personalization";
@@ -877,6 +878,11 @@ export default function AuditDetailPage() {
                       </p>
                     </div>
                   </Card>
+
+                  {/* Trust layer */}
+                  <div className="mt-4">
+                    <PaymentTrust variant="results" />
+                  </div>
 
                   {/* Secondary products */}
                   <div className="mt-4 grid gap-3 sm:grid-cols-2">
