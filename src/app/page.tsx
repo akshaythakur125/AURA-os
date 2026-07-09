@@ -270,11 +270,11 @@ export default function HomePage() {
           <FadeInView>
             <div className="mx-auto mb-14 max-w-2xl text-center">
               <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
-                What people say
+                What a report catches
               </h2>
               <p className="mt-5 text-lg text-gray-400">
-                Real feedback from people who used AuraCheck to upgrade their
-                first impression.
+                Illustrative examples of the kind of specific, actionable
+                calls a Full Aura Report makes.
               </p>
             </div>
           </FadeInView>
