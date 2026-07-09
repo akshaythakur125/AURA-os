@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { FadeInView } from "@/components/ui/FadeInView";
 import type { Look } from "@/lib/shop/catalogTypes";
+import type { StatusLeakTag } from "@/types/product";
 import { buildRetailerUrl, type Retailer } from "@/lib/shop/linkBuilder";
 
 interface PersonalizedShopProps {
@@ -26,9 +27,31 @@ const RETAILER_LABELS: Record<Retailer, string> = {
 
 const RETAILERS: Retailer[] = ["amazon", "flipkart", "myntra", "ajio"];
 
-/**
- * Category visual — renders the look's generated aurora-gradient SVG image.
- */
+const LEAK_FIX_COPY: Record<StatusLeakTag, string> = {
+  lighting: "Fixes your harsh or flat lighting",
+  clarity: "Adds visual clarity to your frame",
+  background: "Cleans up your background signal",
+  framing: "Improves your photo composition",
+  color: "Adds better color coordination",
+  resolution: "Upgrades your image quality signal",
+  grooming: "Boosts your grooming presence",
+  outfit_fit: "Fixes the fit mismatch in your outfit",
+  accessories: "Adds a premium accessory signal",
+  fragrance: "Completes your sensory presentation",
+  phone_condition: "Upgrades your phone-as-signal",
+  room_clutter: "Reduces visual noise in your space",
+  posture: "Improves your body language signal",
+};
+
+function getLeakFixText(look: Look, leakTags: string[]): string | null {
+  for (const tag of look.statusLeakTags) {
+    if (leakTags.includes(tag)) {
+      return LEAK_FIX_COPY[tag] || null;
+    }
+  }
+  return null;
+}
+
 function LookImage({ look }: { look: Look }) {
   return (
     <div className="relative h-40 overflow-hidden rounded-xl bg-black/20">
@@ -42,9 +65,6 @@ function LookImage({ look }: { look: Look }) {
   );
 }
 
-/**
- * Shop link dropdown — shows multiple retailer options.
- */
 function ShopLinks({ look }: { look: Look }) {
   const [open, setOpen] = useState(false);
 
@@ -89,92 +109,102 @@ function ShopLinks({ look }: { look: Look }) {
 
 export function PersonalizedShop({
   looks,
-  userScore,
   archetype,
   leakTags,
 }: PersonalizedShopProps) {
   const [showAll, setShowAll] = useState(false);
-  const [selectedRetailer, setSelectedRetailer] = useState<Retailer>("amazon");
 
   const visibleLooks = showAll ? looks : looks.slice(0, 12);
+
+  const worstLeak = leakTags && leakTags.length > 0 ? leakTags[0] : null;
+
+  const leakLabels: Record<string, string> = {
+    lighting: "lighting",
+    clarity: "clarity",
+    background: "background",
+    framing: "composition",
+    color: "color coordination",
+    resolution: "resolution",
+    grooming: "grooming",
+    outfit_fit: "outfit fit",
+    accessories: "accessories",
+    fragrance: "fragrance",
+    phone_condition: "phone condition",
+    room_clutter: "room clutter",
+    posture: "posture",
+  };
 
   return (
     <section className="border-t border-white/[0.04] py-12">
       <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-10">
-        {/* Header */}
+        {/* Header — names the specific leak */}
         <FadeInView>
           <div className="mb-8 text-center">
             <h2 className="gradient-text-animated text-2xl font-bold sm:text-3xl">
-              Looks matched to your result
+              {worstLeak
+                ? `Fix your "${leakLabels[worstLeak] || worstLeak}" leak`
+                : "Looks matched to your result"}
             </h2>
             <p className="mt-3 text-sm text-gray-400">
               {archetype && (
                 <span className="text-purple-300">{archetype}</span>
               )}
-              {archetype && leakTags && leakTags.length > 0 && " · "}
-              {leakTags && leakTags.length > 0 && (
+              {archetype && worstLeak && " · "}
+              {worstLeak && (
                 <span>
-                  Targeting:{" "}
-                  {leakTags.slice(0, 3).join(", ")}
+                  Each pick directly addresses your{" "}
+                  <span className="text-red-300">{leakLabels[worstLeak] || worstLeak}</span> issue
                 </span>
               )}
-              {!archetype && !leakTags && "Personalized picks based on your audit"}
+              {!worstLeak && "Personalized picks based on your audit"}
             </p>
-          </div>
-        </FadeInView>
-
-        {/* Retailer quick-select */}
-        <FadeInView delay={100}>
-          <div className="mb-6 flex flex-wrap justify-center gap-2">
-            {RETAILERS.map((r) => (
-              <button
-                key={r}
-                onClick={() => setSelectedRetailer(r)}
-                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
-                  selectedRetailer === r
-                    ? "bg-purple-600/20 text-purple-300 border border-purple-500/30"
-                    : "text-gray-500 hover:text-gray-300 border border-transparent hover:border-white/[0.06]"
-                }`}
-              >
-                {RETAILER_LABELS[r]}
-              </button>
-            ))}
           </div>
         </FadeInView>
 
         {/* Look grid */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {visibleLooks.map((look, i) => (
-            <FadeInView key={look.id} delay={Math.min(i * 50, 400)}>
-              <Card hover className="flex flex-col h-full">
-                <LookImage look={look} />
-                <div className="mt-3 flex-1">
-                  <div className="mb-1 flex items-start justify-between gap-2">
-                    <h3 className="text-sm font-semibold text-white leading-tight">
-                      {look.title}
-                    </h3>
-                    <span className="text-xs font-medium text-amber-400 whitespace-nowrap">
-                      {look.priceLabel}
-                    </span>
+          {visibleLooks.map((look, i) => {
+            const fixText = leakTags ? getLeakFixText(look, leakTags) : null;
+            return (
+              <FadeInView key={look.id} delay={Math.min(i * 50, 400)}>
+                <Card hover className="flex flex-col h-full">
+                  <LookImage look={look} />
+                  <div className="mt-3 flex-1">
+                    <div className="mb-1 flex items-start justify-between gap-2">
+                      <h3 className="text-sm font-semibold text-white leading-tight">
+                        {look.title}
+                      </h3>
+                      <span className="text-xs font-medium text-amber-400 whitespace-nowrap">
+                        {look.priceLabel}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 line-clamp-2">
+                      {look.description}
+                    </p>
+                    {/* Why this fixes it */}
+                    {fixText && (
+                      <div className="mt-2 rounded-lg border border-emerald-500/15 bg-emerald-500/5 px-2.5 py-1.5">
+                        <p className="text-[10px] font-medium text-emerald-400">
+                          ✓ {fixText}
+                        </p>
+                      </div>
+                    )}
+                    {/* Tags */}
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {look.styleArchetypes.slice(0, 2).map((tag) => (
+                        <Badge key={tag} variant="default" className="text-[9px] px-1.5 py-0">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-500 line-clamp-2">
-                    {look.description}
-                  </p>
-                  {/* Tags */}
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {look.styleArchetypes.slice(0, 2).map((tag) => (
-                      <Badge key={tag} variant="default" className="text-[9px] px-1.5 py-0">
-                        {tag}
-                      </Badge>
-                    ))}
+                  <div className="mt-3">
+                    <ShopLinks look={look} />
                   </div>
-                </div>
-                <div className="mt-3">
-                  <ShopLinks look={look} />
-                </div>
-              </Card>
-            </FadeInView>
-          ))}
+                </Card>
+              </FadeInView>
+            );
+          })}
         </div>
 
         {/* Show more */}
