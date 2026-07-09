@@ -360,37 +360,48 @@ export default function HomePage() {
               Four steps to know where you stand.
             </p>
           </div>
-          <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-4">
+          <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
             {[
               {
                 step: "1",
                 title: "Upload photo or profile screenshot",
                 desc: "Pick an image you have used or plan to use publicly.",
+                highlight: true,
               },
               {
                 step: "2",
                 title: "Select your goal",
                 desc: "Casual, professional, dating, or social — the lens changes.",
+                highlight: false,
               },
               {
                 step: "3",
                 title: "Select your budget",
                 desc: "From zero spend to a full upgrade — we match the plan.",
+                highlight: false,
               },
               {
                 step: "4",
                 title: "Get your Aura Score & upgrade plan",
                 desc: "See your score, leaks, and a clear path to upgrade.",
+                highlight: true,
               },
             ].map((item) => (
-              <div key={item.step} className="text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 text-lg font-bold text-white">
+              <div
+                key={item.step}
+                className={`rounded-2xl p-6 text-left ${
+                  item.highlight
+                    ? "glass-elevated"
+                    : "glass-card"
+                }`}
+              >
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 text-lg font-bold text-white shadow-[var(--shadow-glow-purple)]">
                   {item.step}
                 </div>
-                <h3 className="mb-2 text-sm font-semibold text-white">
+                <h3 className="mb-2 text-base font-semibold text-white">
                   {item.title}
                 </h3>
-                <p className="text-xs leading-relaxed text-gray-500">
+                <p className="text-sm leading-relaxed text-gray-400">
                   {item.desc}
                 </p>
               </div>
@@ -479,12 +490,12 @@ export default function HomePage() {
               Three demo reports — one for each product. See exactly what you get before you decide to unlock.
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            <Link href="/products/aura-report" className="group">
+          <div className="bento-grid">
+            <Link href="/products/aura-report" className="group bento-span-2">
               <Card hover className="relative overflow-hidden h-full">
                 <Badge variant="premium" className="mb-3">Aura Report — ₹99</Badge>
                 <div className="flex items-baseline gap-1 mb-3">
-                  <span className="text-3xl font-bold text-white">72</span>
+                  <span className="text-4xl font-bold text-white">72</span>
                   <span className="text-xs text-gray-500">/ 100</span>
                 </div>
                 <p className="text-sm text-gray-400">Full visual breakdown, status leaks ranked, budget upgrade plan, and shareable card.</p>
@@ -533,23 +544,23 @@ export default function HomePage() {
               Start free. Go deeper when you are ready.
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            <Card hover className="text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 text-lg font-bold text-white">1</div>
+          <div className="bento-grid">
+            <Card hover className="bento-span-2 text-center glass-elevated">
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-pink-500 text-lg font-bold text-white shadow-[var(--shadow-glow-purple)]">1</div>
               <h3 className="mb-2 text-lg font-semibold text-white">Full Aura Report</h3>
-              <p className="mb-2 text-2xl font-bold text-amber-400">₹99</p>
+              <p className="mb-2 text-3xl font-bold text-amber-400">₹99</p>
               <p className="text-sm text-gray-400">Deep analysis of your visual signal with a detailed upgrade roadmap.</p>
               <div className="mt-4"><Link href="/products/aura-report"><Button variant="outline" size="sm">Learn More</Button></Link></div>
             </Card>
             <Card hover className="text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 text-lg font-bold text-white">2</div>
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 text-lg font-bold text-white shadow-[var(--shadow-glow-pink)]">2</div>
               <h3 className="mb-2 text-lg font-semibold text-white">Dating Profile Audit</h3>
               <p className="mb-2 text-2xl font-bold text-amber-400">₹299</p>
               <p className="text-sm text-gray-400">Profile text analysis with bio suggestions, red-flag detection, and prompt grading.</p>
               <div className="mt-4"><Link href="/products/dating-audit"><Button variant="outline" size="sm">Learn More</Button></Link></div>
             </Card>
             <Card hover className="text-center">
-              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-lg font-bold text-white">3</div>
+              <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-lg font-bold text-white shadow-[var(--shadow-glow-blue)]">3</div>
               <h3 className="mb-2 text-lg font-semibold text-white">30-Day Glow-Up Plan</h3>
               <p className="mb-2 text-2xl font-bold text-amber-400">₹499</p>
               <p className="text-sm text-gray-400">A structured month-long roadmap for grooming, outfit, and photo consistency.</p>
@@ -723,9 +734,9 @@ export default function HomePage() {
               AuraCheck helps you find the gaps and fix them.
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            <Card hover>
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-blue-500">
+          <div className="bento-grid">
+            <Card hover className="bento-span-2">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 shadow-[var(--shadow-glow-purple)]">
                 <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                 </svg>
@@ -738,7 +749,7 @@ export default function HomePage() {
               </p>
             </Card>
             <Card hover>
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 shadow-[var(--shadow-glow-pink)]">
                 <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
@@ -750,7 +761,7 @@ export default function HomePage() {
               </p>
             </Card>
             <Card hover>
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-[var(--shadow-glow-blue)]">
                 <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
@@ -830,7 +841,7 @@ export default function HomePage() {
               first impression the most.
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="bento-grid">
             <Card hover className="border-red-500/10">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-red-600/20 to-red-500/10">
                 <svg className="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -848,6 +859,23 @@ export default function HomePage() {
                 status leak worse, not better.
               </p>
             </Card>
+            <Card hover className="bento-span-2 border-purple-500/10 glass-elevated">
+              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600/20 to-pink-500/10 shadow-[var(--shadow-glow-purple)]">
+                <svg className="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <Badge variant="premium" className="mb-3">Best Upgrade</Badge>
+              <h3 className="mb-2 text-lg font-semibold text-white">
+                Target your biggest status leak first
+              </h3>
+              <p className="text-sm leading-relaxed text-gray-400">
+                AuraCheck identifies your single biggest status leak — the one
+                element weakening your first impression the most. Fixing that
+                one thing delivers more visible upgrade per rupee than any
+                random purchase.
+              </p>
+            </Card>
             <Card hover className="border-emerald-500/10">
               <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600/20 to-emerald-500/10">
                 <svg className="h-6 w-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -863,23 +891,6 @@ export default function HomePage() {
                 well-fitted solid-color outfit costs under ₹3,000 combined. This
                 changes how every photo of you is perceived — regardless of the
                 phone or background.
-              </p>
-            </Card>
-            <Card hover className="border-purple-500/10">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600/20 to-pink-500/10">
-                <svg className="h-6 w-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <Badge variant="premium" className="mb-3">Best Upgrade</Badge>
-              <h3 className="mb-2 text-lg font-semibold text-white">
-                Target your biggest status leak first
-              </h3>
-              <p className="text-sm leading-relaxed text-gray-400">
-                AuraCheck identifies your single biggest status leak — the one
-                element weakening your first impression the most. Fixing that
-                one thing delivers more visible upgrade per rupee than any
-                random purchase.
               </p>
             </Card>
           </div>
