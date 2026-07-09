@@ -7,18 +7,18 @@ interface BadgeProps {
 }
 
 const variants = {
-  default: "bg-white/10 text-gray-300 badge-embossed",
-  success: "bg-emerald-500/15 text-emerald-400 badge-embossed",
-  warning: "bg-amber-500/15 text-amber-400 badge-embossed",
-  danger: "bg-red-500/15 text-red-400 badge-embossed",
-  premium: "bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 text-purple-300 badge-embossed aurora-border",
+  default: "bg-white/[0.07] text-gray-300 badge-embossed",
+  success: "bg-emerald-500/10 text-emerald-400 badge-embossed",
+  warning: "bg-amber-500/10 text-amber-400 badge-embossed",
+  danger: "bg-red-500/10 text-red-400 badge-embossed",
+  premium: "bg-gradient-to-r from-purple-500/15 via-pink-500/15 to-blue-500/15 text-purple-300 badge-embossed aurora-border",
 };
 
 export function Badge({ children, variant = "default", className }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium tracking-wide uppercase",
         variants[variant],
         className
       )}

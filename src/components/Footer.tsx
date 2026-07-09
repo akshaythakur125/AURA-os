@@ -42,26 +42,26 @@ const footerLinks = [
 
 export function Footer() {
   return (
-    <footer className="relative mt-auto border-t border-white/5">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.06),transparent_60%)]" />
-      <Container className="relative py-12">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="relative mt-auto border-t border-white/[0.04]">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.04),transparent_60%)]" />
+      <Container className="relative py-16">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-2">
-              <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 via-pink-500 to-blue-500 text-sm font-bold text-white">
+              <div className="relative flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 text-[11px] font-bold text-white">
                 A
-                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/20 to-transparent" />
+                <div className="absolute inset-0 rounded-md bg-gradient-to-br from-white/15 to-transparent" />
               </div>
-              <span className="text-lg font-bold text-white">AuraCheck</span>
+              <span className="text-[14px] font-semibold tracking-tight text-white">AuraCheck</span>
             </div>
-            <p className="mt-3 text-sm text-gray-500">
+            <p className="mt-3 text-[13px] leading-relaxed text-gray-500">
               First-impression intelligence for the modern age.
             </p>
           </div>
 
           {footerLinks.map((group) => (
             <div key={group.label}>
-              <h3 className="mb-3 text-sm font-semibold text-white">
+              <h3 className="mb-3.5 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
                 {group.label}
               </h3>
               <ul className="space-y-2">
@@ -69,7 +69,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-500 transition-colors hover:text-purple-300"
+                      className="text-[13px] text-gray-500 transition-colors duration-200 hover:text-purple-300"
                     >
                       {link.label}
                     </Link>
@@ -80,7 +80,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-12 border-t border-white/5 pt-6 text-center text-sm text-gray-600">
+        <div className="mt-14 border-t border-white/[0.04] pt-6 text-center text-[12px] text-gray-600">
           &copy; {new Date().getFullYear()} AuraCheck. For informational and
           entertainment purposes only.
         </div>
