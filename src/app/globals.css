@@ -594,3 +594,20 @@ h2 {
     animation: none !important;
   }
 }
+
+/* ─── Slide-in Animation (for personalization panel) ─── */
+
+@keyframes slide-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in-down 0.2s var(--ease-out-expo) forwards;
+}

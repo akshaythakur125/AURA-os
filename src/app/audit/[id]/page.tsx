@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { Container } from "@/components/ui/Container";
@@ -234,6 +234,12 @@ export default function AuditDetailPage() {
   }
 
   const canGenerate = audit?.reportStatus === "draft" && audit?.imageDataUrl;
+
+  useEffect(() => {
+    if (canGenerate && !generating) {
+      handleGenerate();
+    }
+  }, [canGenerate]);
   const hasResult = audit?.reportStatus === "free_generated" && audit?.fullReport?.freeResult;
   const displayResult = result || (hasResult ? (audit!.fullReport!.freeResult as FreeAuraResult) : null);
   const isUnlocked = audit?.reportStatus === "unlocked" && audit?.fullReport?.fullContent;
@@ -241,7 +247,9 @@ export default function AuditDetailPage() {
   const personalization = audit?.personalization;
 
   return (
-    <Container className="py-12">
+    <>
+      <div className="aurora-mesh" />
+    <Container className="relative py-12">
       <div className="mb-8">
         <Link
           href="/dashboard"
@@ -373,16 +381,40 @@ export default function AuditDetailPage() {
 
           {/* Score generation area */}
           {canGenerate && (
-            <div className="mb-6 text-center">
-              <Button size="lg" onClick={handleGenerate} disabled={generating}>
-                {generating ? "Analyzing your image..." : "Generate Free Aura Score"}
-              </Button>
-              {generating && (
-                <p className="mt-3 text-xs text-gray-500">
-                  Analyzing image signals using browser-based rules...
-                </p>
+            <div className="mb-6">
+              {generating ? (
+                <Card className="relative overflow-hidden p-8 text-center">
+                  <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-purple-500/10 blur-3xl" />
+                  <div className="pointer-events-none absolute -left-20 -bottom-20 h-40 w-40 rounded-full bg-pink-500/10 blur-3xl" />
+                  <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-500/10">
+                    <svg className="h-7 w-7 animate-spin text-purple-400" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                  </div>
+                  <h2 className="mb-2 text-lg font-semibold text-white">Analyzing your photo</h2>
+                  <p className="mb-6 text-xs text-gray-500">Running 12+ visual signal checks in your browser...</p>
+                  <div className="mx-auto max-w-xs space-y-2">
+                    {[
+                      "Reading image signals...",
+                      "Detecting status leaks...",
+                      "Building your score...",
+                    ].map((text, i) => (
+                      <div key={text} className="flex items-center gap-2 text-xs text-gray-400">
+                        <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-purple-400" style={{ animationDelay: `${i * 400}ms` }} />
+                        {text}
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              ) : (
+                <div className="text-center">
+                  <Button size="lg" onClick={handleGenerate}>
+                    Generate Free Aura Score
+                  </Button>
+                </div>
               )}
-              {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
+              {error && <p className="mt-3 text-center text-sm text-red-400">{error}</p>}
             </div>
           )}
 
@@ -615,143 +647,172 @@ export default function AuditDetailPage() {
           {/* Free Result + Locked Teaser */}
           {!displayFull && displayResult && (
             <>
-              <Card className="relative mb-6 overflow-hidden text-center">
-                <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
-                <Badge variant="premium" className="mb-4">
-                  {displayResult.category}
-                </Badge>
-                <div className="text-6xl font-bold text-white">
-                  {displayResult.auraScore}
-                </div>
-                <div className="mt-1 text-sm text-gray-500">/ 100</div>
-                <div className="mx-auto mt-4 h-2 max-w-xs overflow-hidden rounded-full bg-white/5">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-1000"
-                    style={{ width: `${displayResult.auraScore}%` }}
-                  />
-                </div>
-                <p className="mx-auto mt-4 max-w-md text-sm text-gray-300">
-                  {displayResult.oneLineVerdict}
-                </p>
-              </Card>
+              {/* ─── HERO: The Leak ─── */}
+              {(() => {
+                const sortedLeaks = [...displayResult.statusLeaks].sort(
+                  (a, b) => (a.severity === "high" ? 0 : a.severity === "medium" ? 1 : 2) - (b.severity === "high" ? 0 : b.severity === "medium" ? 1 : 2)
+                );
+                const heroLeak = sortedLeaks[0];
+                const otherLeaks = sortedLeaks.slice(1);
 
-              <Card className="mb-6">
-                <h3 className="mb-3 text-sm font-semibold text-white">
-                  Strongest Signals
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {displayResult.strongestSignals.map((s) => (
-                    <Badge key={s} variant="success">
-                      {s}
-                    </Badge>
-                  ))}
-                </div>
-              </Card>
-
-              <Card className="mb-6">
-                <h3 className="mb-4 text-sm font-semibold text-white">
-                  Biggest Status Leaks
-                </h3>
-                <div className="space-y-4">
-                  {displayResult.statusLeaks.map((leak) => (
-                    <div key={leak.id} className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
-                      <div className="mb-2 flex items-start justify-between gap-2">
-                        <h4 className="text-sm font-medium text-white">
-                          {leak.title}
-                        </h4>
-                        <Badge
-                          variant={
-                            leak.severity === "high"
-                              ? "danger"
-                              : leak.severity === "medium"
-                                ? "warning"
-                                : "default"
-                          }
-                        >
-                          {leak.severity}
-                        </Badge>
-                      </div>
-                      <p className="mb-2 text-xs text-gray-400">
-                        {leak.description}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        <span className="text-purple-300">Fix:</span>{" "}
-                        {leak.fix}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              <Card className="mb-6">
-                <h3 className="mb-4 text-sm font-semibold text-white">
-                  Quick Fixes
-                </h3>
-                <div className="space-y-3">
-                  {displayResult.quickFixes.map((fix) => (
-                    <div key={fix.title} className="flex items-start gap-3">
-                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-xs text-emerald-400">
-                        &#10003;
-                      </div>
-                      <div>
-                        <p className="text-sm text-white">{fix.title}</p>
-                        <p className="text-xs text-gray-500">
-                          {fix.description}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              <Card className="mb-6">
-                <h3 className="mb-1 text-sm font-semibold text-white">
-                  Budget Upgrade Plan
-                </h3>
-                <p className="mb-4 text-xs text-gray-500">
-                  {displayResult.budgetUpgradePlan.priority}
-                </p>
-                <ul className="space-y-2">
-                  {displayResult.budgetUpgradePlan.actions.map((action) => (
-                    <li key={action} className="flex items-start gap-3 text-xs text-gray-300">
-                      <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
-                      {action}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-4 rounded-lg bg-white/[0.03] p-3 text-xs text-gray-500">
-                  Estimated impact: {displayResult.budgetUpgradePlan.estimatedImpact}
-                </p>
-              </Card>
-
-              <Card className="mb-6">
-                <h3 className="mb-3 text-sm font-semibold text-white">
-                  Image Signal Metrics
-                </h3>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {[
-                    { label: "Lighting", value: displayResult.imageMetrics.lightingScore },
-                    { label: "Clarity", value: displayResult.imageMetrics.clarityScore },
-                    { label: "Composition", value: displayResult.imageMetrics.compositionScore },
-                    { label: "Contrast", value: displayResult.imageMetrics.contrast },
-                    { label: "Saturation", value: displayResult.imageMetrics.saturation },
-                    { label: "Resolution", value: displayResult.imageMetrics.resolutionScore },
-                  ].map((m) => (
-                    <div key={m.label} className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
-                      <div className="text-xs text-gray-500">{m.label}</div>
-                      <div className="mt-1 flex items-center gap-2">
-                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
-                          <div
-                            className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500"
-                            style={{ width: `${m.value}%` }}
-                          />
+                return (
+                  <>
+                    {heroLeak && (
+                      <div className="mb-8">
+                        <div className="relative overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-b from-red-500/[0.08] to-transparent p-6 sm:p-8 text-center">
+                          <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-red-500/10 blur-3xl" />
+                          <div className="pointer-events-none absolute -left-20 -bottom-20 h-40 w-40 rounded-full bg-purple-500/10 blur-3xl" />
+                          <Badge variant="danger" className="mb-4">
+                            {heroLeak.severity === "high" ? "Critical" : "Major"} Status Leak
+                          </Badge>
+                          <h2 className="mb-3 bg-gradient-to-r from-red-300 via-pink-300 to-red-200 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
+                            {heroLeak.title}
+                          </h2>
+                          <p className="mx-auto mb-4 max-w-md text-sm text-gray-300">
+                            {heroLeak.description}
+                          </p>
+                          <div className="mx-auto max-w-md rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
+                            <div className="mb-1 text-xs text-purple-400">Fix this first</div>
+                            <p className="text-sm text-gray-300">{heroLeak.fix}</p>
+                          </div>
                         </div>
-                        <span className="text-xs text-white">{m.value}</span>
+                        {otherLeaks.length > 0 && (
+                          <p className="mt-4 text-center text-xs text-gray-500">
+                            +{otherLeaks.length} more {otherLeaks.length === 1 ? "leak" : "leaks"} found — see below
+                          </p>
+                        )}
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
+                    )}
+
+                    {/* ─── Score Card ─── */}
+                    <Card className="relative mb-6 overflow-hidden text-center">
+                      <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
+                      <Badge variant="premium" className="mb-4">
+                        {displayResult.category}
+                      </Badge>
+                      <div className="text-6xl font-bold text-white">
+                        {displayResult.auraScore}
+                      </div>
+                      <div className="mt-1 text-sm text-gray-500">/ 100</div>
+                      <div className="mx-auto mt-4 h-2 max-w-xs overflow-hidden rounded-full bg-white/5">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-1000"
+                          style={{ width: `${displayResult.auraScore}%` }}
+                        />
+                      </div>
+                      <p className="mx-auto mt-4 max-w-md text-sm text-gray-300">
+                        {displayResult.oneLineVerdict}
+                      </p>
+                    </Card>
+
+                    <Card className="mb-6">
+                      <h3 className="mb-3 text-sm font-semibold text-white">
+                        Strongest Signals
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {displayResult.strongestSignals.map((s) => (
+                          <Badge key={s} variant="success">{s}</Badge>
+                        ))}
+                      </div>
+                    </Card>
+
+                    {/* ─── Remaining Leaks ─── */}
+                    {otherLeaks.length > 0 && (
+                      <Card className="mb-6">
+                        <h3 className="mb-4 text-sm font-semibold text-white">
+                          More Status Leaks
+                        </h3>
+                        <div className="space-y-4">
+                          {otherLeaks.map((leak) => (
+                            <div key={leak.id} className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
+                              <div className="mb-2 flex items-start justify-between gap-2">
+                                <h4 className="text-sm font-medium text-white">{leak.title}</h4>
+                                <Badge
+                                  variant={leak.severity === "high" ? "danger" : leak.severity === "medium" ? "warning" : "default"}
+                                >
+                                  {leak.severity}
+                                </Badge>
+                              </div>
+                              <p className="mb-2 text-xs text-gray-400">{leak.description}</p>
+                              <p className="text-xs text-gray-500">
+                                <span className="text-purple-300">Fix:</span> {leak.fix}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </Card>
+                    )}
+
+                    <Card className="mb-6">
+                      <h3 className="mb-4 text-sm font-semibold text-white">
+                        Quick Fixes
+                      </h3>
+                      <div className="space-y-3">
+                        {displayResult.quickFixes.map((fix) => (
+                          <div key={fix.title} className="flex items-start gap-3">
+                            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-xs text-emerald-400">
+                              &#10003;
+                            </div>
+                            <div>
+                              <p className="text-sm text-white">{fix.title}</p>
+                              <p className="text-xs text-gray-500">{fix.description}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+
+                    <Card className="mb-6">
+                      <h3 className="mb-1 text-sm font-semibold text-white">
+                        Budget Upgrade Plan
+                      </h3>
+                      <p className="mb-4 text-xs text-gray-500">
+                        {displayResult.budgetUpgradePlan.priority}
+                      </p>
+                      <ul className="space-y-2">
+                        {displayResult.budgetUpgradePlan.actions.map((action) => (
+                          <li key={action} className="flex items-start gap-3 text-xs text-gray-300">
+                            <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
+                            {action}
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="mt-4 rounded-lg bg-white/[0.03] p-3 text-xs text-gray-500">
+                        Estimated impact: {displayResult.budgetUpgradePlan.estimatedImpact}
+                      </p>
+                    </Card>
+
+                    <Card className="mb-6">
+                      <h3 className="mb-3 text-sm font-semibold text-white">
+                        Image Signal Metrics
+                      </h3>
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {[
+                          { label: "Lighting", value: displayResult.imageMetrics.lightingScore },
+                          { label: "Clarity", value: displayResult.imageMetrics.clarityScore },
+                          { label: "Composition", value: displayResult.imageMetrics.compositionScore },
+                          { label: "Contrast", value: displayResult.imageMetrics.contrast },
+                          { label: "Saturation", value: displayResult.imageMetrics.saturation },
+                          { label: "Resolution", value: displayResult.imageMetrics.resolutionScore },
+                        ].map((m) => (
+                          <div key={m.label} className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
+                            <div className="text-xs text-gray-500">{m.label}</div>
+                            <div className="mt-1 flex items-center gap-2">
+                              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
+                                <div
+                                  className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500"
+                                  style={{ width: `${m.value}%` }}
+                                />
+                              </div>
+                              <span className="text-xs text-white">{m.value}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  </>
+                );
+              })()}
 
               {/* ─── Challenge CTA ─── */}
               <Card className="mb-6">
@@ -1102,5 +1163,6 @@ export default function AuditDetailPage() {
         </div>
       )}
     </Container>
+    </>
   );
 }
