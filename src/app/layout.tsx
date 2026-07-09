@@ -39,6 +39,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-depth text-[#ededf0]">
+        <div className="grain-overlay" aria-hidden="true" />
         <ToastProvider>
           <Header />
           <main className="flex-1">{children}</main>
