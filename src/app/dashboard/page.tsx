@@ -8,6 +8,9 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { GlowOrb } from "@/components/ui/GlowOrb";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
+import { ScoreTrend } from "@/components/dashboard/ScoreTrend";
+import { StreakIndicator } from "@/components/dashboard/StreakIndicator";
+import { ImprovementCard } from "@/components/dashboard/ImprovementCard";
 import { getAudits, deleteAudit, getAuditStats } from "@/lib/storage/auditStore";
 import { getLocalUser, updateLocalUser } from "@/lib/storage/userStore";
 import { clearAll } from "@/lib/storage/localStore";
@@ -95,6 +98,10 @@ export default function DashboardPage() {
 
   const hasAudits = audits.length > 0;
 
+  const scoresForTrend = audits
+    .filter((a) => a.freeScore !== undefined)
+    .map((a) => ({ score: a.freeScore!, date: a.createdAt }));
+
   function getCategory(audit: Audit): string | undefined {
     if (audit.fullReport?.fullContent?.category) return audit.fullReport.fullContent.category;
     return audit.fullReport?.freeResult?.category;
@@ -106,6 +113,7 @@ export default function DashboardPage() {
       <Container className="relative py-12">
         <GlowOrb color="rgba(147, 51, 234, 0.08)" size={300} className="top-[10%] right-[8%]" delay={0} />
         <GlowOrb color="rgba(236, 72, 153, 0.06)" size={200} className="bottom-[15%] left-[5%]" delay={300} />
+
       <div className="mb-10 flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-white sm:text-3xl">
@@ -114,7 +122,7 @@ export default function DashboardPage() {
               : "Your Dashboard"}
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Track your audits and review past reports.
+            Track your improvement. Check in regularly to keep your score rising.
           </p>
         </div>
         <Link href="/audit/new">
@@ -139,10 +147,26 @@ export default function DashboardPage() {
         </Card>
       )}
 
+      {/* Hero: Score Trend + Streak */}
+      {hasAudits && (
+        <div className="mb-8 grid gap-4 sm:grid-cols-2">
+          <Card className="p-5">
+            <ScoreTrend scores={scoresForTrend} />
+          </Card>
+          <Card className="p-5">
+            <StreakIndicator audits={audits} />
+          </Card>
+        </div>
+      )}
+
+      {/* Improvement Celebration */}
+      {hasAudits && <ImprovementCard audits={audits} />}
+
+      {/* Stats Row */}
       {hasAudits && stats && (
-        <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="my-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Card>
-            <div className="text-xs text-gray-500">Total Audits</div>
+            <div className="text-xs text-gray-500">Total Checks</div>
             <div className="mt-1 text-2xl font-bold text-white">{stats.totalAudits}</div>
           </Card>
           <Card>
@@ -158,7 +182,7 @@ export default function DashboardPage() {
             </div>
           </Card>
           <Card>
-            <div className="text-xs text-gray-500">Avg Free Score</div>
+            <div className="text-xs text-gray-500">Avg Score</div>
             <div className="mt-1 text-2xl font-bold text-purple-400">
               {stats.averageFreeScore ?? "—"}
             </div>
@@ -192,23 +216,6 @@ export default function DashboardPage() {
               </>
             )}
           </div>
-        </div>
-      </Card>
-
-      {/* Progress Comparisons Link */}
-      <Card className="mb-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h3 className="text-sm font-semibold text-white">
-              Track Your Improvement
-            </h3>
-            <p className="mt-1 text-xs text-gray-500">
-              Compare audits over time and see how your score changes.
-            </p>
-          </div>
-          <Link href="/progress">
-            <Button size="sm">View Progress</Button>
-          </Link>
         </div>
       </Card>
 
@@ -263,6 +270,7 @@ export default function DashboardPage() {
         );
       })()}
 
+      {/* Audit History */}
       {hasAudits && (
         <div className="mb-10">
           <h2 className="mb-4 text-lg font-semibold text-white">Audit History</h2>
