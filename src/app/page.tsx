@@ -7,6 +7,7 @@ import { GlowOrb } from "@/components/ui/GlowOrb";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { HeroMockup } from "@/components/hero/HeroMockup";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
+import { Testimonials } from "@/components/marketing/Testimonials";
 
 const leaks = [
   {
@@ -260,6 +261,26 @@ export default function HomePage() {
               </Card>
             ))}
           </div>
+        </Container>
+      </section>
+
+      {/* ─── Testimonials ─── */}
+      <section className="border-t border-white/[0.04] py-24">
+        <Container>
+          <FadeInView>
+            <div className="mx-auto mb-14 max-w-2xl text-center">
+              <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
+                What people say
+              </h2>
+              <p className="mt-5 text-lg text-gray-400">
+                Real feedback from people who used AuraCheck to upgrade their
+                first impression.
+              </p>
+            </div>
+          </FadeInView>
+          <FadeInView delay={100}>
+            <Testimonials />
+          </FadeInView>
         </Container>
       </section>
 
