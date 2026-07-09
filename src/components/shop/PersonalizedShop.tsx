@@ -8,6 +8,7 @@ import { FadeInView } from "@/components/ui/FadeInView";
 import type { Look } from "@/lib/shop/catalogTypes";
 import type { StatusLeakTag } from "@/types/product";
 import { buildRetailerUrl, type Retailer } from "@/lib/shop/linkBuilder";
+import { ShopCategoryImage } from "./ShopCategoryImage";
 
 interface PersonalizedShopProps {
   looks: Look[];
@@ -53,16 +54,7 @@ function getLeakFixText(look: Look, leakTags: string[]): string | null {
 }
 
 function LookImage({ look }: { look: Look }) {
-  return (
-    <div className="relative h-40 overflow-hidden rounded-xl bg-black/20">
-      <img
-        src={look.imageUrl}
-        alt={look.imageAlt}
-        loading="lazy"
-        className="h-full w-full object-cover"
-      />
-    </div>
-  );
+  return <ShopCategoryImage category={look.category} title={look.title} />;
 }
 
 function ShopLinks({ look }: { look: Look }) {
