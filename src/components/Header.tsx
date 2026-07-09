@@ -27,7 +27,7 @@ export function Header() {
       <Container>
         <div className="flex h-[60px] items-center justify-between">
           <Link href="/" className="group flex items-center gap-2.5">
-            <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 text-xs font-bold text-white shadow-[0_2px_12px_rgba(147,51,234,0.3)] transition-shadow group-hover:shadow-[0_4px_20px_rgba(147,51,234,0.4)]">
+            <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 text-xs font-bold text-white shadow-[var(--shadow-glow-purple)] transition-shadow group-hover:shadow-[0_4px_24px_rgba(147,51,234,0.5)]">
               A
               <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/15 to-transparent" />
             </div>

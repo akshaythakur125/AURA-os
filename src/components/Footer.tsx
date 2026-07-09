@@ -48,7 +48,7 @@ export function Footer() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-2">
-              <div className="relative flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 text-[11px] font-bold text-white">
+              <div className="relative flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 text-[11px] font-bold text-white shadow-[var(--shadow-glow-purple)]">
                 A
                 <div className="absolute inset-0 rounded-md bg-gradient-to-br from-white/15 to-transparent" />
               </div>
