@@ -2,12 +2,15 @@ export type ShareCardType = "free_result" | "full_report";
 
 export type CardStyle = "premium_dark" | "clean_minimal" | "bold_score";
 
+export type CardFormat = "story" | "square";
+
 export interface ShareCardOptions {
   includeImage: boolean;
   includeStatusLeak: boolean;
   includeQuickFix: boolean;
   includeBranding: boolean;
   cardStyle: CardStyle;
+  format: CardFormat;
 }
 
 export interface ShareCardData {
