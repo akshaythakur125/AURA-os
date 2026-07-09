@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://auracheck.vercel.app/sitemap.xml
