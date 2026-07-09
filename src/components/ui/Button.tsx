@@ -8,7 +8,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants = {
   primary:
-    "bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 text-white shadow-[0_2px_12px_rgba(147,51,234,0.3)] hover:shadow-[0_4px_20px_rgba(147,51,234,0.4)] hover:from-purple-500 hover:via-purple-400 hover:to-pink-400 btn-aurora",
+    "bg-gradient-to-r from-purple-600 via-purple-500 to-pink-500 text-white shadow-[0_2px_12px_rgba(147,51,234,0.3)] hover:shadow-[0_6px_24px_rgba(147,51,234,0.45)] hover:from-purple-500 hover:via-purple-400 hover:to-pink-400 btn-aurora",
   secondary:
     "glass-card text-white hover:bg-white/[0.08] hover:border-white/[0.08] btn-aurora",
   ghost: "text-gray-400 hover:text-white hover:bg-white/[0.05]",
@@ -32,8 +32,8 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center font-medium transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 disabled:opacity-40 disabled:pointer-events-none",
-        "active:scale-[0.97] active:transition-transform active:duration-100",
+        "inline-flex items-center justify-center font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 disabled:opacity-40 disabled:pointer-events-none",
+        "btn-spring",
         variants[variant],
         sizes[size],
         className

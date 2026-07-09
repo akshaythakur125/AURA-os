@@ -46,8 +46,8 @@ export function Card({ children, className, hover = false, tilt = false, onClick
         const y = (e.clientY - rect.top) / rect.height;
         const tiltX = (y - 0.5) * -6;
         const tiltY = (x - 0.5) * 6;
-        tiltRef.current.style.transform = `perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.012, 1.012, 1.012)`;
-        tiltRef.current.style.transition = "transform 600ms cubic-bezier(0.23, 1, 0.32, 1)";
+        tiltRef.current.style.transform = `perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale3d(1.015, 1.015, 1.015)`;
+        tiltRef.current.style.transition = "transform 120ms cubic-bezier(0.22, 1.2, 0.36, 1)";
       });
     },
     []
@@ -56,8 +56,9 @@ export function Card({ children, className, hover = false, tilt = false, onClick
   const handleMouseLeave = useCallback(() => {
     cancelAnimationFrame(frameRef.current);
     if (tiltRef.current) {
+      // Spring-back: overshoot then settle
       tiltRef.current.style.transform = "perspective(800px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
-      tiltRef.current.style.transition = "transform 600ms cubic-bezier(0.23, 1, 0.32, 1)";
+      tiltRef.current.style.transition = "transform 600ms cubic-bezier(0.34, 1.56, 0.64, 1)";
     }
   }, []);
 
@@ -69,9 +70,12 @@ export function Card({ children, className, hover = false, tilt = false, onClick
         onMouseLeave={handleMouseLeave}
         onClick={onClick}
         className={cn(
-          "glass-card rounded-2xl p-6 cursor-pointer transition-all duration-500",
+          "glass-card rounded-2xl p-6 cursor-pointer transition-all",
           "hover:border-white/[0.08]"
         )}
+        style={{
+          boxShadow: "0 2px 4px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25), 0 24px 48px -12px rgba(0,0,0,0.2)",
+        }}
       >
         {children}
       </div>
