@@ -98,7 +98,7 @@ export default function HomePage() {
       <div className="aurora-mesh-third" />
 
       {/* ─── Hero ─── */}
-      <section className="parallax-section relative overflow-hidden pb-32 pt-24 sm:pt-32">
+      <section className="parallax-section relative overflow-hidden pb-28 pt-20 sm:pt-28">
         <GlowOrb color="rgba(147, 51, 234, 0.18)" size={500} className="top-[-10%] left-[10%]" delay={0} />
         <GlowOrb color="rgba(236, 72, 153, 0.12)" size={400} className="top-[20%] right-[5%]" delay={500} />
         <GlowOrb color="rgba(14, 165, 233, 0.08)" size={350} className="bottom-[10%] left-[30%]" delay={1000} />
@@ -111,7 +111,7 @@ export default function HomePage() {
             </span>
           </FadeInView>
           <FadeInView delay={100}>
-            <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl md:text-6xl" style={{ textShadow: "0 0 80px rgba(147, 51, 234, 0.3)" }}>
+            <h1 className="bg-gradient-to-br from-white via-purple-100 to-pink-100 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl md:text-[3.5rem] md:leading-[1.08]" style={{ textShadow: "0 0 80px rgba(147, 51, 234, 0.2)" }}>
               Find your biggest status leak.
             </h1>
           </FadeInView>
@@ -143,7 +143,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Social Psychology Hook ─── */}
-      <section className="relative border-t border-white/5 py-20">
+      <section className="relative border-t border-white/[0.04] py-24">
         <GlowOrb color="rgba(147, 51, 234, 0.08)" size={300} className="top-[20%] right-[10%]" delay={200} />
         <Container className="relative">
           <FadeInView>
@@ -214,7 +214,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Status Leak Detector ─── */}
-      <section id="examples" className="border-t border-white/5 py-20">
+      <section id="examples" className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -254,7 +254,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Product Outcomes ─── */}
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -350,7 +350,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── How It Works ─── */}
-      <section id="how-it-works" className="border-t border-white/5 py-20">
+      <section id="how-it-works" className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -404,7 +404,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Monetization Preview ─── */}
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -469,7 +469,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── See Sample Reports ─── */}
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -523,7 +523,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Three Paid Upgrades ─── */}
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -560,7 +560,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Referral / Invite Section ─── */}
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -584,7 +584,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Challenges Section ─── */}
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -618,7 +618,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Install App Section ─── */}
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -647,7 +647,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Example Report Preview ─── */}
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -712,7 +712,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Signal Consistency ─── */}
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -771,7 +771,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Share Card Preview ─── */}
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -819,7 +819,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Upgrade Impact ─── */}
-      <section className="border-t border-white/5 py-20">
+      <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
@@ -892,7 +892,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Safety Note ─── */}
-      <section className="border-t border-white/5 py-12">
+      <section className="border-t border-white/[0.04] py-12">
         <Container>
           <div className="mx-auto max-w-2xl rounded-xl border border-white/5 bg-white/[0.02] p-6 text-center">
             <p className="text-sm text-gray-500">
@@ -904,7 +904,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── Final CTA ─── */}
-      <section className="relative overflow-hidden border-t border-white/5 py-24">
+      <section className="relative overflow-hidden border-t border-white/[0.04] py-24">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.12),transparent_50%)]" />
         <Container className="relative text-center">
           <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
