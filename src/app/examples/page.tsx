@@ -8,6 +8,8 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SampleReportCard } from "@/components/examples/SampleReportCard";
 import { ReportComparison } from "@/components/examples/ReportComparison";
 import { InsightPreview } from "@/components/examples/InsightPreview";
+import { ReportMockup } from "@/components/examples/ReportMockup";
+import { LeakComparison } from "@/components/examples/LeakComparison";
 import { LeadCaptureCard } from "@/components/marketing/LeadCaptureCard";
 import { SAMPLE_REPORTS } from "@/config/sampleReports";
 
@@ -54,7 +56,23 @@ export default function ExamplesPage() {
 
       <section className="border-t border-white/[0.04] py-24">
         <Container>
-          <SectionHeading title="What a full report looks like" subtitle="Expanded insights from a sample Full Aura Report." />
+          <SectionHeading title="What a full report looks like" subtitle="Real UI from a sample Full Aura Report — visual breakdown, status leaks, upgrade path." />
+          <ReportMockup />
+        </Container>
+      </section>
+
+      <section className="border-t border-white/[0.04] py-24">
+        <Container>
+          <SectionHeading title="Before and after" subtitle="How specific fixes change your score — real report logic, sample data." />
+          <div className="mx-auto max-w-2xl">
+            <LeakComparison />
+          </div>
+        </Container>
+      </section>
+
+      <section className="border-t border-white/[0.04] py-24">
+        <Container>
+          <SectionHeading title="Full report insights" subtitle="Expanded details from a sample Full Aura Report." />
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-4">
               <InsightPreview
