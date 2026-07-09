@@ -99,31 +99,31 @@ export default function HomePage() {
 
       {/* ─── Hero ─── */}
       <section className="parallax-section relative overflow-hidden pb-28 pt-20 sm:pt-28">
-        <GlowOrb color="rgba(147, 51, 234, 0.18)" size={500} className="top-[-10%] left-[10%]" delay={0} />
-        <GlowOrb color="rgba(236, 72, 153, 0.12)" size={400} className="top-[20%] right-[5%]" delay={500} />
-        <GlowOrb color="rgba(14, 165, 233, 0.08)" size={350} className="bottom-[10%] left-[30%]" delay={1000} />
+        <GlowOrb color="rgba(147, 51, 234, 0.22)" size={700} className="top-[-15%] left-[5%]" delay={0} />
+        <GlowOrb color="rgba(236, 72, 153, 0.15)" size={550} className="top-[15%] right-[0%]" delay={600} />
+        <GlowOrb color="rgba(14, 165, 233, 0.1)" size={450} className="bottom-[5%] left-[25%]" delay={1200} />
 
         <Container className="relative text-center">
           <FadeInView>
-            <span className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 px-3 py-1 text-xs text-purple-300 badge-embossed">
+            <span className="mb-8 inline-flex items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 px-3.5 py-1 text-xs text-purple-300 badge-embossed">
               <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
               First-Impression Intelligence
             </span>
           </FadeInView>
           <FadeInView delay={100}>
-            <h1 className="bg-gradient-to-br from-white via-purple-100 to-pink-100 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl md:text-[3.5rem] md:leading-[1.08]" style={{ textShadow: "0 0 80px rgba(147, 51, 234, 0.2)" }}>
+            <h1 className="mx-auto max-w-4xl gradient-text-animated text-5xl font-bold sm:text-6xl md:text-[4.5rem] md:leading-[1.02] lg:text-[5rem]">
               Find your biggest status leak.
             </h1>
           </FadeInView>
           <FadeInView delay={200}>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-400 sm:text-xl">
+            <p className="mx-auto mt-8 max-w-2xl text-lg text-gray-400 sm:text-xl leading-relaxed">
               You may have the phone, the outfit, or the profile. AuraCheck shows
               what is weakening your first impression and how to upgrade your
               visual signal under your budget.
             </p>
           </FadeInView>
           <FadeInView delay={300}>
-            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
               <Link href="/audit/new">
                 <Button size="lg">Start Free Aura Check</Button>
               </Link>
@@ -135,7 +135,7 @@ export default function HomePage() {
             </div>
           </FadeInView>
           <FadeInView delay={400}>
-            <p className="mt-6 text-xs text-gray-600">
+            <p className="mt-8 text-xs text-gray-600">
               No login. No external API. Your image stays in your browser in this MVP.
             </p>
           </FadeInView>
@@ -144,40 +144,40 @@ export default function HomePage() {
 
       {/* ─── Social Psychology Hook ─── */}
       <section className="relative border-t border-white/[0.04] py-24">
-        <GlowOrb color="rgba(147, 51, 234, 0.08)" size={300} className="top-[20%] right-[10%]" delay={200} />
+        <GlowOrb color="rgba(147, 51, 234, 0.1)" size={350} className="top-[20%] right-[10%]" delay={200} />
         <Container className="relative">
           <FadeInView>
             <div className="mx-auto mb-14 max-w-2xl text-center">
-              <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+              <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
                 People do not only buy products. They buy signals.
               </h2>
-              <p className="mt-4 text-lg text-gray-400">
+              <p className="mt-5 text-lg text-gray-400">
                 Every visible detail in your photo or profile sends a message —
                 whether you intend it or not.
               </p>
             </div>
           </FadeInView>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="bento-grid">
             <FadeInView delay={0}>
-              <Card hover>
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 shadow-lg shadow-purple-500/20">
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
-                </svg>
-              </div>
-              <h3 className="mb-2 text-lg font-semibold text-white">
-                Phone is a signal
-              </h3>
-              <p className="text-sm leading-relaxed text-gray-400">
-                The phone in your hand says something. But a scratched screen,
-                dull case, or outdated model can quietly undermine the story
-                your photo tells.
-              </p>
+              <Card hover className="bento-span-2">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 shadow-[var(--shadow-glow-purple)]">
+                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                  </svg>
+                </div>
+                <h3 className="mb-2 text-lg font-semibold text-white">
+                  Phone is a signal
+                </h3>
+                <p className="text-sm leading-relaxed text-gray-400">
+                  The phone in your hand says something. But a scratched screen,
+                  dull case, or outdated model can quietly undermine the story
+                  your photo tells.
+                </p>
               </Card>
             </FadeInView>
             <FadeInView delay={100}>
               <Card hover>
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 shadow-lg shadow-pink-500/20">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 shadow-[var(--shadow-glow-pink)]">
                   <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
@@ -194,7 +194,7 @@ export default function HomePage() {
             </FadeInView>
             <FadeInView delay={200}>
               <Card hover>
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg shadow-amber-500/20">
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-[var(--shadow-glow-blue)]">
                   <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
@@ -217,10 +217,10 @@ export default function HomePage() {
       <section id="examples" className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
               Your most expensive item may not be your strongest signal.
             </h2>
-            <p className="mt-4 text-lg text-gray-400">
+            <p className="mt-5 text-lg text-gray-400">
               These are the kinds of status leaks AuraCheck detects — small
               mismatches between what you own and how you present it.
             </p>
@@ -257,15 +257,15 @@ export default function HomePage() {
       <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
               AuraCheck gives you a practical upgrade path.
             </h2>
-            <p className="mt-4 text-lg text-gray-400">
+            <p className="mt-5 text-lg text-gray-400">
               Three clear outputs. No fluff.
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            <Card hover className="relative overflow-hidden">
+          <div className="bento-grid">
+            <Card hover className="bento-span-2 relative overflow-hidden">
               <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-purple-600/10 blur-2xl" />
               <Badge variant="premium" className="mb-3">
                 Output 1
@@ -280,7 +280,7 @@ export default function HomePage() {
               <div className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-gray-500">Overall Score</span>
-                  <span className="text-2xl font-bold text-white">68</span>
+                  <span className="text-3xl font-bold text-white">68</span>
                 </div>
                 <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/5">
                   <div className="h-full w-[68%] rounded-full bg-gradient-to-r from-purple-600 to-pink-500" />
@@ -353,7 +353,7 @@ export default function HomePage() {
       <section id="how-it-works" className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
               How it works
             </h2>
             <p className="mt-4 text-lg text-gray-400">
@@ -407,7 +407,7 @@ export default function HomePage() {
       <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
               Choose your audit depth
             </h2>
             <p className="mt-4 text-lg text-gray-400">
@@ -472,7 +472,7 @@ export default function HomePage() {
       <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
               See sample reports before paying
             </h2>
             <p className="mt-4 text-lg text-gray-400">
@@ -526,7 +526,7 @@ export default function HomePage() {
       <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
               Three paid upgrades. One clear path.
             </h2>
             <p className="mt-4 text-lg text-gray-400">
@@ -563,7 +563,7 @@ export default function HomePage() {
       <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
               Invite friends. Earn rewards.
             </h2>
             <p className="mt-4 text-lg text-gray-400">
@@ -587,7 +587,7 @@ export default function HomePage() {
       <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
               Challenges to level up
             </h2>
             <p className="mt-4 text-lg text-gray-400">
@@ -621,7 +621,7 @@ export default function HomePage() {
       <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
               Use AuraCheck like an app
             </h2>
             <p className="mt-4 text-lg text-gray-400">
@@ -650,7 +650,7 @@ export default function HomePage() {
       <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
               See what a report looks like
             </h2>
             <p className="mt-4 text-lg text-gray-400">
@@ -715,7 +715,7 @@ export default function HomePage() {
       <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
               Status is not one thing. It is signal consistency.
             </h2>
             <p className="mt-4 text-lg text-gray-400">
@@ -774,7 +774,7 @@ export default function HomePage() {
       <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
               Built to be shared.
             </h2>
             <p className="mt-4 text-lg text-gray-400">
@@ -822,7 +822,7 @@ export default function HomePage() {
       <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
               Not every upgrade gives equal status impact.
             </h2>
             <p className="mt-4 text-lg text-gray-400">
@@ -907,7 +907,7 @@ export default function HomePage() {
       <section className="relative overflow-hidden border-t border-white/[0.04] py-24">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.12),transparent_50%)]" />
         <Container className="relative text-center">
-          <h2 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+          <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
             Ready to check your visual signal?
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-gray-400">
