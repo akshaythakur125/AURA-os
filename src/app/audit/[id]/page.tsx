@@ -16,6 +16,9 @@ import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
 import { RecommendationSection } from "@/components/products/RecommendationSection";
 import { PersonalizedShop } from "@/components/shop/PersonalizedShop";
 import { getPersonalizedLooks } from "@/lib/shop/catalog";
+import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
+import { PercentileBadge } from "@/components/social-proof/PercentileBadge";
+import { getScorePercentile } from "@/lib/social-proof/getScorePercentile";
 import type { Audit, FreeAuraResult, FullAuraReportContent } from "@/types/audit";
 import type { PersonalizationResult, SignalMismatch, GoalStrategy } from "@/types/personalization";
 
@@ -703,6 +706,9 @@ export default function AuditDetailPage() {
                       <p className="mx-auto mt-4 max-w-md text-sm text-gray-300">
                         {displayResult.oneLineVerdict}
                       </p>
+                      <div className="mx-auto mt-4 max-w-md">
+                        <PercentileBadge percentile={getScorePercentile(displayResult.auraScore)} />
+                      </div>
                     </Card>
 
                     <Card className="mb-6">
@@ -839,6 +845,9 @@ export default function AuditDetailPage() {
               {/* ─── Paywall: Personalized Upgrade ─── */}
               {displayResult && (
                 <div className="mb-6">
+                  <div className="mb-4">
+                    <SocialProofBar variant="compact" />
+                  </div>
                   <Card className="relative overflow-hidden border-purple-500/20">
                     <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
                     <div className="pointer-events-none absolute -left-16 -bottom-16 h-32 w-32 rounded-full bg-pink-600/10 blur-3xl" />

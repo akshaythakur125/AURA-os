@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { GlowOrb } from "@/components/ui/GlowOrb";
 import { FadeInView } from "@/components/ui/FadeInView";
+import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
 
 const leaks = [
   {
@@ -135,9 +136,14 @@ export default function HomePage() {
             </div>
           </FadeInView>
           <FadeInView delay={400}>
-            <p className="mt-8 text-xs text-gray-600">
+            <div className="mt-8 text-xs text-gray-600">
               No login. No external API. Your image stays in your browser in this MVP.
-            </p>
+            </div>
+          </FadeInView>
+          <FadeInView delay={500}>
+            <div className="mt-6">
+              <SocialProofBar variant="hero" />
+            </div>
           </FadeInView>
         </Container>
       </section>

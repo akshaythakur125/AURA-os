@@ -7,6 +7,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ComparisonTable } from "@/components/marketing/ComparisonTable";
 import { GlowOrb } from "@/components/ui/GlowOrb";
 import { FadeInView } from "@/components/ui/FadeInView";
+import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
 
 const tiers = [
   {
@@ -100,6 +101,11 @@ export default function PricingPage() {
               title="Simple pricing, real results"
               subtitle="Start free. Upgrade when you want the full picture."
             />
+          </FadeInView>
+          <FadeInView delay={50}>
+            <div className="mb-10">
+              <SocialProofBar variant="inline" />
+            </div>
           </FadeInView>
           <div className="bento-grid">
             {tiers.map((tier, i) => (
