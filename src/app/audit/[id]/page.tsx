@@ -716,31 +716,41 @@ export default function AuditDetailPage() {
                       </div>
                     </Card>
 
-                    {/* ─── Remaining Leaks ─── */}
+                    {/* ─── Remaining Leaks (Blurred Previews) ─── */}
                     {otherLeaks.length > 0 && (
-                      <Card className="mb-6">
-                        <h3 className="mb-4 text-sm font-semibold text-white">
-                          More Status Leaks
-                        </h3>
-                        <div className="space-y-4">
-                          {otherLeaks.map((leak) => (
-                            <div key={leak.id} className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
-                              <div className="mb-2 flex items-start justify-between gap-2">
-                                <h4 className="text-sm font-medium text-white">{leak.title}</h4>
-                                <Badge
-                                  variant={leak.severity === "high" ? "danger" : leak.severity === "medium" ? "warning" : "default"}
-                                >
-                                  {leak.severity}
-                                </Badge>
+                      <div className="mb-6">
+                        <Card className="relative overflow-hidden">
+                          <h3 className="mb-4 text-sm font-semibold text-white">
+                            {otherLeaks.length} more {otherLeaks.length === 1 ? "leak" : "leaks"} found
+                          </h3>
+                          <div className="space-y-3">
+                            {otherLeaks.map((leak) => (
+                              <div key={leak.id} className="relative rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
+                                <div className="flex items-start justify-between gap-2">
+                                  <h4 className="text-sm font-medium text-white">{leak.title}</h4>
+                                  <Badge
+                                    variant={leak.severity === "high" ? "danger" : leak.severity === "medium" ? "warning" : "default"}
+                                  >
+                                    {leak.severity}
+                                  </Badge>
+                                </div>
+                                {/* Blurred content — visible shape, unreadable text */}
+                                <div className="pointer-events-none mt-2 select-none blur-sm">
+                                  <p className="text-xs text-gray-400">{leak.description}</p>
+                                  <p className="mt-1 text-xs text-gray-500">
+                                    <span className="text-purple-300">Fix:</span> {leak.fix}
+                                  </p>
+                                </div>
                               </div>
-                              <p className="mb-2 text-xs text-gray-400">{leak.description}</p>
-                              <p className="text-xs text-gray-500">
-                                <span className="text-purple-300">Fix:</span> {leak.fix}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      </Card>
+                            ))}
+                          </div>
+                          {/* Gradient overlay for extra锁 feel */}
+                          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050508]/90" />
+                        </Card>
+                        <p className="mt-2 text-center text-xs text-gray-600">
+                          Unlock to see all leaks and how to fix them
+                        </p>
+                      </div>
                     )}
 
                     <Card className="mb-6">
@@ -826,38 +836,69 @@ export default function AuditDetailPage() {
                 </div>
               </Card>
 
-              {/* ─── Multi-Product Unlock CTAs ─── */}
-              <h3 className="mb-3 text-sm font-semibold text-white">Upgrade Options</h3>
-              <div className="mb-6 grid gap-4 sm:grid-cols-3">
-                {[
-                  { type: "aura_report" as const, name: "Full Aura Report", price: 99, desc: "Full visual breakdown, goal strategy, upgrade path", feature: "View full report" },
-                  { type: "dating_audit" as const, name: "Dating / Profile Audit", price: 299, desc: "Bio analysis, red-flag detection, suggested bios", feature: "View dating audit" },
-                  { type: "glowup_plan" as const, name: "30-Day Glow-Up Plan", price: 499, desc: "4-week roadmap, daily missions, budget plan", feature: "View glow-up plan" },
-                ].map((p) => {
-                  const unlocked = audit.unlockedProducts?.includes(p.type);
-                  const hasReport = p.type === "dating_audit" ? audit.datingProfileReport : p.type === "glowup_plan" ? audit.glowupPlan : audit.fullReport?.fullContent;
-                  return (
-                    <Card key={p.type} className={`relative text-center ${unlocked ? "border-emerald-500/20" : "border-purple-500/20"}`}>
-                      {unlocked ? (
-                        <Badge variant="success" className="mb-2">Unlocked</Badge>
-                      ) : (
-                        <Badge variant="premium" className="mb-2">&#8377;{p.price}</Badge>
-                      )}
-                      <h4 className="mb-1 text-sm font-semibold text-white">{p.name}</h4>
-                      <p className="mb-4 text-xs text-gray-400">{p.desc}</p>
-                      {unlocked && hasReport ? (
-                        <span className="text-xs text-emerald-400">{p.feature} available below</span>
-                      ) : unlocked ? (
-                        <span className="text-xs text-emerald-400">Unlocked</span>
-                      ) : (
-                        <Link href={`/unlock?auditId=${audit.id}&product=${p.type}`} className="block">
-                          <Button size="sm" className="w-full">Unlock — &#8377;{p.price}</Button>
-                        </Link>
-                      )}
-                    </Card>
-                  );
-                })}
-              </div>
+              {/* ─── Paywall: Personalized Upgrade ─── */}
+              {displayResult && (
+                <div className="mb-6">
+                  <Card className="relative overflow-hidden border-purple-500/20">
+                    <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
+                    <div className="pointer-events-none absolute -left-16 -bottom-16 h-32 w-32 rounded-full bg-pink-600/10 blur-3xl" />
+                    <div className="text-center">
+                      <Badge variant="premium" className="mb-3">Full Report</Badge>
+                      <h3 className="mb-2 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-xl font-bold text-transparent">
+                        Unlock every leak &amp; fix
+                      </h3>
+                      <p className="mx-auto mb-4 max-w-sm text-sm text-gray-400">
+                        You saw <span className="text-white font-medium">{displayResult.statusLeaks[0]?.title}</span> — 
+                        there {displayResult.statusLeaks.length - 1 === 1 ? "is" : "are"} {displayResult.statusLeaks.length - 1} more 
+                        {displayResult.statusLeaks.length - 1 === 1 ? " leak" : " leaks"} plus your full goal strategy, upgrade path, and photo guidance.
+                      </p>
+                      <div className="mb-4 flex items-center justify-center gap-3 text-xs text-gray-500">
+                        <span>Less than a chai per day for 30 days</span>
+                        <span className="h-1 w-1 rounded-full bg-gray-600" />
+                        <span>One-time, yours forever</span>
+                      </div>
+                      <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} className="block">
+                        <Button size="lg" className="w-full max-w-xs mx-auto">
+                          Unlock Full Report — &#8377;99
+                        </Button>
+                      </Link>
+                      <p className="mt-3 text-[10px] text-gray-600">
+                        Instant unlock. No subscription. Local browser analysis.
+                      </p>
+                    </div>
+                  </Card>
+
+                  {/* Secondary products */}
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    {[
+                      { type: "dating_audit" as const, name: "Dating / Profile Audit", price: 299, desc: "Bio analysis, red flags, suggested bios" },
+                      { type: "glowup_plan" as const, name: "30-Day Glow-Up Plan", price: 499, desc: "Weekly roadmap, daily missions, budget" },
+                    ].map((p) => {
+                      const unlocked = audit.unlockedProducts?.includes(p.type);
+                      const hasReport = p.type === "dating_audit" ? audit.datingProfileReport : audit.glowupPlan;
+                      return (
+                        <Card key={p.type} className={`relative ${unlocked ? "border-emerald-500/20" : ""}`}>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="text-sm font-medium text-white">{p.name}</h4>
+                              <p className="text-xs text-gray-500">{p.desc}</p>
+                            </div>
+                            {unlocked && hasReport ? (
+                              <span className="text-xs text-emerald-400">Unlocked</span>
+                            ) : unlocked ? (
+                              <span className="text-xs text-emerald-400">Unlocked</span>
+                            ) : (
+                              <Link href={`/unlock?auditId=${audit.id}&product=${p.type}`}>
+                                <Button size="sm" variant="secondary">&#8377;{p.price}</Button>
+                              </Link>
+                            )}
+                          </div>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* ─── Dating Profile Report Display ─── */}
               {audit.datingProfileReport && (

@@ -611,3 +611,24 @@ h2 {
 .animate-slide-in {
   animation: slide-in-down 0.2s var(--ease-out-expo) forwards;
 }
+
+/* ─── Locked Content Preview ─── */
+
+.locked-preview {
+  position: relative;
+}
+
+.locked-preview::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 40%,
+    rgba(5, 5, 8, 0.6) 70%,
+    rgba(5, 5, 8, 0.95) 100%
+  );
+  pointer-events: none;
+  border-radius: inherit;
+}
