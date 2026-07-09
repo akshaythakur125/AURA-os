@@ -6,9 +6,9 @@ AuraCheck is a first-impression and status-signal audit app for Indian youth. Up
 
 ## Current Build Stage
 
-**Prompt 14 — Trust, Data Control, Safety, Backup/Restore, and Final UX Polish Layer**
+**Production Hardening — Security, API Routes, Testing, and Privacy**
 
-- [x] Next.js App Router + TypeScript + Tailwind CSS (23 routes)
+- [x] Next.js App Router + TypeScript + Tailwind CSS (23+ routes)
 - [x] Reusable UI components (dark premium theme)
 - [x] All routes: `/`, `/dashboard`, `/audit/new`, `/audit/[id]`, `/pricing`, `/shop`, `/unlock`, `/success`, `/privacy`, `/terms`, `/admin`, `/products/*`, `/examples`, `/challenges`, `/challenges/[slug]`, `/progress`, `/install`, `/data`, `/privacy-center`, `/help`
 - [x] Local storage architecture (localStorage) with safe JSON parsing
@@ -17,15 +17,19 @@ AuraCheck is a first-impression and status-signal audit app for Indian youth. Up
 - [x] Dating/Profile Audit (₹299) — bio/prompt text analysis, red-flag detection, suggested bios
 - [x] 30-Day Glow-Up Plan (₹499) — 4-week roadmap, 30 daily missions, budget roadmap
 - [x] Manual unlock flow — 3-stage payment request, submit details, unlock with code
-- [x] Admin panel with local admin code gate, founder launch checklist, growth dashboard
+- [x] **Server-side admin auth** — HMAC-verified session tokens, httpOnly cookies, no client-side code exposure
+- [x] **Server-side payment verification** — unlock codes validated server-side via API routes
+- [x] **Security headers** — CSP, X-Frame-Options, HSTS, X-Content-Type-Options, Referrer-Policy
+- [x] **API routes** — `/api/admin/auth`, `/api/payments/verify`, `/api/payments/create-order`
+- [x] Admin panel with server-side session auth, founder launch checklist, growth dashboard
 - [x] Order management — CRUD, status tracking, unlock code generation, discount tracking
 - [x] Local analytics — 20+ event types tracked with conversion estimates
 - [x] Export tools — JSON, CSV for orders, audits, affiliate clicks, leads, referrals, challenges, progress, full admin snapshot
 - [x] Multi-product unlock state (track unlocked products per audit)
 - [x] Dashboard + audit history with unlocked product badges, onboarding checklist, referral card, progress link
-- [x] Marketplace + product recommendations engine
+- [x] Marketplace + product recommendations engine (33 products)
 - [x] Product sales pages + sample report previews + comparison tables
-- [x] Offer/discount code system (5 starter codes)
+- [x] Offer/discount code system (5 starter codes) — applied server-side
 - [x] Lead capture with WhatsApp contact
 - [x] Referral system (local-only, code-based)
 - [x] Challenges (8 types, local leaderboard)
@@ -40,8 +44,11 @@ AuraCheck is a first-impression and status-signal audit app for Indian youth. Up
 - [x] **Storage health checks** — usage estimation, corruption detection, repair, private mode warning
 - [x] **Empty/Error/Loading state components** — EmptyState, ErrorState, LoadingState, ConfirmDialog, Toast
 - [x] **Founder launch checklist** — 16 items with progress tracking, admin snapshot export
+- [x] **E2E tests** — Playwright tests for auth, payments, navigation, security headers
+- [x] **Privacy compliance** — dynamic `clearAll()` using storage prefix scan, storage usage reporting
 - [x] Improved privacy/terms pages — comprehensive with all safety disclaimers
 - [ ] Real PDF generation (currently uses print-to-PDF)
+- [ ] Real affiliate API integrations (Myntra, Amazon)
 
 ## Local Data Model
 
@@ -90,7 +97,7 @@ The app does NOT:
 
 ## Manual Monetization MVP
 
-AuraCheck uses a **manual unlock system** for payment. There is no Razorpay, Stripe, or any payment API integrated.
+AuraCheck uses a **manual unlock system** for payment. Unlock codes are validated server-side via API routes.
 
 ### Products
 
@@ -106,7 +113,8 @@ AuraCheck uses a **manual unlock system** for payment. There is no Razorpay, Str
 2. User clicks "Unlock" → sees UPI payment details
 3. User submits payment details (name, contact, UPI ref)
 4. Admin generates unlock code via `/admin`
-5. User enters code → report is unlocked
+5. User enters code → code is **verified server-side** via `/api/payments/verify`
+6. Report is unlocked locally
 
 ### Setting up for manual payments
 
@@ -117,8 +125,8 @@ Copy `.env.example` to `.env.local` and configure:
 | `NEXT_PUBLIC_MANUAL_UPI_ID` | Your UPI ID for receiving payments | Yes |
 | `NEXT_PUBLIC_OWNER_WHATSAPP` | WhatsApp number (digits only) | Optional |
 | `NEXT_PUBLIC_SUPPORT_EMAIL` | Support email | Optional |
-| `NEXT_PUBLIC_DEMO_UNLOCK_CODE` | Demo code (default: AURADEMO) | Optional |
-| `NEXT_PUBLIC_LOCAL_ADMIN_CODE` | Admin code (default: ADMINDEMO) | Optional |
+| `ADMIN_ACCESS_CODE` | Server-side admin code (NOT exposed to browser) | Yes (for admin) |
+| `ADMIN_UNLOCK_CODE` | Server-side admin unlock code (legacy) | Optional |
 
 ## Founder Launch Checklist
 
@@ -134,25 +142,33 @@ Completion is stored locally and persists across sessions.
 - **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS v4
-- **Storage:** Browser localStorage
+- **Storage:** Browser localStorage (primary), optional Supabase (not yet integrated)
 - **Fonts:** Geist (via next/font)
-- **Zero external APIs, zero external databases, zero authentication providers**
+- **Testing:** Playwright E2E tests
+- **Security:** Server-side auth, API routes, CSP headers, HSTS
 
 ## Setup
 
 ```bash
 npm install
 cp .env.example .env.local
+# Edit .env.local — set ADMIN_ACCESS_CODE for admin panel
 npm run dev
 npm run build
 npm run lint
+npm run test:e2e  # Run E2E tests (requires dev server)
 ```
 
 ## Project Structure
 
 ```
 src/
-├── app/                      # 23 App Router pages
+├── app/                      # App Router pages + API routes
+│   ├── api/
+│   │   ├── admin/auth/       # Server-side admin authentication
+│   │   └── payments/
+│   │       ├── verify/       # Server-side unlock code validation
+│   │       └── create-order/ # Server-side order creation + offer application
 │   ├── admin/                # Admin panel + founder checklist
 │   ├── audit/[id]/           # Audit report + management
 │   ├── audit/new/            # 6-step audit creation
@@ -175,8 +191,9 @@ src/
 │   ├── onboarding/           # Onboarding checklist
 │   └── products/             # Recommendations
 ├── lib/
+│   ├── admin/                # Server-side admin auth utilities
 │   ├── aura-engine/          # Scoring + reports
-│   ├── payments/             # Manual unlock
+│   ├── payments/             # Manual unlock + server-side validation
 │   ├── storage/              # All stores + storageHealth
 │   ├── data/                 # Export, import, summary, clear
 │   ├── safety/               # Content safety
@@ -186,7 +203,7 @@ src/
 │   ├── audits/               # Upsell detection
 │   ├── export/               # CSV/JSON download
 │   └── image/                # Image processing
-├── config/                   # Offers, challenges, sample reports
+├── config/                   # Offers, challenges, sample reports, products
 └── types/                    # TypeScript models
 ```
 
@@ -197,10 +214,11 @@ src/
 - No guaranteed dating, social, or financial outcomes are promised
 - The app does not infer caste, religion, ethnicity, sexuality, income, disease, or other protected traits
 - Language focuses on "visual signals," "first impressions," "presentation," and "upgrade paths"
-- Unlock mechanism is MVP-only and not secure for production use
+- Admin auth uses server-side session tokens with httpOnly cookies — no client-side code exposure
+- Payment unlock codes are validated server-side via API routes
 - Manual payment flow does not automatically verify UPI payments
-- Admin panel uses a static local code stored in environment variables — no real authentication
-- All growth features (referral, challenges, leaderboards, progress) are local-only — no real social network
+- Security headers (CSP, HSTS, X-Frame-Options) are configured in next.config.ts
+- All growth features (referral, challenges, leaderboards, progress) are local-only
 - Data is stored in browser localStorage — clearing browser data may remove all information
 
 ## What Must Be Added for Production
@@ -215,3 +233,4 @@ src/
 - Real referral tracking with server verification
 - PDF generation on server side
 - Email/SMS notifications for order updates
+- Real affiliate API integrations (Myntra, Amazon)

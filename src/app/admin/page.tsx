@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -23,11 +23,35 @@ import { getChallengeEntries, getChallengeStats } from "@/lib/storage/challengeS
 import { getProgressComparisons, getProgressStats } from "@/lib/storage/progressStore";
 import type { ManualOrder } from "@/types/order";
 
-function getAdminCode(): string {
-  if (typeof process !== "undefined" && process.env && (process.env as Record<string, string | undefined>).NEXT_PUBLIC_LOCAL_ADMIN_CODE) {
-    return (process.env as Record<string, string | undefined>).NEXT_PUBLIC_LOCAL_ADMIN_CODE as string;
+async function verifyAdminSession(code: string): Promise<boolean> {
+  try {
+    const res = await fetch("/api/admin/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code }),
+    });
+    return res.ok;
+  } catch {
+    return false;
   }
-  return "ADMINDEMO";
+}
+
+async function checkAdminSession(): Promise<boolean> {
+  try {
+    const res = await fetch("/api/admin/auth");
+    const data = await res.json();
+    return data.authenticated === true;
+  } catch {
+    return false;
+  }
+}
+
+async function logoutAdmin(): Promise<void> {
+  try {
+    await fetch("/api/admin/auth", { method: "DELETE" });
+  } catch {
+    // ignore
+  }
 }
 
 const STATUS_BADGE: Record<string, "default" | "success" | "warning" | "danger" | "premium"> = {
@@ -50,12 +74,22 @@ function formatDate(iso: string): string {
 function AdminGate({ onUnlock }: { onUnlock: () => void }) {
   const [code, setCode] = useState("");
   const [error, setError] = useState<string | null>(null);
-  function handleSubmit() {
-    if (code.trim().toUpperCase() === getAdminCode().toUpperCase()) {
-      sessionStorage.setItem("auracheck_admin_auth", "true");
-      onUnlock();
-    } else {
-      setError("Invalid admin code.");
+  const [loading, setLoading] = useState(false);
+  async function handleSubmit() {
+    if (!code.trim()) { setError("Please enter the admin code."); return; }
+    setLoading(true);
+    setError(null);
+    try {
+      const ok = await verifyAdminSession(code.trim());
+      if (ok) {
+        onUnlock();
+      } else {
+        setError("Invalid admin code.");
+      }
+    } catch {
+      setError("Could not verify admin code. Check your connection.");
+    } finally {
+      setLoading(false);
     }
   }
   return (
@@ -65,22 +99,31 @@ function AdminGate({ onUnlock }: { onUnlock: () => void }) {
           <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m0 0v2m0-2h2m-2 0H10" /></svg>
         </div>
         <h2 className="mb-2 text-lg font-bold text-white">Admin Access</h2>
-        <p className="mb-6 text-xs text-gray-500">Enter the local admin code to access the panel. This is not secure — for local MVP testing only.</p>
-        <input type="password" value={code} onChange={(e) => setCode(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSubmit()} placeholder="Admin code" className="mb-3 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none" />
+        <p className="mb-6 text-xs text-gray-500">Enter the admin code to access the panel. Server-side verified.</p>
+        <input type="password" value={code} onChange={(e) => setCode(e.target.value)} onKeyDown={(e) => e.key === "Enter" && !loading && handleSubmit()} placeholder="Admin code" className="mb-3 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none" />
         {error && <p className="mb-3 text-sm text-red-400">{error}</p>}
-        <Button onClick={handleSubmit} className="w-full">Unlock Admin Panel</Button>
-        <p className="mt-4 text-xs text-gray-600">⚠ This is a local-only MVP admin panel. No real authentication.</p>
+        <Button onClick={handleSubmit} className="w-full" disabled={loading}>{loading ? "Verifying..." : "Unlock Admin Panel"}</Button>
       </Card>
     </Container>
   );
 }
 
 export default function AdminPage() {
-  const [authenticated, setAuthenticated] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return sessionStorage.getItem("auracheck_admin_auth") === "true";
-  });
+  const [authenticated, setAuthenticated] = useState(false);
+  const [checking, setChecking] = useState(true);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    checkAdminSession().then((ok) => {
+      setAuthenticated(ok);
+      setChecking(false);
+    });
+  }, []);
+
+  async function handleLogout() {
+    await logoutAdmin();
+    setAuthenticated(false);
+  }
 
   const orders = useMemo(() => {
     if (!authenticated) return [];
@@ -267,6 +310,16 @@ export default function AdminPage() {
     if (!window.confirm("Delete this lead?")) return;
     deleteLead(id);
     setRefreshKey((k) => k + 1);
+  }
+
+  if (checking) {
+    return (
+      <Container className="py-24">
+        <Card className="mx-auto max-w-sm py-12 text-center">
+          <p className="text-sm text-gray-500">Verifying admin session...</p>
+        </Card>
+      </Container>
+    );
   }
 
   if (!authenticated) {
@@ -672,8 +725,9 @@ export default function AdminPage() {
         </div>
       </Card>
 
-      <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4 text-center text-xs text-gray-600">
-        ⚠ This admin panel is a local-only MVP tool. No real authentication. No external database. Data is read from localStorage.
+      <div className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[0.02] p-4 text-xs text-gray-600">
+        <span>⚠ Admin panel — data stored in localStorage. Server-side session auth.</span>
+        <button onClick={handleLogout} className="rounded-lg border border-white/10 px-3 py-1.5 text-gray-400 hover:bg-white/5 hover:text-white transition-colors">Logout</button>
       </div>
     </Container>
   );

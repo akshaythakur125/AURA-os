@@ -10,12 +10,11 @@ import { Badge } from "@/components/ui/Badge";
 import { getAuditById, updateAudit } from "@/lib/storage/auditStore";
 import { createUnlockRecord } from "@/lib/storage/unlockStore";
 import { createOrder, updateOrder } from "@/lib/storage/orderStore";
-import { validateUnlockCode, getProductName, getProductPrice, getProductPriceLabel } from "@/lib/payments/manualUnlock";
+import { getProductName, getProductPrice, getProductPriceLabel } from "@/lib/payments/manualUnlock";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
 import { generateDatingProfileReport } from "@/lib/aura-engine/datingAudit";
 import { generateGlowupPlan } from "@/lib/aura-engine/glowupPlan";
-import { applyOfferCode } from "@/lib/offers/applyOffer";
 import type { ProductType } from "@/types/payment";
 import type { Audit } from "@/types/audit";
 import type { OfferApplication } from "@/types/offer";
@@ -158,33 +157,83 @@ function UnlockForm() {
       setOfferResult(null);
       return;
     }
-    const result = applyOfferCode(defaultProduct, productPrice, offerCode);
-    setOfferResult(result);
-    if (result.isValid && result.finalAmount < productPrice) {
-      trackEvent({ eventName: "offer_applied", auditId, productType: defaultProduct, metadata: { code: result.code, discount: String(result.discountAmount) } });
-    }
+    const normalized = offerCode.trim().toUpperCase();
+    setOfferResult({ productType: defaultProduct, originalAmount: productPrice, code: normalized, discountAmount: 0, finalAmount: productPrice, message: "Verifying offer code...", isValid: false });
+
+    fetch("/api/payments/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productType: defaultProduct, offerCode: normalized, auditId }),
+    })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.appliedOffer) {
+          setOfferResult({
+            productType: defaultProduct,
+            originalAmount: data.originalAmount,
+            code: data.appliedOffer,
+            discountAmount: data.discountAmount,
+            finalAmount: data.finalAmount,
+            message: `Offer ${data.appliedOffer} applied.`,
+            isValid: true,
+          });
+          if (data.finalAmount < productPrice) {
+            trackEvent({ eventName: "offer_applied", auditId, productType: defaultProduct, metadata: { code: data.appliedOffer, discount: String(data.discountAmount) } });
+          }
+        } else {
+          setOfferResult({
+            productType: defaultProduct,
+            originalAmount: data.originalAmount,
+            code: normalized,
+            discountAmount: 0,
+            finalAmount: data.originalAmount,
+            message: "Invalid or expired offer code.",
+            isValid: false,
+          });
+        }
+      })
+      .catch(() => {
+        setOfferResult(null);
+      });
   }
 
-  function handleSavePaymentRequest() {
+  async function handleSavePaymentRequest() {
     if (!audit || !auditId) return;
-    const order = createOrder({
-      auditId,
-      productType: defaultProduct,
-      customerName: customerName.trim() || undefined,
-      customerContact: customerContact.trim() || undefined,
-      userNote: userNote.trim() || undefined,
-      offerCode: offerResult?.isValid ? offerResult.code : undefined,
-      originalAmount: offerResult?.isValid ? productPrice : undefined,
-      discountAmount: offerResult?.isValid ? offerResult.discountAmount : undefined,
-      finalAmount: offerResult?.isValid ? offerResult.finalAmount : undefined,
-    });
-    const withRef = order.upiTransactionRef !== upiTxRef.trim() ? { ...order, upiTransactionRef: upiTxRef.trim() || undefined } : order;
-    if (withRef.upiTransactionRef !== order.upiTransactionRef) {
-      updateOrder(order.id, withRef);
+    try {
+      const orderRes = await fetch("/api/payments/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productType: defaultProduct,
+          offerCode: offerResult?.isValid ? offerResult.code : undefined,
+          customerName,
+          customerContact,
+          userNote,
+          auditId,
+        }),
+      });
+      const orderData = await orderRes.json();
+      const order = createOrder({
+        auditId,
+        productType: defaultProduct,
+        customerName: customerName.trim() || undefined,
+        customerContact: customerContact.trim() || undefined,
+        userNote: userNote.trim() || undefined,
+        offerCode: orderData.appliedOffer || undefined,
+        originalAmount: orderData.originalAmount,
+        discountAmount: orderData.discountAmount,
+        finalAmount: orderData.finalAmount,
+      });
+      const withRef = order.upiTransactionRef !== upiTxRef.trim() ? { ...order, upiTransactionRef: upiTxRef.trim() || undefined } : order;
+      if (withRef.upiTransactionRef !== order.upiTransactionRef) {
+        updateOrder(order.id, withRef);
+      }
+      setOrderId(order.id);
+      trackEvent({ eventName: "payment_request_saved", auditId, productType: defaultProduct });
+      setStage("summary");
+    } catch {
+      setError("Failed to create order. Please try again.");
     }
-    setOrderId(order.id);
-    trackEvent({ eventName: "payment_request_saved", auditId, productType: defaultProduct });
-    setStage("summary");
   }
 
   async function handleUnlock() {
@@ -193,9 +242,14 @@ function UnlockForm() {
     if (!unlockCode.trim()) { setError("Please enter your unlock code."); return; }
     setUnlocking(true);
     try {
-      const valid = validateUnlockCode({ code: unlockCode, auditId, productType: defaultProduct });
-      if (!valid) {
-        setError("Invalid unlock code. Please check your code and try again.");
+      const verifyRes = await fetch("/api/payments/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: unlockCode.trim(), auditId, productType: defaultProduct }),
+      });
+      const verifyData = await verifyRes.json();
+      if (!verifyRes.ok || !verifyData.valid) {
+        setError(verifyData.message || "Invalid unlock code. Please check your code and try again.");
         setUnlocking(false);
         return;
       }
@@ -526,7 +580,6 @@ function UnlockForm() {
                 <div>
                   <label className="mb-1 block text-xs text-gray-500">Unlock Code <span className="text-red-400">*</span></label>
                   <input type="text" value={unlockCode} onChange={(e) => setUnlockCode(e.target.value)} placeholder="e.g. AURA-XXXXXX" className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none" />
-                  <p className="mt-1 text-xs text-gray-600">Demo code: <span className="font-mono text-purple-300">AURADEMO</span></p>
                 </div>
                 {error && <p className="rounded-lg bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
                 <Button className="w-full" size="lg" onClick={handleUnlock} disabled={unlocking}>
@@ -545,7 +598,6 @@ function UnlockForm() {
             <div className="space-y-4">
               <div>
                 <input type="text" value={unlockCode} onChange={(e) => setUnlockCode(e.target.value)} placeholder="e.g. AURA-XXXXXX" className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none" />
-                <p className="mt-1 text-xs text-gray-600">Demo code: <span className="font-mono text-purple-300">AURADEMO</span></p>
               </div>
               {error && <p className="rounded-lg bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
               <Button className="w-full" size="lg" onClick={handleUnlock} disabled={unlocking}>
