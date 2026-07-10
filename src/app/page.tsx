@@ -76,7 +76,7 @@ export default function HomePage() {
           </div>
           <div className="bento-grid">
             {leaks.map((leak, i) => (
-              <Card key={leak.title} hover className={i < 2 ? "bento-span-2" : ""}>
+              <Card key={leak.title} hover tilt className={i < 2 ? "bento-span-2" : ""}>
                 <div className="mb-3 flex items-start justify-between gap-2">
                   <h3 className="text-sm font-semibold text-white">
                     {leak.title}
@@ -144,7 +144,7 @@ export default function HomePage() {
 
       {/* ─── Final CTA ─── */}
       <section className="relative overflow-hidden border-t border-white/[0.04] py-24">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.12),transparent_50%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(251,113,133,0.12),transparent_50%)]" />
         <Container className="relative text-center">
           <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
             Ready to check your visual signal?

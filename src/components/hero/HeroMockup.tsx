@@ -48,7 +48,7 @@ export function HeroMockup({ depthRef, entranceRef }: HeroMockupProps) {
 
             {/* App header */}
             <div className="mb-4 flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-pink-500">
+              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gradient-to-br from-rose-600 to-blue-500">
                 <span className="text-[10px] font-bold text-white">A</span>
               </div>
               <span className="text-xs font-semibold text-white">AuraCheck</span>
@@ -62,7 +62,7 @@ export function HeroMockup({ depthRef, entranceRef }: HeroMockupProps) {
                 <span className="mb-1 text-sm text-gray-500">/100</span>
               </div>
               <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/5">
-                <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-purple-600 to-pink-500" />
+                <div className="h-full w-[72%] rounded-full bg-gradient-to-r from-rose-500 to-blue-500" />
               </div>
               <div className="mt-2 text-[10px] text-gray-400">
                 Your strongest signal is <span className="text-emerald-400">background control</span>.
@@ -101,7 +101,7 @@ export function HeroMockup({ depthRef, entranceRef }: HeroMockupProps) {
                 </div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="rounded-full bg-purple-600/80 px-3 py-1 text-[9px] font-medium text-white backdrop-blur-sm">
+                <span className="rounded-full bg-rose-600/80 px-3 py-1 text-[9px] font-medium text-white backdrop-blur-sm">
                   Unlock to see all leaks
                 </span>
               </div>
@@ -113,7 +113,7 @@ export function HeroMockup({ depthRef, entranceRef }: HeroMockupProps) {
         </div>
 
         {/* Ambient glow behind phone */}
-        <div className="pointer-events-none absolute -inset-10 -z-10 rounded-full bg-purple-600/10 blur-[60px]" />
+        <div className="pointer-events-none absolute -inset-10 -z-10 rounded-full bg-rose-500/10 blur-[60px]" />
       </div>
       </div>
     </div>
