@@ -8,6 +8,7 @@ import { FadeInView } from "@/components/ui/FadeInView";
 import { HeroMockup } from "@/components/hero/HeroMockup";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
 import { Testimonials } from "@/components/marketing/Testimonials";
+import { LeakComparison } from "@/components/examples/LeakComparison";
 
 const leaks = [
   {
@@ -118,6 +119,9 @@ export default function HomePage() {
                 </p>
               </Card>
             ))}
+          </div>
+          <div className="mt-10">
+            <LeakComparison />
           </div>
           <div className="mt-10 text-center">
             <Link href="/examples">
