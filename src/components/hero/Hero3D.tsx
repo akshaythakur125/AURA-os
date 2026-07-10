@@ -5,18 +5,25 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { GlowOrb } from "@/components/ui/GlowOrb";
-import { FadeInView } from "@/components/ui/FadeInView";
 import { HeroMockup } from "@/components/hero/HeroMockup";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
 import { useHeroParallax } from "@/hooks/useHeroParallax";
 import { useMagneticHover } from "@/hooks/useMagneticHover";
+import { useHeroEntrance } from "@/hooks/useHeroEntrance";
 
 export function Hero3D() {
   const sectionRef = useRef<HTMLElement>(null);
   const orbLayerRef = useRef<HTMLDivElement>(null);
   const textLayerRef = useRef<HTMLDivElement>(null);
   const mockupDepthRef = useRef<HTMLDivElement>(null);
+  const mockupEntranceRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLAnchorElement>(null);
+
+  const badgeRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const paragraphRef = useRef<HTMLParagraphElement>(null);
+  const ctaWrapRef = useRef<HTMLDivElement>(null);
+  const socialProofRef = useRef<HTMLDivElement>(null);
 
   useHeroParallax({
     section: sectionRef,
@@ -26,6 +33,15 @@ export function Hero3D() {
   });
 
   useMagneticHover(ctaRef);
+
+  useHeroEntrance({
+    badge: badgeRef,
+    heading: headingRef,
+    paragraph: paragraphRef,
+    ctaWrap: ctaWrapRef,
+    mockup: mockupEntranceRef,
+    socialProof: socialProofRef,
+  });
 
   return (
     <section
@@ -41,40 +57,38 @@ export function Hero3D() {
 
       <Container className="relative text-center">
         <div ref={textLayerRef}>
-          <FadeInView>
-            <span className="mb-8 inline-flex items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 px-3.5 py-1 text-xs text-purple-300 badge-embossed">
+          <div ref={badgeRef} style={{ opacity: 0, transformStyle: "preserve-3d" }} className="mb-8 inline-block">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 px-3.5 py-1 text-xs text-purple-300 badge-embossed">
               <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
               First-Impression Intelligence
             </span>
-          </FadeInView>
-          <FadeInView delay={100}>
-            <h1 className="mx-auto max-w-4xl gradient-text-animated text-4xl font-bold sm:text-5xl md:text-6xl md:text-[4.5rem] md:leading-[1.02] lg:text-[5rem]">
-              Find your biggest status leak.
-            </h1>
-          </FadeInView>
-          <FadeInView delay={200}>
-            <p className="mx-auto mt-8 max-w-2xl text-lg text-gray-400 sm:text-xl leading-relaxed">
-              You may have the phone, the outfit, or the profile. AuraCheck shows
-              what is weakening your first impression and how to upgrade your
-              visual signal under your budget.
-            </p>
-          </FadeInView>
-          <FadeInView delay={300}>
-            <div className="mt-12">
-              <Link ref={ctaRef} href="/audit/new" className="inline-block">
-                <Button size="lg">Start Free Aura Check</Button>
-              </Link>
-            </div>
-          </FadeInView>
-        </div>
-        <FadeInView delay={400}>
-          <HeroMockup depthRef={mockupDepthRef} />
-        </FadeInView>
-        <FadeInView delay={500}>
-          <div className="mt-6">
-            <SocialProofBar variant="hero" />
           </div>
-        </FadeInView>
+          <h1
+            ref={headingRef}
+            style={{ opacity: 0, transformStyle: "preserve-3d" }}
+            className="mx-auto max-w-4xl gradient-text-animated text-4xl font-bold sm:text-5xl md:text-6xl md:text-[4.5rem] md:leading-[1.02] lg:text-[5rem]"
+          >
+            Find your biggest status leak.
+          </h1>
+          <p
+            ref={paragraphRef}
+            style={{ opacity: 0 }}
+            className="mx-auto mt-8 max-w-2xl text-lg text-gray-400 sm:text-xl leading-relaxed"
+          >
+            You may have the phone, the outfit, or the profile. AuraCheck shows
+            what is weakening your first impression and how to upgrade your
+            visual signal under your budget.
+          </p>
+          <div ref={ctaWrapRef} style={{ opacity: 0 }} className="mt-12">
+            <Link ref={ctaRef} href="/audit/new" className="inline-block">
+              <Button size="lg">Start Free Aura Check</Button>
+            </Link>
+          </div>
+        </div>
+        <HeroMockup depthRef={mockupDepthRef} entranceRef={mockupEntranceRef} />
+        <div ref={socialProofRef} style={{ opacity: 0 }} className="mt-6">
+          <SocialProofBar variant="hero" />
+        </div>
       </Container>
     </section>
   );

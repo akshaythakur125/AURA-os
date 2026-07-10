@@ -5,9 +5,10 @@ import { useMouseTilt } from "@/hooks/useMouseTilt";
 
 interface HeroMockupProps {
   depthRef?: RefObject<HTMLDivElement | null>;
+  entranceRef?: RefObject<HTMLDivElement | null>;
 }
 
-export function HeroMockup({ depthRef }: HeroMockupProps) {
+export function HeroMockup({ depthRef, entranceRef }: HeroMockupProps) {
   const tilt = useMouseTilt({ maxTilt: 6, scale: 1.02 });
   const [reducedMotion, setReducedMotion] = useState(false);
 
@@ -21,6 +22,7 @@ export function HeroMockup({ depthRef }: HeroMockupProps) {
 
   return (
     <div ref={depthRef} className="mx-auto mt-16 max-w-lg px-4 sm:mt-20" style={{ transformStyle: "preserve-3d" }}>
+      <div ref={entranceRef} style={{ transformStyle: "preserve-3d", opacity: 0 }}>
       <div
         ref={tilt.ref}
         onMouseMove={reducedMotion ? undefined : tilt.onMouseMove}
@@ -112,6 +114,7 @@ export function HeroMockup({ depthRef }: HeroMockupProps) {
 
         {/* Ambient glow behind phone */}
         <div className="pointer-events-none absolute -inset-10 -z-10 rounded-full bg-purple-600/10 blur-[60px]" />
+      </div>
       </div>
     </div>
   );
