@@ -111,6 +111,20 @@ export interface ImageSignalMetrics {
   compositionScore: number;
   backgroundComplexityEstimate: number;
   overallImageQualityScore: number;
+  // ─── New: face-zone & content analysis ───
+  faceDetected: boolean;
+  faceBrightness: number;
+  skinBrightness: number;
+  lightingDirection: "left" | "right" | "top" | "bottom" | "flat" | "mixed";
+  dominantHue: string;
+  colorWarmth: number;
+  colorHarmony: number;
+  imageDullness: number;
+  symmetryScore: number;
+  subjectCenterX: number;
+  subjectCenterY: number;
+  backgroundBrightness: number;
+  subjectBgContrast: number;
 }
 
 export interface FreeAuraResult {

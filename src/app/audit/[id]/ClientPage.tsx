@@ -466,6 +466,96 @@ export default function AuditDetailPage() {
                 </Card>
               </FadeInView>
 
+              {/* ─── What We Found — Analysis Summary ─── */}
+              {displayResult && (
+                <FadeInView delay={50}>
+                  <Card className="mb-6">
+                    <h3 className="mb-4 text-sm font-semibold text-white">What We Found</h3>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                      {[
+                        {
+                          label: "Face Detected",
+                          value: displayResult.imageMetrics.faceDetected ? "Yes" : "Not detected",
+                          detail: displayResult.imageMetrics.faceDetected
+                            ? `Face brightness: ${displayResult.imageMetrics.faceBrightness}%`
+                            : "Subject may be too far or obscured",
+                          good: displayResult.imageMetrics.faceDetected && displayResult.imageMetrics.faceBrightness > 45,
+                        },
+                        {
+                          label: "Lighting Direction",
+                          value: displayResult.imageMetrics.lightingDirection === "flat"
+                            ? "Flat / Even"
+                            : displayResult.imageMetrics.lightingDirection === "top"
+                              ? "Overhead"
+                              : displayResult.imageMetrics.lightingDirection === "left"
+                                ? "From left"
+                                : displayResult.imageMetrics.lightingDirection === "right"
+                                  ? "From right"
+                                  : "Directional",
+                          detail: displayResult.imageMetrics.lightingDirection === "flat"
+                            ? "No strong shadows — needs more direction"
+                            : displayResult.imageMetrics.lightingDirection === "top"
+                              ? "Creates under-eye shadows"
+                              : "Natural contour on face",
+                          good: displayResult.imageMetrics.lightingDirection !== "flat" && displayResult.imageMetrics.lightingDirection !== "top",
+                        },
+                        {
+                          label: "Color Tone",
+                          value: displayResult.imageMetrics.dominantHue === "warm"
+                            ? "Warm"
+                            : displayResult.imageMetrics.dominantHue === "cool"
+                              ? "Cool"
+                              : displayResult.imageMetrics.dominantHue === "greenish"
+                                ? "Greenish"
+                                : "Neutral",
+                          detail: `Saturation: ${displayResult.imageMetrics.saturation}%`,
+                          good: displayResult.imageMetrics.saturation > 30 && displayResult.imageMetrics.saturation < 65,
+                        },
+                        {
+                          label: "Symmetry",
+                          value: `${displayResult.imageMetrics.symmetryScore}%`,
+                          detail: displayResult.imageMetrics.symmetryScore > 65
+                            ? "Well-balanced composition"
+                            : "Some asymmetry detected",
+                          good: displayResult.imageMetrics.symmetryScore > 60,
+                        },
+                        {
+                          label: "Subject Separation",
+                          value: `${displayResult.imageMetrics.subjectBgContrast}%`,
+                          detail: displayResult.imageMetrics.subjectBgContrast > 20
+                            ? "Good contrast with background"
+                            : "Subject blends into background",
+                          good: displayResult.imageMetrics.subjectBgContrast > 15,
+                        },
+                        {
+                          label: "Color Harmony",
+                          value: `${displayResult.imageMetrics.colorHarmony}%`,
+                          detail: displayResult.imageMetrics.colorHarmony > 55
+                            ? "Colors work well together"
+                            : "Color palette feels inconsistent",
+                          good: displayResult.imageMetrics.colorHarmony > 50,
+                        },
+                      ].map((item) => (
+                        <div
+                          key={item.label}
+                          className={`rounded-lg border p-3 ${
+                            item.good
+                              ? "border-emerald-500/20 bg-emerald-500/5"
+                              : "border-amber-500/20 bg-amber-500/5"
+                          }`}
+                        >
+                          <div className="text-[10px] text-gray-500">{item.label}</div>
+                          <div className={`mt-1 text-sm font-medium ${item.good ? "text-emerald-400" : "text-amber-400"}`}>
+                            {item.value}
+                          </div>
+                          <div className="mt-0.5 text-[10px] text-gray-500">{item.detail}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                </FadeInView>
+              )}
+
               {/* Visual Breakdown */}
               <FadeInView delay={100}>
                 <Card className="mb-6">

@@ -51,6 +51,252 @@ function stdDev(values: number[], m: number): number {
   return Math.sqrt(variance);
 }
 
+function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+}
+
+// ─── New: Face zone detection via skin-tone heuristic ───
+
+function isSkinTone(r: number, g: number, b: number): boolean {
+  // HSV-based skin detection in RGB space
+  const rn = r / 255;
+  const gn = g / 255;
+  const bn = b / 255;
+  const max = Math.max(rn, gn, bn);
+  const min = Math.min(rn, gn, bn);
+
+  if (max - min < 0.05) return false; // too grey
+  if (max < 0.15 || max > 0.95) return false; // too dark or too bright
+
+  // Skin tone ranges (empirically tuned for diverse skin tones)
+  return r > 60 && g > 40 && b > 20 &&
+    r > g && r > b &&
+    Math.abs(r - g) > 15 &&
+    r - b > 15;
+}
+
+function detectFaceZone(
+  data: Uint8ClampedArray,
+  width: number,
+  height: number
+): { centerX: number; centerY: number; density: number; skinBrightness: number } {
+  // Sample skin-tone pixels and find their centroid
+  let skinCount = 0;
+  let sumX = 0;
+  let sumY = 0;
+  let skinBrightnessSum = 0;
+
+  for (let y = 0; y < height; y += 2) {
+    for (let x = 0; x < width; x += 2) {
+      const i = (y * width + x) * 4;
+      const r = data[i];
+      const g = data[i + 1];
+      const b = data[i + 2];
+      if (isSkinTone(r, g, b)) {
+        skinCount++;
+        sumX += x;
+        sumY += y;
+        skinBrightnessSum += 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      }
+    }
+  }
+
+  const totalPixels = (width / 2) * (height / 2);
+  const density = skinCount / totalPixels;
+
+  if (skinCount === 0) {
+    return { centerX: width / 2, centerY: height / 2, density: 0, skinBrightness: 128 };
+  }
+
+  return {
+    centerX: sumX / skinCount,
+    centerY: sumY / skinCount,
+    density,
+    skinBrightness: skinBrightnessSum / skinCount,
+  };
+}
+
+// ─── New: Lighting direction analysis ───
+
+function analyzeLightingDirection(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number
+): { direction: "left" | "right" | "top" | "bottom" | "flat" | "mixed"; score: number } {
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+
+  // Split into quadrants and measure brightness
+  const halfW = Math.floor(width / 2);
+  const halfH = Math.floor(height / 2);
+  const zones = { tl: 0, tr: 0, bl: 0, br: 0, count: 0 };
+
+  for (let y = 0; y < height; y += 3) {
+    for (let x = 0; x < width; x += 3) {
+      const i = (y * width + x) * 4;
+      const lum = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+      if (x < halfW && y < halfH) zones.tl += lum;
+      else if (x >= halfW && y < halfH) zones.tr += lum;
+      else if (x < halfW && y >= halfH) zones.bl += lum;
+      else zones.br += lum;
+      zones.count++;
+    }
+  }
+
+  const qCount = zones.count / 4;
+  const avg = { tl: zones.tl / qCount, tr: zones.tr / qCount, bl: zones.bl / qCount, br: zones.br / qCount };
+
+  const leftRight = (avg.tl + avg.bl) - (avg.tr + avg.br);
+  const topBottom = (avg.tl + avg.tr) - (avg.bl + avg.br);
+  const diff = Math.max(Math.abs(leftRight), Math.abs(topBottom));
+
+  if (diff < 8) return { direction: "flat", score: 30 };
+  if (Math.abs(leftRight) > Math.abs(topBottom)) {
+    if (leftRight > 0) return { direction: "left", score: 70 };
+    return { direction: "right", score: 70 };
+  }
+  if (topBottom > 0) return { direction: "top", score: 50 }; // top-lit = overhead, less ideal
+  return { direction: "bottom", score: 60 };
+}
+
+// ─── New: Color harmony analysis ───
+
+function analyzeColorHarmony(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number
+): { dominantHue: string; warmth: number; harmonyScore: number; dullness: number } {
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+
+  let warmCount = 0;
+  let coolCount = 0;
+  let totalSat = 0;
+  let satCount = 0;
+  let totalR = 0, totalG = 0, totalB = 0;
+  let count = 0;
+
+  for (let i = 0; i < data.length; i += 16) {
+    const r = data[i];
+    const g = data[i + 1];
+    const b = data[i + 2];
+    totalR += r;
+    totalG += g;
+    totalB += b;
+    count++;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const sat = max === 0 ? 0 : (max - min) / max;
+    totalSat += sat;
+    satCount++;
+
+    if (r > b + 20) warmCount++;
+    else if (b > r + 20) coolCount++;
+  }
+
+  const avgR = totalR / count;
+  const avgG = totalG / count;
+  const avgB = totalB / count;
+  const avgSat = satCount > 0 ? totalSat / satCount : 0;
+  const warmth = (warmCount - coolCount) / count;
+
+  let dominantHue = "neutral";
+  if (avgR > avgG + 15 && avgR > avgB + 15) dominantHue = "warm";
+  else if (avgB > avgR + 15 && avgB > avgG + 15) dominantHue = "cool";
+  else if (avgG > avgR + 10 && avgG > avgB + 10) dominantHue = "greenish";
+
+  // Harmony = how close saturation is to "natural" (0.3-0.5 range) + hue consistency
+  const satScore = 100 - Math.abs(avgSat * 100 - 40) * 2;
+  const hueConsistency = 100 - Math.abs(warmth) * 50;
+  const harmonyScore = clamp(satScore * 0.6 + hueConsistency * 0.4);
+  const dullness = clamp((1 - avgSat) * 100);
+
+  return { dominantHue, warmth: clamp(warmth * 50 + 50), harmonyScore, dullness };
+}
+
+// ─── New: Symmetry analysis ───
+
+function analyzeSymmetry(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number
+): { symmetryScore: number; centerX: number } {
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+  const midX = Math.floor(width / 2);
+  let totalDiff = 0;
+  let count = 0;
+
+  // Compare left half vs mirrored right half
+  for (let y = 0; y < height; y += 3) {
+    for (let x = 0; x < midX; x += 3) {
+      const mirrorX = width - 1 - x;
+      const i1 = (y * width + x) * 4;
+      const i2 = (y * width + mirrorX) * 4;
+      const lum1 = 0.2126 * data[i1] + 0.7152 * data[i1 + 1] + 0.0722 * data[i1 + 2];
+      const lum2 = 0.2126 * data[i2] + 0.7152 * data[i2 + 1] + 0.0722 * data[i2 + 2];
+      totalDiff += Math.abs(lum1 - lum2);
+      count++;
+    }
+  }
+
+  if (count === 0) return { symmetryScore: 50, centerX: midX };
+  const avgDiff = totalDiff / count;
+  const symmetryScore = clamp(100 - (avgDiff / 128) * 100);
+
+  return { symmetryScore, centerX: midX };
+}
+
+// ─── New: Per-zone brightness (face vs background) ───
+
+function analyzeZoneBrightness(
+  data: Uint8ClampedArray,
+  width: number,
+  height: number,
+  faceCenter: { x: number; y: number }
+): { faceBrightness: number; bgBrightness: number; contrastRatio: number } {
+  const thirdH = height / 3;
+  const thirdW = width / 3;
+
+  // Face zone = center third
+  let faceSum = 0, faceCount = 0;
+  let bgSum = 0, bgCount = 0;
+
+  for (let y = 0; y < height; y += 2) {
+    for (let x = 0; x < width; x += 2) {
+      const i = (y * width + x) * 4;
+      const lum = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+
+      const inCenterX = x >= thirdW && x <= thirdW * 2;
+      const inCenterY = y >= thirdH && y <= thirdH * 2;
+
+      if (inCenterX && inCenterY) {
+        faceSum += lum;
+        faceCount++;
+      } else {
+        bgSum += lum;
+        bgCount++;
+      }
+    }
+  }
+
+  const faceBrightness = faceCount > 0 ? faceSum / faceCount : 128;
+  const bgBrightness = bgCount > 0 ? bgSum / bgCount : 128;
+  const contrastRatio = faceBrightness > 0 ? Math.abs(faceBrightness - bgBrightness) : 0;
+
+  return {
+    faceBrightness: clamp((faceBrightness / 255) * 100),
+    bgBrightness: clamp((bgBrightness / 255) * 100),
+    contrastRatio: clamp(contrastRatio / 2.55),
+  };
+}
+
+// ─── Existing functions (preserved) ───
+
 function estimateSharpness(
   ctx: CanvasRenderingContext2D,
   width: number,
@@ -151,6 +397,8 @@ function averageSaturation(
   return clamp((totalSat / count) * 100);
 }
 
+// ─── Main export ───
+
 export function analyzeImageDataUrl(
   dataUrl: string
 ): Promise<ImageSignalMetrics> {
@@ -173,7 +421,9 @@ export function analyzeImageDataUrl(
 
         ctx.drawImage(img, 0, 0, w, h);
         const stats = extractPixelStats(ctx, w, h);
+        const imageData = ctx.getImageData(0, 0, w, h);
 
+        // ─── Core metrics ───
         const avgBrightness = mean(stats.brightnessValues);
         const contrastVal = stdDev(stats.brightnessValues, avgBrightness);
         const sharpnessVal = estimateSharpness(ctx, w, h);
@@ -193,31 +443,58 @@ export function analyzeImageDataUrl(
             100
         );
 
+        // ─── New: Face zone detection ───
+        const faceZone = detectFaceZone(imageData.data, w, h);
+
+        // ─── New: Lighting direction ───
+        const lightingAnalysis = analyzeLightingDirection(ctx, w, h);
+
+        // ─── New: Color harmony ───
+        const colorAnalysis = analyzeColorHarmony(ctx, w, h);
+
+        // ─── New: Symmetry ───
+        const symmetryAnalysis = analyzeSymmetry(ctx, w, h);
+
+        // ─── New: Zone brightness ───
+        const zoneAnalysis = analyzeZoneBrightness(imageData.data, w, h, { x: faceZone.centerX, y: faceZone.centerY });
+
+        // ─── Scored metrics (improved) ───
+        // Lighting: now considers face brightness + direction + contrast
         const lightingScore = clamp(
-          brightness * 0.5 +
-            (100 - Math.abs(brightness - 55)) * 0.3 +
-            contrast * 0.2
+          brightness * 0.25 +
+          zoneAnalysis.faceBrightness * 0.25 +
+          (100 - Math.abs(zoneAnalysis.faceBrightness - 60) * 1.5) * 0.2 +
+          lightingAnalysis.score * 0.15 +
+          contrast * 0.15
         );
 
-        const clarityScore = clamp(sharpness * 0.5 + contrast * 0.3 + 20);
+        // Clarity: sharpness + edge detail + contrast
+        const clarityScore = clamp(sharpness * 0.45 + contrast * 0.25 + edgeDensityScore * 0.15 + 15);
 
-        let compScore = 50;
-        if (aspectRatio > 0.5 && aspectRatio < 2.0) compScore += 20;
+        // Composition: aspect ratio + resolution + symmetry + face centering
+        let compScore = 40;
+        if (aspectRatio > 0.5 && aspectRatio < 2.0) compScore += 15;
         if (aspectRatio > 0.7 && aspectRatio < 1.5) compScore += 10;
         if (img.width >= 600 && img.height >= 600) compScore += 10;
-        if (img.width >= 300 && img.height >= 300) compScore += 10;
+        if (symmetryAnalysis.symmetryScore > 60) compScore += 10;
+        compScore += symmetryAnalysis.symmetryScore * 0.1;
         const compositionScore = clamp(compScore);
 
+        // Background: edge density + contrast balance + color harmony
         const backgroundComplexityEstimate = clamp(
-          edgeDensityScore * 0.4 + (100 - contrast) * 0.2 + saturation * 0.2
+          edgeDensityScore * 0.35 +
+          (100 - contrast) * 0.2 +
+          (100 - colorAnalysis.harmonyScore) * 0.15 +
+          zoneAnalysis.bgBrightness * 0.1
         );
 
         const overallImageQualityScore = clamp(
           lightingScore * 0.3 +
-            clarityScore * 0.3 +
-            compositionScore * 0.2 +
-            resolutionScore * 0.1 +
-            (100 - Math.abs(saturation - 50)) * 0.1
+          clarityScore * 0.25 +
+          compositionScore * 0.2 +
+          resolutionScore * 0.1 +
+          colorAnalysis.harmonyScore * 0.1 +
+          symmetryAnalysis.symmetryScore * 0.05
         );
 
         resolve({
@@ -235,6 +512,20 @@ export function analyzeImageDataUrl(
           compositionScore,
           backgroundComplexityEstimate,
           overallImageQualityScore,
+          // ─── New fields ───
+          faceDetected: faceZone.density > 0.01,
+          faceBrightness: zoneAnalysis.faceBrightness,
+          skinBrightness: faceZone.skinBrightness,
+          lightingDirection: lightingAnalysis.direction,
+          dominantHue: colorAnalysis.dominantHue,
+          colorWarmth: colorAnalysis.warmth,
+          colorHarmony: colorAnalysis.harmonyScore,
+          imageDullness: colorAnalysis.dullness,
+          symmetryScore: symmetryAnalysis.symmetryScore,
+          subjectCenterX: faceZone.centerX / w,
+          subjectCenterY: faceZone.centerY / h,
+          backgroundBrightness: zoneAnalysis.bgBrightness,
+          subjectBgContrast: zoneAnalysis.contrastRatio,
         });
       } catch {
         resolve(fallbackMetrics(img.width, img.height));
@@ -264,5 +555,19 @@ function fallbackMetrics(w: number, h: number): ImageSignalMetrics {
     compositionScore: 50,
     backgroundComplexityEstimate: 50,
     overallImageQualityScore: 50,
+    // ─── New fields (defaults) ───
+    faceDetected: false,
+    faceBrightness: 50,
+    skinBrightness: 128,
+    lightingDirection: "flat",
+    dominantHue: "neutral",
+    colorWarmth: 50,
+    colorHarmony: 50,
+    imageDullness: 30,
+    symmetryScore: 50,
+    subjectCenterX: 0.5,
+    subjectCenterY: 0.5,
+    backgroundBrightness: 50,
+    subjectBgContrast: 20,
   };
 }
