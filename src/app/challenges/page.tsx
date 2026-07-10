@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { FadeInView } from "@/components/ui/FadeInView";
 import { GlowOrb } from "@/components/ui/GlowOrb";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getActiveChallenges } from "@/config/challenges";
@@ -57,25 +58,27 @@ export default function ChallengesPage() {
         <Container>
           <SectionHeading title="Active Challenges" subtitle="Choose a challenge that matches your goal." />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {challenges.map((challenge) => {
+            {challenges.map((challenge, i) => {
               const entryCount = allEntries.filter((e) => e.challengeId === challenge.id).length;
               return (
-                <Link key={challenge.id} href={`/challenges/${challenge.slug}`} className="group">
-                  <Card hover className="relative flex h-full flex-col overflow-hidden">
-                    <div className="pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full bg-purple-600/10 blur-2xl" />
-                    <Badge variant="premium" className="mb-2 self-start">{challenge.type.replace(/_/g, " ")}</Badge>
-                    <h3 className="mb-2 text-base font-semibold text-white group-hover:text-purple-200 transition-colors">
-                      {challenge.title}
-                    </h3>
-                    <p className="mb-4 flex-1 text-xs leading-relaxed text-gray-400">
-                      {challenge.description}
-                    </p>
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-gray-500">{entryCount} local entries</span>
-                      <span className="text-purple-400 group-hover:text-purple-300">{challenge.rewardText} →</span>
-                    </div>
-                  </Card>
-                </Link>
+                <FadeInView key={challenge.id} delay={Math.min(i * 100, 300)}>
+                  <Link href={`/challenges/${challenge.slug}`} className="group block">
+                    <Card hover className="relative flex h-full flex-col overflow-hidden">
+                      <div className="pointer-events-none absolute -right-8 -top-8 h-20 w-20 rounded-full bg-purple-600/10 blur-2xl" />
+                      <Badge variant="premium" className="mb-2 self-start">{challenge.type.replace(/_/g, " ")}</Badge>
+                      <h3 className="mb-2 text-base font-semibold text-white group-hover:text-purple-200 transition-colors">
+                        {challenge.title}
+                      </h3>
+                      <p className="mb-4 flex-1 text-xs leading-relaxed text-gray-400">
+                        {challenge.description}
+                      </p>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-gray-500">{entryCount} local entries</span>
+                        <span className="text-purple-400 group-hover:text-purple-300">{challenge.rewardText} →</span>
+                      </div>
+                    </Card>
+                  </Link>
+                </FadeInView>
               );
             })}
           </div>

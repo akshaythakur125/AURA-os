@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { FadeInView } from "@/components/ui/FadeInView";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SampleReportCard } from "@/components/examples/SampleReportCard";
 import { ReportComparison } from "@/components/examples/ReportComparison";
@@ -36,10 +37,14 @@ export default function ExamplesPage() {
 
       <section className="border-t border-white/[0.04] py-24">
         <Container>
-          <SectionHeading title="Sample reports" subtitle="Three products, three different outputs. All generated locally." />
+          <FadeInView>
+            <SectionHeading title="Sample reports" subtitle="Three products, three different outputs. All generated locally." />
+          </FadeInView>
           <div className="grid gap-8 md:grid-cols-3">
-            {SAMPLE_REPORTS.map((report) => (
-              <SampleReportCard key={report.id} report={report} />
+            {SAMPLE_REPORTS.map((report, i) => (
+              <FadeInView key={report.id} delay={Math.min(i * 100, 300)}>
+                <SampleReportCard report={report} />
+              </FadeInView>
             ))}
           </div>
         </Container>
@@ -47,7 +52,9 @@ export default function ExamplesPage() {
 
       <section className="border-t border-white/[0.04] py-24">
         <Container>
-          <SectionHeading title="Free vs Paid comparison" subtitle="See exactly what changes when you unlock." />
+          <FadeInView>
+            <SectionHeading title="Free vs Paid comparison" subtitle="See exactly what changes when you unlock." />
+          </FadeInView>
           <div className="mx-auto max-w-4xl">
             <ReportComparison />
           </div>
@@ -56,14 +63,18 @@ export default function ExamplesPage() {
 
       <section className="border-t border-white/[0.04] py-24">
         <Container>
-          <SectionHeading title="What a full report looks like" subtitle="Real UI from a sample Full Aura Report — visual breakdown, status leaks, upgrade path." />
+          <FadeInView>
+            <SectionHeading title="What a full report looks like" subtitle="Real UI from a sample Full Aura Report — visual breakdown, status leaks, upgrade path." />
+          </FadeInView>
           <ReportMockup />
         </Container>
       </section>
 
       <section className="border-t border-white/[0.04] py-24">
         <Container>
-          <SectionHeading title="Before and after" subtitle="How specific fixes change your score — real report logic, sample data." />
+          <FadeInView>
+            <SectionHeading title="Before and after" subtitle="How specific fixes change your score — real report logic, sample data." />
+          </FadeInView>
           <div className="mx-auto max-w-2xl">
             <LeakComparison />
           </div>
@@ -72,7 +83,9 @@ export default function ExamplesPage() {
 
       <section className="border-t border-white/[0.04] py-24">
         <Container>
-          <SectionHeading title="Full report insights" subtitle="Expanded details from a sample Full Aura Report." />
+          <FadeInView>
+            <SectionHeading title="Full report insights" subtitle="Expanded details from a sample Full Aura Report." />
+          </FadeInView>
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="space-y-4">
               <InsightPreview

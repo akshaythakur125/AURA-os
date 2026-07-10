@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { ProductCard } from "@/components/products/ProductCard";
+import { FadeInView } from "@/components/ui/FadeInView";
 import { GlowOrb } from "@/components/ui/GlowOrb";
 import { PRODUCTS } from "@/config/products";
 import { CATEGORY_LABELS } from "@/types/product";
@@ -128,8 +129,10 @@ export default function ShopPage() {
             Showing {filtered.length} product{filtered.length === 1 ? "" : "s"}
           </p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((p) => (
-              <ProductCard key={p.id} product={p} source="shop" />
+            {filtered.map((p, i) => (
+              <FadeInView key={p.id} delay={Math.min(i * 50, 400)}>
+                <ProductCard product={p} source="shop" />
+              </FadeInView>
             ))}
           </div>
         </>
