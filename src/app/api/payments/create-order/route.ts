@@ -68,7 +68,7 @@ export async function POST(request: Request) {
       }
     }
 
-    const receipt = `aura_${auditId}_${pt}_${Date.now()}`;
+    const receipt = `aura_${auditId.slice(0, 16)}_${pt.slice(0, 4)}`.slice(0, 40);
     const order = await createRazorpayOrder(finalAmount, receipt);
 
     return Response.json({
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
       customerName: customerName?.trim() || null,
       customerContact: customerContact?.trim() || null,
     });
-  } catch (e) {
-    return Response.json({ error: "Failed to create order.", detail: String(e) }, { status: 500 });
+  } catch {
+    return Response.json({ error: "Failed to create order." }, { status: 500 });
   }
 }
