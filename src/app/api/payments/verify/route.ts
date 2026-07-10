@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
     const result = Array.isArray(data) ? data[0] : data;
 
-    if (result?.success) {
+    if (result?.valid) {
       return Response.json({ valid: true, message: result.message || "Code accepted." });
     }
 
