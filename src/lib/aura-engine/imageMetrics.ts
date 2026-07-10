@@ -295,6 +295,248 @@ function analyzeZoneBrightness(
   };
 }
 
+// ─── Region analysis: hair, clothing, skin quality, accessories ───
+
+interface RegionData {
+  hairRegion: {
+    brightness: number;
+    edgeDensity: number;
+    dominantColor: string;
+    neatnessScore: number;
+  };
+  clothingRegion: {
+    dominantColor: string;
+    colorVariety: number;
+    contrastWithSkin: number;
+    styleSignal: string;
+  };
+  skinRegion: {
+    evenness: number;
+    brightnessVariance: number;
+    toneConsistency: number;
+  };
+  accessoryDetection: {
+    hasGlasses: boolean;
+    hasWatch: boolean;
+    hasEarring: boolean;
+    accessoryCount: number;
+  };
+  backgroundObjects: {
+    isIndoor: boolean;
+    hasPlants: boolean;
+    hasFurniture: boolean;
+    hasArtwork: boolean;
+    clutterLevel: number;
+  };
+}
+
+function analyzeRegions(
+  data: Uint8ClampedArray,
+  width: number,
+  height: number,
+  faceZone: { centerX: number; centerY: number; density: number }
+): RegionData {
+  // ─── Hair region: top 20% of image, center column ───
+  const hairTop = 0;
+  const hairBottom = Math.floor(height * 0.2);
+  const hairLeft = Math.floor(width * 0.2);
+  const hairRight = Math.floor(width * 0.8);
+  const hairStats = sampleRegion(data, width, hairLeft, hairTop, hairRight, hairBottom);
+
+  // ─── Clothing region: bottom 30-70% of image, center column ───
+  const clothTop = Math.floor(height * 0.35);
+  const clothBottom = Math.floor(height * 0.85);
+  const clothLeft = Math.floor(width * 0.15);
+  const clothRight = Math.floor(width * 0.85);
+  const clothStats = sampleRegion(data, width, clothLeft, clothTop, clothRight, clothBottom);
+
+  // ─── Skin region: center face area ───
+  const skinLeft = Math.floor(width * 0.3);
+  const skinRight = Math.floor(width * 0.7);
+  const skinTop = Math.floor(height * 0.2);
+  const skinBottom = Math.floor(height * 0.5);
+  const skinStats = sampleRegion(data, width, skinLeft, skinTop, skinRight, skinBottom);
+
+  // ─── Hair analysis ───
+  const hairBrightness = mean(hairStats.brightness);
+  const hairEdge = mean(hairStats.edgeDensity);
+  const hairColor = dominantColorName(hairStats.r, hairStats.g, hairStats.b);
+  const hairNeatness = clamp(100 - hairEdge * 1.5); // less edges = neater
+  // ponytail: heuristic — low edge density in hair = smooth/neat, high = frizzy/messy
+
+  // ─── Clothing analysis ───
+  const clothColor = dominantColorName(clothStats.r, clothStats.g, clothStats.b);
+  const clothColorVariety = colorVariety(clothStats.r, clothStats.g, clothStats.b);
+  const skinAvg = mean(skinStats.brightness);
+  const clothAvg = mean(clothStats.brightness);
+  const clothSkinContrast = Math.abs(clothAvg - skinAvg);
+  const clothStyle = clothColorVariety > 40 ? "varied" : clothColorVariety < 15 ? "solid" : "mixed";
+  // ponytail: solid colors read cleaner; varied = patterned/multi-color
+
+  // ─── Skin analysis ───
+  const skinBrightnessVar = stdDev(skinStats.brightness, skinAvg);
+  const skinEvenness = clamp(100 - skinBrightnessVar * 1.5);
+  const skinToneConsistency = clamp(100 - stdDev(skinStats.r, mean(skinStats.r)) * 0.5 - stdDev(skinStats.g, mean(skinStats.g)) * 0.5);
+
+  // ─── Accessory detection (heuristic via edge patterns in specific zones) ───
+  // Glasses: two small high-contrast circular regions near face center
+  const glassesZone = sampleRegion(data, width,
+    Math.floor(width * 0.35), Math.floor(height * 0.25),
+    Math.floor(width * 0.65), Math.floor(height * 0.35)
+  );
+  const glassesEdge = mean(glassesZone.edgeDensity);
+  const hasGlasses = glassesEdge > 25; // ponytail: high edges in eye area = glasses
+
+  // Watch: small high-contrast region at bottom-left or bottom-right
+  const watchLeft = sampleRegion(data, width, 0, Math.floor(height * 0.6), Math.floor(width * 0.2), Math.floor(height * 0.8));
+  const watchRight = sampleRegion(data, width, Math.floor(width * 0.8), Math.floor(height * 0.6), width, Math.floor(height * 0.8));
+  const hasWatch = mean(watchLeft.edgeDensity) > 30 || mean(watchRight.edgeDensity) > 30;
+  // ponytail: wrist area with high edges = watch/bracelet
+
+  // Earring: small bright spot near ear region
+  const earLeft = sampleRegion(data, width, 0, Math.floor(height * 0.2), Math.floor(width * 0.2), Math.floor(height * 0.4));
+  const earRight = sampleRegion(data, width, Math.floor(width * 0.8), Math.floor(height * 0.2), width, Math.floor(height * 0.4));
+  const earBrightL = mean(earLeft.brightness);
+  const earBrightR = mean(earRight.brightness);
+  const hasEarring = (earBrightL > 180 || earBrightR > 180); // ponytail: bright spots near ears = jewelry
+
+  // ─── Background object detection ───
+  // Indoor: low sky-blue, has warm interior colors
+  const bgLeft = sampleRegion(data, width, 0, 0, Math.floor(width * 0.3), height);
+  const bgRight = sampleRegion(data, width, Math.floor(width * 0.7), 0, width, height);
+  const bgAvg = (mean(bgLeft.brightness) + mean(bgRight.brightness)) / 2;
+  const bgBlueRatio = mean(bgRight.b) / (mean(bgRight.r) + 1);
+  const isIndoor = bgBlueRatio < 0.6 && bgAvg < 160; // ponytail: low blue + moderate brightness = indoor
+
+  // Plants: green spots in background
+  const bgGreenCount = countColorRange(bgLeft.g, bgLeft.r, bgLeft.b, 80, 200, 50, 150);
+  const hasPlants = bgGreenCount > 5; // ponytail: green pixels in bg = plants
+
+  // Furniture: rectangular high-contrast regions in background
+  const bgEdgeMean = (mean(bgLeft.edgeDensity) + mean(bgRight.edgeDensity)) / 2;
+  const hasFurniture = bgEdgeMean > 18 && !hasPlants; // ponytail: moderate edges in bg = furniture
+
+  // Artwork: small high-saturation patch in background
+  const bgSatHigh = countHighSaturation(bgLeft.s, 60);
+  const hasArtwork = bgSatHigh > 3;
+
+  const clutterLevel = clamp(bgEdgeMean * 0.6 + (100 - bgAvg) * 0.4);
+
+  return {
+    hairRegion: {
+      brightness: clamp(hairBrightness / 2.55),
+      edgeDensity: clamp(hairEdge),
+      dominantColor: hairColor,
+      neatnessScore: hairNeatness,
+    },
+    clothingRegion: {
+      dominantColor: clothColor,
+      colorVariety: clamp(clothColorVariety),
+      contrastWithSkin: clamp(clothSkinContrast / 2.55),
+      styleSignal: clothStyle,
+    },
+    skinRegion: {
+      evenness: skinEvenness,
+      brightnessVariance: clamp(skinBrightnessVar / 2.55),
+      toneConsistency: skinToneConsistency,
+    },
+    accessoryDetection: {
+      hasGlasses,
+      hasWatch,
+      hasEarring,
+      accessoryCount: [hasGlasses, hasWatch, hasEarring].filter(Boolean).length,
+    },
+    backgroundObjects: {
+      isIndoor,
+      hasPlants,
+      hasFurniture,
+      hasArtwork,
+      clutterLevel,
+    },
+  };
+}
+
+// ─── Region sampling helpers ───
+
+function sampleRegion(
+  data: Uint8ClampedArray,
+  width: number,
+  x1: number, y1: number, x2: number, y2: number
+): { brightness: number[]; r: number[]; g: number[]; b: number[]; edgeDensity: number[]; s: number[] } {
+  const brightness: number[] = [];
+  const r: number[] = [];
+  const g: number[] = [];
+  const b: number[] = [];
+  const edgeDensity: number[] = [];
+  const s: number[] = [];
+
+  for (let y = y1; y < y2; y += 3) {
+    for (let x = x1; x < x2; x += 3) {
+      const i = (y * width + x) * 4;
+      const rr = data[i];
+      const gg = data[i + 1];
+      const bb = data[i + 2];
+      const lum = 0.2126 * rr + 0.7152 * gg + 0.0722 * bb;
+      brightness.push(lum);
+      r.push(rr);
+      g.push(gg);
+      b.push(bb);
+
+      // Edge estimate: difference with right neighbor
+      if (x + 3 < x2) {
+        const j = (y * width + (x + 3)) * 4;
+        const lumJ = 0.2126 * data[j] + 0.7152 * data[j + 1] + 0.0722 * data[j + 2];
+        edgeDensity.push(Math.abs(lum - lumJ));
+      }
+
+      // Saturation estimate
+      const max = Math.max(rr, gg, bb) / 255;
+      const min = Math.min(rr, gg, bb) / 255;
+      s.push(max === 0 ? 0 : ((max - min) / max) * 100);
+    }
+  }
+
+  return { brightness, r, g, b, edgeDensity, s };
+}
+
+function dominantColorName(rArr: number[], gArr: number[], bArr: number[]): string {
+  if (rArr.length === 0) return "unknown";
+  const avgR = mean(rArr);
+  const avgG = mean(gArr);
+  const avgB = mean(bArr);
+
+  if (avgR > 180 && avgG > 180 && avgB > 180) return "white/light";
+  if (avgR < 50 && avgG < 50 && avgB < 50) return "black/dark";
+  if (avgR > avgG + 30 && avgR > avgB + 30) return "red/warm";
+  if (avgB > avgR + 30 && avgB > avgG + 30) return "blue/cool";
+  if (avgG > avgR + 20 && avgG > avgB + 20) return "green";
+  if (avgR > 120 && avgG > 80 && avgB < 80) return "brown/earth";
+  if (avgR > 150 && avgG > 100 && avgB < 100) return "orange/warm";
+  if (avgR > 100 && avgG < 100 && avgB > 100) return "purple";
+  if (Math.abs(avgR - avgG) < 20 && Math.abs(avgG - avgB) < 20) return "grey/neutral";
+  return "mixed";
+}
+
+function colorVariety(rArr: number[], gArr: number[], bArr: number[]): number {
+  if (rArr.length < 10) return 50;
+  const rStd = stdDev(rArr, mean(rArr));
+  const gStd = stdDev(gArr, mean(gArr));
+  const bStd = stdDev(bArr, mean(bArr));
+  return clamp((rStd + gStd + bStd) / 3);
+}
+
+function countColorRange(arr: number[], r: number[], b: number[], lowG: number, highG: number, lowR: number, highR: number): number {
+  let count = 0;
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i] > lowG && arr[i] < highG && r[i] < highR && b[i] < lowR + 50) count++;
+  }
+  return count;
+}
+
+function countHighSaturation(sArr: number[], threshold: number): number {
+  return sArr.filter((s) => s > threshold).length;
+}
+
 // ─── Existing functions (preserved) ───
 
 function estimateSharpness(
@@ -497,6 +739,9 @@ export function analyzeImageDataUrl(
           symmetryAnalysis.symmetryScore * 0.05
         );
 
+        // ─── Region analysis: hair, clothing, skin, accessories ───
+        const regionData = analyzeRegions(imageData.data, w, h, faceZone);
+
         resolve({
           width: img.width,
           height: img.height,
@@ -526,6 +771,12 @@ export function analyzeImageDataUrl(
           subjectCenterY: faceZone.centerY / h,
           backgroundBrightness: zoneAnalysis.bgBrightness,
           subjectBgContrast: zoneAnalysis.contrastRatio,
+          // ─── Region analysis ───
+          hairRegion: regionData.hairRegion,
+          clothingRegion: regionData.clothingRegion,
+          skinRegion: regionData.skinRegion,
+          accessoryDetection: regionData.accessoryDetection,
+          backgroundObjects: regionData.backgroundObjects,
         });
       } catch {
         resolve(fallbackMetrics(img.width, img.height));
@@ -569,5 +820,11 @@ function fallbackMetrics(w: number, h: number): ImageSignalMetrics {
     subjectCenterY: 0.5,
     backgroundBrightness: 50,
     subjectBgContrast: 20,
+    // ─── Region defaults ───
+    hairRegion: { brightness: 50, edgeDensity: 30, dominantColor: "unknown", neatnessScore: 50 },
+    clothingRegion: { dominantColor: "unknown", colorVariety: 30, contrastWithSkin: 20, styleSignal: "mixed" },
+    skinRegion: { evenness: 50, brightnessVariance: 15, toneConsistency: 50 },
+    accessoryDetection: { hasGlasses: false, hasWatch: false, hasEarring: false, accessoryCount: 0 },
+    backgroundObjects: { isIndoor: true, hasPlants: false, hasFurniture: false, hasArtwork: false, clutterLevel: 30 },
   };
 }

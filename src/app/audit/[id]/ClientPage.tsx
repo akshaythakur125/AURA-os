@@ -176,6 +176,8 @@ export default function AuditDetailPage() {
   const [result, setResult] = useState<FreeAuraResult | null>(null);
   const [fullContent] = useState<FullAuraReportContent | null>(null);
   const [confirmAction, setConfirmAction] = useState<string | null>(null);
+  const [userLocation, setUserLocation] = useState<{ city: string; lat: number; lng: number } | null>(null);
+  const [nearbyPlaces, setNearbyPlaces] = useState<{ salons: { name: string; type: string; area: string; rating: number; mapUrl: string }[]; photographers: { name: string; type: string; area: string; rating: number; mapUrl: string }[]; gyms: { name: string; type: string; area: string; rating: number; mapUrl: string }[] }>({ salons: [], photographers: [], gyms: [] });
 
   function handlePrint() {
     window.print();
@@ -265,6 +267,48 @@ export default function AuditDetailPage() {
       trackEvent(EVENTS.PAYWALL_VIEWED, { auditId: id, score: displayResult.auraScore });
     }
   }, [displayResult, isUnlocked, id]);
+  // Geolocation for nearby services
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude: lat, longitude: lng } = pos.coords;
+        const city = lat > 28.4 && lat < 28.9 && lng > 76.8 && lng < 77.4 ? "Delhi"
+          : lat > 18.8 && lat < 19.3 && lng > 72.7 && lng < 73.0 ? "Mumbai"
+          : lat > 12.8 && lat < 13.1 && lng > 77.4 && lng < 77.8 ? "Bangalore"
+          : lat > 13.0 && lat < 13.2 && lng > 80.1 && lng < 80.4 ? "Chennai"
+          : lat > 22.5 && lat < 22.7 && lng > 88.3 && lng < 88.5 ? "Kolkata"
+          : lat > 17.3 && lat < 17.6 && lng > 78.3 && lng < 78.6 ? "Hyderabad"
+          : lat > 23.0 && lat < 23.3 && lng > 72.5 && lng < 72.8 ? "Ahmedabad"
+          : lat > 18.5 && lat < 18.6 && lng > 73.7 && lng < 73.9 ? "Pune"
+          : lat > 26.8 && lat < 27.0 && lng > 80.8 && lng < 81.1 ? "Lucknow"
+          : lat > 26.9 && lat < 27.2 && lng > 75.7 && lng < 76.0 ? "Jaipur"
+          : null;
+        if (city) setUserLocation({ city, lat, lng });
+      },
+      () => {},
+      { timeout: 5000, maximumAge: 300000 }
+    );
+  }, []);
+  // Fetch nearby places from Google Maps API
+  useEffect(() => {
+    if (!userLocation) return;
+    const fetchPlaces = async (type: string) => {
+      try {
+        const res = await fetch(`/api/places/nearby?lat=${userLocation.lat}&lng=${userLocation.lng}&radius=5000&type=${type}`);
+        if (!res.ok) return [];
+        const data = await res.json();
+        return data.places || [];
+      } catch { return []; }
+    };
+    Promise.all([
+      fetchPlaces("beauty_salon"),
+      fetchPlaces("photographer"),
+      fetchPlaces("gym"),
+    ]).then(([salons, photographers, gyms]) => {
+      setNearbyPlaces({ salons, photographers, gyms });
+    });
+  }, [userLocation]);
 
   return (
     <>
@@ -722,6 +766,164 @@ export default function AuditDetailPage() {
                   </div>
                 </Card>
               </FadeInView>
+
+              {/* --- Outfit Color Analysis --- */}
+              {displayFull && displayResult && displayResult.imageMetrics?.clothingRegion && (
+                <FadeInView delay={478}>
+                  <Card className="mb-6">
+                    <div className="mb-3 flex items-center gap-2">
+                      <span className="text-lg">🎨</span>
+                      <h3 className="text-sm font-semibold text-white">Outfit Color Analysis</h3>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                      <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
+                        <div className="text-[10px] text-gray-500">Dominant Color</div>
+                        <div className="mt-1 text-sm font-medium text-white capitalize">{displayResult.imageMetrics.clothingRegion.dominantColor}</div>
+                      </div>
+                      <div className={`rounded-lg border p-3 ${displayResult.imageMetrics.clothingRegion.styleSignal === "solid" ? "border-emerald-500/20 bg-emerald-500/5" : "border-amber-500/20 bg-amber-500/5"}`}>
+                        <div className="text-[10px] text-gray-500">Color Pattern</div>
+                        <div className={`mt-1 text-sm font-medium capitalize ${displayResult.imageMetrics.clothingRegion.styleSignal === "solid" ? "text-emerald-400" : "text-amber-400"}`}>{displayResult.imageMetrics.clothingRegion.styleSignal}</div>
+                      </div>
+                      <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
+                        <div className="text-[10px] text-gray-500">Skin Contrast</div>
+                        <div className="mt-1 text-sm font-medium text-white">{displayResult.imageMetrics.clothingRegion.contrastWithSkin}%</div>
+                      </div>
+                    </div>
+                    <div className="mt-4 rounded-xl border border-purple-500/20 bg-purple-500/5 p-4">
+                      <div className="mb-2 text-xs font-medium text-purple-300">👔 Wardrobe Suggestions</div>
+                      <div className="space-y-1.5 text-xs text-gray-300">
+                        {displayResult.imageMetrics.clothingRegion.styleSignal === "solid" ? (
+                          <>
+                            <p>✅ Solid color reads clean. Keep this approach.</p>
+                            <p>Best colors: <span className="text-white font-medium">Navy, white, grey, black</span></p>
+                            <p>For dating/Instagram: add <span className="text-white font-medium">one bold accent</span> (maroon, teal, mustard)</p>
+                          </>
+                        ) : (
+                          <>
+                            <p>⚠️ Color variety detected — patterns split focus.</p>
+                            <p>Switch to: <span className="text-white font-medium">1-2 solid colors max</span>.</p>
+                            <p>Best combo: <span className="text-white font-medium">Dark bottom + light top</span></p>
+                          </>
+                        )}
+                        {displayResult.imageMetrics.clothingRegion.contrastWithSkin < 15 && (
+                          <p>⚠️ Outfit blends with skin. Try a <span className="text-white font-medium">{(displayResult.imageMetrics.faceBrightness || 50) > 50 ? "darker" : "lighter"}</span> top.</p>
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                </FadeInView>
+              )}
+
+              {/* --- Room / Background Score --- */}
+              {displayFull && displayResult && displayResult.imageMetrics?.backgroundObjects && (
+                <FadeInView delay={482}>
+                  <Card className="mb-6">
+                    <div className="mb-3 flex items-center gap-2">
+                      <span className="text-lg">🏠</span>
+                      <h3 className="text-sm font-semibold text-white">Background & Environment</h3>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                      <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
+                        <div className="text-[10px] text-gray-500">Setting</div>
+                        <div className="mt-1 text-sm font-medium text-white">{displayResult.imageMetrics.backgroundObjects.isIndoor ? "Indoor" : "Outdoor"}</div>
+                      </div>
+                      <div className={`rounded-lg border p-3 ${displayResult.imageMetrics.backgroundObjects.clutterLevel < 40 ? "border-emerald-500/20 bg-emerald-500/5" : "border-amber-500/20 bg-amber-500/5"}`}>
+                        <div className="text-[10px] text-gray-500">Clutter</div>
+                        <div className={`mt-1 text-sm font-medium ${displayResult.imageMetrics.backgroundObjects.clutterLevel < 40 ? "text-emerald-400" : "text-amber-400"}`}>{displayResult.imageMetrics.backgroundObjects.clutterLevel < 40 ? "Clean" : "Busy"}</div>
+                      </div>
+                      <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
+                        <div className="text-[10px] text-gray-500">Elements</div>
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {displayResult.imageMetrics.backgroundObjects.hasPlants && <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] text-emerald-400">🌿 Plants</span>}
+                          {displayResult.imageMetrics.backgroundObjects.hasFurniture && <span className="rounded bg-blue-500/10 px-1.5 py-0.5 text-[9px] text-blue-400">🪑 Furniture</span>}
+                          {displayResult.imageMetrics.backgroundObjects.hasArtwork && <span className="rounded bg-purple-500/10 px-1.5 py-0.5 text-[9px] text-purple-400">🖼️ Art</span>}
+                          {!displayResult.imageMetrics.backgroundObjects.hasPlants && !displayResult.imageMetrics.backgroundObjects.hasFurniture && !displayResult.imageMetrics.backgroundObjects.hasArtwork && <span className="text-[10px] text-gray-500">Minimal</span>}
+                        </div>
+                      </div>
+                      <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
+                        <div className="text-[10px] text-gray-500">Bg Brightness</div>
+                        <div className="mt-1 text-sm font-medium text-white">{displayResult.imageMetrics.backgroundBrightness}%</div>
+                      </div>
+                    </div>
+                    <div className="mt-3 rounded-lg bg-white/[0.03] px-3 py-2 text-[11px] text-gray-400">
+                      {displayResult.imageMetrics.backgroundObjects.clutterLevel > 55
+                        ? "\u{1F4A1} Background is busy. A plain wall or open doorway behind you reads cleaner."
+                        : displayResult.imageMetrics.backgroundBrightness > (displayResult.imageMetrics.faceBrightness || 0) + 15
+                          ? "\u{1F4A1} Background is brighter than your face \u2014 move to a darker backdrop."
+                          : "\u2705 Background is clean and well-balanced."}
+                    </div>
+                  </Card>
+                </FadeInView>
+              )}
+
+              {/* --- Detailed Observations --- */}
+              {displayFull && displayFull.observations && displayFull.observations.length > 0 && (
+                <FadeInView delay={485}>
+                  <Card className="mb-6">
+                    <h3 className="mb-4 text-sm font-semibold text-white">Detailed Observations</h3>
+                    <div className="space-y-3">
+                      {displayFull.observations.map((obs, i) => (
+                        <div key={`${obs.category}-${i}`} className={`rounded-xl border p-4 ${obs.severity === "positive" ? "border-emerald-500/20 bg-emerald-500/5" : obs.severity === "needs-work" ? "border-amber-500/20 bg-amber-500/5" : "border-white/[0.04] bg-white/[0.03]"}`}>
+                          <div className="mb-2 flex items-center gap-2">
+                            <span className="text-sm">{obs.category === "hair" ? "\u{1F487}" : obs.category === "clothing" ? "\u{1F454}" : obs.category === "skin" ? "\u2728" : obs.category === "grooming" ? "\u{1FA92}" : obs.category === "accessories" ? "\u231A" : obs.category === "background" ? "\u{1F3E0}" : "\u{1F4F8}"}</span>
+                            <h4 className="text-sm font-medium text-white">{obs.title}</h4>
+                            <Badge variant={obs.severity === "positive" ? "success" : obs.severity === "needs-work" ? "warning" : "default"} className="text-[10px]">{obs.category}</Badge>
+                          </div>
+                          <p className="mb-2 text-xs text-gray-400">{obs.detail}</p>
+                          <div className="rounded-lg bg-white/[0.03] px-3 py-2"><p className="text-[11px] text-purple-300"><span className="font-medium">Tip:</span> {obs.suggestion}</p></div>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                </FadeInView>
+              )}
+
+              {/* --- Nearby Services (Google Maps) --- */}
+              {userLocation && (nearbyPlaces.salons.length > 0 || nearbyPlaces.photographers.length > 0 || nearbyPlaces.gyms.length > 0) && (
+                <FadeInView delay={490}>
+                  <Card className="mb-6">
+                    <div className="mb-4 flex items-center gap-2">
+                      <span className="text-lg">📍</span>
+                      <h3 className="text-sm font-semibold text-white">Nearby Services in {userLocation.city}</h3>
+                    </div>
+                    <p className="mb-4 text-xs text-gray-400">Real places from Google Maps. Act on the tips above.</p>
+                    {nearbyPlaces.salons.length > 0 && (
+                      <div className="mb-4">
+                        <div className="mb-2 text-xs font-medium text-purple-300">💈 Salons & Grooming</div>
+                        <div className="space-y-2">{nearbyPlaces.salons.slice(0, 3).map((p) => (
+                          <div key={p.name + p.area} className="flex items-start gap-3 rounded-xl border border-white/[0.04] bg-white/[0.03] p-3">
+                            <div className="flex-1"><div className="text-sm font-medium text-white">{p.name}</div><div className="text-[11px] text-gray-400">{p.type} \u00b7 {p.area}</div>{p.rating > 0 && <div className="mt-0.5 text-[10px] text-amber-400">\u2b50 {p.rating}</div>}</div>
+                            <a href={p.mapUrl} target="_blank" rel="noopener noreferrer" className="shrink-0 rounded-lg border border-purple-500/20 bg-purple-500/10 px-3 py-1.5 text-[11px] text-purple-300 hover:bg-purple-500/20">Directions</a>
+                          </div>
+                        ))}</div>
+                      </div>
+                    )}
+                    {nearbyPlaces.photographers.length > 0 && (
+                      <div className="mb-4">
+                        <div className="mb-2 text-xs font-medium text-blue-300">📸 Photographers</div>
+                        <div className="space-y-2">{nearbyPlaces.photographers.slice(0, 3).map((p) => (
+                          <div key={p.name + p.area} className="flex items-start gap-3 rounded-xl border border-white/[0.04] bg-white/[0.03] p-3">
+                            <div className="flex-1"><div className="text-sm font-medium text-white">{p.name}</div><div className="text-[11px] text-gray-400">{p.type} \u00b7 {p.area}</div>{p.rating > 0 && <div className="mt-0.5 text-[10px] text-amber-400">\u2b50 {p.rating}</div>}</div>
+                            <a href={p.mapUrl} target="_blank" rel="noopener noreferrer" className="shrink-0 rounded-lg border border-blue-500/20 bg-blue-500/10 px-3 py-1.5 text-[11px] text-blue-300 hover:bg-blue-500/20">Directions</a>
+                          </div>
+                        ))}</div>
+                      </div>
+                    )}
+                    {nearbyPlaces.gyms.length > 0 && (
+                      <div>
+                        <div className="mb-2 text-xs font-medium text-emerald-300">💪 Gyms & Fitness</div>
+                        <div className="space-y-2">{nearbyPlaces.gyms.slice(0, 3).map((p) => (
+                          <div key={p.name + p.area} className="flex items-start gap-3 rounded-xl border border-white/[0.04] bg-white/[0.03] p-3">
+                            <div className="flex-1"><div className="text-sm font-medium text-white">{p.name}</div><div className="text-[11px] text-gray-400">{p.type} \u00b7 {p.area}</div>{p.rating > 0 && <div className="mt-0.5 text-[10px] text-amber-400">\u2b50 {p.rating}</div>}</div>
+                            <a href={p.mapUrl} target="_blank" rel="noopener noreferrer" className="shrink-0 rounded-lg border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 text-[11px] text-emerald-300 hover:bg-emerald-500/20">Directions</a>
+                          </div>
+                        ))}</div>
+                      </div>
+                    )}
+                  </Card>
+                </FadeInView>
+              )}
+
 
               {/* Final Verdict */}
               <FadeInView delay={500}>

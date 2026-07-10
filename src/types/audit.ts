@@ -125,6 +125,37 @@ export interface ImageSignalMetrics {
   subjectCenterY: number;
   backgroundBrightness: number;
   subjectBgContrast: number;
+  // ─── Region analysis ───
+  hairRegion: {
+    brightness: number;
+    edgeDensity: number;
+    dominantColor: string;
+    neatnessScore: number;
+  };
+  clothingRegion: {
+    dominantColor: string;
+    colorVariety: number;
+    contrastWithSkin: number;
+    styleSignal: string;
+  };
+  skinRegion: {
+    evenness: number;
+    brightnessVariance: number;
+    toneConsistency: number;
+  };
+  accessoryDetection: {
+    hasGlasses: boolean;
+    hasWatch: boolean;
+    hasEarring: boolean;
+    accessoryCount: number;
+  };
+  backgroundObjects: {
+    isIndoor: boolean;
+    hasPlants: boolean;
+    hasFurniture: boolean;
+    hasArtwork: boolean;
+    clutterLevel: number;
+  };
 }
 
 export interface FreeAuraResult {
@@ -204,6 +235,27 @@ export interface GoalSpecificAdvice {
   avoidThis: string;
 }
 
+export interface Observation {
+  category: "hair" | "clothing" | "skin" | "grooming" | "accessories" | "background" | "posing";
+  severity: "positive" | "neutral" | "needs-work";
+  title: string;
+  detail: string;
+  suggestion: string;
+}
+
+export interface LocationInfo {
+  city: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  nearbySalons: SalonSuggestion[];
+}
+
+export interface SalonSuggestion {
+  name: string;
+  type: string;
+  area: string;
+}
+
 export interface FullAuraReportContent {
   fullScore: number;
   category: string;
@@ -224,6 +276,7 @@ export interface FullAuraReportContent {
   photoGuidance: PhotoGuidance;
   goalSpecificAdvice: GoalSpecificAdvice;
   finalVerdict: string;
+  observations: Observation[];
   generatedAt: string;
 }
 
