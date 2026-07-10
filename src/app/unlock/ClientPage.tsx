@@ -503,9 +503,105 @@ function UnlockForm() {
               </Button>
             </div>
 
-            <div className="mt-6 rounded-xl border border-amber-500/10 bg-amber-500/5 p-4 text-center text-xs text-gray-400">
+            <div className="mt-4 rounded-xl border border-amber-500/10 bg-amber-500/5 p-4 text-center text-xs text-gray-400">
               <p className="mb-1 font-medium text-amber-300">Manual MVP Payment Flow</p>
               <p>AuraCheck does not automatically verify UPI payments yet. After payment, send your payment summary to the owner/admin and enter the unlock code you receive.</p>
+            </div>
+
+            {/* Razorpay Checkout */}
+            <div className="mt-6">
+              <div className="mb-3 flex items-center gap-3">
+                <div className="h-px flex-1 bg-white/10" />
+                <span className="text-xs text-gray-500">or pay instantly</span>
+                <div className="h-px flex-1 bg-white/10" />
+              </div>
+              <Button
+                size="lg"
+                className="w-full bg-[#072654] hover:bg-[#0a3370] text-white"
+                onClick={async () => {
+                  try {
+                    setError(null);
+                    // Load Razorpay script
+                    if (!window.Razorpay) {
+                      const script = document.createElement("script");
+                      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+                      document.body.appendChild(script);
+                      await new Promise((resolve) => { script.onload = resolve; });
+                    }
+                    // Create order
+                    const orderRes = await fetch("/api/payments/create-order", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        productType: defaultProduct,
+                        offerCode: offerResult?.isValid ? offerResult.code : undefined,
+                        customerName,
+                        customerContact,
+                        auditId,
+                      }),
+                    });
+                    const orderData = await orderRes.json();
+                    if (!orderRes.ok) throw new Error(orderData.error || "Failed to create order");
+                    // Open Razorpay checkout
+                    const rzp = new window.Razorpay({
+                      key: orderData.razorpayKeyId,
+                      amount: orderData.amount * 100,
+                      currency: orderData.currency,
+                      name: "AuraCheck",
+                      description: orderData.productName,
+                      order_id: orderData.orderId,
+                      handler: async (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => {
+                        // Verify payment
+                        const verifyRes = await fetch("/api/payments/verify", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            auditId,
+                            productType: defaultProduct,
+                          }),
+                        });
+                        const verifyData = await verifyRes.json();
+                        if (!verifyRes.ok || !verifyData.valid) {
+                          setError("Payment verification failed. Please contact support.");
+                          return;
+                        }
+                        // Unlock report
+                        createUnlockRecord({ auditId, productType: defaultProduct, unlockCode: response.razorpay_payment_id });
+                        const updates: Record<string, unknown> = {};
+                        updates.unlockedProducts = [...(audit?.unlockedProducts || []), defaultProduct];
+                        if (defaultProduct === "aura_report") {
+                          const fullContent = await generateFullAuraReport(audit!);
+                          updates.fullScore = fullContent.fullScore;
+                          updates.reportStatus = "unlocked";
+                          updates.unlockStatus = "unlocked";
+                          updates.fullReport = audit!.fullReport
+                            ? { ...audit!.fullReport, score: { ...audit!.fullReport.score, overall: fullContent.fullScore }, isPremium: true, fullContent }
+                            : { id: `${auditId}-report`, auditId, score: { overall: fullContent.fullScore, categories: { visual: fullContent.visualBreakdown.lighting, presentation: fullContent.visualBreakdown.clarity, signals: fullContent.visualBreakdown.colorSignal, cohesion: fullContent.visualBreakdown.overallConsistency } }, leaks: [], suggestions: [], summary: fullContent.detailedVerdict, createdAt: fullContent.generatedAt, isPremium: true, fullContent };
+                        } else if (defaultProduct === "dating_audit") {
+                          updates.datingProfileReport = generateDatingProfileReport(audit!);
+                        } else if (defaultProduct === "glowup_plan") {
+                          updates.glowupPlan = generateGlowupPlan(audit!);
+                        }
+                        updateAudit(auditId, updates as Partial<Audit>);
+                        trackEvent({ eventName: "product_unlocked", auditId, productType: defaultProduct });
+                        setStage("done");
+                        setTimeout(() => router.push(`/audit/${auditId}`), 1500);
+                      },
+                      prefill: { name: customerName, contact: customerContact },
+                      theme: { color: "#e11d48" },
+                    });
+                    rzp.on("payment.failed", () => setError("Payment failed. Please try again."));
+                    rzp.open();
+                  } catch (err) {
+                    setError(err instanceof Error ? err.message : "Payment failed. Please try again.");
+                  }
+                }}
+              >
+                Pay ₹{finalPrice} with Razorpay
+              </Button>
             </div>
           </>
         )}
