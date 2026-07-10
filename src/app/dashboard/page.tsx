@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { CountUp } from "@/components/ui/CountUp";
 import { GlowOrb } from "@/components/ui/GlowOrb";
 import { OnboardingChecklist } from "@/components/onboarding/OnboardingChecklist";
 import { ScoreTrend } from "@/components/dashboard/ScoreTrend";
@@ -150,24 +151,26 @@ export default function DashboardPage() {
         <div className="my-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Card>
             <div className="text-xs text-gray-500">Total Checks</div>
-            <div className="mt-1 text-2xl font-bold text-white">{stats.totalAudits}</div>
+            <div className="mt-1 text-2xl font-bold text-white">
+              <CountUp target={stats.totalAudits} duration={1000} />
+            </div>
           </Card>
           <Card>
             <div className="text-xs text-gray-500">Latest Score</div>
             <div className="mt-1 text-2xl font-bold text-white">
-              {stats.latestScore ?? "—"}
+              {stats.latestScore !== null ? <CountUp target={stats.latestScore} duration={1200} /> : "—"}
             </div>
           </Card>
           <Card>
             <div className="text-xs text-gray-500">Best Score</div>
             <div className="mt-1 text-2xl font-bold text-emerald-400">
-              {stats.bestScore ?? "—"}
+              {stats.bestScore !== null ? <CountUp target={stats.bestScore} duration={1200} /> : "—"}
             </div>
           </Card>
           <Card>
             <div className="text-xs text-gray-500">Avg Score</div>
             <div className="mt-1 text-2xl font-bold text-purple-400">
-              {stats.averageFreeScore ?? "—"}
+              {stats.averageFreeScore !== null ? <CountUp target={stats.averageFreeScore} duration={1200} /> : "—"}
             </div>
           </Card>
         </div>
