@@ -80,7 +80,7 @@ export async function POST(request: Request) {
       customerName: customerName?.trim() || null,
       customerContact: customerContact?.trim() || null,
     });
-  } catch {
-    return Response.json({ error: "Failed to create order." }, { status: 500 });
+  } catch (e) {
+    return Response.json({ error: "Failed to create order.", detail: String(e) }, { status: 500 });
   }
 }
