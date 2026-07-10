@@ -749,6 +749,32 @@ export default function AuditDetailPage() {
                       </Card>
                     </FadeInView>
 
+                    {/* ─── Quick Wins — fix these NOW for free ─── */}
+                    <FadeInView delay={150}>
+                      <div className="mb-6 rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-emerald-500/[0.08] to-transparent p-5 sm:p-6">
+                        <div className="mb-4 text-center">
+                          <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1">
+                            <span className="text-xs">⚡</span>
+                            <span className="text-xs font-medium text-emerald-300">Quick Wins — Fix Now, Free</span>
+                          </div>
+                          <h3 className="text-lg font-bold text-white">3 things you can fix before leaving</h3>
+                        </div>
+                        <div className="space-y-3">
+                          {displayResult.quickFixes.slice(0, 3).map((fix, i) => (
+                            <div key={fix.title} className="flex items-start gap-3 rounded-xl bg-white/[0.03] p-3">
+                              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-sm font-bold text-emerald-400">
+                                {i + 1}
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-white">{fix.title}</p>
+                                <p className="text-xs text-gray-400">{fix.description}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </FadeInView>
+
                     <FadeInView delay={200}>
                       <Card className="mb-6">
                         <h3 className="mb-3 text-sm font-semibold text-white">

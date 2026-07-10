@@ -112,8 +112,12 @@ export function PersonalizedShop({
   leakTags,
 }: PersonalizedShopProps) {
   const [showAll, setShowAll] = useState(false);
+  const [budgetFilter, setBudgetFilter] = useState<number | null>(null);
 
-  const visibleLooks = showAll ? looks : looks.slice(0, 12);
+  const filteredLooks = budgetFilter
+    ? looks.filter((l) => l.price <= budgetFilter)
+    : looks;
+  const visibleLooks = showAll ? filteredLooks : filteredLooks.slice(0, 12);
 
   const worstLeak = leakTags && leakTags.length > 0 ? leakTags[0] : null;
 
@@ -161,6 +165,31 @@ export function PersonalizedShop({
               )}
               {!worstLeak && "Curated based on your audit results"}
             </p>
+          </div>
+        </FadeInView>
+
+        {/* Budget filter */}
+        <FadeInView delay={50}>
+          <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
+            <span className="text-xs text-gray-500">Budget:</span>
+            {[
+              { label: "All", value: null },
+              { label: "Under ₹500", value: 500 },
+              { label: "Under ₹1000", value: 1000 },
+              { label: "Under ₹2000", value: 2000 },
+            ].map((b) => (
+              <button
+                key={b.label}
+                onClick={() => setBudgetFilter(b.value)}
+                className={`rounded-full px-3 py-1 text-xs transition-all ${
+                  budgetFilter === b.value
+                    ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                    : "bg-white/[0.04] text-gray-400 border border-white/[0.06] hover:bg-white/[0.08]"
+                }`}
+              >
+                {b.label}
+              </button>
+            ))}
           </div>
         </FadeInView>
 
