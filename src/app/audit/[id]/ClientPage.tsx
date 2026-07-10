@@ -775,6 +775,130 @@ export default function AuditDetailPage() {
                       </div>
                     </FadeInView>
 
+                    {/* ─── Going Out Tonight? ─── */}
+                    {audit.goal && (
+                      <FadeInView delay={200}>
+                        <div className="mb-6 rounded-2xl border border-blue-500/20 bg-gradient-to-b from-blue-500/[0.08] to-transparent p-5 sm:p-6">
+                          <div className="mb-3 text-center">
+                            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1">
+                              <span className="text-xs">🎯</span>
+                              <span className="text-xs font-medium text-blue-300">
+                                {audit.goal === "dating" && "Going on a date?"}
+                                {audit.goal === "instagram" && "Posting on Instagram?"}
+                                {audit.goal === "college" && "Heading to college?"}
+                                {audit.goal === "office" && "Going to work?"}
+                                {audit.goal === "glowup" && "Working on your glow-up?"}
+                              </span>
+                            </div>
+                            <h3 className="text-lg font-bold text-white">
+                              {audit.goal === "dating" && "Look your best for tonight"}
+                              {audit.goal === "instagram" && "Get more likes with these fixes"}
+                              {audit.goal === "college" && "Stand out on campus today"}
+                              {audit.goal === "office" && "Look sharp and professional"}
+                              {audit.goal === "glowup" && "Your glow-up starts here"}
+                            </h3>
+                          </div>
+                          <div className="grid gap-2 sm:grid-cols-3">
+                            {audit.goal === "dating" && (
+                              <>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">💡</div>
+                                  <div className="text-xs font-medium text-white">Good lighting</div>
+                                  <div className="text-[10px] text-gray-500">Face a window</div>
+                                </div>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">👔</div>
+                                  <div className="text-xs font-medium text-white">Clean outfit</div>
+                                  <div className="text-[10px] text-gray-500">Solid colors work best</div>
+                                </div>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">📸</div>
+                                  <div className="text-xs font-medium text-white">Good angle</div>
+                                  <div className="text-[10px] text-gray-500">Slight tilt, eye level</div>
+                                </div>
+                              </>
+                            )}
+                            {audit.goal === "instagram" && (
+                              <>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">🌈</div>
+                                  <div className="text-xs font-medium text-white">Color pop</div>
+                                  <div className="text-[10px] text-gray-500">One bold color item</div>
+                                </div>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">🖼️</div>
+                                  <div className="text-xs font-medium text-white">Clean background</div>
+                                  <div className="text-[10px] text-gray-500">Less clutter = more likes</div>
+                                </div>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">✨</div>
+                                  <div className="text-xs font-medium text-white">Good pose</div>
+                                  <div className="text-[10px] text-gray-500">Confident > perfect</div>
+                                </div>
+                              </>
+                            )}
+                            {audit.goal === "college" && (
+                              <>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">👟</div>
+                                  <div className="text-xs font-medium text-white">Clean sneakers</div>
+                                  <div className="text-[10px] text-gray-500">White always works</div>
+                                </div>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">👕</div>
+                                  <div className="text-xs font-medium text-white">Fitted tee</div>
+                                  <div className="text-[10px] text-gray-500">Not too baggy</div>
+                                </div>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">⌚</div>
+                                  <div className="text-xs font-medium text-white">One accessory</div>
+                                  <div className="text-[10px] text-gray-500">Watch or bracelet</div>
+                                </div>
+                              </>
+                            )}
+                            {audit.goal === "office" && (
+                              <>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">👔</div>
+                                  <div className="text-xs font-medium text-white">Ironed shirt</div>
+                                  <div className="text-[10px] text-gray-500">Wrinkles kill confidence</div>
+                                </div>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">👞</div>
+                                  <div className="text-xs font-medium text-white">Polished shoes</div>
+                                  <div className="text-[10px] text-gray-500">People notice shoes</div>
+                                </div>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">💇</div>
+                                  <div className="text-xs font-medium text-white">Neat grooming</div>
+                                  <div className="text-[10px] text-gray-500">Trimmed beard/hair</div>
+                                </div>
+                              </>
+                            )}
+                            {audit.goal === "glowup" && (
+                              <>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">🧴</div>
+                                  <div className="text-xs font-medium text-white">Skincare</div>
+                                  <div className="text-[10px] text-gray-500">Moisturize daily</div>
+                                </div>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">💪</div>
+                                  <div className="text-xs font-medium text-white">Posture</div>
+                                  <div className="text-[10px] text-gray-500">Stand tall, shoulders back</div>
+                                </div>
+                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
+                                  <div className="mb-1 text-lg">🎨</div>
+                                  <div className="text-xs font-medium text-white">Color palette</div>
+                                  <div className="text-[10px] text-gray-500">Stick to 2-3 colors</div>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </FadeInView>
+                    )}
+
                     <FadeInView delay={200}>
                       <Card className="mb-6">
                         <h3 className="mb-3 text-sm font-semibold text-white">
