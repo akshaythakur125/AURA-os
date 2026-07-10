@@ -136,13 +136,17 @@ export function PersonalizedShop({
   return (
     <section className="border-t border-white/[0.04] py-12">
       <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-10">
-        {/* Header — names the specific leak */}
+        {/* Header — stylist picks branding */}
         <FadeInView>
           <div className="mb-8 text-center">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1">
+              <span className="text-xs">✨</span>
+              <span className="text-xs font-medium text-amber-300">Personalized Picks</span>
+            </div>
             <h2 className="gradient-text-animated text-2xl font-bold sm:text-3xl">
               {worstLeak
-                ? `Fix your "${leakLabels[worstLeak] || worstLeak}" leak`
-                : "Looks matched to your result"}
+                ? `Your stylist picks to fix "${leakLabels[worstLeak] || worstLeak}"`
+                : "Your personalized style picks"}
             </h2>
             <p className="mt-3 text-sm text-gray-400">
               {archetype && (
@@ -155,7 +159,7 @@ export function PersonalizedShop({
                   <span className="text-red-300">{leakLabels[worstLeak] || worstLeak}</span> issue
                 </span>
               )}
-              {!worstLeak && "Personalized picks based on your audit"}
+              {!worstLeak && "Curated based on your audit results"}
             </p>
           </div>
         </FadeInView>
