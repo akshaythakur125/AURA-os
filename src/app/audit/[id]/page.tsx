@@ -22,7 +22,6 @@ import { getPersonalizedLooks } from "@/lib/shop/catalog";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
 import { PercentileBadge } from "@/components/social-proof/PercentileBadge";
 import { PaymentTrust } from "@/components/trust/PaymentTrust";
-import { getScorePercentile } from "@/lib/social-proof/getScorePercentile";
 import type { Audit, FreeAuraResult, FullAuraReportContent } from "@/types/audit";
 import type { PersonalizationResult, SignalMismatch, GoalStrategy } from "@/types/personalization";
 
@@ -724,7 +723,7 @@ export default function AuditDetailPage() {
                         {displayResult.oneLineVerdict}
                       </p>
                       <div className="mx-auto mt-4 max-w-md">
-                        <PercentileBadge percentile={getScorePercentile(displayResult.auraScore)} />
+                        <PercentileBadge score={displayResult.auraScore} />
                       </div>
                     </Card>
 

@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { LiveCounter } from "./LiveCounter";
-import { getSocialProof, type SocialProofData } from "@/lib/social-proof/getSocialProof";
+import { useSocialProof } from "@/hooks/useSocialProof";
 
 interface Props {
   variant?: "hero" | "inline" | "compact";
@@ -10,13 +9,9 @@ interface Props {
 }
 
 export function SocialProofBar({ variant = "inline", className = "" }: Props) {
-  const [data, setData] = useState<SocialProofData | null>(null);
+  const data = useSocialProof();
 
-  useEffect(() => {
-    setData(getSocialProof());
-  }, []);
-
-  if (!data || data.totalChecks === 0) return null;
+  if (data.loading || data.totalChecks === 0) return null;
 
   if (variant === "hero") {
     return (

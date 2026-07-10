@@ -1,21 +1,30 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { getScorePercentileAsync } from "@/lib/social-proof/getScorePercentile";
 
 interface Props {
-  percentile: number;
+  score: number;
   className?: string;
 }
 
-export function PercentileBadge({ percentile, className = "" }: Props) {
-  const [shown, setShown] = useState(false);
+export function PercentileBadge({ score, className = "" }: Props) {
+  const [percentile, setPercentile] = useState<number | null>(null);
 
   useEffect(() => {
-    const t = setTimeout(() => setShown(true), 800);
-    return () => clearTimeout(t);
-  }, []);
+    let cancelled = false;
+    const t = setTimeout(() => {
+      getScorePercentileAsync(score).then((p) => {
+        if (!cancelled) setPercentile(p);
+      });
+    }, 800);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [score]);
 
-  if (!shown) return null;
+  if (percentile === null) return null;
 
   const getCopy = (p: number) => {
     if (p >= 90) return `Top ${100 - p}% — elite signal`;
