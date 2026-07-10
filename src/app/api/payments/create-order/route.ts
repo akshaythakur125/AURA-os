@@ -4,11 +4,10 @@ import type { ProductType } from "@/types/payment";
 
 export const dynamic = "force-dynamic";
 
-// ponytail: Razorpay key server-side for order creation
-const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || "";
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || "";
-
+// ponytail: read env vars inside handler to avoid module-scope capture issues
 async function createRazorpayOrder(amount: number, receipt: string) {
+  const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || "";
+  const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || "";
   const auth = Buffer.from(`${RAZORPAY_KEY_ID}:${RAZORPAY_KEY_SECRET}`).toString("base64");
   const res = await fetch("https://api.razorpay.com/v1/orders", {
     method: "POST",
@@ -71,7 +70,7 @@ export async function POST(request: Request) {
 
     return Response.json({
       orderId: order.id,
-      razorpayKeyId: RAZORPAY_KEY_ID,
+      razorpayKeyId: process.env.RAZORPAY_KEY_ID || "",
       amount: finalAmount,
       currency: "INR",
       productName,

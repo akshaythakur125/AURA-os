@@ -6,9 +6,8 @@ import type { ProductType } from "@/types/payment";
 
 export const dynamic = "force-dynamic";
 
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || "";
-
 function verifyRazorpaySignature(orderId: string, paymentId: string, signature: string): boolean {
+  const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || "";
   const expectedSignature = crypto
     .createHmac("sha256", RAZORPAY_KEY_SECRET)
     .update(`${orderId}|${paymentId}`)
