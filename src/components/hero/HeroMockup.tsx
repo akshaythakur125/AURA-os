@@ -1,16 +1,30 @@
 "use client";
 
+import { useEffect, useState, type RefObject } from "react";
 import { useMouseTilt } from "@/hooks/useMouseTilt";
 
-export function HeroMockup() {
+interface HeroMockupProps {
+  depthRef?: RefObject<HTMLDivElement | null>;
+}
+
+export function HeroMockup({ depthRef }: HeroMockupProps) {
   const tilt = useMouseTilt({ maxTilt: 6, scale: 1.02 });
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const listener = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mq.addEventListener("change", listener);
+    return () => mq.removeEventListener("change", listener);
+  }, []);
 
   return (
-    <div className="mx-auto mt-16 max-w-lg px-4 sm:mt-20">
+    <div ref={depthRef} className="mx-auto mt-16 max-w-lg px-4 sm:mt-20" style={{ transformStyle: "preserve-3d" }}>
       <div
         ref={tilt.ref}
-        onMouseMove={tilt.onMouseMove}
-        onMouseLeave={tilt.onMouseLeave}
+        onMouseMove={reducedMotion ? undefined : tilt.onMouseMove}
+        onMouseLeave={reducedMotion ? undefined : tilt.onMouseLeave}
         className="relative cursor-default"
         style={{ transformStyle: "preserve-3d" }}
       >

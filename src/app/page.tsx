@@ -4,10 +4,8 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { GlowOrb } from "@/components/ui/GlowOrb";
 import { FadeInView } from "@/components/ui/FadeInView";
-import { HeroMockup } from "@/components/hero/HeroMockup";
-import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
+import { Hero3D } from "@/components/hero/Hero3D";
 import { Testimonials } from "@/components/marketing/Testimonials";
 import { LeakComparison } from "@/components/examples/LeakComparison";
 
@@ -62,47 +60,7 @@ export default function HomePage() {
       <div className="aurora-mesh-third" />
 
       {/* ─── Hero ─── */}
-      <section className="parallax-section relative overflow-hidden pb-28 pt-20 sm:pt-28">
-        <GlowOrb color="rgba(147, 51, 234, 0.22)" size={700} className="top-[-15%] left-[5%]" delay={0} />
-        <GlowOrb color="rgba(236, 72, 153, 0.15)" size={550} className="top-[15%] right-[0%]" delay={600} />
-        <GlowOrb color="rgba(14, 165, 233, 0.1)" size={450} className="bottom-[5%] left-[25%]" delay={1200} />
-
-        <Container className="relative text-center">
-          <FadeInView>
-            <span className="mb-8 inline-flex items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 px-3.5 py-1 text-xs text-purple-300 badge-embossed">
-              <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
-              First-Impression Intelligence
-            </span>
-          </FadeInView>
-          <FadeInView delay={100}>
-            <h1 className="mx-auto max-w-4xl gradient-text-animated text-4xl font-bold sm:text-5xl md:text-6xl md:text-[4.5rem] md:leading-[1.02] lg:text-[5rem]">
-              Find your biggest status leak.
-            </h1>
-          </FadeInView>
-          <FadeInView delay={200}>
-            <p className="mx-auto mt-8 max-w-2xl text-lg text-gray-400 sm:text-xl leading-relaxed">
-              You may have the phone, the outfit, or the profile. AuraCheck shows
-              what is weakening your first impression and how to upgrade your
-              visual signal under your budget.
-            </p>
-          </FadeInView>
-          <FadeInView delay={300}>
-            <div className="mt-12">
-              <Link href="/audit/new">
-                <Button size="lg">Start Free Aura Check</Button>
-              </Link>
-            </div>
-          </FadeInView>
-          <FadeInView delay={400}>
-            <HeroMockup />
-          </FadeInView>
-          <FadeInView delay={500}>
-            <div className="mt-6">
-              <SocialProofBar variant="hero" />
-            </div>
-          </FadeInView>
-        </Container>
-      </section>
+      <Hero3D />
 
       {/* ─── What It Finds ─── */}
       <section id="examples" className="border-t border-white/[0.04] py-24">
