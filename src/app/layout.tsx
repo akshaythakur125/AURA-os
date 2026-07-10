@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -8,35 +8,36 @@ import { AuditSyncProvider } from "@/components/providers/AuditSyncProvider";
 import { PostHogProvider } from "@/components/providers/PostHogProvider";
 import { PageViewTracker } from "@/components/providers/PageViewTracker";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "AuraCheck — Find Your Biggest Status Leak",
+    default: "AuraCheck — See Your Real First Impression",
     template: "%s | AuraCheck",
   },
   description:
-    "Upload a photo, get your visual first-impression score, and discover what your presentation is quietly leaking. Free analysis, no signup.",
+    "Upload a photo, get your free Aura Score. See what your first impression is really saying. No signup.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   openGraph: {
     type: "website",
     locale: "en_IN",
     siteName: "AuraCheck",
-    title: "AuraCheck — Find Your Biggest Status Leak",
-    description: "Upload a photo, get your visual first-impression score, and discover what your presentation is quietly leaking.",
+    title: "AuraCheck — See Your Real First Impression",
+    description: "Upload a photo, get your free Aura Score. See what your first impression is really saying.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AuraCheck — Find Your Biggest Status Leak",
-    description: "Upload a photo, get your visual first-impression score, and discover what your presentation is quietly leaking.",
+    title: "AuraCheck — See Your Real First Impression",
+    description: "Upload a photo, get your free Aura Score. See what your first impression is really saying.",
   },
   manifest: "/manifest.json",
   other: {
@@ -54,7 +55,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-depth text-[#ededf0]">
         <div className="grain-overlay" aria-hidden="true" />
