@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useToast } from "@/components/ui/Toast";
+import { FadeInView } from "@/components/ui/FadeInView";
+import { CountUp } from "@/components/ui/CountUp";
 import { getAuditById, updateAudit, deleteAudit, createAudit } from "@/lib/storage/auditStore";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
@@ -677,70 +679,77 @@ export default function AuditDetailPage() {
                 return (
                   <>
                     {heroLeak && (
-                      <div className="mb-8">
-                        <div className="relative overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-b from-red-500/[0.08] to-transparent p-6 sm:p-8 text-center">
-                          <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-red-500/10 blur-3xl" />
-                          <div className="pointer-events-none absolute -left-20 -bottom-20 h-40 w-40 rounded-full bg-purple-500/10 blur-3xl" />
-                          <Badge variant="danger" className="mb-4">
-                            {heroLeak.severity === "high" ? "Critical" : "Major"} Status Leak
-                          </Badge>
-                          <h2 className="mb-3 bg-gradient-to-r from-red-300 via-pink-300 to-red-200 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
-                            {heroLeak.title}
-                          </h2>
-                          <p className="mx-auto mb-4 max-w-md text-sm text-gray-300">
-                            {heroLeak.description}
-                          </p>
-                          <div className="mx-auto max-w-md rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
-                            <div className="mb-1 text-xs text-purple-400">Fix this first</div>
-                            <p className="text-sm text-gray-300">{heroLeak.fix}</p>
+                      <FadeInView>
+                        <div className="mb-8">
+                          <div className="relative overflow-hidden rounded-2xl border border-red-500/20 bg-gradient-to-b from-red-500/[0.08] to-transparent p-6 sm:p-8 text-center">
+                            <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-red-500/10 blur-3xl" />
+                            <div className="pointer-events-none absolute -left-20 -bottom-20 h-40 w-40 rounded-full bg-purple-500/10 blur-3xl" />
+                            <Badge variant="danger" className="mb-4">
+                              {heroLeak.severity === "high" ? "Critical" : "Major"} Status Leak
+                            </Badge>
+                            <h2 className="mb-3 bg-gradient-to-r from-red-300 via-pink-300 to-red-200 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
+                              {heroLeak.title}
+                            </h2>
+                            <p className="mx-auto mb-4 max-w-md text-sm text-gray-300">
+                              {heroLeak.description}
+                            </p>
+                            <div className="mx-auto max-w-md rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
+                              <div className="mb-1 text-xs text-purple-400">Fix this first</div>
+                              <p className="text-sm text-gray-300">{heroLeak.fix}</p>
+                            </div>
                           </div>
+                          {otherLeaks.length > 0 && (
+                            <p className="mt-4 text-center text-xs text-gray-500">
+                              +{otherLeaks.length} more {otherLeaks.length === 1 ? "leak" : "leaks"} found — see below
+                            </p>
+                          )}
                         </div>
-                        {otherLeaks.length > 0 && (
-                          <p className="mt-4 text-center text-xs text-gray-500">
-                            +{otherLeaks.length} more {otherLeaks.length === 1 ? "leak" : "leaks"} found — see below
-                          </p>
-                        )}
-                      </div>
+                      </FadeInView>
                     )}
 
                     {/* ─── Score Card ─── */}
-                    <Card className="relative mb-6 overflow-hidden text-center">
-                      <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
-                      <Badge variant="premium" className="mb-4">
-                        {displayResult.category}
-                      </Badge>
-                      <div className="text-6xl font-bold text-white">
-                        {displayResult.auraScore}
-                      </div>
-                      <div className="mt-1 text-sm text-gray-500">/ 100</div>
-                      <div className="mx-auto mt-4 h-2 max-w-xs overflow-hidden rounded-full bg-white/5">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-1000"
-                          style={{ width: `${displayResult.auraScore}%` }}
-                        />
-                      </div>
-                      <p className="mx-auto mt-4 max-w-md text-sm text-gray-300">
-                        {displayResult.oneLineVerdict}
-                      </p>
-                      <div className="mx-auto mt-4 max-w-md">
-                        <PercentileBadge score={displayResult.auraScore} />
-                      </div>
-                    </Card>
+                    <FadeInView delay={100}>
+                      <Card className="relative mb-6 overflow-hidden text-center">
+                        <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
+                        <Badge variant="premium" className="mb-4">
+                          {displayResult.category}
+                        </Badge>
+                        <div className="text-6xl font-bold text-white">
+                          <CountUp target={displayResult.auraScore} duration={1400} />
+                        </div>
+                        <div className="mt-1 text-sm text-gray-500">/ 100</div>
+                        <div className="mx-auto mt-4 h-2 max-w-xs overflow-hidden rounded-full bg-white/5">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-1000 ease-out"
+                            style={{ width: `${displayResult.auraScore}%` }}
+                          />
+                        </div>
+                        <p className="mx-auto mt-4 max-w-md text-sm text-gray-300">
+                          {displayResult.oneLineVerdict}
+                        </p>
+                        <div className="mx-auto mt-4 max-w-md">
+                          <PercentileBadge score={displayResult.auraScore} />
+                        </div>
+                      </Card>
+                    </FadeInView>
 
-                    <Card className="mb-6">
-                      <h3 className="mb-3 text-sm font-semibold text-white">
-                        Strongest Signals
-                      </h3>
-                      <div className="flex flex-wrap gap-2">
-                        {displayResult.strongestSignals.map((s) => (
-                          <Badge key={s} variant="success">{s}</Badge>
-                        ))}
-                      </div>
-                    </Card>
+                    <FadeInView delay={200}>
+                      <Card className="mb-6">
+                        <h3 className="mb-3 text-sm font-semibold text-white">
+                          Strongest Signals
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                          {displayResult.strongestSignals.map((s) => (
+                            <Badge key={s} variant="success">{s}</Badge>
+                          ))}
+                        </div>
+                      </Card>
+                    </FadeInView>
 
                     {/* ─── Remaining Leaks (Blurred Previews) ─── */}
                     {otherLeaks.length > 0 && (
-                      <div className="mb-6">
+                      <FadeInView delay={250}>
+                        <div className="mb-6">
                         <Card className="relative overflow-hidden">
                           <h3 className="mb-4 text-sm font-semibold text-white">
                             {otherLeaks.length} more {otherLeaks.length === 1 ? "leak" : "leaks"} found
@@ -773,31 +782,35 @@ export default function AuditDetailPage() {
                           Unlock to see all leaks and how to fix them
                         </p>
                       </div>
+                      </FadeInView>
                     )}
 
-                    <Card className="mb-6">
-                      <h3 className="mb-4 text-sm font-semibold text-white">
-                        Quick Fixes
-                      </h3>
-                      <div className="space-y-3">
-                        {displayResult.quickFixes.map((fix) => (
-                          <div key={fix.title} className="flex items-start gap-3">
-                            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-xs text-emerald-400">
-                              &#10003;
+                    <FadeInView delay={300}>
+                      <Card className="mb-6">
+                        <h3 className="mb-4 text-sm font-semibold text-white">
+                          Quick Fixes
+                        </h3>
+                        <div className="space-y-3">
+                          {displayResult.quickFixes.map((fix) => (
+                            <div key={fix.title} className="flex items-start gap-3">
+                              <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-xs text-emerald-400">
+                                &#10003;
+                              </div>
+                              <div>
+                                <p className="text-sm text-white">{fix.title}</p>
+                                <p className="text-xs text-gray-500">{fix.description}</p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-sm text-white">{fix.title}</p>
-                              <p className="text-xs text-gray-500">{fix.description}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
+                          ))}
+                        </div>
+                      </Card>
+                    </FadeInView>
 
-                    <Card className="mb-6">
-                      <h3 className="mb-1 text-sm font-semibold text-white">
-                        Budget Upgrade Plan
-                      </h3>
+                    <FadeInView delay={350}>
+                      <Card className="mb-6">
+                        <h3 className="mb-1 text-sm font-semibold text-white">
+                          Budget Upgrade Plan
+                        </h3>
                       <p className="mb-4 text-xs text-gray-500">
                         {displayResult.budgetUpgradePlan.priority}
                       </p>
@@ -813,35 +826,40 @@ export default function AuditDetailPage() {
                         Estimated impact: {displayResult.budgetUpgradePlan.estimatedImpact}
                       </p>
                     </Card>
+                    </FadeInView>
 
-                    <Card className="mb-6">
-                      <h3 className="mb-3 text-sm font-semibold text-white">
-                        Image Signal Metrics
-                      </h3>
-                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                        {[
-                          { label: "Lighting", value: displayResult.imageMetrics.lightingScore },
-                          { label: "Clarity", value: displayResult.imageMetrics.clarityScore },
-                          { label: "Composition", value: displayResult.imageMetrics.compositionScore },
-                          { label: "Contrast", value: displayResult.imageMetrics.contrast },
-                          { label: "Saturation", value: displayResult.imageMetrics.saturation },
-                          { label: "Resolution", value: displayResult.imageMetrics.resolutionScore },
-                        ].map((m) => (
-                          <div key={m.label} className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
-                            <div className="text-xs text-gray-500">{m.label}</div>
-                            <div className="mt-1 flex items-center gap-2">
-                              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
-                                <div
-                                  className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500"
-                                  style={{ width: `${m.value}%` }}
-                                />
+                    <FadeInView delay={400}>
+                      <Card className="mb-6">
+                        <h3 className="mb-3 text-sm font-semibold text-white">
+                          Image Signal Metrics
+                        </h3>
+                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                          {[
+                            { label: "Lighting", value: displayResult.imageMetrics.lightingScore },
+                            { label: "Clarity", value: displayResult.imageMetrics.clarityScore },
+                            { label: "Composition", value: displayResult.imageMetrics.compositionScore },
+                            { label: "Contrast", value: displayResult.imageMetrics.contrast },
+                            { label: "Saturation", value: displayResult.imageMetrics.saturation },
+                            { label: "Resolution", value: displayResult.imageMetrics.resolutionScore },
+                          ].map((m) => (
+                            <div key={m.label} className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
+                              <div className="text-xs text-gray-500">{m.label}</div>
+                              <div className="mt-1 flex items-center gap-2">
+                                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
+                                  <div
+                                    className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-1000 ease-out"
+                                    style={{ width: `${m.value}%` }}
+                                  />
+                                </div>
+                                <span className="text-xs text-white">
+                                  <CountUp target={m.value} duration={1000} />
+                                </span>
                               </div>
-                              <span className="text-xs text-white">{m.value}</span>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    </Card>
+                          ))}
+                        </div>
+                      </Card>
+                    </FadeInView>
                   </>
                 );
               })()}
@@ -860,85 +878,90 @@ export default function AuditDetailPage() {
 
               {/* ─── Paywall: Personalized Upgrade ─── */}
               {displayResult && (
-                <div className="mb-6">
-                  <div className="mb-4">
-                    <SocialProofBar variant="compact" />
-                  </div>
-                  <Card className="relative overflow-hidden border-purple-500/20">
-                    <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
-                    <div className="pointer-events-none absolute -left-16 -bottom-16 h-32 w-32 rounded-full bg-pink-600/10 blur-3xl" />
-                    <div className="text-center">
-                      <Badge variant="premium" className="mb-3">Full Report</Badge>
-                      <h3 className="mb-2 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-xl font-bold text-transparent">
-                        Unlock every leak &amp; fix
-                      </h3>
-                      <p className="mx-auto mb-4 max-w-sm text-sm text-gray-400">
-                        You saw <span className="text-white font-medium">{displayResult.statusLeaks[0]?.title}</span> — 
-                        there {displayResult.statusLeaks.length - 1 === 1 ? "is" : "are"} {displayResult.statusLeaks.length - 1} more 
-                        {displayResult.statusLeaks.length - 1 === 1 ? " leak" : " leaks"} plus your full goal strategy, upgrade path, and photo guidance.
-                      </p>
-                      <div className="mb-4 flex items-center justify-center gap-3 text-xs text-gray-500">
-                        <span>Less than a chai per day for 30 days</span>
-                        <span className="h-1 w-1 rounded-full bg-gray-600" />
-                        <span>One-time, yours forever</span>
-                      </div>
-                      <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} className="block">
-                        <Button size="lg" className="w-full max-w-xs mx-auto">
-                          Unlock Full Report — &#8377;99
-                        </Button>
-                      </Link>
-                      <p className="mt-3 text-[10px] text-gray-600">
-                        Instant unlock. No subscription. Local browser analysis.
-                      </p>
+                <FadeInView delay={500}>
+                  <div className="mb-6">
+                    <div className="mb-4">
+                      <SocialProofBar variant="compact" />
                     </div>
-                  </Card>
+                    <Card className="relative overflow-hidden border-purple-500/20">
+                      <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
+                      <div className="pointer-events-none absolute -left-16 -bottom-16 h-32 w-32 rounded-full bg-pink-600/10 blur-3xl" />
+                      <div className="text-center">
+                        <Badge variant="premium" className="mb-3">Full Report</Badge>
+                        <h3 className="mb-2 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-xl font-bold text-transparent">
+                          Unlock every leak &amp; fix
+                        </h3>
+                        <p className="mx-auto mb-4 max-w-sm text-sm text-gray-400">
+                          You saw <span className="text-white font-medium">{displayResult.statusLeaks[0]?.title}</span> — 
+                          there {displayResult.statusLeaks.length - 1 === 1 ? "is" : "are"} {displayResult.statusLeaks.length - 1} more 
+                          {displayResult.statusLeaks.length - 1 === 1 ? " leak" : " leaks"} plus your full goal strategy, upgrade path, and photo guidance.
+                        </p>
+                        <div className="mb-4 flex items-center justify-center gap-3 text-xs text-gray-500">
+                          <span>Less than a chai per day for 30 days</span>
+                          <span className="h-1 w-1 rounded-full bg-gray-600" />
+                          <span>One-time, yours forever</span>
+                        </div>
+                        <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} className="block">
+                          <Button size="lg" className="w-full max-w-xs mx-auto">
+                            Unlock Full Report — &#8377;<CountUp target={99} duration={800} />
+                          </Button>
+                        </Link>
+                        <p className="mt-3 text-[10px] text-gray-600">
+                          Instant unlock. No subscription. Local browser analysis.
+                        </p>
+                      </div>
+                    </Card>
 
-                  {/* Trust layer */}
-                  <div className="mt-4">
-                    <PaymentTrust variant="results" />
-                  </div>
+                    {/* Trust layer */}
+                    <div className="mt-4">
+                      <PaymentTrust variant="results" />
+                    </div>
 
-                  {/* Secondary products */}
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                    {[
-                      { type: "dating_audit" as const, name: "Dating / Profile Audit", price: 299, desc: "Bio analysis, red flags, suggested bios" },
-                      { type: "glowup_plan" as const, name: "30-Day Glow-Up Plan", price: 499, desc: "Weekly roadmap, daily missions, budget" },
-                    ].map((p) => {
-                      const unlocked = audit.unlockedProducts?.includes(p.type);
-                      const hasReport = p.type === "dating_audit" ? audit.datingProfileReport : audit.glowupPlan;
-                      return (
-                        <Card key={p.type} className={`relative ${unlocked ? "border-emerald-500/20" : ""}`}>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h4 className="text-sm font-medium text-white">{p.name}</h4>
-                              <p className="text-xs text-gray-500">{p.desc}</p>
+                    {/* Secondary products */}
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      {[
+                        { type: "dating_audit" as const, name: "Dating / Profile Audit", price: 299, desc: "Bio analysis, red flags, suggested bios" },
+                        { type: "glowup_plan" as const, name: "30-Day Glow-Up Plan", price: 499, desc: "Weekly roadmap, daily missions, budget" },
+                      ].map((p) => {
+                        const unlocked = audit.unlockedProducts?.includes(p.type);
+                        const hasReport = p.type === "dating_audit" ? audit.datingProfileReport : audit.glowupPlan;
+                        return (
+                          <Card key={p.type} className={`relative ${unlocked ? "border-emerald-500/20" : ""}`}>
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <h4 className="text-sm font-medium text-white">{p.name}</h4>
+                                <p className="text-xs text-gray-500">{p.desc}</p>
+                              </div>
+                              {unlocked && hasReport ? (
+                                <span className="text-xs text-emerald-400">Unlocked</span>
+                              ) : unlocked ? (
+                                <span className="text-xs text-emerald-400">Unlocked</span>
+                              ) : (
+                                <Link href={`/unlock?auditId=${audit.id}&product=${p.type}`}>
+                                  <Button size="sm" variant="secondary">&#8377;{p.price}</Button>
+                                </Link>
+                              )}
                             </div>
-                            {unlocked && hasReport ? (
-                              <span className="text-xs text-emerald-400">Unlocked</span>
-                            ) : unlocked ? (
-                              <span className="text-xs text-emerald-400">Unlocked</span>
-                            ) : (
-                              <Link href={`/unlock?auditId=${audit.id}&product=${p.type}`}>
-                                <Button size="sm" variant="secondary">&#8377;{p.price}</Button>
-                              </Link>
-                            )}
-                          </div>
-                        </Card>
-                      );
-                    })}
+                          </Card>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
+                </FadeInView>
               )}
 
               {/* ─── Dating Profile Report Display ─── */}
               {audit.datingProfileReport && (
-                <Card className="mb-6">
-                  <Badge variant="success" className="mb-2">Dating / Profile Audit</Badge>
-                  <h3 className="mb-4 text-sm font-semibold text-white">Profile Text Analysis</h3>
-                  <div className="mb-4 text-center">
-                    <div className="text-4xl font-bold text-white">{audit.datingProfileReport.textScore}</div>
-                    <div className="text-xs text-gray-500">Text Score / 100</div>
-                  </div>
+                <FadeInView>
+                  <Card className="mb-6">
+                    <Badge variant="success" className="mb-2">Dating / Profile Audit</Badge>
+                    <h3 className="mb-4 text-sm font-semibold text-white">Profile Text Analysis</h3>
+                    <div className="mb-4 text-center">
+                      <div className="text-4xl font-bold text-white">
+                        <CountUp target={audit.datingProfileReport.textScore} duration={1200} />
+                      </div>
+                      <div className="text-xs text-gray-500">Text Score / 100</div>
+                    </div>
                   <div className="mb-4 rounded-lg border border-white/[0.04] bg-white/[0.03] p-4">
                     <p className="text-xs text-gray-300">{audit.datingProfileReport.overallAdvice}</p>
                   </div>
@@ -989,10 +1012,12 @@ export default function AuditDetailPage() {
                     </div>
                   )}
                 </Card>
+                </FadeInView>
               )}
 
               {/* ─── Glow-Up Plan Display ─── */}
               {audit.glowupPlan && (
+                <FadeInView>
                 <Card className="mb-6">
                   <Badge variant="success" className="mb-2">30-Day Glow-Up Plan</Badge>
                   <h3 className="mb-4 text-sm font-semibold text-white">Your 4-Week Roadmap</h3>
@@ -1052,6 +1077,7 @@ export default function AuditDetailPage() {
                     </div>
                   </div>
                 </Card>
+                </FadeInView>
               )}
 
               {/* Share section for free result */}
