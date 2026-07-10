@@ -2,8 +2,7 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-// ponytail: Google Maps Places API — server-side only, key never exposed to client
-
+// Google Maps Places API (New) — server-side only, key never exposed to client
 interface PlaceResult {
   name: string;
   type: string;
@@ -14,13 +13,25 @@ interface PlaceResult {
   mapUrl: string;
 }
 
+const TYPE_MAP: Record<string, string> = {
+  salon: "beauty_salon",
+  photographer: "photographer",
+  gym: "gym",
+};
+
+const LABEL_MAP: Record<string, string> = {
+  salon: "Salon & Beauty",
+  photographer: "Photographer",
+  gym: "Gym & Fitness",
+};
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const lat = parseFloat(searchParams.get("lat") || "0");
     const lng = parseFloat(searchParams.get("lng") || "0");
-    const radius = parseInt(searchParams.get("radius") || "5000", 10); // default 5km
-    const type = searchParams.get("type") || "beauty_salon"; // ponytail: beauty_salon covers salons, spas, barbershops
+    const radius = parseInt(searchParams.get("radius") || "5000", 10);
+    const rawType = searchParams.get("type") || "salon";
 
     if (!lat || !lng) {
       return NextResponse.json({ error: "lat and lng are required" }, { status: 400 });
@@ -31,47 +42,66 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Google Maps API key not configured" }, { status: 500 });
     }
 
-    // ponytail: Places API Nearby Search — max 20 results, sorted by importance
-    const url = new URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json");
-    url.searchParams.set("location", `${lat},${lng}`);
-    url.searchParams.set("radius", String(radius));
-    url.searchParams.set("type", type);
-    url.searchParams.set("key", API_KEY);
-    url.searchParams.set("rankby", "prominence");
+    const includedType = TYPE_MAP[rawType] || "beauty_salon";
 
-    const res = await fetch(url.toString());
+    // Places API (New) — searchNearby
+    const url = "https://places.googleapis.com/v1/places:searchNearby";
+    const body = {
+      maxResultCount: 8,
+      locationRestriction: {
+        circle: {
+          center: { latitude: lat, longitude: lng },
+          radius: radius,
+        },
+      },
+      includedType,
+    };
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": API_KEY,
+        "X-Goog-FieldMask": "places.displayName,places.types,places.formattedAddress,places.rating,places.userRatingCount,places.photos,places.id",
+      },
+      body: JSON.stringify(body),
+    });
+
     const data = await res.json();
 
-    if (data.status !== "OK") {
+    if (!res.ok || data.error) {
       return NextResponse.json(
-        { error: `Google Places API error: ${data.status}`, details: data.error_message },
+        { error: `Google Places API error: ${data.error?.message || res.statusText}`, details: JSON.stringify(data.error || data) },
         { status: 502 }
       );
     }
 
-    const places: PlaceResult[] = (data.results || []).slice(0, 8).map((p: Record<string, unknown>) => {
-      const loc = (p.geometry as Record<string, unknown>) as { location: { lat: number; lng: number } };
-      const photos = p.photos as Array<{ photo_reference: string }> | undefined;
+    const places: PlaceResult[] = (data.places || []).map((p: Record<string, unknown>) => {
+      const types = (p.types as string[]) || [];
+      const photos = p.photos as Array<{ name: string }> | undefined;
+      const displayName = p.displayName as { text: string } | undefined;
       return {
-        name: p.name as string,
-        type: (p.types as string[])?.includes("hair_care") ? "Hair care"
-          : (p.types as string[])?.includes("beauty_salon") ? "Beauty salon"
-          : (p.types as string[])?.includes("barber") ? "Barbershop"
-          : (p.types as string[])?.includes("spa") ? "Spa"
-          : (p.types as string[])?.includes("gym") ? "Gym / Fitness"
-          : (p.types as string[])?.includes("clothing_store") ? "Clothing store"
-          : (p.types as string[])?.includes("shoe_store") ? "Footwear"
-          : (p.types as string[])?.includes("jewelry_store") ? "Jewelry"
+        name: displayName?.text || "Unknown",
+        type: types.includes("hair_care") ? "Hair care"
+          : types.includes("beauty_salon") ? "Beauty salon"
+          : types.includes("barber") ? "Barbershop"
+          : types.includes("spa") ? "Spa"
+          : types.includes("gym") ? "Gym / Fitness"
+          : types.includes("clothing_store") ? "Clothing store"
+          : types.includes("photographer") ? "Photographer"
           : "Grooming",
-        area: p.vicinity as string || "",
+        area: (p.formattedAddress as string) || "",
         rating: (p.rating as number) || 0,
-        totalRatings: (p.user_ratings_total as number) || 0,
-        photoReference: photos?.[0]?.photo_reference || null,
-        mapUrl: `https://www.google.com/maps/place/?q=place_id:${p.place_id}`,
+        totalRatings: (p.userRatingCount as number) || 0,
+        photoReference: photos?.[0]?.name || null,
+        mapUrl: `https://www.google.com/maps/place/?q=place_id:${p.id}`,
       };
     });
 
-    return NextResponse.json({ places, city: data.results?.[0]?. vicinity?.split(",")?.pop()?.trim() || null });
+    return NextResponse.json({
+      places,
+      category: LABEL_MAP[rawType] || rawType,
+    });
   } catch (err) {
     return NextResponse.json({ error: "Failed to fetch places" }, { status: 500 });
   }
