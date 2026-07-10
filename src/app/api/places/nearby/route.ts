@@ -15,7 +15,6 @@ interface PlaceResult {
 
 const TYPE_MAP: Record<string, string> = {
   salon: "beauty_salon",
-  photographer: "photographer",
   gym: "gym",
 };
 
@@ -42,41 +41,72 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Google Maps API key not configured" }, { status: 500 });
     }
 
-    const includedType = TYPE_MAP[rawType] || "beauty_salon";
+    const includedType = TYPE_MAP[rawType];
+    let data: Record<string, unknown>;
 
-    // Places API (New) — searchNearby
-    const url = "https://places.googleapis.com/v1/places:searchNearby";
-    const body = {
-      maxResultCount: 8,
-      locationRestriction: {
-        circle: {
-          center: { latitude: lat, longitude: lng },
-          radius: radius,
+    if (includedType) {
+      // Places API (New) — searchNearby with type filter
+      const url = "https://places.googleapis.com/v1/places:searchNearby";
+      const body = {
+        maxResultCount: 8,
+        locationRestriction: {
+          circle: {
+            center: { latitude: lat, longitude: lng },
+            radius: radius,
+          },
         },
-      },
-      includedTypes: [includedType],
-    };
+        includedTypes: [includedType],
+      };
 
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Goog-Api-Key": API_KEY,
-        "X-Goog-FieldMask": "places.displayName,places.types,places.formattedAddress,places.rating,places.userRatingCount,places.photos,places.id",
-      },
-      body: JSON.stringify(body),
-    });
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-Api-Key": API_KEY,
+          "X-Goog-FieldMask": "places.displayName,places.types,places.formattedAddress,places.rating,places.userRatingCount,places.photos,places.id",
+        },
+        body: JSON.stringify(body),
+      });
+      data = await res.json();
+      if (!res.ok || data.error) {
+        return NextResponse.json(
+          { error: `Google Places API error: ${(data.error as Record<string, unknown>)?.message || "Unknown"}`, details: JSON.stringify(data.error) },
+          { status: 502 }
+        );
+      }
+    } else {
+      // For unsupported types (photographer, etc.) — use textSearch with keyword
+      const url = "https://places.googleapis.com/v1/places:searchText";
+      const body = {
+        textQuery: rawType + " near me",
+        maxResultCount: 8,
+        locationBias: {
+          circle: {
+            center: { latitude: lat, longitude: lng },
+            radius: radius,
+          },
+        },
+      };
 
-    const data = await res.json();
-
-    if (!res.ok || data.error) {
-      return NextResponse.json(
-        { error: `Google Places API error: ${data.error?.message || res.statusText}`, details: JSON.stringify(data.error || data) },
-        { status: 502 }
-      );
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-Api-Key": API_KEY,
+          "X-Goog-FieldMask": "places.displayName,places.types,places.formattedAddress,places.rating,places.userRatingCount,places.photos,places.id",
+        },
+        body: JSON.stringify(body),
+      });
+      data = await res.json();
+      if (!res.ok || data.error) {
+        return NextResponse.json(
+          { error: `Google Places API error: ${(data.error as Record<string, unknown>)?.message || "Unknown"}`, details: JSON.stringify(data.error) },
+          { status: 502 }
+        );
+      }
     }
 
-    const places: PlaceResult[] = (data.places || []).map((p: Record<string, unknown>) => {
+    const places: PlaceResult[] = ((data.places as Record<string, unknown>[]) || []).map((p) => {
       const types = (p.types as string[]) || [];
       const photos = p.photos as Array<{ name: string }> | undefined;
       const displayName = p.displayName as { text: string } | undefined;
