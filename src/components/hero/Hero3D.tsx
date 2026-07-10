@@ -52,37 +52,39 @@ export function Hero3D() {
       {/* Dot grid overlay */}
       <div className="hero-grid pointer-events-none absolute inset-0 z-[1]" />
 
-      {/* Floating decorative shapes + Gen Z lifestyle photos */}
+      {/* Large Gen Z lifestyle photos — faces visible, not tiny decorations */}
       <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden">
-        {/* Young people photos floating around */}
-        <div className="absolute left-[5%] top-[15%] h-20 w-20 overflow-hidden rounded-2xl border border-white/[0.08] shadow-2xl animate-[float-dramatic_10s_ease-in-out_infinite] sm:h-28 sm:w-28">
-          <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=200&q=80" alt="" className="h-full w-full object-cover" loading="lazy" />
+        <div className="absolute left-[3%] top-[8%] h-40 w-28 overflow-hidden rounded-3xl border border-white/[0.1] shadow-[0_0_60px_rgba(0,0,0,0.5)] animate-[float-dramatic_12s_ease-in-out_infinite] sm:h-56 sm:w-40 lg:h-64 lg:w-44">
+          <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=400&q=80" alt="Fashion forward style" className="h-full w-full object-cover" loading="eager" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          <div className="absolute bottom-3 left-3 text-[10px] font-medium text-white/80">Style ✓</div>
         </div>
-        <div className="absolute right-[8%] top-[20%] h-16 w-16 overflow-hidden rounded-full border border-white/[0.08] shadow-2xl animate-[float-dramatic_12s_ease-in-out_infinite_1s] sm:h-24 sm:w-24">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" alt="" className="h-full w-full object-cover" loading="lazy" />
+        <div className="absolute right-[4%] top-[12%] h-36 w-36 overflow-hidden rounded-full border border-white/[0.1] shadow-[0_0_60px_rgba(0,0,0,0.5)] animate-[float-dramatic_14s_ease-in-out_infinite_2s] sm:h-48 sm:w-48 lg:h-56 lg:w-56">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80" alt="Confident portrait" className="h-full w-full object-cover" loading="eager" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          <div className="absolute bottom-3 left-3 text-[10px] font-medium text-white/80">Aura 82</div>
         </div>
-        <div className="absolute left-[12%] bottom-[25%] h-14 w-14 overflow-hidden rounded-xl border border-white/[0.08] shadow-2xl animate-[float-dramatic_9s_ease-in-out_infinite_2s] sm:h-20 sm:w-20">
-          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80" alt="" className="h-full w-full object-cover" loading="lazy" />
+        <div className="absolute left-[8%] bottom-[15%] h-32 w-24 overflow-hidden rounded-2xl border border-white/[0.1] shadow-[0_0_60px_rgba(0,0,0,0.5)] animate-[float-dramatic_10s_ease-in-out_infinite_4s] sm:h-44 sm:w-32 lg:h-52 lg:w-36">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80" alt="Natural lighting" className="h-full w-full object-cover" loading="eager" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          <div className="absolute bottom-3 left-3 text-[10px] font-medium text-white/80">Lighting ✓</div>
         </div>
-        <div className="absolute right-[15%] bottom-[30%] h-16 w-16 overflow-hidden rounded-2xl border border-white/[0.08] shadow-2xl animate-[float-dramatic_11s_ease-in-out_infinite_0.5s] sm:h-24 sm:w-24">
-          <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&q=80" alt="" className="h-full w-full object-cover" loading="lazy" />
+        <div className="absolute right-[6%] bottom-[20%] h-36 w-28 overflow-hidden rounded-3xl border border-white/[0.1] shadow-[0_0_60px_rgba(0,0,0,0.5)] animate-[float-dramatic_11s_ease-in-out_infinite_1s] sm:h-48 sm:w-36 lg:h-56 lg:w-40">
+          <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&q=80" alt="Clean background" className="h-full w-full object-cover" loading="eager" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          <div className="absolute bottom-3 left-3 text-[10px] font-medium text-white/80">Background ✓</div>
         </div>
-        <div className="absolute left-[45%] top-[10%] h-12 w-12 overflow-hidden rounded-full border border-white/[0.06] shadow-xl animate-[float-dramatic_8s_ease-in-out_infinite_1.5s] sm:h-16 sm:w-16">
-          <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&q=80" alt="" className="h-full w-full object-cover" loading="lazy" />
-        </div>
-        {/* Small shapes */}
+        {/* Small decorative shapes */}
         <div className="absolute left-[8%] top-[18%] h-3 w-3 rounded-full border border-rose-400/30 bg-rose-400/10 animate-[float-dramatic_8s_ease-in-out_infinite]" />
         <div className="absolute right-[12%] top-[25%] h-2 w-2 rounded bg-blue-400/20 animate-[float-dramatic_10s_ease-in-out_infinite_1s]" style={{ rotate: "45deg" }} />
         <div className="absolute left-[15%] bottom-[30%] h-4 w-4 rounded-full border border-rose-300/20 bg-rose-300/5 animate-[float-dramatic_9s_ease-in-out_infinite_2s]" />
         <div className="absolute right-[25%] top-[45%] h-5 w-5 rounded-full border border-blue-400/10 bg-blue-400/5 animate-[float-dramatic_7s_ease-in-out_infinite_0.5s]" />
-        <div className="absolute left-[50%] bottom-[15%] h-2 w-2 rounded bg-rose-500/15 animate-[float-dramatic_11s_ease-in-out_infinite_1.5s]" style={{ rotate: "45deg" }} />
       </div>
 
       <div ref={orbLayerRef}>
         <GlowOrb color="rgba(251, 113, 133, 0.22)" size={700} className="top-[-15%] left-[5%]" delay={0} />
         <GlowOrb color="rgba(225, 29, 72, 0.18)" size={550} className="top-[15%] right-[0%]" delay={600} />
         <GlowOrb color="rgba(37, 99, 235, 0.1)" size={450} className="bottom-[5%] left-[25%]" delay={1200} />
-        {/* Extra spectacle orbs */}
         <GlowOrb color="rgba(251, 113, 133, 0.08)" size={350} className="top-[30%] left-[40%]" delay={200} />
         <GlowOrb color="rgba(96, 165, 250, 0.06)" size={300} className="bottom-[20%] right-[30%]" delay={800} />
       </div>
