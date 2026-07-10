@@ -2,17 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { Hero3D } from "@/components/hero/Hero3D";
-import { Testimonials } from "@/components/marketing/Testimonials";
-import { LeakComparison } from "@/components/examples/LeakComparison";
+import { GlassCard } from "@/components/sections/GlassCard";
+import { ImageShowcase } from "@/components/sections/ImageShowcase";
 
 export const metadata: Metadata = {
-  title: "AuraCheck — Free Visual Signal Analysis & Status Leak Detection",
+  title: "AuraCheck — See What Your Presentation Is Really Saying",
   description:
-    "Upload a photo, get your free Aura Score, and discover the status leaks weakening your first impression. See what to fix first — background, lighting, outfit, or profile. No account required.",
+    "Upload a photo, get your free Aura Score, and discover the status leaks weakening your first impression.",
   openGraph: {
     title: "AuraCheck — Know What Your Presentation Is Actually Saying",
     description:
@@ -29,26 +27,54 @@ export const metadata: Metadata = {
   },
 };
 
-const leaks = [
+const features = [
   {
-    title: "Expensive phone, weak background",
-    desc: "A flagship phone means little if the background behind you screams \u201Cunmade bed at 3 PM.\u201D",
-    severity: "high" as const,
+    icon: (
+      <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+      </svg>
+    ),
+    title: "Lighting Analysis",
+    description: "Detects harsh shadows and flat light that undercut your face.",
   },
   {
-    title: "Good outfit, poor fit",
-    desc: "Even a premium brand looks off when the fit is baggy or the shoulders don\u2019t align.",
-    severity: "high" as const,
+    icon: (
+      <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M2.25 18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V6A2.25 2.25 0 0 0 19.5 3.75h-15A2.25 2.25 0 0 0 2.25 6v12z" />
+      </svg>
+    ),
+    title: "Background Audit",
+    description: "Spots clutter and distractions behind you in every frame.",
   },
   {
-    title: "Good face, bad lighting",
-    desc: "Harsh overhead light can undo good grooming in a single frame.",
-    severity: "medium" as const,
+    icon: (
+      <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+      </svg>
+    ),
+    title: "Outfit Signal",
+    description: "Reads fit, color harmony, and how your clothes read on camera.",
+  },
+];
+
+const testimonials = [
+  {
+    quote: "I had no idea my background was sabotaging every photo. One clean wall later and my score jumped 22 points.",
+    name: "Maya R.",
+    role: "Content Creator",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&q=80",
   },
   {
-    title: "Premium watch, messy room",
-    desc: "Luxury accessories lose impact when the surroundings suggest chaos.",
-    severity: "medium" as const,
+    quote: "The lighting call was spot-on. I switched from overhead fluorescents to facing a window and the difference is night and day.",
+    name: "James K.",
+    role: "Startup Founder",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=80",
+  },
+  {
+    quote: "Free tool, zero signup, and it caught something my photographer friend missed. My LinkedIn photo finally looks intentional.",
+    name: "Priya S.",
+    role: "Product Designer",
+    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=120&q=80",
   },
 ];
 
@@ -62,109 +88,120 @@ export default function HomePage() {
       {/* ─── Hero ─── */}
       <Hero3D />
 
-      {/* ─── What It Finds ─── */}
-      <section id="examples" className="relative overflow-hidden border-t border-white/[0.04] py-24">
-        {/* Section glow */}
+      {/* ─── Before / After Visual Proof ─── */}
+      <section className="relative overflow-hidden border-t border-white/[0.04] py-24 sm:py-32 gradient-mesh-bg">
+        {/* Decorative floating shapes */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div className="absolute -left-20 top-0 h-72 w-72 rounded-full bg-rose-500/5 blur-[100px]" />
-          <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-blue-500/5 blur-[100px]" />
-          <div className="absolute left-[20%] top-[10%] h-2 w-2 rounded bg-rose-400/15 animate-[float-dramatic_12s_ease-in-out_infinite]" />
-          <div className="absolute right-[30%] bottom-[20%] h-3 w-3 rounded-full border border-blue-400/10 bg-blue-400/5 animate-[float-dramatic_9s_ease-in-out_infinite_1s]" />
+          <div className="absolute left-[10%] top-[20%] h-3 w-3 rounded-full border border-rose-400/20 bg-rose-400/5 animate-[float-dramatic_10s_ease-in-out_infinite]" />
+          <div className="absolute right-[15%] bottom-[25%] h-2 w-2 rounded bg-blue-400/15 animate-[float-dramatic_8s_ease-in-out_infinite_1s]" style={{ rotate: "45deg" }} />
         </div>
         <Container>
-          <div className="mx-auto mb-14 max-w-2xl text-center">
-            <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
-              Your most expensive item may not be your strongest signal.
-            </h2>
-            <p className="mt-5 text-lg text-gray-400">
-              These are the kinds of status leaks AuraCheck detects — small
-              mismatches between what you own and how you present it.
-            </p>
-          </div>
-          <div className="bento-grid">
-            {leaks.map((leak, i) => (
-              <Card key={leak.title} hover tilt className={i < 2 ? "bento-span-2" : ""}>
-                <div className="mb-3 flex items-start justify-between gap-2">
-                  <h3 className="text-sm font-semibold text-white">
-                    {leak.title}
-                  </h3>
-                  <Badge
-                    variant={
-                      leak.severity === "high"
-                        ? "danger"
-                        : leak.severity === "medium"
-                          ? "warning"
-                          : "default"
-                    }
-                  >
-                    {leak.severity}
-                  </Badge>
-                </div>
-                <p className="text-sm leading-relaxed text-gray-400">
-                  {leak.desc}
-                </p>
-              </Card>
+          <FadeInView>
+            <div className="mx-auto mb-14 max-w-2xl text-center">
+              <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
+                See the difference a signal fix makes.
+              </h2>
+              <p className="mt-5 text-lg text-gray-400">
+                Same person, different signal. Small tweaks, massive impact.
+              </p>
+            </div>
+          </FadeInView>
+          <FadeInView delay={100}>
+            <ImageShowcase />
+          </FadeInView>
+        </Container>
+      </section>
+
+      {/* ─── Features Grid ─── */}
+      <section className="relative overflow-hidden border-t border-white/[0.04] py-24 sm:py-32">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -right-32 top-10 h-80 w-80 rounded-full bg-blue-500/[0.05] blur-[120px]" />
+          <div className="absolute -left-20 bottom-10 h-64 w-64 rounded-full bg-rose-500/[0.05] blur-[100px]" />
+        </div>
+        <Container>
+          <FadeInView>
+            <div className="mx-auto mb-14 max-w-2xl text-center">
+              <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
+                What AuraCheck reveals.
+              </h2>
+            </div>
+          </FadeInView>
+          <div className="grid gap-6 sm:grid-cols-3">
+            {features.map((f, i) => (
+              <FadeInView key={f.title} delay={i * 100}>
+                <GlassCard icon={f.icon} title={f.title} description={f.description} />
+              </FadeInView>
             ))}
-          </div>
-          <div className="mt-10">
-            <LeakComparison />
-          </div>
-          <div className="mt-10 text-center">
-            <Link href="/examples">
-              <Button variant="outline" size="lg">See Sample Reports</Button>
-            </Link>
           </div>
         </Container>
       </section>
 
       {/* ─── Testimonials ─── */}
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="relative overflow-hidden border-t border-white/[0.04] py-24 sm:py-32 gradient-mesh-bg">
         <Container>
           <FadeInView>
             <div className="mx-auto mb-14 max-w-2xl text-center">
               <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
-                What a report catches
+                Real signals, real results.
               </h2>
-              <p className="mt-5 text-lg text-gray-400">
-                Illustrative examples of the kind of specific, actionable
-                calls a Full Aura Report makes.
-              </p>
             </div>
           </FadeInView>
-          <FadeInView delay={100}>
-            <Testimonials />
-          </FadeInView>
-        </Container>
-      </section>
-
-      {/* ─── Safety Note ─── */}
-      <section className="border-t border-white/[0.04] py-12">
-        <Container>
-          <div className="mx-auto max-w-2xl rounded-xl border border-white/[0.04] bg-white/[0.02] p-6 text-center">
-            <p className="text-sm text-gray-500">
-              AuraCheck analyzes presentation, not human worth. Scores are
-              guidance, not objective truth.
-            </p>
+          <div className="grid gap-6 sm:grid-cols-3">
+            {testimonials.map((t, i) => (
+              <FadeInView key={t.name} delay={i * 100}>
+                <div className="glass-card group relative overflow-hidden rounded-2xl p-6 transition-[border-color] duration-300 hover:border-white/[0.1]">
+                  <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-rose-500/[0.03] to-blue-500/[0.03] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div className="relative">
+                    <p className="mb-5 text-sm leading-relaxed text-gray-300">
+                      &ldquo;{t.quote}&rdquo;
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={t.avatar}
+                        alt={t.name}
+                        className="h-10 w-10 rounded-full object-cover ring-2 ring-white/10"
+                      />
+                      <div>
+                        <div className="text-sm font-medium text-white">{t.name}</div>
+                        <div className="text-xs text-gray-500">{t.role}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </FadeInView>
+            ))}
           </div>
         </Container>
       </section>
 
       {/* ─── Final CTA ─── */}
-      <section className="relative overflow-hidden border-t border-white/[0.04] py-24">
+      <section className="relative overflow-hidden border-t border-white/[0.04] py-24 sm:py-32">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(251,113,133,0.12),transparent_50%)]" />
         <Container className="relative text-center">
-          <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">
-            Ready to check your visual signal?
-          </h2>
-          <p className="mx-auto mt-4 max-w-lg text-gray-400">
-            Two minutes. No login. See what your first impression is really
-            saying.
+          <FadeInView>
+            <h2 className="gradient-text-animated text-4xl font-bold sm:text-5xl md:text-6xl">
+              Ready to see what you&apos;re really saying?
+            </h2>
+            <p className="mx-auto mt-5 max-w-lg text-lg text-gray-400">
+              Two minutes. No login. Free.
+            </p>
+            <div className="mt-10">
+              <Link href="/audit/new">
+                <Button size="lg" className="text-base px-8 py-4">
+                  Start Free Aura Check
+                </Button>
+              </Link>
+            </div>
+          </FadeInView>
+        </Container>
+      </section>
+
+      {/* ─── Safety Note ─── */}
+      <section className="border-t border-white/[0.04] py-8">
+        <Container>
+          <p className="text-center text-xs text-gray-600">
+            AuraCheck analyzes presentation, not human worth. Scores are guidance, not objective truth.
           </p>
-          <div className="mt-8">
-            <Link href="/audit/new">
-              <Button size="lg">Start Free Aura Check</Button>
-            </Link>
-          </div>
         </Container>
       </section>
     </>

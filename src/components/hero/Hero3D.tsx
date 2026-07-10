@@ -83,7 +83,7 @@ export function Hero3D() {
             style={{ opacity: 0, transformStyle: "preserve-3d" }}
             className="mx-auto max-w-4xl gradient-text-animated text-4xl font-bold sm:text-5xl md:text-6xl md:text-[4.5rem] md:leading-[1.02] lg:text-[5rem]"
           >
-            Find your biggest status leak.
+            See what your presentation is really saying.
           </h1>
           <p
             ref={paragraphRef}
