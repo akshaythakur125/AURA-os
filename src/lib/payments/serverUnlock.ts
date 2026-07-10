@@ -12,12 +12,6 @@ const PRODUCT_NAMES: Record<ProductType, string> = {
   glowup_plan: "30-Day Glow-Up Plan",
 };
 
-const PRODUCT_PREFIXES: Record<ProductType, string> = {
-  aura_report: "AURA",
-  dating_audit: "DATE",
-  glowup_plan: "GLOW",
-};
-
 export function getServerProductPrice(productType: ProductType): number {
   return PRODUCT_PRICES[productType] || 99;
 }
@@ -41,30 +35,13 @@ function timingSafeEqual(a: string, b: string): boolean {
   return mismatch === 0;
 }
 
-export function validateUnlockCodeServer(params: {
-  code: string;
-  auditId: string;
-  productType: ProductType;
-}): { valid: boolean; reason: string } {
-  const { code, auditId, productType } = params;
-  if (!code || typeof code !== "string") {
-    return { valid: false, reason: "No code provided." };
-  }
-
-  const trimmed = normalizeCode(code);
-
+/**
+ * Check if the code matches the admin-only override secret.
+ * This is the ONLY "backdoor" — a static secret only the founder knows,
+ * not derivable from public data. Used for founder's own manual override/testing.
+ */
+export function isAdminUnlockCode(code: string): boolean {
   const demoCode = process.env.ADMIN_UNLOCK_CODE || "";
-  if (demoCode && timingSafeEqual(trimmed, normalizeCode(demoCode))) {
-    return { valid: true, reason: "Admin unlock code accepted." };
-  }
-
-  const auditSuffix = auditId.replace(/-/g, "").slice(-6).toUpperCase();
-  const prefix = PRODUCT_PREFIXES[productType] || "AURA";
-  const computedCode = `${prefix}-${auditSuffix}`;
-
-  if (timingSafeEqual(trimmed, computedCode)) {
-    return { valid: true, reason: "Audit-specific unlock code accepted." };
-  }
-
-  return { valid: false, reason: "Invalid unlock code." };
+  if (!demoCode) return false;
+  return timingSafeEqual(normalizeCode(code), normalizeCode(demoCode));
 }

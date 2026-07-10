@@ -13,7 +13,6 @@ import { getAffiliateStats, getAffiliateClicks } from "@/lib/storage/affiliateSt
 import { getOrders, updateOrder, deleteOrder, getOrderStats } from "@/lib/storage/orderStore";
 import { getAuditStats, getAudits } from "@/lib/storage/auditStore";
 import { getAnalyticsSummary, clearAnalytics, getEvents } from "@/lib/storage/analyticsStore";
-import { generateUnlockCode } from "@/lib/payments/unlockCodeGenerator";
 import { downloadJson } from "@/lib/export/downloadJson";
 import { jsonToCsv, downloadCsv } from "@/lib/export/csv";
 import { getLeads, deleteLead, clearLeads, exportLeads } from "@/lib/storage/leadStore";
@@ -220,10 +219,21 @@ export default function AdminPage() {
   const totalActive = useMemo(() => PRODUCTS.filter((p) => p.isActive).length, []);
   const totalSponsored = useMemo(() => PRODUCTS.filter((p) => p.isSponsored).length, []);
 
-  function handleGenerateCode(order: ManualOrder) {
-    const code = generateUnlockCode(order.auditId, order.productType);
-    updateOrder(order.id, { generatedUnlockCode: code, status: "code_sent" });
-    setRefreshKey((k) => k + 1);
+  async function handleGenerateCode(order: ManualOrder) {
+    try {
+      const res = await fetch("/api/admin/generate-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ auditId: order.auditId, productType: order.productType }),
+      });
+      const data = await res.json();
+      if (data.code) {
+        updateOrder(order.id, { generatedUnlockCode: data.code, status: "code_sent" });
+        setRefreshKey((k) => k + 1);
+      }
+    } catch {
+      // silent — admin will see the error
+    }
   }
 
   function handleCopyCode(code: string) {
