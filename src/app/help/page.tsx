@@ -1,7 +1,13 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+
+export const metadata: Metadata = {
+  title: "Help — AuraCheck",
+  description: "How AuraCheck works: upload a photo, get your visual first-impression score, and discover your biggest status leaks. FAQ and support.",
+};
 
 const faqs = [
   {

@@ -1,7 +1,13 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+
+export const metadata: Metadata = {
+  title: "Payment Successful — AuraCheck",
+  description: "Your Aura Report has been unlocked. Check your dashboard for the full analysis.",
+};
 
 export default function SuccessPage() {
   return (

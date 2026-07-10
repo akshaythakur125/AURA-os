@@ -1,6 +1,12 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+
+export const metadata: Metadata = {
+  title: "Terms of Service — AuraCheck",
+  description: "AuraCheck terms of service. Usage terms, payment terms, and limitations for the visual first-impression analysis tool.",
+};
 
 export default function TermsPage() {
   return (

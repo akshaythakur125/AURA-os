@@ -1,6 +1,12 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy — AuraCheck",
+  description: "AuraCheck privacy policy. How we handle your photos, audit data, and personal information. Your images stay in your browser.",
+};
 
 export default function PrivacyPage() {
   return (

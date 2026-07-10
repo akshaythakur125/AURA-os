@@ -1,8 +1,19 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+
+export const metadata: Metadata = {
+  title: "Pricing — AuraCheck",
+  description: "Unlock your full Aura Report for ₹99. One-time payment, no subscription. Get detailed visual analysis, status leak fixes, and personalized upgrade path.",
+  openGraph: {
+    title: "AuraCheck Pricing — Full Report for ₹99",
+    description: "One-time payment. No subscription. Detailed visual analysis and personalized upgrade path.",
+    type: "website",
+  },
+};
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ComparisonTable } from "@/components/marketing/ComparisonTable";
 import { GlowOrb } from "@/components/ui/GlowOrb";

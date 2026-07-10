@@ -19,10 +19,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AuraCheck — Find Your Biggest Status Leak",
+  title: {
+    default: "AuraCheck — Find Your Biggest Status Leak",
+    template: "%s | AuraCheck",
+  },
   description:
-    "AI-style first-impression audit for photos, profiles, outfits, and lifestyle presentation.",
+    "Upload a photo, get your visual first-impression score, and discover what your presentation is quietly leaking. Free analysis, no signup.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    siteName: "AuraCheck",
+    title: "AuraCheck — Find Your Biggest Status Leak",
+    description: "Upload a photo, get your visual first-impression score, and discover what your presentation is quietly leaking.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AuraCheck — Find Your Biggest Status Leak",
+    description: "Upload a photo, get your visual first-impression score, and discover what your presentation is quietly leaking.",
+  },
   manifest: "/manifest.json",
   other: {
     "theme-color": "#000000",
