@@ -6,16 +6,15 @@ import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 
 const navLinks = [
-  { href: "/pricing", label: "Pricing" },
   { href: "/examples", label: "Examples" },
   { href: "/shop", label: "Shop" },
   { href: "/dashboard", label: "Dashboard" },
 ];
 
 const productLinks = [
-  { href: "/products/aura-report", label: "Aura Report — ₹99" },
-  { href: "/products/dating-audit", label: "Dating Audit — ₹299" },
-  { href: "/products/glowup-plan", label: "Glow-Up Plan — ₹499" },
+  { href: "/products/aura-report", label: "Aura Report" },
+  { href: "/products/dating-audit", label: "Dating Audit" },
+  { href: "/products/glowup-plan", label: "Glow-Up Plan" },
 ];
 
 export function Header() {
