@@ -54,7 +54,7 @@ export async function GET(request: Request) {
           radius: radius,
         },
       },
-      includedType,
+      includedTypes: [includedType],
     };
 
     const res = await fetch(url, {
