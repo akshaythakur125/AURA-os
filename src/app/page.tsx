@@ -63,7 +63,14 @@ export default function HomePage() {
       <Hero3D />
 
       {/* ─── What It Finds ─── */}
-      <section id="examples" className="border-t border-white/[0.04] py-24">
+      <section id="examples" className="relative overflow-hidden border-t border-white/[0.04] py-24">
+        {/* Section glow */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-20 top-0 h-72 w-72 rounded-full bg-rose-500/5 blur-[100px]" />
+          <div className="absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-blue-500/5 blur-[100px]" />
+          <div className="absolute left-[20%] top-[10%] h-2 w-2 rounded bg-rose-400/15 animate-[float-dramatic_12s_ease-in-out_infinite]" />
+          <div className="absolute right-[30%] bottom-[20%] h-3 w-3 rounded-full border border-blue-400/10 bg-blue-400/5 animate-[float-dramatic_9s_ease-in-out_infinite_1s]" />
+        </div>
         <Container>
           <div className="mx-auto mb-14 max-w-2xl text-center">
             <h2 className="gradient-text-animated text-3xl font-bold sm:text-4xl">

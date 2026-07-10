@@ -177,12 +177,19 @@ h2 {
 
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-12px); }
+  50% { transform: translateY(-16px); }
 }
 
 @keyframes float-slow {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes float-dramatic {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-20px) rotate(2deg); }
+  66% { transform: translateY(8px) rotate(-1deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
 }
 
 @keyframes pulse-glow {
@@ -479,6 +486,12 @@ h2 {
 .parallax-section {
   perspective: 1200px;
   transform-style: preserve-3d;
+}
+
+/* ─── Hero Dot Grid ─── */
+.hero-grid {
+  background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 
 .parallax-layer-back {
