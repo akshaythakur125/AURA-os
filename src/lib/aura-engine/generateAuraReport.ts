@@ -12,9 +12,9 @@ function generateStatusLeaks(score: number, metrics: import("@/types/audit").Ima
       id: createLocalId(),
       severity: metrics.lightingScore < 40 ? "high" : "medium",
       category: "lighting",
-      title: "Lighting is weakening the frame",
-      description: "The image may not create a clean premium first impression because the lighting signal is weak.",
-      fix: "Use window light, avoid harsh overhead light, and keep the face or subject facing the light source.",
+      title: "Your lighting is too dark or harsh",
+      description: "Dark or harsh lighting makes you look less approachable and hides your best features.",
+      fix: "Stand near a window during the day. Face the light, not away from it.",
       impactScore: Math.round((55 - metrics.lightingScore) * 1.2),
     });
   }
@@ -24,9 +24,9 @@ function generateStatusLeaks(score: number, metrics: import("@/types/audit").Ima
       id: createLocalId(),
       severity: metrics.sharpness < 40 ? "high" : "medium",
       category: "clarity",
-      title: "Clarity leak",
-      description: "The frame may look less intentional because details are not crisp enough.",
-      fix: "Use the rear camera, clean the lens, and avoid shaky low-light shots.",
+      title: "Your photo is blurry",
+      description: "A blurry photo looks like an accident. People scroll past blurry images instantly.",
+      fix: "Use the rear camera, clean the lens, and hold steady.",
       impactScore: Math.round((55 - metrics.sharpness) * 1.2),
     });
   }
@@ -36,9 +36,9 @@ function generateStatusLeaks(score: number, metrics: import("@/types/audit").Ima
       id: createLocalId(),
       severity: metrics.backgroundComplexityEstimate > 75 ? "high" : "medium",
       category: "background",
-      title: "Busy background",
-      description: "The viewer's attention may split between you and the background.",
-      fix: "Use a cleaner wall, less cluttered room, or increase distance from background objects.",
+      title: "Your background is too busy",
+      description: "A messy or cluttered background pulls attention away from you.",
+      fix: "Find a clean wall or simple background. Step away from clutter.",
       impactScore: Math.round((metrics.backgroundComplexityEstimate - 65) * 1.5),
     });
   }
@@ -48,9 +48,9 @@ function generateStatusLeaks(score: number, metrics: import("@/types/audit").Ima
       id: createLocalId(),
       severity: metrics.compositionScore < 40 ? "high" : "medium",
       category: "framing",
-      title: "Weak framing",
-      description: "The frame may not feel profile-ready or premium because the crop or aspect ratio is not ideal.",
-      fix: "Use a cleaner vertical frame with the subject centered and enough headroom.",
+      title: "Your framing is off",
+      description: "The photo is cropped awkwardly. It doesn't look intentional or profile-ready.",
+      fix: "Center yourself in the frame with a little space above your head.",
       impactScore: Math.round((55 - metrics.compositionScore) * 1.2),
     });
   }
@@ -61,9 +61,9 @@ function generateStatusLeaks(score: number, metrics: import("@/types/audit").Ima
       id: createLocalId(),
       severity: satDiff > 35 ? "medium" : "low",
       category: "color",
-      title: "Color signal mismatch",
-      description: "The color balance may make the image look either dull or over-processed.",
-      fix: "Use natural light and reduce heavy filters for a more balanced color signal.",
+      title: "Your colors look off",
+      description: "The colors in your photo are either too dull or too oversaturated.",
+      fix: "Use natural light and skip heavy filters.",
       impactScore: Math.round(satDiff * 0.6),
     });
   }

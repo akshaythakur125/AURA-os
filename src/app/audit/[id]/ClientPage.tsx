@@ -880,7 +880,7 @@ export default function AuditDetailPage() {
                 );
               })()}
 
-              {/* ΓöÇΓöÇΓöÇ Challenge CTA ΓöÇΓöÇΓöÇ */}
+              {/* ─── Challenge CTA ─── */}
               <Card className="mb-6">
                 <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:text-left">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-lg font-bold text-white">!</div>
@@ -891,6 +891,21 @@ export default function AuditDetailPage() {
                   <Link href="/challenges"><Button size="sm" variant="outline">View Challenges</Button></Link>
                 </div>
               </Card>
+
+              {/* ─── Shop For Looks ─── */}
+              {personalization && displayResult && (
+                <PersonalizedShop
+                  looks={getPersonalizedLooks({
+                    styleArchetypes: [personalization.archetype === "Corporate Sharp" ? "professional" : personalization.archetype === "Creator Vibe" ? "creator" : personalization.archetype === "College Casual" ? "college" : personalization.archetype === "Premium Minimalist" ? "premium" : personalization.archetype === "Urban Aspirational" ? "confident" : personalization.archetype === "Loud Flex" ? "bold" : personalization.archetype === "Soft Luxury" ? "understated" : "clean"],
+                    statusLeakTags: displayResult.statusLeaks.map((l) => l.category as any).filter(Boolean),
+                    goalTags: audit!.goal ? [audit!.goal as any] : undefined,
+                    budgetMax: audit!.budgetRange as any,
+                  })}
+                  userScore={displayResult.auraScore}
+                  archetype={personalization.archetype}
+                  leakTags={displayResult.statusLeaks.map((l) => l.category)}
+                />
+              )}
 
               {/* ΓöÇΓöÇΓöÇ Paywall: Personalized Upgrade ΓöÇΓöÇΓöÇ */}
               {displayResult && (
