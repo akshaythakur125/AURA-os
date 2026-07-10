@@ -18,7 +18,6 @@ import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
 import { ReferralShare } from "@/components/referral/ReferralShare";
 import { ResultCapture } from "@/components/recovery/ResultCapture";
-import { RecommendationSection } from "@/components/products/RecommendationSection";
 import { PersonalizedShop } from "@/components/shop/PersonalizedShop";
 import { getPersonalizedLooks } from "@/lib/shop/catalog";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
@@ -657,11 +656,6 @@ export default function AuditDetailPage() {
                 <ShareCardBuilder audit={audit!} type="full_report" />
               </div>
 
-              {/* Premium recommendations */}
-              <div className="mb-6">
-                <RecommendationSection audit={audit!} isPremium />
-              </div>
-
               {/* Personalized shopping looks */}
               {personalization && displayResult && (
                 <PersonalizedShop
@@ -1115,11 +1109,6 @@ export default function AuditDetailPage() {
               {/* Save result */}
               <div className="mb-6">
                 <ResultCapture audit={audit!} />
-              </div>
-
-              {/* Recommendations for free result */}
-              <div className="mb-6">
-                <RecommendationSection audit={audit!} />
               </div>
 
               {/* Personalized shopping looks (free result) */}
