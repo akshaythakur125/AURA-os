@@ -2,6 +2,7 @@ import type { Audit, AuditInput, AuditStats } from "@/types/audit";
 import { createLocalId } from "@/types/audit";
 import { getItem, setItem } from "./localStore";
 import { STORAGE_KEYS } from "./storageKeys";
+import { syncAuditToSupabase } from "@/lib/supabase/syncAudits";
 
 function getAll(): Audit[] {
   return getItem<Audit[]>(STORAGE_KEYS.AUDITS, []);
@@ -36,6 +37,7 @@ export function createAudit(input: AuditInput): Audit {
   const audits = getAll();
   audits.push(audit);
   persist(audits);
+  syncAuditToSupabase(audit).catch(() => {});
   return audit;
 }
 
@@ -48,6 +50,7 @@ export function updateAudit(
   if (idx === -1) return undefined;
   audits[idx] = { ...audits[idx], ...updates, updatedAt: new Date().toISOString() };
   persist(audits);
+  syncAuditToSupabase(audits[idx]).catch(() => {});
   return audits[idx];
 }
 

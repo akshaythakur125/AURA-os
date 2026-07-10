@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ToastProvider } from "@/components/ui/Toast";
+import { AuditSyncProvider } from "@/components/providers/AuditSyncProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,9 +42,11 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col bg-depth text-[#ededf0]">
         <div className="grain-overlay" aria-hidden="true" />
         <ToastProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <AuditSyncProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </AuditSyncProvider>
         </ToastProvider>
       </body>
     </html>

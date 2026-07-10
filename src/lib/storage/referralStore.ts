@@ -2,6 +2,7 @@ import type { ReferralProfile, ReferralClaim, ReferralStats, ReferralRewardTier 
 import { REFERRAL_REWARD_TIERS, FRIEND_DISCOUNT_CODE } from "@/types/referral";
 import { createLocalId } from "@/types/audit";
 import { getItem, setItem } from "./localStore";
+import { syncReferralProfileToSupabase, redeemReferralCodeAsync } from "@/lib/supabase/syncReferrals";
 
 const PROFILE_KEY = "auracheck:v1:referral_profile";
 const CLAIMS_KEY = "auracheck:v1:referral_claims";
@@ -36,6 +37,7 @@ export function createReferralProfile(displayName?: string): ReferralProfile {
     totalClaimsLocal: 0,
   };
   setProfile(profile);
+  syncReferralProfileToSupabase(profile).catch(() => {});
   return profile;
 }
 
@@ -74,6 +76,7 @@ export function recordReferralClaim(referralCode: string, source?: string): Refe
   if (profile) {
     profile.totalClaimsLocal = claims.filter((c) => c.referralCode === referralCode).length;
     setProfile(profile);
+    syncReferralProfileToSupabase(profile).catch(() => {});
   }
 
   return claim;
