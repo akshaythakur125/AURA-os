@@ -21,6 +21,7 @@ import { ResultCapture } from "@/components/recovery/ResultCapture";
 import { PersonalizedShop } from "@/components/shop/PersonalizedShop";
 import { getPersonalizedLooks } from "@/lib/shop/catalog";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
+import { RecentScores } from "@/components/social-proof/RecentScores";
 import { PercentileBadge } from "@/components/social-proof/PercentileBadge";
 import { PaymentTrust } from "@/components/trust/PaymentTrust";
 import type { Audit, FreeAuraResult, FullAuraReportContent, Observation, ImageSignalMetrics } from "@/types/audit";
@@ -1172,7 +1173,7 @@ export default function AuditDetailPage() {
                   (a, b) => (a.severity === "high" ? 0 : a.severity === "medium" ? 1 : 2) - (b.severity === "high" ? 0 : b.severity === "medium" ? 1 : 2)
                 );
                 const heroLeak = sortedLeaks[0];
-                const otherLeaks = sortedLeaks.slice(1);
+                const otherLeaks = sortedLeaks.slice(1, 2);
 
                 return (
                   <>
@@ -1231,7 +1232,8 @@ export default function AuditDetailPage() {
                       </Card>
                     </FadeInView>
 
-                    {/* ─── Quick Wins — fix these NOW for free ─── */}
+                    {isUnlocked && (
+                    <>
                     <FadeInView delay={150}>
                       <div className="mb-6 rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-emerald-500/[0.08] to-transparent p-5 sm:p-6">
                         <div className="mb-4 text-center">
@@ -1257,8 +1259,6 @@ export default function AuditDetailPage() {
                       </div>
                     </FadeInView>
 
-                    {/* ─── Going Out Tonight? ─── */}
-                    {audit.goal && (
                       <FadeInView delay={200}>
                         <div className="mb-6 rounded-2xl border border-blue-500/20 bg-gradient-to-b from-blue-500/[0.08] to-transparent p-5 sm:p-6">
                           <div className="mb-3 text-center">
@@ -1379,8 +1379,9 @@ export default function AuditDetailPage() {
                           </div>
                         </div>
                       </FadeInView>
-                    )}
+                    </>
 
+                    )}
                     <FadeInView delay={200}>
                       <Card className="mb-6">
                         <h3 className="mb-3 text-sm font-semibold text-white">
@@ -1537,6 +1538,25 @@ export default function AuditDetailPage() {
                   archetype={personalization.archetype}
                   leakTags={displayResult.statusLeaks.map((l) => l.category)}
                 />
+              )}
+
+              {/* ─── Conversion CTA ─── */}
+              {!isUnlocked && displayResult && (
+                <FadeInView delay={450}>
+                  <div className="mb-6 rounded-2xl border border-purple-500/20 bg-gradient-to-b from-purple-500/[0.06] to-transparent p-6 text-center">
+                    <p className="mb-2 text-sm text-gray-300">
+                      Your score is <span className="font-bold text-white">{displayResult.auraScore}</span>.
+                      Users who fixed their top leaks improved by <span className="font-bold text-emerald-400">+18 points</span> on average.
+                    </p>
+                    <p className="mb-4 text-xs text-gray-500">Your full report includes {displayResult.statusLeaks.length} personalized fixes, nearby salons & gyms, and buy links for every recommendation.</p>
+                    <div className="flex flex-wrap justify-center gap-2 text-xs text-gray-500">
+                      <span className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Improvement score</span>
+                      <span className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Before/after preview</span>
+                      <span className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Google Maps locations</span>
+                      <span className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Product links</span>
+                    </div>
+                  </div>
+                </FadeInView>
               )}
 
               {/* ─── Paywall: Personalized Upgrade ─── */}

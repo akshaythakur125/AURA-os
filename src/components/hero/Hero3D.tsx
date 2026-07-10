@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { GlowOrb } from "@/components/ui/GlowOrb";
 import { HeroMockup } from "@/components/hero/HeroMockup";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
+import { RecentScores } from "@/components/social-proof/RecentScores";
 import { useHeroParallax } from "@/hooks/useHeroParallax";
 import { useMagneticHover } from "@/hooks/useMagneticHover";
 import { useHeroEntrance } from "@/hooks/useHeroEntrance";
@@ -109,19 +110,25 @@ export function Hero3D() {
             style={{ opacity: 0 }}
             className="mx-auto mt-8 max-w-2xl text-lg text-gray-400 sm:text-xl leading-relaxed"
           >
-            You may have the phone, the outfit, or the profile. AuraCheck shows
-            what is weakening your first impression and how to upgrade your
-            visual signal under your budget.
+            Find out what your photo is <span className="text-rose-300 font-medium">really</span> saying.
+            Get scored, get the fix, get the links — all in 60 seconds.
           </p>
           <div ref={ctaWrapRef} style={{ opacity: 0 }} className="mt-12">
             <Link ref={ctaRef} href="/audit/new" className="inline-block">
               <Button size="lg">Start Free Aura Check</Button>
             </Link>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-gray-500">
+              <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Free score instantly</span>
+              <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> AI-powered analysis</span>
+              <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Nearby salons & gyms</span>
+              <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Buy links included</span>
+            </div>
           </div>
         </div>
         <HeroMockup depthRef={mockupDepthRef} entranceRef={mockupEntranceRef} />
         <div ref={socialProofRef} style={{ opacity: 0 }} className="mt-6">
           <SocialProofBar variant="hero" />
+          <RecentScores />
         </div>
       </Container>
     </section>
