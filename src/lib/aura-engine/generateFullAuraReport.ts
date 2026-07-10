@@ -15,6 +15,7 @@ import {
   determineCategory,
   generateVerdict,
 } from "./scoring";
+import { calculateImprovementScore, getBeforeAfter } from "./productLinks";
 
 function clamp(value: number, min = 0, max = 100): number {
   return Math.round(Math.min(max, Math.max(min, value)));
@@ -686,6 +687,9 @@ export async function generateFullAuraReport(
   const finalVerdict = generateFinalVerdict(score, category, metrics);
   const observations = generateObservations(metrics, audit.goal);
 
+  const improvementScore = calculateImprovementScore(metrics, score, statusLeaks);
+  const beforeAfter = getBeforeAfter(metrics, score, improvementScore.potentialScore);
+
   return {
     fullScore: score,
     category,
@@ -707,6 +711,8 @@ export async function generateFullAuraReport(
     goalSpecificAdvice: goalAdvice,
     finalVerdict,
     observations,
+    improvementScore,
+    beforeAfter,
     generatedAt: new Date().toISOString(),
   };
 }

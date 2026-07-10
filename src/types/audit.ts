@@ -277,6 +277,20 @@ export interface FullAuraReportContent {
   goalSpecificAdvice: GoalSpecificAdvice;
   finalVerdict: string;
   observations: Observation[];
+  improvementScore?: {
+    currentScore: number;
+    potentialScore: number;
+    delta: number;
+    tier: "excellent" | "strong" | "moderate" | "needs-work";
+    message: string;
+    topImpactItems: { label: string; impact: number; fixable: boolean }[];
+  };
+  beforeAfter?: {
+    currentLabel: string;
+    potentialLabel: string;
+    currentTraits: string[];
+    potentialTraits: string[];
+  };
   generatedAt: string;
 }
 

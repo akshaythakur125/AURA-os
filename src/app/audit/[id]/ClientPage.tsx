@@ -23,8 +23,9 @@ import { getPersonalizedLooks } from "@/lib/shop/catalog";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
 import { PercentileBadge } from "@/components/social-proof/PercentileBadge";
 import { PaymentTrust } from "@/components/trust/PaymentTrust";
-import type { Audit, FreeAuraResult, FullAuraReportContent } from "@/types/audit";
+import type { Audit, FreeAuraResult, FullAuraReportContent, Observation, ImageSignalMetrics } from "@/types/audit";
 import type { PersonalizationResult, SignalMismatch, GoalStrategy } from "@/types/personalization";
+import { getBuyLinksForObservation, getTutorialLinks } from "@/lib/aura-engine/productLinks";
 
 const auditTypeLabels: Record<string, string> = {
   photo: "Photo Aura Check",
@@ -156,6 +157,114 @@ function GoalStrategyCard({ strategy }: { strategy: GoalStrategy }) {
             <p className="text-xs text-gray-300">{strategy.suggestedStyleDirection}</p>
           </div>
         </div>
+      </div>
+    </Card>
+  );
+}
+
+
+// ─── Premium Bundles inline component ───
+
+// ─── Buy links + YouTube tutorials for each observation ───
+function ObsLinks({ obs }: { obs: Observation }) {
+  const buyLinks = getBuyLinksForObservation(obs);
+  const tutorials = getTutorialLinks(obs);
+  if (buyLinks.length === 0 && tutorials.length === 0) return null;
+  return (
+    <div className="mt-2 flex flex-wrap gap-1.5">
+      {buyLinks.map((link) => (
+        <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer"
+           className="inline-flex items-center gap-1 rounded-lg border border-purple-500/20 bg-purple-500/10 px-2.5 py-1 text-[10px] text-purple-300 hover:bg-purple-500/20">
+          <span>{link.icon}</span> {link.label}
+        </a>
+      ))}
+      {tutorials.map((t) => (
+        <a key={t.url} href={t.url} target="_blank" rel="noopener noreferrer"
+           className="inline-flex items-center gap-1 rounded-lg border border-red-500/20 bg-red-500/10 px-2.5 py-1 text-[10px] text-red-300 hover:bg-red-500/20">
+          <span>🎬</span> {t.title}
+        </a>
+      ))}
+    </div>
+  );
+}
+
+function PremiumBundles({ metrics, observations }: { metrics: ImageSignalMetrics; observations: Observation[] }) {
+  // ponytail: inline bundle builder, no new file needed
+  const bundles: { name: string; emoji: string; desc: string; items: { name: string; price: string; url: string }[]; total: string }[] = [];
+
+  const hasGrooming = observations.some(o => o.category === "grooming" || o.category === "skin");
+  const hasClothing = observations.some(o => o.category === "clothing") || metrics.clothingRegion.contrastWithSkin < 20;
+  const hasPhoto = metrics.backgroundComplexityEstimate > 50 || metrics.lightingScore < 60;
+  const hasHair = observations.some(o => o.category === "hair") || metrics.hairRegion.neatnessScore < 50;
+
+  if (hasGrooming) bundles.push({
+    name: "Essential Grooming Kit", emoji: "🧴",
+    desc: "Skincare + grooming basics for a polished look.",
+    items: [
+      { name: "Face Wash + Moisturizer", price: "₹499", url: "https://www.nykaa.com/search/result/?q=grooming+kit+men" },
+      { name: "Hair Styling Product", price: "₹349", url: "https://www.amazon.in/s?k=hair+styling+cream+men" },
+      { name: "Sunscreen SPF50", price: "₹399", url: "https://www.nykaa.com/search/result/?q=sunscreen+men" },
+    ], total: "₹1,247"
+  });
+  if (hasClothing) bundles.push({
+    name: "Profile Photo Outfit", emoji: "👔",
+    desc: "Photographer-approved picks for profile photos.",
+    items: [
+      { name: "Solid Color Shirt", price: "₹799", url: "https://www.myntra.com/gateway/v2/search/query?q=solid+shirt+men" },
+      { name: "Minimal Watch", price: "₹1,299", url: "https://www.myntra.com/gateway/v2/search/query?q=minimal+watch+men" },
+      { name: "Casual Blazer", price: "₹1,999", url: "https://www.ajio.com/search/?text=men+casual+blazer" },
+    ], total: "₹4,097"
+  });
+  if (hasPhoto) bundles.push({
+    name: "Home Photo Studio Kit", emoji: "📸",
+    desc: "Better lighting, cleaner backgrounds, steadier shots.",
+    items: [
+      { name: "Ring Light + Stand", price: "₹899", url: "https://www.amazon.in/s?k=ring+light+with+stand" },
+      { name: "Phone Tripod", price: "₹499", url: "https://www.amazon.in/s?k=phone+tripod+stand" },
+      { name: "Plain Backdrop", price: "₹399", url: "https://www.amazon.in/s?k=photo+backdrop+plain" },
+    ], total: "₹1,797"
+  });
+  if (hasHair) bundles.push({
+    name: "Hair Care Essentials", emoji: "💈",
+    desc: "Tame frizz, add definition, look sharp.",
+    items: [
+      { name: "Hair Serum", price: "₹349", url: "https://www.nykaa.com/search/result/?q=hair+serum+men" },
+      { name: "Styling Wax", price: "₹299", url: "https://www.amazon.in/s?k=hair+wax+men" },
+      { name: "Leave-in Conditioner", price: "₹449", url: "https://www.amazon.in/s?k=leave+in+conditioner+men" },
+    ], total: "₹1,097"
+  });
+
+  if (bundles.length === 0) return null;
+
+  return (
+    <Card className="mb-6">
+      <div className="mb-4 flex items-center gap-2">
+        <span className="text-lg">🛍️</span>
+        <h3 className="text-sm font-semibold text-white">Recommended Product Bundles</h3>
+      </div>
+      <p className="mb-4 text-xs text-gray-400">Curated picks based on your analysis. Tap to shop.</p>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {bundles.map((b) => (
+          <div key={b.name} className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
+            <div className="mb-2 flex items-center gap-2">
+              <span className="text-lg">{b.emoji}</span>
+              <div>
+                <div className="text-sm font-medium text-white">{b.name}</div>
+                <div className="text-[10px] text-gray-500">{b.desc}</div>
+              </div>
+            </div>
+            <div className="mb-2 space-y-1">
+              {b.items.map((item) => (
+                <a key={item.url} href={item.url} target="_blank" rel="noopener noreferrer"
+                   className="flex items-center justify-between rounded-lg bg-white/[0.03] px-2.5 py-1.5 text-[11px] text-gray-300 hover:bg-white/[0.06]">
+                  <span>{item.name}</span>
+                  <span className="text-purple-400 font-medium">{item.price}</span>
+                </a>
+              ))}
+            </div>
+            <div className="text-[10px] text-gray-500">Est. total: <span className="text-purple-400">{b.total}</span></div>
+          </div>
+        ))}
       </div>
     </Card>
   );
@@ -871,6 +980,7 @@ export default function AuditDetailPage() {
                           </div>
                           <p className="mb-2 text-xs text-gray-400">{obs.detail}</p>
                           <div className="rounded-lg bg-white/[0.03] px-3 py-2"><p className="text-[11px] text-purple-300"><span className="font-medium">Tip:</span> {obs.suggestion}</p></div>
+                          <ObsLinks obs={obs} />
                         </div>
                       ))}
                     </div>
@@ -925,7 +1035,87 @@ export default function AuditDetailPage() {
               )}
 
 
-              {/* Final Verdict */}
+              {/* --- Improvement Score --- */}
+              {displayFull && displayFull.improvementScore && displayFull.improvementScore.delta > 0 && (
+                <FadeInView delay={495}>
+                  <Card className="mb-6">
+                    <div className="mb-4 flex items-center gap-2">
+                      <span className="text-lg">📈</span>
+                      <h3 className="text-sm font-semibold text-white">Your Improvement Potential</h3>
+                    </div>
+                    <div className="mb-4 flex items-center gap-4">
+                      <div className="flex-1">
+                        <div className="text-[10px] text-gray-500">Current Score</div>
+                        <div className="text-2xl font-bold text-white">{displayFull.improvementScore.currentScore}</div>
+                      </div>
+                      <div className="text-2xl text-purple-400">→</div>
+                      <div className="flex-1">
+                        <div className="text-[10px] text-gray-500">Potential Score</div>
+                        <div className="text-2xl font-bold text-emerald-400">{displayFull.improvementScore.potentialScore}</div>
+                      </div>
+                      <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-center">
+                        <div className="text-xs text-emerald-400">+{displayFull.improvementScore.delta}</div>
+                        <div className="text-[10px] text-emerald-300">points</div>
+                      </div>
+                    </div>
+                    <p className="mb-3 text-xs text-gray-400">{displayFull.improvementScore.message}</p>
+                    <div className="space-y-1.5">
+                      {displayFull.improvementScore.topImpactItems.map((item, i) => (
+                        <div key={i} className="flex items-center gap-2 rounded-lg bg-white/[0.03] px-3 py-1.5">
+                          <span className={`text-[10px] ${item.fixable ? "text-emerald-400" : "text-amber-400"}`}>
+                            {item.fixable ? "✅" : "💰"}
+                          </span>
+                          <span className="flex-1 text-[11px] text-gray-300">{item.label}</span>
+                          <span className="text-[10px] text-purple-400">+{item.impact}pts</span>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                </FadeInView>
+              )}
+
+              {/* --- Before / After Comparison --- */}
+              {displayFull && displayFull.beforeAfter && (
+                <FadeInView delay={497}>
+                  <Card className="mb-6">
+                    <div className="mb-4 flex items-center gap-2">
+                      <span className="text-lg">🔄</span>
+                      <h3 className="text-sm font-semibold text-white">Before vs After</h3>
+                    </div>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
+                        <div className="mb-3 text-xs font-medium text-red-300">{displayFull.beforeAfter.currentLabel}</div>
+                        <div className="space-y-1.5">
+                          {displayFull.beforeAfter.currentTraits.map((t, i) => (
+                            <div key={i} className="flex items-center gap-2 text-[11px] text-gray-400">
+                              <span className="text-red-400">✗</span> {t}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+                        <div className="mb-3 text-xs font-medium text-emerald-300">{displayFull.beforeAfter.potentialLabel}</div>
+                        <div className="space-y-1.5">
+                          {displayFull.beforeAfter.potentialTraits.map((t, i) => (
+                            <div key={i} className="flex items-center gap-2 text-[11px] text-gray-300">
+                              <span className="text-emerald-400">✓</span> {t}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </Card>
+                </FadeInView>
+              )}
+
+              {/* --- Premium Product Bundles --- */}
+              {displayFull && displayFull.observations && displayResult && (
+                <FadeInView delay={499}>
+                  <PremiumBundles metrics={displayResult.imageMetrics} observations={displayFull.observations} />
+                </FadeInView>
+              )}
+
+{/* Final Verdict */}
               <FadeInView delay={500}>
                 <Card className="mb-6">
                   <h3 className="mb-3 text-sm font-semibold text-white">Final Verdict</h3>
