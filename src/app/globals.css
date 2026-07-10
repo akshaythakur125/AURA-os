@@ -19,11 +19,24 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+@keyframes aurora {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes aurora-scale {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.15) rotate(180deg); }
+}
+
 body {
   background: #0a0a1a;
   background-image:
-    radial-gradient(circle at 15% 20%, rgba(251, 113, 133, 0.12), transparent 28%),
-    radial-gradient(circle at 85% 18%, rgba(37, 99, 235, 0.08), transparent 24%);
+    radial-gradient(ellipse at 15% 20%, rgba(251, 113, 133, 0.15), transparent 40%),
+    radial-gradient(ellipse at 85% 18%, rgba(37, 99, 235, 0.12), transparent 35%),
+    radial-gradient(ellipse at 55% 75%, rgba(225, 29, 72, 0.08), transparent 30%);
+  background-size: 200% 200%;
+  animation: aurora 10s ease-in-out infinite;
   color: #faf5ff;
   font-family: var(--font-sans, Arial, Helvetica, sans-serif);
   -webkit-font-smoothing: antialiased;
