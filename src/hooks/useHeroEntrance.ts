@@ -12,6 +12,12 @@ interface EntranceRefs {
   socialProof: RefObject<HTMLElement | null>;
 }
 
+// The mockup settles into this off-axis pose instead of flat-on, so the
+// 3D read is a permanent trait of the page — visible in a screenshot taken
+// seconds or weeks after load, not just during the one-time intro tumble.
+const REST_ROTATE_Y = -18;
+const REST_ROTATE_X = 6;
+
 /**
  * Runs immediately on mount — no scroll, no hover. The phone mockup tumbles
  * in from real 3D space (rotateY/rotateX/z) rather than just fading, so the
@@ -41,7 +47,7 @@ export function useHeroEntrance(refs: EntranceRefs) {
 
     const ctx = gsap.context(() => {
       gsap.set(refs.mockup.current, {
-        transformPerspective: 1400,
+        transformPerspective: 900,
         transformOrigin: "center center",
       });
 
@@ -73,8 +79,16 @@ export function useHeroEntrance(refs: EntranceRefs) {
         )
         .fromTo(
           refs.mockup.current,
-          { opacity: 0, rotateY: -46, rotateX: 20, z: -280, scale: 0.7 },
-          { opacity: 1, rotateY: 0, rotateX: 0, z: 0, scale: 1, duration: 1.6, ease: "expo.out" },
+          { opacity: 0, rotateY: -60, rotateX: 24, z: -280, scale: 0.7 },
+          {
+            opacity: 1,
+            rotateY: REST_ROTATE_Y,
+            rotateX: REST_ROTATE_X,
+            z: 0,
+            scale: 1,
+            duration: 1.6,
+            ease: "expo.out",
+          },
           0.28
         )
         .fromTo(
@@ -84,12 +98,12 @@ export function useHeroEntrance(refs: EntranceRefs) {
           1.4
         );
 
-      // subtle idle drift once the tumble settles, so the phone keeps
-      // reading as a 3D object at rest, not just during the intro beat
+      // subtle idle drift around the resting showcase angle, so the phone
+      // keeps reading as a 3D object in space rather than a static image
       if (refs.mockup.current) {
         gsap.to(refs.mockup.current, {
-          rotateY: 3,
-          rotateX: -1.5,
+          rotateY: REST_ROTATE_Y + 5,
+          rotateX: REST_ROTATE_X - 3,
           duration: 4.5,
           ease: "sine.inOut",
           repeat: -1,
