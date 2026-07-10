@@ -833,7 +833,7 @@ export default function AuditDetailPage() {
                                 <div className="rounded-xl bg-white/[0.03] p-3 text-center">
                                   <div className="mb-1 text-lg">✨</div>
                                   <div className="text-xs font-medium text-white">Good pose</div>
-                                  <div className="text-[10px] text-gray-500">Confident > perfect</div>
+                                  <div className="text-[10px] text-gray-500">Confident &gt; perfect</div>
                                 </div>
                               </>
                             )}
