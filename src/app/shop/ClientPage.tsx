@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -137,12 +137,16 @@ function ShopLinks({ look }: { look: Look }) {
   );
 }
 
+const INITIAL_BATCH = 36;
+const BATCH_SIZE = 36;
+
 export default function ShopPage() {
   const [category, setCategory] = useState<LookCategory | null>(null);
   const [budget, setBudget] = useState<BudgetTag | null>(null);
   const [goal, setGoal] = useState<GoalTag | null>(null);
   const [style, setStyle] = useState<StyleIntent | null>(null);
   const [gender, setGender] = useState<"men" | "women" | "unisex" | null>(null);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_BATCH);
 
   const allLooks = useMemo(() => getAllLooks(), []);
 
@@ -157,7 +161,14 @@ export default function ShopPage() {
     });
   }, [allLooks, category, budget, goal, style, gender]);
 
+  // Reset to first batch when filters change
+  useEffect(() => {
+    setVisibleCount(INITIAL_BATCH);
+  }, [category, budget, goal, style, gender]);
+
   const hasFilters = category || budget || goal || style || gender;
+  const visibleLooks = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
 
   return (
     <>
@@ -281,10 +292,10 @@ export default function ShopPage() {
         ) : (
           <>
             <p className="mb-4 text-xs text-gray-500">
-              Showing {filtered.length} look{filtered.length === 1 ? "" : "s"}
+              Showing {visibleLooks.length} of {filtered.length} look{filtered.length === 1 ? "" : "s"}
             </p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filtered.map((look, i) => (
+              {visibleLooks.map((look, i) => (
                 <FadeInView key={look.id} delay={Math.min(i * 50, 400)}>
                   <Card hover className="flex flex-col h-full">
                     <ShopCategoryImage category={look.category} title={look.title} />
@@ -320,6 +331,16 @@ export default function ShopPage() {
                 </FadeInView>
               ))}
             </div>
+            {hasMore && (
+              <div className="mt-8 text-center">
+                <Button
+                  variant="outline"
+                  onClick={() => setVisibleCount((c) => c + BATCH_SIZE)}
+                >
+                  Load More ({filtered.length - visibleLooks.length} remaining)
+                </Button>
+              </div>
+            )}
           </>
         )}
 
