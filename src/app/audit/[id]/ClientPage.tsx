@@ -1087,9 +1087,61 @@ export default function AuditDetailPage() {
                             Unlock Full Report — ₹<CountUp target={99} duration={800} />
                           </Button>
                         </Link>
-                        <p className="mt-3 text-[10px] text-gray-600">
-                          Less than a chai. One-time payment.
+                        {/* Price anchoring */}
+                        <p className="mt-3 text-[11px] text-gray-500">
+                          ₹99 = less than a chai per day for a week. One-time payment, yours forever.
                         </p>
+
+                        {/* Social proof — testimonials */}
+                        <div className="mt-4 space-y-2">
+                          {[
+                            { name: "Priya, Delhi", text: "Went from 38 → 74 in two weeks. The lighting fix alone changed everything." },
+                            { name: "Arjun, Mumbai", text: "The budget plan showed me ₹500 changes that made my profile look 10x better." },
+                            { name: "Sneha, Bangalore", text: "Finally understood why my photos weren't hitting. This report nailed it." },
+                          ].map((t) => (
+                            <div key={t.name} className="flex items-start gap-2 rounded-lg bg-white/[0.03] px-3 py-2 text-left">
+                              <span className="mt-0.5 text-amber-400">★</span>
+                              <div>
+                                <p className="text-[11px] text-gray-300">{t.text}</p>
+                                <p className="mt-0.5 text-[10px] text-gray-500">— {t.name}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Blurred preview of what's inside */}
+                        <div className="relative mt-5 overflow-hidden rounded-xl border border-white/[0.04] bg-white/[0.02] text-left">
+                          <div className="p-4">
+                            <p className="mb-3 text-xs font-medium text-gray-400">What&apos;s inside your full report:</p>
+                            {/* Remaining leaks — blurred */}
+                            <div className="space-y-2">
+                              {displayResult.statusLeaks.slice(1).map((leak, i) => (
+                                <div key={i} className="flex items-start gap-2">
+                                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400/60" />
+                                  <div className="blur-[5px] select-none">
+                                    <p className="text-xs text-gray-300">{leak.title}</p>
+                                    <p className="text-[10px] text-gray-500">{leak.description?.slice(0, 80)}…</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                            {/* Budget tiers — blurred */}
+                            <div className="mt-3 grid grid-cols-2 gap-2">
+                              {["Under ₹2,000", "Under ₹5,000", "Under ₹10,000", "Photo tips"].map((tier) => (
+                                <div key={tier} className="rounded-lg border border-white/[0.04] bg-white/[0.03] px-3 py-2 blur-[5px] select-none">
+                                  <p className="text-[10px] text-gray-400">{tier}</p>
+                                  <p className="mt-1 text-[10px] text-gray-600">Personalized upgrade path…</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          {/* Gradient overlay */}
+                          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/80 to-transparent" />
+                          <div className="absolute inset-x-0 bottom-0 flex flex-col items-center pb-4 pt-8">
+                            <p className="mb-1 text-xs font-semibold text-white">Unlock to reveal your full analysis</p>
+                            <p className="text-[10px] text-gray-400">{displayResult.statusLeaks.length} leaks · Budget plan · Photo guide · Goal strategy</p>
+                          </div>
+                        </div>
                       </div>
                     </Card>
 
