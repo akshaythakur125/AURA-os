@@ -52,8 +52,25 @@ export function Hero3D() {
       {/* Dot grid overlay */}
       <div className="hero-grid pointer-events-none absolute inset-0 z-[1]" />
 
-      {/* Floating decorative shapes */}
+      {/* Floating decorative shapes + Gen Z lifestyle photos */}
       <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden">
+        {/* Young people photos floating around */}
+        <div className="absolute left-[5%] top-[15%] h-20 w-20 overflow-hidden rounded-2xl border border-white/[0.08] shadow-2xl animate-[float-dramatic_10s_ease-in-out_infinite] sm:h-28 sm:w-28">
+          <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=200&q=80" alt="" className="h-full w-full object-cover" loading="lazy" />
+        </div>
+        <div className="absolute right-[8%] top-[20%] h-16 w-16 overflow-hidden rounded-full border border-white/[0.08] shadow-2xl animate-[float-dramatic_12s_ease-in-out_infinite_1s] sm:h-24 sm:w-24">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" alt="" className="h-full w-full object-cover" loading="lazy" />
+        </div>
+        <div className="absolute left-[12%] bottom-[25%] h-14 w-14 overflow-hidden rounded-xl border border-white/[0.08] shadow-2xl animate-[float-dramatic_9s_ease-in-out_infinite_2s] sm:h-20 sm:w-20">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80" alt="" className="h-full w-full object-cover" loading="lazy" />
+        </div>
+        <div className="absolute right-[15%] bottom-[30%] h-16 w-16 overflow-hidden rounded-2xl border border-white/[0.08] shadow-2xl animate-[float-dramatic_11s_ease-in-out_infinite_0.5s] sm:h-24 sm:w-24">
+          <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&q=80" alt="" className="h-full w-full object-cover" loading="lazy" />
+        </div>
+        <div className="absolute left-[45%] top-[10%] h-12 w-12 overflow-hidden rounded-full border border-white/[0.06] shadow-xl animate-[float-dramatic_8s_ease-in-out_infinite_1.5s] sm:h-16 sm:w-16">
+          <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&q=80" alt="" className="h-full w-full object-cover" loading="lazy" />
+        </div>
+        {/* Small shapes */}
         <div className="absolute left-[8%] top-[18%] h-3 w-3 rounded-full border border-rose-400/30 bg-rose-400/10 animate-[float-dramatic_8s_ease-in-out_infinite]" />
         <div className="absolute right-[12%] top-[25%] h-2 w-2 rounded bg-blue-400/20 animate-[float-dramatic_10s_ease-in-out_infinite_1s]" style={{ rotate: "45deg" }} />
         <div className="absolute left-[15%] bottom-[30%] h-4 w-4 rounded-full border border-rose-300/20 bg-rose-300/5 animate-[float-dramatic_9s_ease-in-out_infinite_2s]" />
