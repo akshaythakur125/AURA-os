@@ -50,16 +50,16 @@ export function Hero3D() {
       style={{ perspective: "1200px" }}
     >
       <div ref={orbLayerRef}>
-        <GlowOrb color="rgba(147, 51, 234, 0.22)" size={700} className="top-[-15%] left-[5%]" delay={0} />
-        <GlowOrb color="rgba(236, 72, 153, 0.15)" size={550} className="top-[15%] right-[0%]" delay={600} />
-        <GlowOrb color="rgba(14, 165, 233, 0.1)" size={450} className="bottom-[5%] left-[25%]" delay={1200} />
+        <GlowOrb color="rgba(251, 113, 133, 0.22)" size={700} className="top-[-15%] left-[5%]" delay={0} />
+        <GlowOrb color="rgba(225, 29, 72, 0.15)" size={550} className="top-[15%] right-[0%]" delay={600} />
+        <GlowOrb color="rgba(37, 99, 235, 0.1)" size={450} className="bottom-[5%] left-[25%]" delay={1200} />
       </div>
 
       <Container className="relative text-center">
         <div ref={textLayerRef}>
           <div ref={badgeRef} style={{ opacity: 0, transformStyle: "preserve-3d" }} className="mb-8 inline-block">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-500/20 bg-purple-500/10 px-3.5 py-1 text-xs text-purple-300 badge-embossed">
-              <span className="h-1.5 w-1.5 rounded-full bg-purple-400" />
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-rose-500/20 bg-rose-500/10 px-3.5 py-1 text-xs text-rose-300 badge-embossed">
+              <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />
               First-Impression Intelligence
             </span>
           </div>
