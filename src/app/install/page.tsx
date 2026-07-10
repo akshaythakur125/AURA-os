@@ -1,92 +1,26 @@
-"use client";
+import type { Metadata } from "next";
+import InstallPage from "./ClientPage";
 
-import { useEffect } from "react";
-import { Container } from "@/components/ui/Container";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { trackEvent } from "@/lib/storage/analyticsStore";
+export const metadata: Metadata = {
+  title: "Install AuraCheck — Add to Home Screen",
+  description:
+    "Install AuraCheck as a progressive web app on your device. Get instant access to your Aura Score, challenges, and progress tracker.",
+  openGraph: {
+    title: "Install AuraCheck — Progressive Web App",
+    description:
+      "Add AuraCheck to your home screen for instant access. Works offline, no app store needed.",
+    images: [
+      {
+        url: "/api/og?category=Install+AuraCheck&leak=Add+to+your+home+screen",
+        width: 1200,
+        height: 630,
+        alt: "Install AuraCheck — Add to Home Screen",
+      },
+    ],
+    type: "website",
+  },
+};
 
-export default function InstallPage() {
-  useEffect(() => {
-    trackEvent({ eventName: "pwa_install_page_viewed" });
-  }, []);
-
-  return (
-    <Container className="py-12">
-      <div className="mx-auto max-w-2xl">
-        <SectionHeading title="Install AuraCheck" subtitle="Get the app-like experience on your device." />
-
-        <Card className="mb-8">
-          <Badge variant="premium" className="mb-3">Browser Install</Badge>
-          <h3 className="mb-4 text-lg font-semibold text-white">Chrome on Android</h3>
-          <ol className="space-y-3 text-sm text-gray-400">
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">1</span>
-              Open AuraCheck in Chrome.
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">2</span>
-              Tap the menu icon (three dots) in the top-right corner.
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">3</span>
-              Tap &quot;Add to Home screen&quot; or &quot;Install app&quot;.
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">4</span>
-              Follow the prompts to install.
-            </li>
-          </ol>
-        </Card>
-
-        <Card className="mb-8">
-          <Badge variant="premium" className="mb-3">iOS / Safari</Badge>
-          <h3 className="mb-4 text-lg font-semibold text-white">Safari on iPhone/iPad</h3>
-          <ol className="space-y-3 text-sm text-gray-400">
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">1</span>
-              Open AuraCheck in Safari.
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">2</span>
-              Tap the Share button (square with arrow) at the bottom.
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">3</span>
-              Scroll down and tap &quot;Add to Home Screen&quot;.
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">4</span>
-              Tap &quot;Add&quot; in the top-right corner.
-            </li>
-          </ol>
-        </Card>
-
-        <Card className="mb-8">
-          <Badge variant="premium" className="mb-3">Desktop</Badge>
-          <h3 className="mb-4 text-lg font-semibold text-white">Chrome / Edge on Desktop</h3>
-          <ol className="space-y-3 text-sm text-gray-400">
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">1</span>
-              Open AuraCheck in Chrome or Edge.
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">2</span>
-              Look for the install icon in the address bar (or menu).
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">3</span>
-              Click &quot;Install&quot; to add AuraCheck as a standalone app.
-            </li>
-          </ol>
-        </Card>
-
-        <div className="rounded-xl border border-white/[0.04] bg-white/[0.02] p-4 text-center text-xs text-gray-600">
-          <p>AuraCheck is a progressive web app. Once installed, it works like a native app on your device.</p>
-          <p className="mt-1">Your data remains local in your browser. No uploads, no servers.</p>
-        </div>
-      </div>
-    </Container>
-  );
+export default function Page() {
+  return <InstallPage />;
 }

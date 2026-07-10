@@ -1,7 +1,20 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+
+export const metadata: Metadata = {
+  title: "Privacy Center — How AuraCheck Handles Your Data",
+  description:
+    "Complete transparency on how AuraCheck handles your data. Everything stays in your browser. No images uploaded, no external AI, no tracking. Learn what is and isn't collected.",
+  openGraph: {
+    title: "AuraCheck Privacy Center — Your Data, Your Browser",
+    description:
+      "Everything stays local. No images uploaded, no external AI, no tracking. Full transparency on what is and isn't collected.",
+    type: "website",
+  },
+};
 
 const sections = [
   {

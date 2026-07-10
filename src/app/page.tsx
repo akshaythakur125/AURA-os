@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
@@ -9,6 +10,26 @@ import { HeroMockup } from "@/components/hero/HeroMockup";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
 import { Testimonials } from "@/components/marketing/Testimonials";
 import { LeakComparison } from "@/components/examples/LeakComparison";
+
+export const metadata: Metadata = {
+  title: "AuraCheck — Free Visual Signal Analysis & Status Leak Detection",
+  description:
+    "Upload a photo, get your free Aura Score, and discover the status leaks weakening your first impression. See what to fix first — background, lighting, outfit, or profile. No account required.",
+  openGraph: {
+    title: "AuraCheck — Know What Your Presentation Is Actually Saying",
+    description:
+      "Free visual signal analysis. Upload a photo, get your score, and find your biggest status leak in under 2 minutes.",
+    images: [
+      {
+        url: "/api/og?category=AuraCheck&leak=Know+what+your+presentation+is+saying",
+        width: 1200,
+        height: 630,
+        alt: "AuraCheck — Free Visual Signal Analysis",
+      },
+    ],
+    type: "website",
+  },
+};
 
 const leaks = [
   {
