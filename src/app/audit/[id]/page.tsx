@@ -451,174 +451,196 @@ export default function AuditDetailPage() {
           {/* Full Paid Report */}
           {displayFull && (
             <>
-              <Card className="relative mb-6 overflow-hidden text-center">
-                <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
-                <Badge variant="premium" className="mb-2">Premium Report</Badge>
-                <Badge variant="success" className="mb-4">{displayFull.category}</Badge>
-                <div className="text-6xl font-bold text-white">{displayFull.fullScore}</div>
-                <div className="mt-1 text-sm text-gray-500">/ 100</div>
-                <div className="mx-auto mt-4 h-2 max-w-xs overflow-hidden rounded-full bg-white/5">
-                  <div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-1000" style={{ width: `${displayFull.fullScore}%` }} />
-                </div>
-                <p className="mx-auto mt-4 max-w-md text-sm text-gray-300">{displayFull.detailedVerdict}</p>
-              </Card>
+              <FadeInView>
+                <Card className="relative mb-6 overflow-hidden text-center">
+                  <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
+                  <Badge variant="premium" className="mb-2">Premium Report</Badge>
+                  <Badge variant="success" className="mb-4">{displayFull.category}</Badge>
+                  <div className="text-6xl font-bold text-white">
+                    <CountUp target={displayFull.fullScore} duration={1400} />
+                  </div>
+                  <div className="mt-1 text-sm text-gray-500">/ 100</div>
+                  <div className="mx-auto mt-4 h-2 max-w-xs overflow-hidden rounded-full bg-white/5">
+                    <div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-1000 ease-out" style={{ width: `${displayFull.fullScore}%` }} />
+                  </div>
+                  <p className="mx-auto mt-4 max-w-md text-sm text-gray-300">{displayFull.detailedVerdict}</p>
+                </Card>
+              </FadeInView>
 
               {/* Visual Breakdown */}
-              <Card className="mb-6">
-                <h3 className="mb-4 text-sm font-semibold text-white">Visual Breakdown</h3>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  {[
-                    { label: "Lighting", value: displayFull.visualBreakdown.lighting },
-                    { label: "Clarity", value: displayFull.visualBreakdown.clarity },
-                    { label: "Composition", value: displayFull.visualBreakdown.composition },
-                    { label: "Background Control", value: displayFull.visualBreakdown.backgroundControl },
-                    { label: "Color Signal", value: displayFull.visualBreakdown.colorSignal },
-                    { label: "Premium Signal", value: displayFull.visualBreakdown.premiumSignal },
-                    { label: "Overall Consistency", value: displayFull.visualBreakdown.overallConsistency, span: true },
-                  ].map((m) => (
-                    <div key={m.label} className={`rounded-lg border border-white/[0.04] bg-white/[0.03] p-3 ${m.span ? "col-span-2 sm:col-span-4" : ""}`}>
-                      <div className="text-xs text-gray-500">{m.label}</div>
-                      <div className="mt-1 flex items-center gap-2">
-                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
-                          <div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500" style={{ width: `${m.value}%` }} />
+              <FadeInView delay={100}>
+                <Card className="mb-6">
+                  <h3 className="mb-4 text-sm font-semibold text-white">Visual Breakdown</h3>
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {[
+                      { label: "Lighting", value: displayFull.visualBreakdown.lighting },
+                      { label: "Clarity", value: displayFull.visualBreakdown.clarity },
+                      { label: "Composition", value: displayFull.visualBreakdown.composition },
+                      { label: "Background Control", value: displayFull.visualBreakdown.backgroundControl },
+                      { label: "Color Signal", value: displayFull.visualBreakdown.colorSignal },
+                      { label: "Premium Signal", value: displayFull.visualBreakdown.premiumSignal },
+                      { label: "Overall Consistency", value: displayFull.visualBreakdown.overallConsistency, span: true },
+                    ].map((m) => (
+                      <div key={m.label} className={`rounded-lg border border-white/[0.04] bg-white/[0.03] p-3 ${m.span ? "col-span-2 sm:col-span-4" : ""}`}>
+                        <div className="text-xs text-gray-500">{m.label}</div>
+                        <div className="mt-1 flex items-center gap-2">
+                          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
+                            <div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-1000 ease-out" style={{ width: `${m.value}%` }} />
+                          </div>
+                          <span className="text-xs text-white">
+                            <CountUp target={m.value} duration={1000} />
+                          </span>
                         </div>
-                        <span className="text-xs text-white">{m.value}</span>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </Card>
+                    ))}
+                  </div>
+                </Card>
+              </FadeInView>
 
               {/* Strongest Signals */}
-              <Card className="mb-6">
-                <h3 className="mb-3 text-sm font-semibold text-white">Strongest Signals</h3>
-                <div className="flex flex-wrap gap-2">
-                  {displayFull.strongestSignals.map((s) => (
-                    <Badge key={s} variant="success">{s}</Badge>
-                  ))}
-                </div>
-              </Card>
+              <FadeInView delay={200}>
+                <Card className="mb-6">
+                  <h3 className="mb-3 text-sm font-semibold text-white">Strongest Signals</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {displayFull.strongestSignals.map((s) => (
+                      <Badge key={s} variant="success">{s}</Badge>
+                    ))}
+                  </div>
+                </Card>
+              </FadeInView>
 
               {/* Biggest Status Leaks */}
-              <Card className="mb-6">
-                <h3 className="mb-4 text-sm font-semibold text-white">Biggest Status Leaks</h3>
-                <div className="space-y-4">
-                  {displayFull.biggestStatusLeaks.map((leak) => (
-                    <div key={leak.title} className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
-                      <div className="mb-2 flex items-start justify-between gap-2">
-                        <h4 className="text-sm font-medium text-white">{leak.title}</h4>
-                        <Badge variant={leak.severity === "high" ? "danger" : leak.severity === "medium" ? "warning" : "default"}>
-                          {leak.severity}
-                        </Badge>
-                      </div>
-                      <p className="mb-2 text-xs text-gray-400">{leak.explanation}</p>
-                      <p className="text-xs text-gray-500">
-                        <span className="text-purple-300">Fix:</span> {leak.fix}
-                      </p>
-                      {leak.estimatedCost && (
-                        <p className="mt-1 text-xs text-gray-500">
-                          <span className="text-purple-300">Estimated cost:</span> {leak.estimatedCost}
+              <FadeInView delay={250}>
+                <Card className="mb-6">
+                  <h3 className="mb-4 text-sm font-semibold text-white">Biggest Status Leaks</h3>
+                  <div className="space-y-4">
+                    {displayFull.biggestStatusLeaks.map((leak) => (
+                      <div key={leak.title} className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
+                        <div className="mb-2 flex items-start justify-between gap-2">
+                          <h4 className="text-sm font-medium text-white">{leak.title}</h4>
+                          <Badge variant={leak.severity === "high" ? "danger" : leak.severity === "medium" ? "warning" : "default"}>
+                            {leak.severity}
+                          </Badge>
+                        </div>
+                        <p className="mb-2 text-xs text-gray-400">{leak.explanation}</p>
+                        <p className="text-xs text-gray-500">
+                          <span className="text-purple-300">Fix:</span> {leak.fix}
                         </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </Card>
+                        {leak.estimatedCost && (
+                          <p className="mt-1 text-xs text-gray-500">
+                            <span className="text-purple-300">Estimated cost:</span> {leak.estimatedCost}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </FadeInView>
 
               {/* Priority Upgrade Map */}
-              <Card className="mb-6">
-                <h3 className="mb-4 text-sm font-semibold text-white">Priority Upgrade Map</h3>
-                <div className="space-y-3">
-                  <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
-                    <div className="text-xs text-emerald-400">First Priority</div>
-                    <div className="text-sm text-white">{displayFull.priorityUpgradeMap.firstPriority}</div>
-                  </div>
-                  <div className="rounded-lg border border-purple-500/20 bg-purple-500/5 p-3">
-                    <div className="text-xs text-purple-400">Second Priority</div>
-                    <div className="text-sm text-white">{displayFull.priorityUpgradeMap.secondPriority}</div>
-                  </div>
-                  <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-3">
-                    <div className="text-xs text-red-400">Avoid For Now</div>
-                    <div className="text-sm text-white">{displayFull.priorityUpgradeMap.avoidForNow}</div>
-                  </div>
-                </div>
-              </Card>
-
-              {/* Budget Upgrade Plan */}
-              <Card className="mb-6">
-                <h3 className="mb-4 text-sm font-semibold text-white">Budget Upgrade Plan</h3>
-                {[
-                  { label: "Free — Do Now", items: displayFull.budgetUpgradePlan.immediateFree, color: "emerald" },
-                  { label: "Under ₹2,000", items: displayFull.budgetUpgradePlan.under2000, color: "purple" },
-                  { label: "Under ₹5,000", items: displayFull.budgetUpgradePlan.under5000, color: "amber" },
-                  { label: "Under ₹10,000", items: displayFull.budgetUpgradePlan.under10000, color: "blue" },
-                  { label: "Under ₹25,000+", items: displayFull.budgetUpgradePlan.under25000, color: "pink" },
-                ].map((tier) => (
-                  <details key={tier.label} className="group mb-2">
-                    <summary className="flex cursor-pointer items-center gap-2 rounded-lg border border-white/[0.04] bg-white/[0.03] px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.05]">
-                      <svg className={`h-4 w-4 text-${tier.color}-400 transition-transform group-open:rotate-90`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                      {tier.label}
-                    </summary>
-                    <ul className="mt-2 space-y-1.5 px-4">
-                      {tier.items.map((action: string) => (
-                        <li key={action} className="flex items-start gap-2 text-xs text-gray-400">
-                          <span className={`mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-${tier.color}-400`} />
-                          {action}
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                ))}
-              </Card>
-
-              {/* Photo Guidance */}
-              <Card className="mb-6">
-                <h3 className="mb-4 text-sm font-semibold text-white">Photo Guidance</h3>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {[
-                    { label: "Lighting", value: displayFull.photoGuidance.lighting },
-                    { label: "Framing", value: displayFull.photoGuidance.framing },
-                    { label: "Background", value: displayFull.photoGuidance.background },
-                    { label: "Posing / Presentation", value: displayFull.photoGuidance.posingOrPresentation },
-                    { label: "Editing", value: displayFull.photoGuidance.editing, span: true },
-                  ].map((g) => (
-                    <div key={g.label} className={`rounded-lg border border-white/[0.04] bg-white/[0.03] p-3 ${g.span ? "sm:col-span-2" : ""}`}>
-                      <div className="mb-1 text-xs text-purple-400">{g.label}</div>
-                      <p className="text-xs text-gray-300">{g.value}</p>
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              {/* Goal-Specific Advice */}
-              <Card className="mb-6">
-                <h3 className="mb-4 text-sm font-semibold text-white">Goal-Specific Strategy</h3>
-                <div className="space-y-4">
-                  <div>
-                    <div className="mb-1 text-xs text-purple-400">{displayFull.goalSpecificAdvice.goal}</div>
-                    <div className="text-xs text-gray-500">Strategy</div>
-                    <p className="text-sm text-gray-300">{displayFull.goalSpecificAdvice.strategy}</p>
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-2">
+              <FadeInView delay={300}>
+                <Card className="mb-6">
+                  <h3 className="mb-4 text-sm font-semibold text-white">Priority Upgrade Map</h3>
+                  <div className="space-y-3">
                     <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
-                      <div className="mb-1 text-xs text-emerald-400">Do This</div>
-                      <p className="text-xs text-gray-300">{displayFull.goalSpecificAdvice.doThis}</p>
+                      <div className="text-xs text-emerald-400">First Priority</div>
+                      <div className="text-sm text-white">{displayFull.priorityUpgradeMap.firstPriority}</div>
+                    </div>
+                    <div className="rounded-lg border border-purple-500/20 bg-purple-500/5 p-3">
+                      <div className="text-xs text-purple-400">Second Priority</div>
+                      <div className="text-sm text-white">{displayFull.priorityUpgradeMap.secondPriority}</div>
                     </div>
                     <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-3">
-                      <div className="mb-1 text-xs text-red-400">Avoid This</div>
-                      <p className="text-xs text-gray-300">{displayFull.goalSpecificAdvice.avoidThis}</p>
+                      <div className="text-xs text-red-400">Avoid For Now</div>
+                      <div className="text-sm text-white">{displayFull.priorityUpgradeMap.avoidForNow}</div>
                     </div>
                   </div>
-                </div>
-              </Card>
+                </Card>
+              </FadeInView>
+
+              {/* Budget Upgrade Plan */}
+              <FadeInView delay={350}>
+                <Card className="mb-6">
+                  <h3 className="mb-4 text-sm font-semibold text-white">Budget Upgrade Plan</h3>
+                  {[
+                    { label: "Free — Do Now", items: displayFull.budgetUpgradePlan.immediateFree, color: "emerald" },
+                    { label: "Under ₹2,000", items: displayFull.budgetUpgradePlan.under2000, color: "purple" },
+                    { label: "Under ₹5,000", items: displayFull.budgetUpgradePlan.under5000, color: "amber" },
+                    { label: "Under ₹10,000", items: displayFull.budgetUpgradePlan.under10000, color: "blue" },
+                    { label: "Under ₹25,000+", items: displayFull.budgetUpgradePlan.under25000, color: "pink" },
+                  ].map((tier) => (
+                    <details key={tier.label} className="group mb-2">
+                      <summary className="flex cursor-pointer items-center gap-2 rounded-lg border border-white/[0.04] bg-white/[0.03] px-4 py-3 text-sm font-medium text-white hover:bg-white/[0.05]">
+                        <svg className={`h-4 w-4 text-${tier.color}-400 transition-transform group-open:rotate-90`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                        {tier.label}
+                      </summary>
+                      <ul className="mt-2 space-y-1.5 px-4">
+                        {tier.items.map((action: string) => (
+                          <li key={action} className="flex items-start gap-2 text-xs text-gray-400">
+                            <span className={`mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-${tier.color}-400`} />
+                            {action}
+                          </li>
+                        ))}
+                      </ul>
+                    </details>
+                  ))}
+                </Card>
+              </FadeInView>
+
+              {/* Photo Guidance */}
+              <FadeInView delay={400}>
+                <Card className="mb-6">
+                  <h3 className="mb-4 text-sm font-semibold text-white">Photo Guidance</h3>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {[
+                      { label: "Lighting", value: displayFull.photoGuidance.lighting },
+                      { label: "Framing", value: displayFull.photoGuidance.framing },
+                      { label: "Background", value: displayFull.photoGuidance.background },
+                      { label: "Posing / Presentation", value: displayFull.photoGuidance.posingOrPresentation },
+                      { label: "Editing", value: displayFull.photoGuidance.editing, span: true },
+                    ].map((g) => (
+                      <div key={g.label} className={`rounded-lg border border-white/[0.04] bg-white/[0.03] p-3 ${g.span ? "sm:col-span-2" : ""}`}>
+                        <div className="mb-1 text-xs text-purple-400">{g.label}</div>
+                        <p className="text-xs text-gray-300">{g.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </FadeInView>
+
+              {/* Goal-Specific Advice */}
+              <FadeInView delay={450}>
+                <Card className="mb-6">
+                  <h3 className="mb-4 text-sm font-semibold text-white">Goal-Specific Strategy</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="mb-1 text-xs text-purple-400">{displayFull.goalSpecificAdvice.goal}</div>
+                      <div className="text-xs text-gray-500">Strategy</div>
+                      <p className="text-sm text-gray-300">{displayFull.goalSpecificAdvice.strategy}</p>
+                    </div>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
+                        <div className="mb-1 text-xs text-emerald-400">Do This</div>
+                        <p className="text-xs text-gray-300">{displayFull.goalSpecificAdvice.doThis}</p>
+                      </div>
+                      <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-3">
+                        <div className="mb-1 text-xs text-red-400">Avoid This</div>
+                        <p className="text-xs text-gray-300">{displayFull.goalSpecificAdvice.avoidThis}</p>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </FadeInView>
 
               {/* Final Verdict */}
-              <Card className="mb-6">
-                <h3 className="mb-3 text-sm font-semibold text-white">Final Verdict</h3>
-                <p className="text-sm text-gray-300 leading-relaxed">{displayFull.finalVerdict}</p>
-              </Card>
+              <FadeInView delay={500}>
+                <Card className="mb-6">
+                  <h3 className="mb-3 text-sm font-semibold text-white">Final Verdict</h3>
+                  <p className="text-sm text-gray-300 leading-relaxed">{displayFull.finalVerdict}</p>
+                </Card>
+              </FadeInView>
 
               {/* Print / PDF */}
               <div className="mb-6 flex flex-wrap gap-3">
