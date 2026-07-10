@@ -5,6 +5,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ToastProvider } from "@/components/ui/Toast";
 import { AuditSyncProvider } from "@/components/providers/AuditSyncProvider";
+import { PostHogProvider } from "@/components/providers/PostHogProvider";
+import { PageViewTracker } from "@/components/providers/PageViewTracker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,13 +43,16 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col bg-depth text-[#ededf0]">
         <div className="grain-overlay" aria-hidden="true" />
-        <ToastProvider>
-          <AuditSyncProvider>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </AuditSyncProvider>
-        </ToastProvider>
+        <PostHogProvider>
+          <PageViewTracker />
+          <ToastProvider>
+            <AuditSyncProvider>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </AuditSyncProvider>
+          </ToastProvider>
+        </PostHogProvider>
       </body>
     </html>
   );

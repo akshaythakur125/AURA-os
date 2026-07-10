@@ -9,6 +9,7 @@ import type { Look } from "@/lib/shop/catalogTypes";
 import type { StatusLeakTag } from "@/types/product";
 import { buildRetailerUrl, type Retailer } from "@/lib/shop/linkBuilder";
 import { ShopCategoryImage } from "./ShopCategoryImage";
+import { trackEvent, EVENTS } from "@/lib/analytics/events";
 
 interface PersonalizedShopProps {
   looks: Look[];
@@ -88,7 +89,13 @@ function ShopLinks({ look }: { look: Look }) {
               target="_blank"
               rel="noopener noreferrer"
               className="block rounded-lg px-3 py-2 text-xs text-gray-300 transition-colors hover:bg-white/[0.06] hover:text-white"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                setOpen(false);
+                trackEvent(EVENTS.SHOP_LINK_CLICKED, {
+                  retailer: link.retailer,
+                  lookCategory: look.category,
+                });
+              }}
             >
               {link.label} →
             </a>

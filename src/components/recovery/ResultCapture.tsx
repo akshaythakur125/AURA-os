@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import type { Audit } from "@/types/audit";
+import { trackEvent, EVENTS } from "@/lib/analytics/events";
 
 interface Props {
   audit: Audit;
@@ -25,6 +26,7 @@ export function ResultCapture({ audit }: Props) {
   function handleSubmit() {
     if (!value.trim()) return;
     setSubmitted(true);
+    trackEvent(EVENTS.RECOVERY_EMAIL_CAPTURED, { channel, auditId: audit.id });
   }
 
   if (submitted) {

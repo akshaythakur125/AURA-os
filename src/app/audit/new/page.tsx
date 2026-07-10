@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { GlowOrb } from "@/components/ui/GlowOrb";
 import { createAudit, updateAudit } from "@/lib/storage/auditStore";
+import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import {
   validateImageFile,
   getImageDimensions,
@@ -98,6 +99,10 @@ export default function NewAuditPage() {
   const [notes, setNotes] = useState("");
   const [safetyError, setSafetyError] = useState<string | null>(null);
 
+  useEffect(() => {
+    trackEvent(EVENTS.QUIZ_STARTED);
+  }, []);
+
   const canNext = (): boolean => {
     if (step === 0) return goal !== null;
     if (step === 1) return file !== null && !imageError;
@@ -119,6 +124,7 @@ export default function NewAuditPage() {
     const url = URL.createObjectURL(f);
     setPreviewUrl(url);
     getImageDimensions(f).then(setImageDims).catch(() => {});
+    trackEvent(EVENTS.QUIZ_PHOTO_UPLOADED, { fileType: f.type, fileSize: f.size });
   }
 
   function handleDrop(e: React.DragEvent) {
@@ -155,6 +161,7 @@ export default function NewAuditPage() {
       };
 
       const audit = createAudit({ auditType: "photo" as AuditType, goal, budgetRange: 5000 as BudgetAmount });
+      trackEvent(EVENTS.QUIZ_COMPLETED, { goal, auditId: audit.id });
       const deepInput: DeepAuditInput | undefined = {
         styleIntent: styleIntent || "clean",
         currentSignals: ["none"],
@@ -180,6 +187,9 @@ export default function NewAuditPage() {
 
   function goNext() {
     if (!canNext()) return;
+    if (step === 0 && goal) {
+      trackEvent(EVENTS.QUIZ_GOAL_SELECTED, { goal });
+    }
     if (step === STEPS.length - 1) {
       handleSubmit();
     } else {

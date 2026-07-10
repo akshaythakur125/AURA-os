@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { getReferralStats, getFriendDiscountCode } from "@/lib/storage/referralStore";
 import { buildReferralUrl } from "@/lib/referrals/referralUtils";
+import { trackEvent, EVENTS } from "@/lib/analytics/events";
 
 interface Props {
   auditId?: string;
@@ -30,12 +31,14 @@ export function ReferralShare({ auditId, variant = "card" }: Props) {
     if (navigator.share) {
       try {
         await navigator.share({ title: "AuraCheck Referral", text: shareText, url: shareUrl });
+        trackEvent(EVENTS.REFERRAL_SHARED, { referralCode: stats.referralCode });
       } catch {
         // user cancelled
       }
     } else {
       await navigator.clipboard.writeText(shareText);
       setCopied(true);
+      trackEvent(EVENTS.REFERRAL_LINK_COPIED, { referralCode: stats.referralCode });
       setTimeout(() => setCopied(false), 2000);
     }
   }
@@ -43,6 +46,7 @@ export function ReferralShare({ auditId, variant = "card" }: Props) {
   async function handleCopyLink() {
     await navigator.clipboard.writeText(shareUrl);
     setCopied(true);
+    trackEvent(EVENTS.REFERRAL_LINK_COPIED, { referralCode: stats.referralCode });
     setTimeout(() => setCopied(false), 2000);
   }
 

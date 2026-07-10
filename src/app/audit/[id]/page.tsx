@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/Badge";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useToast } from "@/components/ui/Toast";
 import { getAuditById, updateAudit, deleteAudit, createAudit } from "@/lib/storage/auditStore";
+import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
@@ -188,6 +189,7 @@ export default function AuditDetailPage() {
     if (!audit || !audit.imageDataUrl) return;
     setGenerating(true);
     setError(null);
+    trackEvent(EVENTS.ANALYSIS_STARTED, { auditId: audit.id });
 
     try {
       const report = await generateFreeAuraReport(audit);
@@ -251,6 +253,18 @@ export default function AuditDetailPage() {
   const isUnlocked = audit?.reportStatus === "unlocked" && audit?.fullReport?.fullContent;
   const displayFull = fullContent || (isUnlocked ? (audit!.fullReport!.fullContent as FullAuraReportContent) : null);
   const personalization = audit?.personalization;
+
+  useEffect(() => {
+    if (displayResult) {
+      trackEvent(EVENTS.RESULTS_VIEWED, { auditId: id, score: displayResult.auraScore });
+    }
+  }, [displayResult, id]);
+
+  useEffect(() => {
+    if (displayResult && !isUnlocked) {
+      trackEvent(EVENTS.PAYWALL_VIEWED, { auditId: id, score: displayResult.auraScore });
+    }
+  }, [displayResult, isUnlocked, id]);
 
   return (
     <>
@@ -1218,7 +1232,8 @@ export default function AuditDetailPage() {
                     freeResult: report,
                   },
                 });
-                if (updated) setAudit(updated);
+      if (updated) setAudit(updated);
+      trackEvent(EVENTS.ANALYSIS_COMPLETED, { auditId: audit.id, score: report.auraScore });
                 toast("Free score regenerated", "success");
               } catch {
                 toast("Failed to regenerate", "error");

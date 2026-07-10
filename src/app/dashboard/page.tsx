@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
@@ -13,6 +13,7 @@ import { StreakIndicator } from "@/components/dashboard/StreakIndicator";
 import { ImprovementCard } from "@/components/dashboard/ImprovementCard";
 import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
 import { getAudits, deleteAudit, getAuditStats } from "@/lib/storage/auditStore";
+import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { getLocalUser, updateLocalUser } from "@/lib/storage/userStore";
 import { clearAll } from "@/lib/storage/localStore";
 import { ReferralProgress } from "@/components/referral/ReferralProgress";
@@ -63,6 +64,10 @@ export default function DashboardPage() {
   const [displayName, setDisplayName] = useState(initial.user?.displayName || "");
   const [city, setCity] = useState(initial.user?.city || "");
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    trackEvent(EVENTS.DASHBOARD_VIEWED);
+  }, []);
 
   function refresh() {
     setAudits(getAudits());
