@@ -15,6 +15,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -466,6 +467,7 @@ h2 {
 .parallax-section {
   perspective: 1200px;
   transform-style: preserve-3d;
+  scroll-snap-align: start;
 }
 
 .parallax-layer-back {
