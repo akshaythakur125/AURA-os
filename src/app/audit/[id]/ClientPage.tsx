@@ -1057,7 +1057,7 @@ export default function AuditDetailPage() {
                 />
               )}
 
-              {/* ΓöÇΓöÇΓöÇ Paywall: Personalized Upgrade ΓöÇΓöÇΓöÇ */}
+              {/* ─── Paywall: Personalized Upgrade ─── */}
               {displayResult && (
                 <FadeInView delay={500}>
                   <div className="mb-6">
@@ -1070,25 +1070,25 @@ export default function AuditDetailPage() {
                       <div className="text-center">
                         <Badge variant="premium" className="mb-3">Full Report</Badge>
                         <h3 className="mb-2 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-xl font-bold text-transparent">
-                          Unlock every leak &amp; fix
+                          See everything that&apos;s weakening your impression
                         </h3>
                         <p className="mx-auto mb-4 max-w-sm text-sm text-gray-400">
-                          You saw <span className="text-white font-medium">{displayResult.statusLeaks[0]?.title}</span> ΓÇö 
-                          there {displayResult.statusLeaks.length - 1 === 1 ? "is" : "are"} {displayResult.statusLeaks.length - 1} more 
-                          {displayResult.statusLeaks.length - 1 === 1 ? " leak" : " leaks"} plus your full goal strategy, upgrade path, and photo guidance.
+                          You saw <span className="text-white font-medium">{displayResult.statusLeaks[0]?.title}</span> — there&apos;s {displayResult.statusLeaks.length - 1} more leak{displayResult.statusLeaks.length - 1 !== 1 ? "s" : ""} plus your full goal strategy and upgrade path.
                         </p>
                         <div className="mb-4 flex items-center justify-center gap-3 text-xs text-gray-500">
-                          <span>Less than a chai per day for 30 days</span>
+                          <span>Instant unlock</span>
                           <span className="h-1 w-1 rounded-full bg-gray-600" />
-                          <span>One-time, yours forever</span>
+                          <span>No subscription</span>
+                          <span className="h-1 w-1 rounded-full bg-gray-600" />
+                          <span>Yours forever</span>
                         </div>
                         <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} className="block">
                           <Button size="lg" className="w-full max-w-xs mx-auto">
-                            Unlock Full Report ΓÇö &#8377;<CountUp target={99} duration={800} />
+                            Unlock Full Report — ₹<CountUp target={99} duration={800} />
                           </Button>
                         </Link>
                         <p className="mt-3 text-[10px] text-gray-600">
-                          Instant unlock. No subscription. Local browser analysis.
+                          Less than a chai. One-time payment.
                         </p>
                       </div>
                     </Card>
@@ -1098,7 +1098,7 @@ export default function AuditDetailPage() {
                       <PaymentTrust variant="results" />
                     </div>
 
-                    {/* Secondary products */}
+                    {/* Secondary products — sequential unlock */}
                     <div className="mt-4 grid gap-3 sm:grid-cols-2">
                       {[
                         { type: "dating_audit" as const, name: "Dating / Profile Audit", price: 299, desc: "Bio analysis, red flags, suggested bios" },
@@ -1119,7 +1119,7 @@ export default function AuditDetailPage() {
                                 <span className="text-xs text-emerald-400">Unlocked</span>
                               ) : (
                                 <Link href={`/unlock?auditId=${audit.id}&product=${p.type}`}>
-                                  <Button size="sm" variant="secondary">&#8377;{p.price}</Button>
+                                  <Button size="sm" variant="secondary">₹{p.price}</Button>
                                 </Link>
                               )}
                             </div>
