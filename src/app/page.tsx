@@ -54,7 +54,7 @@ export default function HomePage() {
             </span>
           </FadeInView>
           <FadeInView delay={100}>
-            <h1 className="mx-auto max-w-4xl gradient-text-animated text-5xl font-bold sm:text-6xl md:text-[4.5rem] md:leading-[1.02] lg:text-[5rem]">
+            <h1 className="mx-auto max-w-4xl gradient-text-animated text-4xl font-bold sm:text-5xl md:text-6xl md:text-[4.5rem] md:leading-[1.02] lg:text-[5rem]">
               Find your biggest status leak.
             </h1>
           </FadeInView>
