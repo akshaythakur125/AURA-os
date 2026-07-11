@@ -42,7 +42,7 @@ export async function POST(request: Request) {
     ? (pe as Record<string, unknown>).entity
     : null;
   const payData = entity && typeof entity === "object" ? entity as Record<string, unknown> : null;
-  console.log(`[webhook] ${eventType}`, JSON.stringify({
+  console.info(`[webhook] ${eventType}`, JSON.stringify({
     orderId: payData?.order_id,
     paymentId: payData?.id,
     amount: payData?.amount,
