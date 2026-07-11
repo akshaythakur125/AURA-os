@@ -765,9 +765,13 @@ export function analyzeImageDataUrl(
           }
           if (skinR.length >= 500) break;
         }
+        // Cartoon/illustration detection: if skin pixels < 2% of sampled pixels, likely not a real photo
+        const skinPixelRatio = skinR.length / ((w / 3) * (h / 3));
+        const isCartoon = skinPixelRatio < 0.02 && faceZone.density < 0.005;
+
         const undertoneResult = detectUndertone(skinR, skinG, skinB);
 
-        const qualityResult = runQualityGate({
+        const qualityResult = isCartoon ? { qualityScore: 0, issues: ["no_face"], canProceed: false, message: "This looks like an illustration or cartoon. AuraCheck works best with real photos of real people." } : runQualityGate({
           width: img.width,
           height: img.height,
           avgBrightness: brightness,

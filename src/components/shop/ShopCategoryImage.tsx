@@ -97,6 +97,8 @@ const CATEGORY_PHOTOS: Record<LookCategory, { url: string; alt: string }[]> = {
     { url: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&q=80", alt: "Silk saree" },
   ],
   accessory: [
+    { url: "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=400&q=80", alt: "Ring Light" },
+    { url: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&q=80", alt: "Camera Lens" },
     { url: "https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=400&q=80", alt: "Fashion accessory" },
   ],
 };
