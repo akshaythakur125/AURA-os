@@ -13,7 +13,7 @@ export type TransformationType =
   | "cool-cast"
   | "reduce-saturation"
   | "add-headroom"
-  | "crop" | "motion-blur" | "rotate" | "perspective" | "contrast" | "saturation";
+  | "crop" | "motion-blur" | "rotate" | "perspective" | "contrast" | "saturation" | "screenshot" | "background-clutter";
 
 export type SyntheticTransformation = {
   id: string;
@@ -226,6 +226,68 @@ export async function applyTransformation(
           ctx.putImageData(imageData, 0, 0);
           break;
         }
+        case "screenshot": {
+          // ponytail: draw mobile UI chrome around the original image
+          const barHeight = (transformation.parameters.barHeight as number) || 40;
+          const marginColor = transformation.parameters.marginColor || "#000000";
+          const embedScale = (transformation.parameters.embedScale as number) || 0.7;
+          const newW = Math.round(w / embedScale);
+          const newH = Math.round(h / embedScale);
+          const offX = Math.round((newW - w) / 2);
+          const offY = barHeight + Math.round((newH - barHeight - h) / 2);
+          const newCanvas = document.createElement("canvas");
+          newCanvas.width = newW;
+          newCanvas.height = newH;
+          const nctx = newCanvas.getContext("2d")!;
+          // Fill background
+          nctx.fillStyle = marginColor;
+          nctx.fillRect(0, 0, newW, newH);
+          // Status bar
+          nctx.fillStyle = "#1a1a1a";
+          nctx.fillRect(0, 0, newW, barHeight);
+          nctx.fillStyle = "#ffffff";
+          nctx.font = "bold 12px sans-serif";
+          nctx.fillText("9:41", 12, barHeight - 14);
+          nctx.fillText("100%", newW - 40, barHeight - 14);
+          // Embed the original image
+          nctx.drawImage(canvas, offX, offY, w, h);
+          // Navigation bar at bottom
+          const navH = Math.round(newH * 0.06);
+          nctx.fillStyle = "#1a1a1a";
+          nctx.fillRect(0, newH - navH, newW, navH);
+          // Home indicator
+          nctx.fillStyle = "#666666";
+          nctx.fillRect(Math.round(newW / 2 - 40), newH - 8, 80, 4);
+          canvas.width = newW;
+          canvas.height = newH;
+          ctx.drawImage(newCanvas, 0, 0);
+          break;
+        }
+        case "background-clutter": {
+          // ponytail: add random rectangles and circles to simulate clutter
+          const density = (transformation.parameters.density as number) || 20;
+          const seed = 42; // deterministic
+          for (let i = 0; i < density; i++) {
+            const hash = ((i * 2654435761 + seed) >>> 0) % 1000 / 1000;
+            const hash2 = ((i * 2246822519 + seed) >>> 0) % 1000 / 1000;
+            const hash3 = ((i * 3266489917 + seed) >>> 0) % 1000 / 1000;
+            const x = Math.round(hash * w);
+            const y = Math.round(hash2 * h);
+            const size = Math.round(10 + hash3 * 40);
+            const r = Math.round(hash * 200 + 55);
+            const g = Math.round(hash2 * 200 + 55);
+            const b = Math.round(hash3 * 200 + 55);
+            ctx.fillStyle = "rgb(" + r + "," + g + "," + b + ")";
+            if (i % 3 === 0) {
+              ctx.fillRect(x, y, size, size);
+            } else {
+              ctx.beginPath();
+              ctx.arc(x, y, size / 2, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+          break;
+        }
       resolve(canvas.toDataURL("image/jpeg", 0.92));
     };
     img.onerror = () => reject(new Error("Failed to load image"));
@@ -289,3 +351,18 @@ const EXTRA_TRANSFORMATIONS: SyntheticTransformation[] = [
 ];
 
 export const ALL_TRANSFORMATIONS = [...EVALUATION_TRANSFORMATIONS, ...EXTRA_TRANSFORMATIONS];
+
+// ─── Screenshot and background-clutter variants ───
+
+const SCREENSHOT_AND_CLUTTER: SyntheticTransformation[] = [
+  // Screenshot variants
+  { id: "screenshot-mobile", sourceImageId: "source-1", type: "screenshot", parameters: { barHeight: 40, embedScale: 0.7, marginColor: "#000000" } },
+  { id: "screenshot-light", sourceImageId: "source-1", type: "screenshot", parameters: { barHeight: 36, embedScale: 0.65, marginColor: "#f5f5f5" } },
+  { id: "screenshot-small-embed", sourceImageId: "source-1", type: "screenshot", parameters: { barHeight: 40, embedScale: 0.4, marginColor: "#000000" } },
+  // Background clutter variants
+  { id: "clutter-mild", sourceImageId: "source-1", type: "background-clutter", parameters: { density: 10 } },
+  { id: "clutter-moderate", sourceImageId: "source-1", type: "background-clutter", parameters: { density: 30 } },
+  { id: "clutter-severe", sourceImageId: "source-1", type: "background-clutter", parameters: { density: 60 } },
+];
+
+export const ALL_TRANSFORMATIONS = [...EVALUATION_TRANSFORMATIONS, ...EXTRA_TRANSFORMATIONS, ...SCREENSHOT_AND_CLUTTER];
