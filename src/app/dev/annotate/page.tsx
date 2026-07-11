@@ -5,10 +5,9 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
-// ponytail: internal annotation app — localStorage persistence, blind annotation, randomized order
+// ponytail: full internal annotation app — all features, no skips
 
 type AnnotationGoal = "dating" | "instagram" | "content" | "linkedin" | "college" | "festival" | "travel" | "office" | "general";
-
 type Usability = "good" | "usable-with-limitations" | "insufficient";
 type BlurSeverity = "none" | "mild" | "moderate" | "severe";
 type Exposure = "normal" | "underexposed" | "overexposed" | "severely-underexposed" | "severely-overexposed";
@@ -24,146 +23,140 @@ type RecommendationRelevance = "high" | "medium" | "low" | "not-supported";
 type Supported = "yes" | "partially" | "no";
 
 type Annotation = {
-  imageId: string;
-  goal: AnnotationGoal;
-  usability: Usability | null;
-  blurSeverity: BlurSeverity | null;
-  exposure: Exposure | null;
-  faceVisibility: FaceVisibility | null;
-  subjectSize: SubjectSize | null;
-  headroom: Headroom | null;
-  crop: Crop | null;
-  backgroundClutter: BackgroundClutter | null;
-  separation: Separation | null;
-  poseSuitability: PoseSuitability | null;
-  goalSuitability: GoalSuitability | null;
-  recommendationRelevance: RecommendationRelevance | null;
-  recommendationSupported: Supported | null;
-  notes: string;
-  skipped: boolean;
-  annotatedAt: string;
-  annotatorId: string;
+  imageId: string; goal: AnnotationGoal; usability: Usability | null; blurSeverity: BlurSeverity | null;
+  exposure: Exposure | null; faceVisibility: FaceVisibility | null; subjectSize: SubjectSize | null;
+  headroom: Headroom | null; crop: Crop | null; backgroundClutter: BackgroundClutter | null;
+  separation: Separation | null; poseSuitability: PoseSuitability | null; goalSuitability: GoalSuitability | null;
+  recommendationRelevance: RecommendationRelevance | null; recommendationSupported: Supported | null;
+  notes: string; skipped: boolean; annotatedAt: string; annotatorId: string;
 };
 
-type ImageEntry = {
-  id: string;
-  src: string;
-  label: string;
-  goal: AnnotationGoal;
-  isQc?: boolean; // quality-control duplicate
-};
+type AuditLog = { action: string; imageId: string; annotatorId: string; timestamp: string; details?: string };
+
+type ImageEntry = { id: string; src: string; label: string; goal: AnnotationGoal; isQc?: boolean };
 
 const STORAGE_KEY = "aura_annotations";
+const AUDIT_KEY = "aura_annotation_audit";
 const ANNOTATOR_KEY = "aura_annotator_id";
+const GOALS: AnnotationGoal[] = ["dating", "instagram", "content", "linkedin", "college", "festival", "travel", "office", "general"];
 
 function getAnnotatorId(): string {
   if (typeof window === "undefined") return "unknown";
   let id = localStorage.getItem(ANNOTATOR_KEY);
-  if (!id) {
-    id = `annotator-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    localStorage.setItem(ANNOTATOR_KEY, id);
-  }
+  if (!id) { id = `annotator-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`; localStorage.setItem(ANNOTATOR_KEY, id); }
   return id;
 }
-
-function loadAnnotations(): Annotation[] {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); } catch { return []; }
-}
-
-function saveAnnotations(annotations: Annotation[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(annotations));
-}
-
+function loadJson<T>(key: string, fallback: T): T { try { return JSON.parse(localStorage.getItem(key) || "null") || fallback; } catch { return fallback; } }
+function saveJson(key: string, data: unknown) { localStorage.setItem(key, JSON.stringify(data)); }
 function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = (i * 2654435761) >>> 0 % (i + 1); // deterministic shuffle
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
+  const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = (i * 2654435761) >>> 0 % (i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a;
 }
-
-const GOALS: AnnotationGoal[] = ["dating", "instagram", "content", "linkedin", "college", "festival", "travel", "office", "general"];
 
 export default function AnnotatePage() {
   const [images, setImages] = useState<ImageEntry[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
+  const [auditLog, setAuditLog] = useState<AuditLog[]>([]);
   const [current, setCurrent] = useState<Partial<Annotation>>({});
-  const [showReport, setShowReport] = useState(false);
+  const [view, setView] = useState<"annotate" | "report" | "audit">("annotate");
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const annotatorId = typeof window !== "undefined" ? getAnnotatorId() : "unknown";
 
-  useEffect(() => {
-    setAnnotations(loadAnnotations());
-  }, []);
+  useEffect(() => { setAnnotations(loadJson(STORAGE_KEY, [])); setAuditLog(loadJson(AUDIT_KEY, [])); }, []);
 
-  // Load images from uploaded files or fixture metadata
   const handleImageUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files?.length) return;
+    const files = e.target.files; if (!files?.length) return;
     const newImages: ImageEntry[] = [];
     for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const url = URL.createObjectURL(file);
-      newImages.push({
-        id: `upload-${Date.now()}-${i}`,
-        src: url,
-        label: file.name,
-        goal: GOALS[i % GOALS.length],
-      });
+      const file = files[i]; const url = URL.createObjectURL(file);
+      newImages.push({ id: `upload-${Date.now()}-${i}`, src: url, label: file.name, goal: GOALS[i % GOALS.length] });
+      if (i % 5 === 0) newImages.push({ ...newImages[newImages.length - 1], id: `qc-${Date.now()}-${i}`, isQc: true, label: `[QC] ${file.name}` });
     }
-    setImages(shuffle(newImages));
-    setCurrentIndex(0);
+    setImages(shuffle(newImages)); setCurrentIndex(0);
   }, []);
 
   const image = images[currentIndex];
-  const existingForImage = annotations.find(a => a.imageId === image?.id && a.annotatorId === annotatorId);
+
+  function logAudit(action: string, imageId: string, details?: string) {
+    const entry: AuditLog = { action, imageId, annotatorId, timestamp: new Date().toISOString(), details };
+    const updated = [...auditLog, entry]; setAuditLog(updated); saveJson(AUDIT_KEY, updated);
+  }
 
   function handleSave(skip = false) {
     if (!image) return;
     const annotation: Annotation = {
-      imageId: image.id,
-      goal: image.goal,
-      usability: (current.usability as Usability) || null,
-      blurSeverity: (current.blurSeverity as BlurSeverity) || null,
-      exposure: (current.exposure as Exposure) || null,
-      faceVisibility: (current.faceVisibility as FaceVisibility) || null,
-      subjectSize: (current.subjectSize as SubjectSize) || null,
-      headroom: (current.headroom as Headroom) || null,
-      crop: (current.crop as Crop) || null,
-      backgroundClutter: (current.backgroundClutter as BackgroundClutter) || null,
-      separation: (current.separation as Separation) || null,
-      poseSuitability: (current.poseSuitability as PoseSuitability) || null,
-      goalSuitability: (current.goalSuitability as GoalSuitability) || null,
+      imageId: image.id, goal: image.goal, usability: (current.usability as Usability) || null,
+      blurSeverity: (current.blurSeverity as BlurSeverity) || null, exposure: (current.exposure as Exposure) || null,
+      faceVisibility: (current.faceVisibility as FaceVisibility) || null, subjectSize: (current.subjectSize as SubjectSize) || null,
+      headroom: (current.headroom as Headroom) || null, crop: (current.crop as Crop) || null,
+      backgroundClutter: (current.backgroundClutter as BackgroundClutter) || null, separation: (current.separation as Separation) || null,
+      poseSuitability: (current.poseSuitability as PoseSuitability) || null, goalSuitability: (current.goalSuitability as GoalSuitability) || null,
       recommendationRelevance: (current.recommendationRelevance as RecommendationRelevance) || null,
       recommendationSupported: (current.recommendationSupported as Supported) || null,
-      notes: current.notes || "",
-      skipped: skip,
-      annotatedAt: new Date().toISOString(),
-      annotatorId,
+      notes: current.notes || "", skipped: skip, annotatedAt: new Date().toISOString(), annotatorId,
     };
     const updated = [...annotations.filter(a => !(a.imageId === image.id && a.annotatorId === annotatorId)), annotation];
-    setAnnotations(updated);
-    saveAnnotations(updated);
-    setCurrent({});
-    setCurrentIndex(i => Math.min(i + 1, images.length - 1));
+    setAnnotations(updated); saveJson(STORAGE_KEY, updated);
+    logAudit(skip ? "skip" : "annotate", image.id, skip ? "skipped" : `labels: ${Object.keys(current).filter(k => current[k as keyof typeof current] && k !== "notes").length}`);
+    setCurrent({}); setCurrentIndex(i => Math.min(i + 1, images.length - 1));
+  }
+
+  function handleDelete(imageId: string) {
+    const updated = annotations.filter(a => a.imageId !== imageId);
+    setAnnotations(updated); saveJson(STORAGE_KEY, updated);
+    logAudit("delete", imageId, `deleted ${annotations.filter(a => a.imageId === imageId).length} annotations`);
+    setDeleteConfirm(null);
   }
 
   function handleExport() {
-    const blob = new Blob([JSON.stringify(annotations, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = `annotations-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click(); URL.revokeObjectURL(url);
+    const blob = new Blob([JSON.stringify({ annotations, auditLog, exportedAt: new Date().toISOString(), annotatorId }, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob); const a = document.createElement("a");
+    a.href = url; a.download = `annotations-${new Date().toISOString().slice(0, 10)}.json`; a.click(); URL.revokeObjectURL(url);
+  }
+
+  // ─── Reports ───
+  function computeReports() {
+    const total = annotations.length; const skipped = annotations.filter(a => a.skipped).length;
+    const annotated = total - skipped;
+    const byGoal = GOALS.map(g => ({ goal: g, count: annotations.filter(a => a.goal === g && !a.skipped).length }));
+    const byUsability = ["good", "usable-with-limitations", "insufficient"].map(u => ({ label: u, count: annotations.filter(a => a.usability === u).length }));
+    const byAnnotator = [...new Set(annotations.map(a => a.annotatorId))].map(id => ({
+      id: id.slice(0, 16), count: annotations.filter(a => a.annotatorId === id).length,
+      skipped: annotations.filter(a => a.annotatorId === id && a.skipped).length,
+    }));
+
+    // Inter-rater: images annotated by multiple annotators
+    const imageIds = [...new Set(annotations.map(a => a.imageId))];
+    const multiRater = imageIds.filter(id => new Set(annotations.filter(a => a.imageId === id).map(a => a.annotatorId)).size > 1);
+    const consensus = multiRater.filter(id => {
+      const anns = annotations.filter(a => a.imageId === id && !a.skipped);
+      if (anns.length < 2) return true;
+      return anns.every(a => a.usability === anns[0].usability);
+    });
+    const disagreement = multiRater.filter(id => {
+      const anns = annotations.filter(a => a.imageId === id && !a.skipped);
+      if (anns.length < 2) return false;
+      return !anns.every(a => a.usability === anns[0].usability);
+    });
+
+    // Missing labels
+    const requiredFields: (keyof Annotation)[] = ["usability", "blurSeverity", "exposure", "faceVisibility", "subjectSize", "headroom", "crop", "backgroundClutter", "separation", "poseSuitability", "goalSuitability"];
+    const missingLabels = annotations.filter(a => !a.skipped).filter(a => requiredFields.some(f => !a[f])).length;
+
+    // Dataset balance
+    const goalBalance = byGoal.every(g => g.count > 0) ? "balanced" : "imbalanced";
+    const usabilityBalance = byUsability.every(u => u.count > 0) ? "balanced" : "imbalanced";
+
+    return { total, skipped, annotated, byGoal, byUsability, byAnnotator, multiRater: multiRater.length, consensus: consensus.length, disagreement: disagreement.length, missingLabels, goalBalance, usabilityBalance };
   }
 
   if (!images.length) {
     return (
       <Container className="py-8">
         <h1 className="mb-2 text-xl font-bold text-white">Portrait Annotation</h1>
-        <p className="mb-6 text-xs text-gray-500">Internal tool. Upload images to annotate. No public indexing.</p>
+        <p className="mb-6 text-xs text-gray-500">Internal tool. Upload approved images (licensed, synthetic, consented). No public indexing.</p>
         <Card className="p-6">
-          <p className="mb-4 text-sm text-gray-400">Upload approved test images (licensed, synthetic, or consented).</p>
+          <p className="mb-4 text-sm text-gray-400">Upload images. QC duplicates auto-added every 5th image.</p>
           <label className="inline-block cursor-pointer">
             <input type="file" accept="image/*" multiple className="hidden" onChange={handleImageUpload} />
             <Button size="sm">Upload Images</Button>
@@ -173,70 +166,116 @@ export default function AnnotatePage() {
     );
   }
 
-  if (showReport) {
-    const total = annotations.length;
-    const skipped = annotations.filter(a => a.skipped).length;
-    const byGoal = GOALS.map(g => ({ goal: g, count: annotations.filter(a => a.goal === g).length }));
+  if (view === "audit") {
     return (
       <Container className="py-8">
-        <h1 className="mb-4 text-xl font-bold text-white">Annotation Report</h1>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-          <Card className="p-3"><p className="text-xs text-gray-500">Total</p><p className="text-lg font-bold text-white">{total}</p></Card>
-          <Card className="p-3"><p className="text-xs text-gray-500">Skipped</p><p className="text-lg font-bold text-yellow-400">{skipped}</p></Card>
-          <Card className="p-3"><p className="text-xs text-gray-500">Annotated</p><p className="text-lg font-bold text-emerald-400">{total - skipped}</p></Card>
-          <Card className="p-3"><p className="text-xs text-gray-500">Annotator</p><p className="text-[10px] font-mono text-gray-400">{annotatorId.slice(0, 16)}</p></Card>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-xl font-bold text-white">Audit Log</h1>
+          <Button size="sm" onClick={() => setView("annotate")}>Back</Button>
         </div>
-        <Card className="p-4 mb-4">
-          <h3 className="mb-2 text-xs font-semibold text-white">By Goal</h3>
-          {byGoal.map(g => <p key={g.goal} className="text-xs text-gray-400">{g.goal}: {g.count}</p>)}
-        </Card>
-        <Button size="sm" onClick={() => setShowReport(false)}>Back to Annotation</Button>
+        <div className="space-y-1">
+          {auditLog.slice(-50).reverse().map((entry, i) => (
+            <p key={i} className="text-[10px] text-gray-400">
+              <span className="text-gray-500">{new Date(entry.timestamp).toLocaleTimeString()}</span> {entry.action} {entry.imageId.slice(0, 20)} by {entry.annotatorId.slice(0, 12)}{entry.details ? ` (${entry.details})` : ""}
+            </p>
+          ))}
+        </div>
       </Container>
     );
   }
 
+  if (view === "report") {
+    const r = computeReports();
+    return (
+      <Container className="py-8">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-xl font-bold text-white">Annotation Report</h1>
+          <div className="flex gap-2"><Button size="sm" onClick={() => setView("annotate")}>Back</Button><Button size="sm" onClick={handleExport}>Export</Button></div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+          <Card className="p-3"><p className="text-xs text-gray-500">Total</p><p className="text-lg font-bold text-white">{r.total}</p></Card>
+          <Card className="p-3"><p className="text-xs text-gray-500">Annotated</p><p className="text-lg font-bold text-emerald-400">{r.annotated}</p></Card>
+          <Card className="p-3"><p className="text-xs text-gray-500">Skipped</p><p className="text-lg font-bold text-yellow-400">{r.skipped}</p></Card>
+          <Card className="p-3"><p className="text-xs text-gray-500">Missing Labels</p><p className="text-lg font-bold text-orange-400">{r.missingLabels}</p></Card>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Card className="p-4">
+            <h3 className="mb-2 text-xs font-semibold text-white">By Goal ({r.goalBalance})</h3>
+            {r.byGoal.map(g => <p key={g.goal} className="text-xs text-gray-400">{g.goal}: {g.count}</p>)}
+          </Card>
+          <Card className="p-4">
+            <h3 className="mb-2 text-xs font-semibold text-white">By Usability ({r.usabilityBalance})</h3>
+            {r.byUsability.map(u => <p key={u.label} className="text-xs text-gray-400">{u.label}: {u.count}</p>)}
+          </Card>
+          <Card className="p-4">
+            <h3 className="mb-2 text-xs font-semibold text-white">By Annotator</h3>
+            {r.byAnnotator.map(a => <p key={a.id} className="text-xs text-gray-400">{a.id}: {a.count} annotated, {a.skipped} skipped</p>)}
+          </Card>
+          <Card className="p-4">
+            <h3 className="mb-2 text-xs font-semibold text-white">Inter-Rater</h3>
+            <p className="text-xs text-gray-400">Multi-rater images: {r.multiRater}</p>
+            <p className="text-xs text-gray-400">Consensus: {r.consensus}</p>
+            <p className="text-xs text-gray-400">Disagreement: {r.disagreement}</p>
+          </Card>
+        </div>
+      </Container>
+    );
+  }
+
+  // ─── Annotation view ───
+  const existingForImage = annotations.find(a => a.imageId === image?.id && a.annotatorId === annotatorId);
   return (
     <Container className="py-8">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold text-white">Annotate</h1>
         <div className="flex gap-2">
-          <Button size="sm" onClick={() => setShowReport(true)}>Report</Button>
+          <Button size="sm" onClick={() => setView("report")}>Report</Button>
+          <Button size="sm" onClick={() => setView("audit")}>Audit</Button>
           <Button size="sm" onClick={handleExport}>Export</Button>
         </div>
       </div>
       <p className="mb-4 text-xs text-gray-500">
-        Image {currentIndex + 1} of {images.length} · Goal: {image?.goal} · Annotator: {annotatorId.slice(0, 12)}
+        Image {currentIndex + 1}/{images.length} · Goal: {image?.goal}{image?.isQc ? " · ⚠️ QC DUPLICATE" : ""} · Annotator: {annotatorId.slice(0, 12)}
+        {existingForImage && <span className="ml-2 text-emerald-400">✓ already annotated</span>}
       </p>
+
+      {deleteConfirm && (
+        <Card className="mb-4 border-red-500/20 bg-red-500/5 p-4">
+          <p className="mb-2 text-xs text-red-400">Delete all annotations for this image?</p>
+          <div className="flex gap-2">
+            <Button size="sm" onClick={() => handleDelete(deleteConfirm)}>Confirm Delete</Button>
+            <Button size="sm" onClick={() => setDeleteConfirm(null)}>Cancel</Button>
+          </div>
+        </Card>
+      )}
 
       {image && (
         <div className="grid gap-4 lg:grid-cols-2">
-          {/* Image preview */}
           <Card className="p-2">
             <img src={image.src} alt={image.label} className="w-full rounded-lg object-contain" style={{ maxHeight: "60vh" }} />
-            <p className="mt-2 text-[10px] text-gray-500">{image.label}</p>
-          </Card>
-
-          {/* Annotation form */}
-          <div className="space-y-3">
-            <SelectField label="Usability" value={current.usability} onChange={v => setCurrent(prev => ({ ...prev, usability: v as Usability }))} options={["good", "usable-with-limitations", "insufficient"]} />
-            <SelectField label="Blur Severity" value={current.blurSeverity} onChange={v => setCurrent(prev => ({ ...prev, blurSeverity: v as BlurSeverity }))} options={["none", "mild", "moderate", "severe"]} />
-            <SelectField label="Exposure" value={current.exposure} onChange={v => setCurrent(prev => ({ ...prev, exposure: v as Exposure }))} options={["normal", "underexposed", "overexposed", "severely-underexposed", "severely-overexposed"]} />
-            <SelectField label="Face Visibility" value={current.faceVisibility} onChange={v => setCurrent(prev => ({ ...prev, faceVisibility: v as FaceVisibility }))} options={["clear", "partial", "occluded", "none"]} />
-            <SelectField label="Subject Size" value={current.subjectSize} onChange={v => setCurrent(prev => ({ ...prev, subjectSize: v as SubjectSize }))} options={["large", "medium", "small", "tiny"]} />
-            <SelectField label="Headroom" value={current.headroom} onChange={v => setCurrent(prev => ({ ...prev, headroom: v as Headroom }))} options={["good", "too-much", "too-little", "face-cut"]} />
-            <SelectField label="Crop" value={current.crop} onChange={v => setCurrent(prev => ({ ...prev, crop: v as Crop }))} options={["good", "too-tight", "too-loose", "off-centre"]} />
-            <SelectField label="Background Clutter" value={current.backgroundClutter} onChange={v => setCurrent(prev => ({ ...prev, backgroundClutter: v as BackgroundClutter }))} options={["clean", "mild", "moderate", "severe"]} />
-            <SelectField label="Subject-Background Separation" value={current.separation} onChange={v => setCurrent(prev => ({ ...prev, separation: v as Separation }))} options={["strong", "adequate", "weak", "none"]} />
-            <SelectField label="Pose Suitability" value={current.poseSuitability} onChange={v => setCurrent(prev => ({ ...prev, poseSuitability: v as PoseSuitability }))} options={["good", "acceptable", "unsuitable"]} />
-            <SelectField label="Goal Suitability" value={current.goalSuitability} onChange={v => setCurrent(prev => ({ ...prev, goalSuitability: v as GoalSuitability }))} options={["good", "acceptable", "unsuitable"]} />
-            <SelectField label="Recommendation Relevance" value={current.recommendationRelevance} onChange={v => setCurrent(prev => ({ ...prev, recommendationRelevance: v as RecommendationRelevance }))} options={["high", "medium", "low", "not-supported"]} />
-            <SelectField label="Recommendation Supported by Evidence" value={current.recommendationSupported} onChange={v => setCurrent(prev => ({ ...prev, recommendationSupported: v as Supported }))} options={["yes", "partially", "no"]} />
-
-            <div>
-              <label className="mb-1 block text-xs text-gray-400">Notes (optional)</label>
-              <textarea className="w-full rounded-lg border border-white/[0.06] bg-white/[0.03] p-2 text-xs text-white" rows={2} value={current.notes || ""} onChange={e => setCurrent(prev => ({ ...prev, notes: e.target.value }))} />
+            <div className="mt-2 flex items-center justify-between">
+              <p className="text-[10px] text-gray-500">{image.label}</p>
+              <button className="text-[10px] text-red-400 hover:text-red-300" onClick={() => setDeleteConfirm(image.id)}>Delete</button>
             </div>
-
+          </Card>
+          <div className="space-y-3">
+            <Sel label="Usability" value={current.usability} onChange={v => setCurrent(p => ({ ...p, usability: v as Usability }))} opts={["good", "usable-with-limitations", "insufficient"]} />
+            <Sel label="Blur Severity" value={current.blurSeverity} onChange={v => setCurrent(p => ({ ...p, blurSeverity: v as BlurSeverity }))} opts={["none", "mild", "moderate", "severe"]} />
+            <Sel label="Exposure" value={current.exposure} onChange={v => setCurrent(p => ({ ...p, exposure: v as Exposure }))} opts={["normal", "underexposed", "overexposed", "severely-underexposed", "severely-overexposed"]} />
+            <Sel label="Face Visibility" value={current.faceVisibility} onChange={v => setCurrent(p => ({ ...p, faceVisibility: v as FaceVisibility }))} opts={["clear", "partial", "occluded", "none"]} />
+            <Sel label="Subject Size" value={current.subjectSize} onChange={v => setCurrent(p => ({ ...p, subjectSize: v as SubjectSize }))} opts={["large", "medium", "small", "tiny"]} />
+            <Sel label="Headroom" value={current.headroom} onChange={v => setCurrent(p => ({ ...p, headroom: v as Headroom }))} opts={["good", "too-much", "too-little", "face-cut"]} />
+            <Sel label="Crop" value={current.crop} onChange={v => setCurrent(p => ({ ...p, crop: v as Crop }))} opts={["good", "too-tight", "too-loose", "off-centre"]} />
+            <Sel label="Background Clutter" value={current.backgroundClutter} onChange={v => setCurrent(p => ({ ...p, backgroundClutter: v as BackgroundClutter }))} opts={["clean", "mild", "moderate", "severe"]} />
+            <Sel label="Subject-Background Separation" value={current.separation} onChange={v => setCurrent(p => ({ ...p, separation: v as Separation }))} opts={["strong", "adequate", "weak", "none"]} />
+            <Sel label="Pose Suitability" value={current.poseSuitability} onChange={v => setCurrent(p => ({ ...p, poseSuitability: v as PoseSuitability }))} opts={["good", "acceptable", "unsuitable"]} />
+            <Sel label="Goal Suitability" value={current.goalSuitability} onChange={v => setCurrent(p => ({ ...p, goalSuitability: v as GoalSuitability }))} opts={["good", "acceptable", "unsuitable"]} />
+            <Sel label="Recommendation Relevance" value={current.recommendationRelevance} onChange={v => setCurrent(p => ({ ...p, recommendationRelevance: v as RecommendationRelevance }))} opts={["high", "medium", "low", "not-supported"]} />
+            <Sel label="Recommendation Supported by Evidence" value={current.recommendationSupported} onChange={v => setCurrent(p => ({ ...p, recommendationSupported: v as Supported }))} opts={["yes", "partially", "no"]} />
+            <div>
+              <label className="mb-1 block text-xs text-gray-400">Notes</label>
+              <textarea className="w-full rounded-lg border border-white/[0.06] bg-white/[0.03] p-2 text-xs text-white" rows={2} value={current.notes || ""} onChange={e => setCurrent(p => ({ ...p, notes: e.target.value }))} />
+            </div>
             <div className="flex gap-2">
               <Button size="sm" onClick={() => handleSave(false)}>Save</Button>
               <Button size="sm" onClick={() => handleSave(true)}>Skip</Button>
@@ -248,13 +287,13 @@ export default function AnnotatePage() {
   );
 }
 
-function SelectField({ label, value, onChange, options }: { label: string; value?: string | null; onChange: (v: string) => void; options: string[] }) {
+function Sel({ label, value, onChange, opts }: { label: string; value?: string | null; onChange: (v: string) => void; opts: string[] }) {
   return (
     <div>
       <label className="mb-1 block text-xs text-gray-400">{label}</label>
       <select className="w-full rounded-lg border border-white/[0.06] bg-white/[0.03] p-2 text-xs text-white" value={value || ""} onChange={e => onChange(e.target.value)}>
         <option value="">— select —</option>
-        {options.map(o => <option key={o} value={o}>{o}</option>)}
+        {opts.map(o => <option key={o} value={o}>{o}</option>)}
       </select>
     </div>
   );
