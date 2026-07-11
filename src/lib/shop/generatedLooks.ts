@@ -418,7 +418,7 @@ function generateLooksFromTemplate(
           title,
           description: `${keywords.join(", ")} ${template.category}. Auto-matched from style taxonomy.`,
           category: template.category,
-          price: template.basePrice + Math.floor(Math.random() * 500),
+          price: template.basePrice,
           priceLabel: template.priceLabel,
           keywords,
           gender: template.gender,
@@ -430,7 +430,7 @@ function generateLooksFromTemplate(
           imageUrl: `/images/looks/gen-${template.gender}-${id}.svg`,
           imageAlt: title,
           isHero: false,
-          priorityScore: 60 + Math.floor(Math.random() * 20),
+          priorityScore: 70,
           createdAt: "2026-07-10",
         });
 
