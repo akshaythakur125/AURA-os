@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "eslint",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "datasets:list": "node scripts/dataset-status.mjs",
+    "datasets:status": "node scripts/dataset-status.mjs",
+    "analyser:benchmark": "node scripts/analyser-benchmark.mjs",
+    "analyser:safety": "node scripts/analyser-safety-check.mjs"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",

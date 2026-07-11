@@ -43,3 +43,20 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ponytail: dataset exclusions — raw images and model weights never in Git
+datasets/raw/
+datasets/cache/
+datasets/private/
+datasets/generated/
+datasets/*.tar.gz
+datasets/*.zip
+datasets/*.7z
+models/
+*.onnx
+*.pb
+*.pt
+*.pth
+*.weights
+artifacts/benchmarks/*.json
+artifacts/benchmarks/*.md
