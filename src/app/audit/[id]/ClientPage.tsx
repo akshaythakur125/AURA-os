@@ -30,6 +30,9 @@ import type { PersonalizationResult, SignalMismatch, GoalStrategy } from "@/type
 import { getBuyLinksForObservation, getTutorialLinks } from "@/lib/aura-engine/productLinks";
 import { ConversionFunnel } from "@/components/conversion/ConversionFunnel";
 import { CelebrityMatch } from "@/components/celebrity/CelebrityMatch";
+import { ScoreBreakdown } from "@/components/report/ScoreBreakdown";
+import { ImprovementRoadmap } from "@/components/report/ImprovementRoadmap";
+import { DynamicGoalAdvice } from "@/components/report/DynamicGoalAdvice";
 import { matchCelebrity, type MatchResult } from "@/lib/aura-engine/celebrityMatch";
 
 const auditTypeLabels: Record<string, string> = {
@@ -1302,125 +1305,22 @@ export default function AuditDetailPage() {
                       </div>
                     </FadeInView>
 
-                      <FadeInView delay={200}>
-                        <div className="mb-6 rounded-2xl border border-blue-500/20 bg-gradient-to-b from-blue-500/[0.08] to-transparent p-5 sm:p-6">
-                          <div className="mb-3 text-center">
-                            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1">
-                              <span className="text-xs">🎯</span>
-                              <span className="text-xs font-medium text-blue-300">
-                                {audit.goal === "dating" && "Going on a date?"}
-                                {audit.goal === "instagram" && "Posting on Instagram?"}
-                                {audit.goal === "college" && "Heading to college?"}
-                                {audit.goal === "office" && "Going to work?"}
-                                {audit.goal === "glowup" && "Working on your glow-up?"}
-                              </span>
-                            </div>
-                            <h3 className="text-lg font-bold text-white">
-                              {audit.goal === "dating" && "Look your best for tonight"}
-                              {audit.goal === "instagram" && "Get more likes with these fixes"}
-                              {audit.goal === "college" && "Stand out on campus today"}
-                              {audit.goal === "office" && "Look sharp and professional"}
-                              {audit.goal === "glowup" && "Your glow-up starts here"}
-                            </h3>
-                          </div>
-                          <div className="grid gap-2 sm:grid-cols-3">
-                            {audit.goal === "dating" && (
-                              <>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">💡</div>
-                                  <div className="text-xs font-medium text-white">Good lighting</div>
-                                  <div className="text-[10px] text-gray-500">Face a window</div>
-                                </div>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">👔</div>
-                                  <div className="text-xs font-medium text-white">Clean outfit</div>
-                                  <div className="text-[10px] text-gray-500">Solid colors work best</div>
-                                </div>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">📸</div>
-                                  <div className="text-xs font-medium text-white">Good angle</div>
-                                  <div className="text-[10px] text-gray-500">Slight tilt, eye level</div>
-                                </div>
-                              </>
-                            )}
-                            {audit.goal === "instagram" && (
-                              <>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">🌈</div>
-                                  <div className="text-xs font-medium text-white">Color pop</div>
-                                  <div className="text-[10px] text-gray-500">One bold color item</div>
-                                </div>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">🖼️</div>
-                                  <div className="text-xs font-medium text-white">Clean background</div>
-                                  <div className="text-[10px] text-gray-500">Less clutter = more likes</div>
-                                </div>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">✨</div>
-                                  <div className="text-xs font-medium text-white">Good pose</div>
-                                  <div className="text-[10px] text-gray-500">Confident &gt; perfect</div>
-                                </div>
-                              </>
-                            )}
-                            {audit.goal === "college" && (
-                              <>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">👟</div>
-                                  <div className="text-xs font-medium text-white">Clean sneakers</div>
-                                  <div className="text-[10px] text-gray-500">White always works</div>
-                                </div>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">👕</div>
-                                  <div className="text-xs font-medium text-white">Fitted tee</div>
-                                  <div className="text-[10px] text-gray-500">Not too baggy</div>
-                                </div>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">⌚</div>
-                                  <div className="text-xs font-medium text-white">One accessory</div>
-                                  <div className="text-[10px] text-gray-500">Watch or bracelet</div>
-                                </div>
-                              </>
-                            )}
-                            {audit.goal === "office" && (
-                              <>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">👔</div>
-                                  <div className="text-xs font-medium text-white">Ironed shirt</div>
-                                  <div className="text-[10px] text-gray-500">Wrinkles kill confidence</div>
-                                </div>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">👞</div>
-                                  <div className="text-xs font-medium text-white">Polished shoes</div>
-                                  <div className="text-[10px] text-gray-500">People notice shoes</div>
-                                </div>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">💇</div>
-                                  <div className="text-xs font-medium text-white">Neat grooming</div>
-                                  <div className="text-[10px] text-gray-500">Trimmed beard/hair</div>
-                                </div>
-                              </>
-                            )}
-                            {audit.goal === "glowup" && (
-                              <>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">🧴</div>
-                                  <div className="text-xs font-medium text-white">Skincare</div>
-                                  <div className="text-[10px] text-gray-500">Moisturize daily</div>
-                                </div>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">💪</div>
-                                  <div className="text-xs font-medium text-white">Posture</div>
-                                  <div className="text-[10px] text-gray-500">Stand tall, shoulders back</div>
-                                </div>
-                                <div className="rounded-xl bg-white/[0.03] p-3 text-center">
-                                  <div className="mb-1 text-lg">🎨</div>
-                                  <div className="text-xs font-medium text-white">Color palette</div>
-                                  <div className="text-[10px] text-gray-500">Stick to 2-3 colors</div>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        </div>
+                                            <FadeInView delay={200}>
+                        <DynamicGoalAdvice
+                          goal={audit.goal || "glowup"}
+                          metrics={{
+                            lightingScore: displayResult.imageMetrics.lightingScore,
+                            clarityScore: displayResult.imageMetrics.clarityScore,
+                            groomingScore: Math.round((displayResult.imageMetrics.hairRegion?.neatnessScore || 50) + (displayResult.imageMetrics.skinRegion?.evenness || 50)) / 2,
+                            expressionScore: displayResult.imageMetrics.symmetryScore || 50,
+                            clothingScore: displayResult.imageMetrics.clothingRegion?.contrastWithSkin || 50,
+                            backgroundComplexityEstimate: displayResult.imageMetrics.backgroundComplexityEstimate || 50,
+                            symmetryScore: displayResult.imageMetrics.symmetryScore || 50,
+                            faceBrightness: displayResult.imageMetrics.faceBrightness || 50,
+                            saturation: displayResult.imageMetrics.saturation || 45,
+                            imageDullness: displayResult.imageMetrics.imageDullness || 30,
+                          }}
+                        />
                       </FadeInView>
                     </>
 
@@ -1520,38 +1420,30 @@ export default function AuditDetailPage() {
                     </Card>
                     </FadeInView>
 
-                    <FadeInView delay={400}>
-                      <Card className="mb-6">
-                        <h3 className="mb-3 text-sm font-semibold text-white">
-                          Image Signal Metrics
-                        </h3>
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                          {[
-                            { label: "Lighting", value: displayResult.imageMetrics.lightingScore },
-                            { label: "Clarity", value: displayResult.imageMetrics.clarityScore },
-                            { label: "Composition", value: displayResult.imageMetrics.compositionScore },
-                            { label: "Contrast", value: displayResult.imageMetrics.contrast },
-                            { label: "Saturation", value: displayResult.imageMetrics.saturation },
-                            { label: "Resolution", value: displayResult.imageMetrics.resolutionScore },
-                          ].map((m) => (
-                            <div key={m.label} className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
-                              <div className="text-xs text-gray-500">{m.label}</div>
-                              <div className="mt-1 flex items-center gap-2">
-                                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
-                                  <div
-                                    className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-1000 ease-out"
-                                    style={{ width: `${m.value}%` }}
-                                  />
-                                </div>
-                                <span className="text-xs text-white">
-                                  <CountUp target={m.value} duration={1000} />
-                                </span>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </Card>
+                    <FadeInView delay={370}>
+                      <ImprovementRoadmap
+                        metrics={{
+                          lightingScore: displayResult.imageMetrics.lightingScore,
+                          clarityScore: displayResult.imageMetrics.clarityScore,
+                          compositionScore: displayResult.imageMetrics.compositionScore,
+                          groomingScore: Math.round((displayResult.imageMetrics.hairRegion?.neatnessScore || 50) + (displayResult.imageMetrics.skinRegion?.evenness || 50)) / 2,
+                          expressionScore: displayResult.imageMetrics.symmetryScore || 50,
+                          backgroundComplexityEstimate: displayResult.imageMetrics.backgroundComplexityEstimate || 50,
+                          symmetryScore: displayResult.imageMetrics.symmetryScore || 50,
+                        }}
+                      />
                     </FadeInView>
+
+                    <ScoreBreakdown
+                        lighting={displayResult.imageMetrics.lightingScore}
+                        clarity={displayResult.imageMetrics.clarityScore}
+                        composition={displayResult.imageMetrics.compositionScore}
+                        contrast={displayResult.imageMetrics.contrast}
+                        grooming={Math.round(((displayResult.imageMetrics.hairRegion?.neatnessScore || 50) + (displayResult.imageMetrics.skinRegion?.evenness || 50)) / 2)}
+                        expression={displayResult.imageMetrics.symmetryScore || 50}
+                        symmetry={displayResult.imageMetrics.symmetryScore || 50}
+                        colorBalance={displayResult.imageMetrics.saturation}
+                      />
                   </>
                 );
               })()}
