@@ -2,6 +2,8 @@ import type { Audit, FreeAuraResult, StatusLeak, QuickFix } from "@/types/audit"
 import { createLocalId } from "@/types/audit";
 import { analyzeImageDataUrl } from "./imageMetrics";
 import { calculateAuraScore, determineCategory, generateVerdict } from "./scoring";
+import { runIntelligenceAnalysis } from "./intelligence";
+import type { IntelligenceResult } from "./intelligence";
 import { getBudgetUpgradePlan } from "./budgetPlans";
 
 function generateStatusLeaks(score: number, metrics: import("@/types/audit").ImageSignalMetrics): StatusLeak[] {
@@ -161,11 +163,30 @@ function findStrongestSignals(metrics: import("@/types/audit").ImageSignalMetric
   return signals;
 }
 
-export async function generateFreeAuraReport(audit: Audit): Promise<FreeAuraResult> {
+export async function generateFreeAuraReport(
+  audit: Audit,
+  visionResults?: {
+    scores: { lighting: number; background: number; outfit: number; grooming: number; expression: number; overall: number };
+    observations: Array<{ category: string; severity: string; title: string; detail: string; suggestion: string; confidence: number }>;
+    topLeak?: string;
+    quickFixes?: Array<{ title: string; description: string; impact: number }>;
+    improvementTips?: string[];
+  }
+): Promise<FreeAuraResult> {
   if (!audit.imageDataUrl) {
     throw new Error("No image data available for this audit.");
   }
   const metrics = await analyzeImageDataUrl(audit.imageDataUrl);
+
+  // Run intelligence analysis with vision results if available
+  let intelligenceResult: IntelligenceResult | null = null;
+  if (visionResults) {
+    intelligenceResult = runIntelligenceAnalysis({
+      goal: audit.goal,
+      metrics,
+      visionScores: visionResults.scores,
+    });
+  }
 
   const score = calculateAuraScore({
     auditType: audit.auditType,
@@ -180,6 +201,33 @@ export async function generateFreeAuraReport(audit: Audit): Promise<FreeAuraResu
   const statusLeaks = generateStatusLeaks(score, metrics);
   const quickFixes = generateQuickFixes(metrics);
   const budgetUpgradePlan = getBudgetUpgradePlan(audit.budgetRange);
+
+  // If intelligence analysis ran, use its enhanced results
+  if (intelligenceResult) {
+    return {
+      auraScore: intelligenceResult.auraScore,
+      category,
+      oneLineVerdict: intelligenceResult.goalSpecificAdvice || oneLineVerdict,
+      strongestSignals: [
+        ...strongestSignals,
+        ...intelligenceResult.personalizedInsights.slice(0, 2),
+      ],
+      statusLeaks: statusLeaks.map((leak, i) => ({
+        ...leak,
+        description: intelligenceResult.observations[i]?.insight || leak.description,
+        fix: intelligenceResult.observations[i]?.action || leak.fix,
+      })),
+      quickFixes: intelligenceResult.quickWins.map((qw) => ({
+        title: qw.title,
+        description: qw.description,
+        effort: qw.effort,
+        cost: "free",
+      })),
+      budgetUpgradePlan,
+      imageMetrics: metrics,
+      generatedAt: new Date().toISOString(),
+    };
+  }
 
   return {
     auraScore: score,

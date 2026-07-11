@@ -48,6 +48,13 @@ export interface Audit {
   datingProfileReport?: DatingProfileReport;
   glowupPlan?: GlowupPlan;
   unlockedProducts?: import("./payment").ProductType[];
+  visionResults?: {
+    scores: { lighting: number; background: number; outfit: number; grooming: number; expression: number; overall: number };
+    observations: Array<{ category: string; severity: string; title: string; detail: string; suggestion: string; confidence: number }>;
+    topLeak?: string;
+    quickFixes?: Array<{ title: string; description: string; impact: number }>;
+    improvementTips?: string[];
+  };
   createdAt: string;
   updatedAt: string;
 }

@@ -16,6 +16,8 @@ import {
   generateVerdict,
 } from "./scoring";
 import { calculateImprovementScore, getBeforeAfter } from "./productLinks";
+import { runIntelligenceAnalysis } from "./intelligence";
+import type { IntelligenceResult } from "./intelligence";
 
 function clamp(value: number, min = 0, max = 100): number {
   return Math.round(Math.min(max, Math.max(min, value)));
@@ -621,7 +623,14 @@ function generateFinalVerdict(
 }
 
 export async function generateFullAuraReport(
-  audit: Audit
+  audit: Audit,
+  visionResults?: {
+    scores: { lighting: number; background: number; outfit: number; grooming: number; expression: number; overall: number };
+    observations: Array<{ category: string; severity: string; title: string; detail: string; suggestion: string; confidence: number }>;
+    topLeak?: string;
+    quickFixes?: Array<{ title: string; description: string; impact: number }>;
+    improvementTips?: string[];
+  }
 ): Promise<FullAuraReportContent> {
   const metrics = audit.fullReport?.freeResult?.imageMetrics
     ? audit.fullReport.freeResult.imageMetrics
@@ -633,12 +642,25 @@ export async function generateFullAuraReport(
     throw new Error("No image data available to generate full report.");
   }
 
-  const score = calculateAuraScore({
+  // Run intelligence analysis with vision results if available
+  let intelligenceResult: IntelligenceResult | null = null;
+  if (visionResults) {
+    intelligenceResult = runIntelligenceAnalysis({
+      goal: audit.goal,
+      metrics,
+      visionScores: visionResults.scores,
+    });
+  }
+
+  const baseScore = calculateAuraScore({
     auditType: audit.auditType,
     goal: audit.goal,
     budgetRange: audit.budgetRange,
     metrics,
   });
+
+  // Use intelligence score if available, otherwise use heuristic score
+  const score = intelligenceResult ? intelligenceResult.auraScore : baseScore;
 
   const category = determineCategory(score, metrics);
   const oneLineFromFree = audit.fullReport?.freeResult?.oneLineVerdict || generateVerdict(score, category || "Clean but Basic");

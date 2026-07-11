@@ -14,6 +14,7 @@ import { CountUp } from "@/components/ui/CountUp";
 import { getAuditById, updateAudit, deleteAudit, createAudit } from "@/lib/storage/auditStore";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
+import { runLocalVisionAnalysis } from "@/lib/aura-engine/localVision";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
 import { ReferralShare } from "@/components/referral/ReferralShare";
@@ -304,7 +305,17 @@ export default function AuditDetailPage() {
     trackEvent(EVENTS.ANALYSIS_STARTED, { auditId: audit.id });
 
     try {
-      const report = await generateFreeAuraReport(audit);
+      // Run local CLIP vision analysis if not already done
+      let visionResults = audit.visionResults;
+      if (!visionResults && audit.imageDataUrl) {
+        const vr = await runLocalVisionAnalysis(audit.imageDataUrl);
+        if (vr) {
+          visionResults = vr;
+          updateAudit(audit.id, { visionResults });
+        }
+      }
+
+      const report = await generateFreeAuraReport(audit, visionResults);
       setResult(report);
 
       const personalization = generateStatusArchetype(audit, report.imageMetrics);
