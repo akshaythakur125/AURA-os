@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
+import { finalizeOrder } from "@/lib/billing/orders";
 
 // ponytail: Razorpay webhook handler — verifies signature, processes payment events
 // No database yet — logs events and returns 200. Add DB when Supabase schema is ready.
@@ -50,10 +51,14 @@ export async function POST(request: Request) {
   // Handle payment events
   switch (eventType) {
     case "payment.authorized":
-    case "payment.captured":
-      // ponytail: when DB exists, finalize order + create entitlement here
-      // await finalizeOrder(paymentEntity.order_id, paymentEntity.id, paymentEntity.amount);
+    case "payment.captured": {
+      // ponytail: finalize order + create entitlement via billing lib (Supabase when configured)
+      const pe = payData;
+      if (pe?.order_id && pe?.id) {
+        await finalizeOrder(pe.order_id as string, pe.id as string);
+      }
       break;
+    }
     case "payment.failed":
       // Mark order as failed
       break;

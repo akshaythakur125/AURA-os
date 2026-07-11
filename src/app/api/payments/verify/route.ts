@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { getAnonymousId } from "@/lib/storage/anonymousId";
 import { isAdminUnlockCode } from "@/lib/payments/serverUnlock";
+import { finalizeOrder } from "@/lib/billing/orders";
 import type { ProductType } from "@/types/payment";
 
 export const dynamic = "force-dynamic";
@@ -47,6 +48,8 @@ export async function POST(request: Request) {
       if (!isValid) {
         return Response.json({ valid: false, message: "Payment verification failed." }, { status: 401 });
       }
+      // ponytail: finalize order + create entitlement in Supabase (when configured)
+      await finalizeOrder(razorpay_order_id, razorpay_payment_id);
       return Response.json({ valid: true, message: "Payment verified successfully." });
     }
 
