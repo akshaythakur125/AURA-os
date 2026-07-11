@@ -20,6 +20,8 @@ const FEATURES = [
   { icon: "📍", text: "Nearby salons, gyms, and studios" },
   { icon: "🎨", text: "Color palette recommendations for your skin tone" },
   { icon: "📈", text: "Before vs after improvement preview" },
+  { icon: "🎴", text: "Shareable score card — download & share on Instagram" },
+  { icon: "🛍️", text: "Personalized product picks — styled for your skin & budget" },
 ];
 
 export function PaywallPopup({ open, onClose, auditId, trigger }: PaywallPopupProps) {
