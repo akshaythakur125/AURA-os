@@ -1,5 +1,6 @@
 import { detectUndertone } from "./engines/undertoneEngine";
 import { runQualityGate } from "./engines/qualityGate";
+import { analyzeImage, type VisionAnalysis } from "../vision/providers";
 import { assessGrooming } from "./engines/groomingEngine";
 import { detectStyle } from "./engines/styleDetectionEngine";
 import { getColorPalette } from "./engines/colorPaletteEngine";
@@ -846,6 +847,7 @@ export function analyzeImageDataUrl(
           detectedStyle: { detectedStyle: styleResult.detectedStyle, confidence: styleResult.confidence, reasoning: styleResult.reasoning, upgradePath: styleResult.upgradePath },
           // ponytail: color palette uses default occasion, goal-specific wiring in report generation
           colorPalette: getColorPalette(undertoneResult.undertone, undertoneResult.skinDepth, "default"),
+          visionAnalysis: null, // ponytail: populated async by analyzeVision()
         });
       } catch {
         resolve(fallbackMetrics(img.width, img.height));
@@ -897,6 +899,7 @@ function fallbackMetrics(w: number, h: number): ImageSignalMetrics {
     backgroundObjects: { isIndoor: true, hasPlants: false, hasFurniture: false, hasArtwork: false, clutterLevel: 30 },
     undertone: { undertone: "neutral" as const, skinDepth: "medium" as const, confidence: 0 },
     qualityGate: { qualityScore: 50, issues: [], canProceed: true, message: "Fallback metrics — analysis skipped" },
+    visionAnalysis: null,
     groomingResult: { overallScore: 50, hairNeatness: 50, skinClarity: 50, facialHair: 50, eyebrows: 50, assessment: "Unable to assess", topFix: "Upload a clearer photo for accurate grooming analysis." },
     detectedStyle: { detectedStyle: "unknown", confidence: 0, reasoning: "Insufficient data", upgradePath: "Upload a clearer photo." },
     colorPalette: { name: "Default", colors: ["white", "black", "navy", "grey"], avoid: ["neon"], reasoning: "Using defaults — upload a photo for personalized colors." },

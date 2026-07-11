@@ -175,6 +175,12 @@ export interface ImageSignalMetrics {
     canProceed: boolean;
     message: string;
   };
+  visionAnalysis?: {
+    faceDetection: { bbox: { x: number; y: number; width: number; height: number }; confidence: number; headPose: { yaw: number; pitch: number; roll: number } } | null;
+    segmentation: { confidence: number } | null;
+    pose: { headTilt: number; headYaw: number; faceCenterX: number; faceSizeRatio: number } | null;
+    processingTime: number;
+  } | null;
   groomingResult?: {
     overallScore: number;
     hairNeatness: number;
