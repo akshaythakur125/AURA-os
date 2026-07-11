@@ -104,8 +104,8 @@ function generateWeek2(): WeekPlan {
     {
       day: 13,
       category: "grooming",
-      title: "Fragrance check",
-      description: "If you use fragrance, pick one mild, versatile option for daily wear. If not, consider a mild deodorant that does not clash with your natural scent.",
+      title: "Grooming basics check",
+      description: "Review your grooming basics — skincare, hair products, and overall presentation.",
       effort: "easy",
     },
     {

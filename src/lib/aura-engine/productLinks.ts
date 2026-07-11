@@ -188,7 +188,7 @@ export function calculateImprovementScore(
   const freeFixCount = improvements.filter((i) => i.fixable).length;
   const message = delta <= 5
     ? `Your score is already strong. The remaining improvements are subtle refinements.`
-    : `With ${freeFixCount} free fixes, you could boost your aura from ${currentScore} to ${potentialScore} — a +${delta} point jump.`;
+    : `With ${freeFixCount} free fixes, you could improve your photo presentation from ${currentScore} to ${potentialScore} — a +${delta} point jump.`;
 
   return {
     currentScore,

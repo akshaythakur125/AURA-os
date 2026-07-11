@@ -74,7 +74,7 @@ export function assessGrooming(metrics: {
   } else if (overallScore >= 55) {
     assessment = "Decent grooming. A few small improvements will make a noticeable difference.";
   } else if (overallScore >= 35) {
-    assessment = "Grooming needs attention. Basic fixes (haircut, skin care) will boost your score significantly.";
+    assessment = "Grooming needs attention. Basic fixes (haircut, skin care) can improve your score significantly.";
   } else {
     assessment = "Grooming is the #1 area to improve. Start with basics: haircut, moisturize, shape brows.";
   }

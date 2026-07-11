@@ -327,7 +327,7 @@ function generateTieredBudgetPlan(_budget: number): TieredBudgetPlan {
     under25000: [
       "Small wardrobe capsule — 3-5 coordinated outfits",
       "Professional photoshoot for profile photos",
-      "Premium grooming — skin, hair, nails, fragrance",
+      "Premium grooming — skincare, hair products, styling",
       "Fitness or grooming program (3-month commitment)",
     ],
   };

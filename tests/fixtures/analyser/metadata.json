@@ -1,0 +1,10 @@
+{
+  "version": "1.0.0",
+  "description": "Analyser evaluation fixture metadata. Images stored separately — never commit private user photos.",
+  "fixtures": [],
+  "rules": {
+    "sourceTypes": ["licensed", "synthetic", "generated", "consented-local"],
+    "excludedFromGit": ["local-private/"],
+    "requiredFields": ["imageId", "sourceType", "expectedUsability", "expectedConditions"]
+  }
+}
