@@ -1,3 +1,7 @@
+import { detectUndertone } from "./engines/undertoneEngine";
+import { runQualityGate } from "./engines/qualityGate";
+import { assessGrooming } from "./engines/groomingEngine";
+import { detectStyle } from "./engines/styleDetectionEngine";
 import type { ImageSignalMetrics } from "@/types/audit";
 
 const ANALYSIS_WIDTH = 256;
@@ -742,6 +746,42 @@ export function analyzeImageDataUrl(
         // ─── Region analysis: hair, clothing, skin, accessories ───
         const regionData = analyzeRegions(imageData.data, w, h, faceZone);
 
+        // ─── Run dedicated engines ───
+        const undertoneResult = detectUndertone(stats.r.slice(0, 500), stats.g.slice(0, 500), stats.b.slice(0, 500));
+
+        const qualityResult = runQualityGate({
+          width: img.width,
+          height: img.height,
+          avgBrightness: brightness,
+          brightnessStdDev: stdDev(stats.brightnessValues, brightness),
+          faceDetected: faceZone.density > 0.01,
+          faceAreaPct: Math.round(faceZone.density * 100),
+        });
+
+        const groomingResult = assessGrooming({
+          hairNeatness: regionData.hairRegion.neatnessScore,
+          hairEdgeDensity: regionData.hairRegion.edgeDensity,
+          skinEvenness: regionData.skinRegion.evenness,
+          skinBrightnessVariance: regionData.skinRegion.brightnessVariance,
+          clarityScore: clarityScore,
+          faceDetected: faceZone.density > 0.01,
+          faceBrightness: zoneAnalysis.faceBrightness,
+          accessoryCount: regionData.accessoryDetection.accessoryCount,
+          hasGlasses: regionData.accessoryDetection.hasGlasses,
+        });
+
+        const styleResult = detectStyle({
+          clothingColorVariety: regionData.clothingRegion.colorVariety,
+          clothingStyleSignal: regionData.clothingRegion.styleSignal,
+          clothingContrastWithSkin: regionData.clothingRegion.contrastWithSkin,
+          backgroundComplexity: backgroundComplexityEstimate,
+          accessoryCount: regionData.accessoryDetection.accessoryCount,
+          hasGlasses: regionData.accessoryDetection.hasGlasses,
+          dominantHue: colorAnalysis.dominantHue,
+          overallBrightness: brightness,
+          symmetryScore: symmetryAnalysis.symmetryScore,
+        });
+
         resolve({
           width: img.width,
           height: img.height,
@@ -777,6 +817,11 @@ export function analyzeImageDataUrl(
           skinRegion: regionData.skinRegion,
           accessoryDetection: regionData.accessoryDetection,
           backgroundObjects: regionData.backgroundObjects,
+          // ─── Engine results ───
+          undertone: { undertone: undertoneResult.undertone, skinDepth: undertoneResult.skinDepth, confidence: undertoneResult.confidence },
+          qualityGate: { qualityScore: qualityResult.qualityScore, issues: qualityResult.issues, canProceed: qualityResult.canProceed, message: qualityResult.message },
+          groomingResult: { overallScore: groomingResult.overallScore, hairNeatness: groomingResult.hairNeatness, skinClarity: groomingResult.skinClarity, facialHair: groomingResult.facialHair, eyebrows: groomingResult.eyebrows, assessment: groomingResult.assessment, topFix: groomingResult.topFix },
+          detectedStyle: { detectedStyle: styleResult.detectedStyle, confidence: styleResult.confidence, reasoning: styleResult.reasoning, upgradePath: styleResult.upgradePath },
         });
       } catch {
         resolve(fallbackMetrics(img.width, img.height));

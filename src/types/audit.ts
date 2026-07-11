@@ -163,6 +163,39 @@ export interface ImageSignalMetrics {
     hasArtwork: boolean;
     clutterLevel: number;
   };
+  // ─── Engine results (computed in analysis pipeline) ───
+  undertone?: {
+    undertone: "warm" | "cool" | "neutral";
+    skinDepth: "fair" | "light" | "medium" | "olive" | "dark" | "deep";
+    confidence: number;
+  };
+  qualityGate?: {
+    qualityScore: number;
+    issues: string[];
+    canProceed: boolean;
+    message: string;
+  };
+  groomingResult?: {
+    overallScore: number;
+    hairNeatness: number;
+    skinClarity: number;
+    facialHair: number;
+    eyebrows: number;
+    assessment: string;
+    topFix: string;
+  };
+  detectedStyle?: {
+    detectedStyle: string;
+    confidence: number;
+    reasoning: string;
+    upgradePath: string;
+  };
+  colorPalette?: {
+    name: string;
+    colors: string[];
+    avoid: string[];
+    reasoning: string;
+  };
 }
 
 export interface FreeAuraResult {
