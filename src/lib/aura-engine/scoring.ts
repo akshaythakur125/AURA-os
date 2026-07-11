@@ -13,6 +13,11 @@ const GOAL_BONUSES: Record<AuditGoal, { lighting: number; clarity: number; compo
   college: { lighting: 0, clarity: 0, composition: 0 },
   office: { lighting: 3, clarity: 5, composition: 3 },
   glowup: { lighting: 5, clarity: 5, composition: 5 },
+  content: { lighting: 10, clarity: 8, composition: 5 },
+  linkedin: { lighting: 3, clarity: 5, composition: 3 },
+  festival: { lighting: 8, clarity: 5, composition: 3 },
+  travel: { lighting: 8, clarity: 5, composition: 5 },
+  confidence: { lighting: 5, clarity: 5, composition: 5 },
 };
 
 const TYPE_BONUSES: Record<AuditType, { lighting: number; clarity: number; composition: number }> = {

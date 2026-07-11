@@ -78,6 +78,56 @@ const GOAL_PROFILES: Record<AuditGoal, DimensionWeight> = {
     colorHarmony: 0.05,  // Color coordination
     sharpness: 0.05,     // Quality upgrade
   },
+  content: {
+    lighting: 0.18,
+    background: 0.15,
+    outfit: 0.18,
+    grooming: 0.10,
+    expression: 0.12,
+    composition: 0.15,
+    colorHarmony: 0.08,
+    sharpness: 0.04,
+  },
+  linkedin: {
+    lighting: 0.18,
+    background: 0.18,
+    outfit: 0.22,
+    grooming: 0.15,
+    expression: 0.10,
+    composition: 0.10,
+    colorHarmony: 0.04,
+    sharpness: 0.03,
+  },
+  festival: {
+    lighting: 0.15,
+    background: 0.08,
+    outfit: 0.22,
+    grooming: 0.12,
+    expression: 0.18,
+    composition: 0.10,
+    colorHarmony: 0.08,
+    sharpness: 0.07,
+  },
+  travel: {
+    lighting: 0.18,
+    background: 0.18,
+    outfit: 0.15,
+    grooming: 0.12,
+    expression: 0.15,
+    composition: 0.12,
+    colorHarmony: 0.05,
+    sharpness: 0.05,
+  },
+  confidence: {
+    lighting: 0.18,
+    background: 0.12,
+    outfit: 0.18,
+    grooming: 0.20,
+    expression: 0.12,
+    composition: 0.10,
+    colorHarmony: 0.05,
+    sharpness: 0.05,
+  },
 };
 
 // ─── Indian Market Context ───

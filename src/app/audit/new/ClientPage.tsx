@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
@@ -27,12 +28,17 @@ import type {
 } from "@/types/personalization";
 import { detectUnsafePromptText, getSafetyWarningForAudit } from "@/lib/safety/contentSafety";
 
-const GOALS: { id: AuditGoal; label: string; desc: string; icon: string }[] = [
-  { id: "dating", label: "Dating", desc: "Make my profile irresistible", icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" },
-  { id: "instagram", label: "Instagram", desc: "Level up my grid aesthetic", icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" },
-  { id: "college", label: "College", desc: "Stand out on campus", icon: "M12 14l9-5-9-5-9 5 9 5z" },
-  { id: "office", label: "Office", desc: "Look sharp professionally", icon: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" },
-  { id: "glowup", label: "General Glow-Up", desc: "Fix everything at once", icon: "M13 10V3L4 14h7v7l9-11h-7z" },
+const GOALS: { id: AuditGoal; label: string; desc: string; icon: string; emoji: string; color: string }[] = [
+  { id: "dating", label: "Dating", desc: "Make my profile irresistible", icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z", emoji: "❤️", color: "from-rose-500 to-pink-500" },
+  { id: "instagram", label: "Instagram", desc: "Level up my grid", icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z", emoji: "📸", color: "from-purple-500 to-fuchsia-500" },
+  { id: "content", label: "Content Creator", desc: "Build my visual brand", icon: "M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z", emoji: "🎬", color: "from-violet-500 to-purple-500" },
+  { id: "linkedin", label: "LinkedIn", desc: "Professional headshot", icon: "M16 8a6 6 0 01-12 0 6 6 0 0112 0zM2 21a8 8 0 0116 0", emoji: "💼", color: "from-blue-500 to-cyan-500" },
+  { id: "college", label: "College", desc: "Stand out on campus", icon: "M12 14l9-5-9-5-9 5 9 5z", emoji: "🎓", color: "from-emerald-500 to-teal-500" },
+  { id: "festival", label: "Festival / Party", desc: "Bold, photogenic look", icon: "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z", emoji: "⭐", color: "from-amber-500 to-orange-500" },
+  { id: "travel", label: "Travel", desc: "Vivid travel photos", icon: "M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z", emoji: "🌍", color: "from-sky-500 to-blue-500" },
+  { id: "confidence", label: "Confidence", desc: "See your best self", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z", emoji: "🕊", color: "from-teal-500 to-emerald-500" },
+  { id: "office", label: "Office", desc: "Corporate sharp look", icon: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z", emoji: "👔", color: "from-slate-500 to-gray-500" },
+  { id: "glowup", label: "Glow-Up", desc: "Total transformation", icon: "M13 10V3L4 14h7v7l9-11h-7z", emoji: "⚡", color: "from-yellow-500 to-amber-500" },
 ];
 
 const STYLE_OPTIONS: { id: StyleIntent; label: string }[] = [
@@ -255,40 +261,48 @@ export default function NewAuditPage() {
                     We&apos;ll personalize your results around this.
                   </p>
                 </div>
-                <div className="grid gap-3">
-                  {GOALS.map((g) => (
-                    <button
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {GOALS.map((g, i) => (
+                    <motion.button
                       key={g.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.05, duration: 0.3 }}
+                      whileHover={{ scale: 1.03, y: -2 }}
+                      whileTap={{ scale: 0.97 }}
                       onClick={() => setGoal(g.id)}
-                      className={`group flex items-center gap-4 rounded-xl border p-4 text-left transition-all duration-200 ${
+                      className={`group relative flex flex-col items-center gap-2 rounded-2xl border p-4 text-center transition-all duration-200 ${
                         goal === g.id
-                          ? "border-purple-500/50 bg-purple-500/10 ring-1 ring-purple-500/20"
-                          : "border-white/[0.04] bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.04]"
+                          ? "border-purple-500/50 bg-purple-500/10 ring-2 ring-purple-500/30 shadow-lg shadow-purple-500/10"
+                          : "border-white/[0.06] bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.04]"
                       }`}
                     >
-                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-colors ${
-                        goal === g.id
-                          ? "bg-gradient-to-br from-purple-600 to-pink-500"
-                          : "bg-white/5 group-hover:bg-white/10"
-                      }`}>
-                        <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={g.icon} />
-                        </svg>
+                      {goal === g.id && (
+                        <motion.div
+                          layoutId="goal-glow"
+                          className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/10 to-pink-500/5"
+                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                        />
+                      )}
+                      <div className={`relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${g.color} text-lg shadow-lg`}>
+                        {g.emoji}
                       </div>
-                      <div>
-                        <div className="text-sm font-medium text-white">{g.label}</div>
-                        <div className="text-xs text-gray-500">{g.desc}</div>
+                      <div className="relative">
+                        <div className="text-sm font-semibold text-white">{g.label}</div>
+                        <div className="text-[11px] text-gray-500">{g.desc}</div>
                       </div>
                       {goal === g.id && (
-                        <div className="ml-auto">
-                          <div className="h-5 w-5 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 flex items-center justify-center">
-                            <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                            </svg>
-                          </div>
-                        </div>
+                        <motion.div
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 flex items-center justify-center shadow-md"
+                        >
+                          <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </motion.div>
                       )}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               </div>

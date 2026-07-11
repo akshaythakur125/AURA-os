@@ -2,7 +2,7 @@ import type { DeepAuditInput, PersonalizationResult } from "./personalization";
 
 export type AuditType = "photo" | "instagram" | "dating" | "outfit" | "room";
 
-export type AuditGoal = "dating" | "instagram" | "college" | "office" | "glowup";
+export type AuditGoal = "dating" | "instagram" | "college" | "office" | "glowup" | "linkedin" | "content" | "festival" | "travel" | "confidence";
 
 export type BudgetAmount = 0 | 2000 | 5000 | 10000 | 25000;
 

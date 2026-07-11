@@ -86,6 +86,61 @@ export function generateGoalStrategy(
           "Solid well-fitted shirt or blazer in neutral tones. Minimal accessories. Clean, polished grooming. Less is more in professional contexts.",
       };
 
+    case "linkedin":
+      return {
+        goal: "LinkedIn / Professional Branding",
+        strategyTitle: "Executive presence, digital-first",
+        whatToOptimize: "Optimize for trust and competence. LinkedIn photos should feel polished but not stiff. Clean background, good lighting, and a genuine expression signal that you're approachable and professional.",
+        whatToAvoid: "Avoid mirror selfies, vacation photos, group shots, or anything you'd be embarrassed to show a recruiter. No heavy filters or cropping from casual photos.",
+        bestNextMove: "Retake with a solid background (white, grey, or blurred office) and even front lighting. Wear a solid neutral top.",
+        suggestedPhotoDirection: "Chest-up, solid background, even lighting, slight smile. The standard LinkedIn headshot formula works for a reason.",
+        suggestedStyleDirection: "Solid shirt or blazer in neutral tones. Minimal jewelry. Clean grooming. One look that says 'I have my life together.'",
+      };
+
+    case "content":
+      return {
+        goal: "Content Creator / Influencer",
+        strategyTitle: "Signature visual identity",
+        whatToOptimize: "Optimize for recognizability. Your visual style IS your brand. Pick a color palette, lighting style, and framing approach — then repeat it until people recognize your content before seeing your name.",
+        whatToAvoid: "Don't copy trending aesthetics that don't suit you. Avoid inconsistent quality between posts. Don't sacrifice your visual identity for virality.",
+        bestNextMove: "Pick 2-3 colors that complement your skin tone and use them in every post. Consistency beats perfection.",
+        suggestedPhotoDirection: "Find your signature angle and lighting setup. Use it for everything. People should recognize your content instantly.",
+        suggestedStyleDirection: "Build a visual identity through color, texture, and recurring elements. Your outfit, background, and editing style should all feel like they belong together.",
+      };
+
+    case "festival":
+      return {
+        goal: "Festival / Party Look",
+        strategyTitle: "Bold, photogenic, memorable",
+        whatToOptimize: "Optimize for impact. Festivals and parties are about standing out — bold colors, confident posing, and good lighting (even phone flash) make the difference between a forgettable and an iconic photo.",
+        whatToAvoid: "Avoid washed-out colors, blurry shots, or dark backgrounds where you disappear. Also avoid over-accessorizing — one statement piece, not five.",
+        bestNextMove: "Wear one bold-color piece and stand near a light source. Ask someone to take the photo from slightly above eye level.",
+        suggestedPhotoDirection: "Eye-level or slightly above, good lighting on your face, bold outfit as the visual anchor. Use portrait mode if available.",
+        suggestedStyleDirection: "One statement piece (bold color, unique texture, or standout accessory) paired with simpler basics. Let one thing be the star.",
+      };
+
+    case "travel":
+      return {
+        goal: "Travel / Adventure",
+        strategyTitle: "Authentic, vivid, story-telling",
+        whatToOptimize: "Optimize for storytelling. Travel photos should feel authentic and vivid — good natural light, clean composition, and genuine expression. The location is the backdrop, you're the story.",
+        whatToAvoid: "Don't pose stiffly in front of landmarks. Avoid dark, blurry, or over-filtered shots that lose the natural beauty of the location.",
+        bestNextMove: "Use natural light (golden hour is magic). Stand slightly off-center. Let the location breathe around you.",
+        suggestedPhotoDirection: "Wide enough to show context, close enough to see your expression. Natural light, genuine moment.",
+        suggestedStyleDirection: "Dress for the location — practical but intentional. Colors that complement the environment. Comfortable doesn't have to mean sloppy.",
+      };
+
+    case "confidence":
+      return {
+        goal: "Confidence / Self-Image",
+        strategyTitle: "Authentic self-presentation",
+        whatToOptimize: "Optimize for how you want to feel. This isn't about impressing others — it's about presenting yourself in a way that matches how you see yourself at your best. Good lighting, clean framing, genuine expression.",
+        whatToAvoid: "Don't compare yourself to others. Avoid over-editing to look like someone you're not. The goal is the best version of YOU, not a different person.",
+        bestNextMove: "Take 10 photos with different expressions. Pick the one where you look most like yourself — not the most 'perfect' one.",
+        suggestedPhotoDirection: "Natural light, simple background, genuine expression. Shoot multiple angles and pick what feels most like you.",
+        suggestedStyleDirection: "Wear what makes you feel most like yourself. Confidence comes from comfort and authenticity, not from following trends.",
+      };
+
     case "glowup":
     default:
       return {
