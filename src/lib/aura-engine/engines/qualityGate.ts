@@ -178,7 +178,7 @@ export function runQualityGate(params: {
   if (params.canvasContext && params.width > 100 && params.height > 100) {
     const ss = detectScreenshot(params.canvasContext, params.width, params.height);
     screenshotLikelihood = ss.likelihood;
-    if (ss.likelihood > 0.5) {
+    if (ss.likelihood > 0.7) {
       issues.push("screenshot_detected");
       qualityScore -= 50;
     }
@@ -249,8 +249,11 @@ export function runQualityGate(params: {
     effectiveFaceWidth = Math.round(params.faceBox.width);
     effectiveFaceHeight = Math.round(params.faceBox.height);
 
-    // If face region is blurry but global is sharp (screenshot with embedded photo)
-    if (faceRegionSharpness < 25 && params.brightnessStdDev > 30) {
+    // If face region is blurry (regardless of global sharpness)
+    if (faceRegionSharpness < 15) {
+      issues.push("severe_blur");
+      qualityScore -= 30;
+    } else if (faceRegionSharpness < 25 && params.brightnessStdDev > 30) {
       issues.push("severe_blur");
       qualityScore -= 25;
     }

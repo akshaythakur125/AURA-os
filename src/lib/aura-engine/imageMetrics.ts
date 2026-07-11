@@ -781,7 +781,7 @@ export function analyzeImageDataUrl(
           faceAreaPct: Math.round(faceZone.density * 100),
           canvasContext: ctx,
           faceBox: faceZone.density > 0.01 ? { x: Math.max(0, faceZone.centerX - Math.sqrt(faceZone.density * w * h) * 0.3), y: Math.max(0, faceZone.centerY - Math.sqrt(faceZone.density * w * h) * 0.4), width: Math.sqrt(faceZone.density * w * h) * 0.6, height: Math.sqrt(faceZone.density * w * h) * 0.8 } : undefined,
-          faceCount: 1, // ponytail: single-face detection from existing pipeline
+          faceCount: faceZone.density > 0.01 ? 1 : 0, // ponytail: density-based face presence
         });
 
         const groomingResult = assessGrooming({
