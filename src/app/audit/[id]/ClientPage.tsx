@@ -759,11 +759,11 @@ export default function AuditDetailPage() {
                     {/* Signal Sculpture — data-driven 3D visualization */}
                     {displayResult && (() => {
                       const dims = [
-                        { id: "lighting", label: "Lighting", score: displayResult.imageMetrics.lightingScore, confidence: 75, assessmentStatus: "assessed" as const },
-                        { id: "clarity", label: "Clarity", score: displayResult.imageMetrics.clarityScore, confidence: 80, assessmentStatus: "assessed" as const },
-                        { id: "composition", label: "Composition", score: displayResult.imageMetrics.compositionScore, confidence: 70, assessmentStatus: "assessed" as const },
-                        { id: "background", label: "Background", score: Math.max(0, 100 - displayResult.imageMetrics.backgroundComplexityEstimate), confidence: 65, assessmentStatus: "assessed" as const },
-                        { id: "colour-harmony", label: "Colour Harmony", score: displayResult.imageMetrics.colorHarmony, confidence: 60, assessmentStatus: "assessed" as const },
+                        { id: "lighting", label: "Lighting", score: displayResult.imageMetrics.lightingScore, confidence: Math.min(95, 50 + Math.round(displayResult.imageMetrics.lightingScore * 0.4)), assessmentStatus: "assessed" as const },
+                        { id: "clarity", label: "Clarity", score: displayResult.imageMetrics.clarityScore, confidence: Math.min(95, 50 + Math.round(displayResult.imageMetrics.clarityScore * 0.4)), assessmentStatus: "assessed" as const },
+                        { id: "composition", label: "Composition", score: displayResult.imageMetrics.compositionScore, confidence: Math.min(90, 40 + Math.round(displayResult.imageMetrics.compositionScore * 0.4)), assessmentStatus: "assessed" as const },
+                        { id: "background", label: "Background", score: Math.max(0, 100 - displayResult.imageMetrics.backgroundComplexityEstimate), confidence: Math.min(85, 35 + Math.round(displayResult.imageMetrics.backgroundComplexityEstimate * 0.3)), assessmentStatus: "assessed" as const },
+                        { id: "colour-harmony", label: "Colour Harmony", score: displayResult.imageMetrics.colorHarmony, confidence: Math.min(80, 30 + Math.round(displayResult.imageMetrics.colorHarmony * 0.3)), assessmentStatus: "assessed" as const },
                         { id: "style", label: "Style", score: null, confidence: 0, assessmentStatus: "not-assessable" as const },
                         { id: "consistency", label: "Consistency", score: null, confidence: 0, assessmentStatus: "not-assessable" as const },
                       ];
