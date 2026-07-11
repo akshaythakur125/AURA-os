@@ -166,11 +166,22 @@ export default function NewAuditPage() {
     if (!goal || !file || !consent) return;
     setSubmitting(true);
     setErrors([]);
+    let stage = "validating";
 
     try {
+      // Stage 1: Validate file
+      stage = "validating-file";
+      if (!file || file.size === 0) {
+        throw new Error("No image file available.");
+      }
+
+      // Stage 2: Compress image
+      stage = "compressing-image";
       const compressed = await compressImageToDataUrl(file);
       const compressedSize = estimateDataUrlSize(compressed.dataUrl);
 
+      // Stage 3: Create audit
+      stage = "creating-audit";
       const imageMeta: ImageMeta = {
         fileName: file.name,
         fileType: file.type,
@@ -179,9 +190,11 @@ export default function NewAuditPage() {
         height: compressed.height,
         compressedSize,
       };
-
       const audit = createAudit({ auditType: "photo" as AuditType, goal, budgetRange: 5000 as BudgetAmount });
       trackEvent(EVENTS.QUIZ_COMPLETED, { goal, auditId: audit.id });
+
+      // Stage 4: Save audit
+      stage = "saving-audit";
       const deepInput: DeepAuditInput | undefined = {
         styleIntent: styleIntent || "clean",
         currentSignals: ["none"],
@@ -198,9 +211,18 @@ export default function NewAuditPage() {
         deepInput,
       });
 
+      // Stage 5: Redirect
+      stage = "redirecting";
       router.push(`/audit/${audit.id}`);
-    } catch {
-      setErrors(["Something went wrong. Please try again."]);
+    } catch (err) {
+      console.error("[AuraCheck submission failed]", { stage, error: err instanceof Error ? err.message : String(err) });
+      if (stage === "compressing-image") {
+        setErrors(["We could not read this image. Upload the original JPEG, PNG, or WebP file."]);
+      } else if (stage === "saving-audit") {
+        setErrors(["The analysis could not be saved. Please try again."]);
+      } else {
+        setErrors(["Something went wrong. Please try again."]);
+      }
       setSubmitting(false);
     }
   }
