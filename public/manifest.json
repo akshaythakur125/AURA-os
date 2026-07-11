@@ -1,7 +1,7 @@
 {
   "name": "AuraCheck",
   "short_name": "AuraCheck",
-  "description": "AI-style first-impression audit for photos, profiles, outfits, and lifestyle presentation.",
+  "description": "First-impression photo analysis — see what your presentation is really saying for photos, profiles, outfits, and lifestyle presentation.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",

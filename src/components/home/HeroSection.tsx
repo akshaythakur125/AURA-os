@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { FadeInView } from "@/components/ui/FadeInView";
+import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import type { AuraDimension } from "./AuraCore";
 
 const AuraCore = dynamic(() => import("./AuraCore").then((m) => m.AuraCore), {
@@ -81,7 +82,7 @@ export function HeroSection() {
           {/* Aura Core */}
           <div className="order-1 lg:order-2 flex justify-center">
             <FadeInView delay={200}>
-              <AuraCore dimensions={SAMPLE_DIMENSIONS} interactive />
+              <ErrorBoundary fallback={<div className="w-[320px] h-[320px] rounded-full bg-white/5 flex items-center justify-center text-xs text-gray-500">3D view unavailable</div>}><AuraCore dimensions={SAMPLE_DIMENSIONS} interactive /></ErrorBoundary>
             </FadeInView>
           </div>
         </div>

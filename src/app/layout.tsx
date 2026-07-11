@@ -19,6 +19,13 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#0a0a12",
+};
+
 export const metadata: Metadata = {
   title: {
     default: "AuraCheck — See Your Real First Impression",
@@ -26,7 +33,7 @@ export const metadata: Metadata = {
   },
   description:
     "Upload a photo, get your free Aura Score. See what your first impression is really saying. No signup.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://fixmyaura.shop"),
   openGraph: {
     type: "website",
     locale: "en_IN",
@@ -58,13 +65,16 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-depth text-[#ededf0]">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-lg focus:bg-violet-600 focus:px-4 focus:py-2 focus:text-white focus:outline-none">
+          Skip to content
+        </a>
         <div className="grain-overlay" aria-hidden="true" />
         <PostHogProvider>
           <PageViewTracker />
           <ToastProvider>
             <AuditSyncProvider>
               <Header />
-              <main className="flex-1">{children}</main>
+              <main id="main-content" className="flex-1">{children}</main>
               <Footer />
             </AuditSyncProvider>
           </ToastProvider>

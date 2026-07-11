@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://auracheck.app";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://fixmyaura.shop";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

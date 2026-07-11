@@ -1,3 +1,9 @@
 User-agent: *
 Allow: /
-Sitemap: https://auracheck.vercel.app/sitemap.xml
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /orders/
+Disallow: /unlock/
+Disallow: /aura-twin/
+Disallow: /api/
+Sitemap: https://fixmyaura.shop/sitemap.xml
