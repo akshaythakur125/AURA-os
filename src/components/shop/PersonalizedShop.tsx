@@ -78,7 +78,7 @@ function ShopLinks({ look }: { look: Look }) {
         className="w-full text-xs"
         onClick={() => setOpen(!open)}
       >
-        Shop This Look
+        Search This Item
       </Button>
       {open && (
         <div className="absolute bottom-full left-0 right-0 mb-2 rounded-xl glass-elevated p-1.5 shadow-2xl z-10">
@@ -193,6 +193,38 @@ export function PersonalizedShop({
           </div>
         </FadeInView>
 
+        {/* Free fixes — always first, no purchase needed */}
+        {leakTags && leakTags.length > 0 && (
+          <FadeInView delay={30}>
+            <div className="mb-8 rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] p-5">
+              <div className="mb-3 flex items-center gap-2">
+                <span className="text-sm">💡</span>
+                <h3 className="text-sm font-semibold text-emerald-300">Try these free fixes first</h3>
+              </div>
+              <div className="space-y-2">
+                {leakTags.slice(0, 3).map((tag) => (
+                  <div key={tag} className="flex items-start gap-2">
+                    <span className="mt-0.5 text-emerald-500">✓</span>
+                    <div>
+                      <span className="text-xs font-medium text-white">{leakLabels[tag] || tag}: </span>
+                      <span className="text-xs text-gray-400">{
+                        tag === "lighting" && "Face a window at 45°. Natural side light is free and the single biggest upgrade."
+                        || tag === "background" && "Stand against a plain wall or step outside. A clean background costs nothing."
+                        || tag === "clarity" && "Use your phone's rear camera, clean the lens, and hold steady or use a timer."
+                        || tag === "framing" && "Centre yourself with eyes at the top-third line. Chest-up framing works best."
+                        || tag === "color" && "Wear solid colours that contrast your skin — dark on light, light on dark."
+                        || tag === "grooming" && "Clean, neat grooming reads as put-together. No product needed."
+                        || tag === "outfit_fit" && "Well-fitted basics beat expensive logos every time."
+                        || "Small changes in this area can make a significant difference to your photo."
+                      }</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </FadeInView>
+        )}
+
         {/* Look grid */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {visibleLooks.map((look, i) => {
@@ -238,6 +270,14 @@ export function PersonalizedShop({
             );
           })}
         </div>
+
+        {/* Affiliate disclosure */}
+        <FadeInView delay={150}>
+          <p className="mt-6 text-center text-[10px] text-gray-600">
+            FixMyAura may earn a commission when you purchase through eligible links. This does not change the price you pay.
+            Product links open retailer search pages — verify current price and availability on the retailer site.
+          </p>
+        </FadeInView>
 
         {/* Show more */}
         {looks.length > 12 && !showAll && (
