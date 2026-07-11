@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PAYMENT_PRODUCTS, formatPrice } from "@/config/pricing";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { createLead } from "@/lib/storage/leadStore";
@@ -163,9 +164,9 @@ export function LeadCaptureCard({
             className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
           >
             <option value="">Not sure yet</option>
-            <option value="aura_report">Full Aura Report — ₹25</option>
-            <option value="dating_audit">Dating / Profile Audit — ₹299</option>
-            <option value="glowup_plan">30-Day Glow-Up Plan — ₹499</option>
+            <option value="aura_report">Full Aura Report — {formatPrice(PAYMENT_PRODUCTS.aura_report.price)}</option>
+            <option value="dating_audit">Dating / Profile Audit — {formatPrice(PAYMENT_PRODUCTS.dating_audit.price)}</option>
+            <option value="glowup_plan">30-Day Glow-Up Plan — {formatPrice(PAYMENT_PRODUCTS.glowup_plan.price)}</option>
           </select>
         </div>
         <div>

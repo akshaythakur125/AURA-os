@@ -1,4 +1,5 @@
 "use client";
+import { PAYMENT_PRODUCTS, formatPrice } from "@/config/pricing";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -293,7 +294,7 @@ export default function DashboardPage() {
                     </Link>
                     {audit.reportStatus === "free_generated" && audit.unlockStatus === "locked" && (
                       <Link href={`/unlock?auditId=${audit.id}&product=aura_report`}>
-                        <Button size="sm">Unlock ₹25</Button>
+                        <Button size="sm">Unlock {formatPrice(PAYMENT_PRODUCTS["aura_report"].price)}</Button>
                       </Link>
                     )}
                     <button

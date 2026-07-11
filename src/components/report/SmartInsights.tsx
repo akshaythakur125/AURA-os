@@ -34,7 +34,7 @@ export function SmartInsights({ grooming, style, colorPalette }: SmartInsightsPr
         <div className="mb-3 flex items-center gap-2">
           <span className="text-sm">🧠</span>
           <span className="text-xs font-semibold text-white">Smart Insights</span>
-          <span className="rounded-full bg-purple-500/10 px-2 py-0.5 text-[9px] text-purple-300">AI-powered</span>
+          <span className="rounded-full bg-purple-500/10 px-2 py-0.5 text-[9px] text-purple-300">Local analysis</span>
         </div>
 
         <div className="space-y-3">

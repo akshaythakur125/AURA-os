@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     "A practical, budget-aware 30-day roadmap for grooming, outfit basics, background, photo system, and profile consistency. Daily missions across 5 categories.",
   openGraph: {
-    title: "30-Day Glow-Up Plan — ₹499 One-Time Unlock",
+    title: "30-Day Glow-Up Plan One-Time Unlock",
     description:
       "A day-by-day roadmap for your presentation upgrade. Grooming, style, background, photo system, and mindset — budget-aware.",
     images: [

@@ -119,7 +119,7 @@ export function Hero3D() {
             </Link>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-gray-500">
               <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Free score instantly</span>
-              <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> AI-powered analysis</span>
+              <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Browser-based analysis</span>
               <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Nearby salons & gyms</span>
               <span className="flex items-center gap-1.5"><span className="text-emerald-400">✓</span> Buy links included</span>
             </div>

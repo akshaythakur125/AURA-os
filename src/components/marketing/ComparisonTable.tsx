@@ -45,9 +45,9 @@ function Cell({ value }: { value: boolean | string }) {
 
 const HEADERS = [
   { label: "Free", className: "" },
-  { label: "₹25 Aura Report", className: "text-purple-300" },
-  { label: "₹299 Dating", className: "text-pink-300" },
-  { label: "₹499 Glow-Up", className: "text-amber-300" },
+  { label: "{formatPrice(PAYMENT_PRODUCTS.aura_report.price)} Aura Report", className: "text-purple-300" },
+  { label: "{formatPrice(PAYMENT_PRODUCTS.dating_audit.price)} Dating", className: "text-pink-300" },
+  { label: "{formatPrice(PAYMENT_PRODUCTS.glowup_plan.price)} Glow-Up", className: "text-amber-300" },
 ];
 
 export function ComparisonTable() {

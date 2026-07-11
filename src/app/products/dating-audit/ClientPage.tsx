@@ -1,4 +1,5 @@
 "use client";
+import { PAYMENT_PRODUCTS, formatPrice } from "@/config/pricing";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -35,7 +36,7 @@ export default function DatingAuditPage() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(236,72,153,0.12),transparent_50%)]" />
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="premium" className="mb-4">Dating / Profile Audit — ₹299</Badge>
+            <Badge variant="premium" className="mb-4">Dating / Profile Audit — {formatPrice(PAYMENT_PRODUCTS.dating_audit.price)}</Badge>
             <h1 className="bg-gradient-to-r from-white via-pink-200 to-rose-200 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
               Fix the friction in your dating/profile presentation.
             </h1>
@@ -89,7 +90,7 @@ export default function DatingAuditPage() {
 
       <section className="border-t border-white/[0.04] py-24">
         <Container>
-          <SectionHeading title="What you get for ₹299" />
+          <SectionHeading title="What you get" />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
               { title: "Profile text score", desc: "A composite score (15–100) based on bio quality, prompt answers, and red-flag presence." },

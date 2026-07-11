@@ -1,25 +1,21 @@
+import { PAYMENT_PRODUCTS, type PaymentProductId, formatPrice } from "@/config/pricing";
 import type { ProductType } from "@/types/payment";
 
-const PRODUCT_PRICES: Record<ProductType, number> = {
-  aura_report: 25,
-  dating_audit: 299,
-  glowup_plan: 499,
-};
-
-const PRODUCT_NAMES: Record<ProductType, string> = {
-  aura_report: "Full Aura Report",
-  dating_audit: "Dating / Profile Audit",
-  glowup_plan: "30-Day Glow-Up Plan",
-};
+function toProductId(t: ProductType): PaymentProductId {
+  return (t in PAYMENT_PRODUCTS ? t : "aura_report") as PaymentProductId;
+}
 
 export function getProductPrice(productType: ProductType): number {
-  return PRODUCT_PRICES[productType] || 99;
+  const p = PAYMENT_PRODUCTS[toProductId(productType)];
+  return p ? Math.round(p.price / 100) : 0;
 }
 
 export function getProductName(productType: ProductType): string {
-  return PRODUCT_NAMES[productType] || "Aura Report";
+  const p = PAYMENT_PRODUCTS[toProductId(productType)];
+  return p?.name || productType;
 }
 
 export function getProductPriceLabel(productType: ProductType): string {
-  return `₹${getProductPrice(productType)}`;
+  const p = PAYMENT_PRODUCTS[toProductId(productType)];
+  return p ? formatPrice(p.price) : "₹0";
 }

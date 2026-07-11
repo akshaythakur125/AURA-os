@@ -1,4 +1,5 @@
 "use client";
+import { PAYMENT_PRODUCTS, formatPrice } from "@/config/pricing";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
@@ -66,14 +67,14 @@ export function PaywallPopup({ open, onClose, auditId, trigger }: PaywallPopupPr
 
           {/* Price */}
           <div className="mb-4 rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 text-center">
-            <div className="text-3xl font-bold text-white">₹25</div>
+            <div className="text-3xl font-bold text-white">{formatPrice(PAYMENT_PRODUCTS.aura_report.price)}</div>
             <div className="text-[11px] text-gray-500">One-time payment · No subscription · Yours forever</div>
           </div>
 
           {/* CTA */}
           <Link href={`/unlock?auditId=${auditId}&product=aura_report`} className="block">
             <Button size="lg" className="w-full text-base font-bold">
-              Unlock Now — ₹25
+              Unlock Now
             </Button>
           </Link>
 

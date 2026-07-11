@@ -1,4 +1,5 @@
 "use client";
+import { PAYMENT_PRODUCTS, formatPrice } from "@/config/pricing";
 
 import { useMemo } from "react";
 import { getSocialProof } from "@/lib/social-proof/getSocialProof";
@@ -65,7 +66,7 @@ export function PaymentTrust({ variant = "results" }: Props) {
             ))}
           </div>
           <p className="mt-2 text-[11px] text-gray-400">
-            &ldquo;Worth ₹25 just for the background tips. Saved me thousands.&rdquo;
+            &ldquo;Worth {formatPrice(PAYMENT_PRODUCTS.aura_report.price)} just for the background tips. Saved me thousands.&rdquo;
           </p>
         </div>
       </div>

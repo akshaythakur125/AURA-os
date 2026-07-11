@@ -1,4 +1,5 @@
 "use client";
+import { PAYMENT_PRODUCTS, formatPrice } from "@/config/pricing";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
@@ -113,7 +114,7 @@ export function ConversionFunnel({
 
           {/* Price anchoring */}
           <p className="mt-3 text-[11px] text-gray-500">
-            ₹25 = one meal out. But the confidence from knowing your profile works? That pays for itself.
+            One-time payment. But the confidence from knowing your profile works? That pays for itself.
           </p>
 
           {/* Trust badges */}

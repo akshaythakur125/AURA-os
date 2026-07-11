@@ -1,4 +1,5 @@
 "use client";
+import { PAYMENT_PRODUCTS, formatPrice } from "@/config/pricing";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -39,7 +40,7 @@ export default function AuraReportPage() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(147,51,234,0.12),transparent_50%)]" />
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="premium" className="mb-4">Full Aura Report — ₹25</Badge>
+            <Badge variant="premium" className="mb-4">Full Aura Report — {formatPrice(PAYMENT_PRODUCTS.aura_report.price)}</Badge>
             <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
               Unlock the full reason behind your Aura Score.
             </h1>
@@ -129,9 +130,9 @@ export default function AuraReportPage() {
       <section className="border-t border-white/[0.04] py-24">
         <Container>
           <div className="mx-auto max-w-2xl rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-pink-500/5 p-8 text-center">
-            <h2 className="mb-4 text-2xl font-bold text-white">Why ₹25?</h2>
+            <h2 className="mb-4 text-2xl font-bold text-white">Why {formatPrice(PAYMENT_PRODUCTS.aura_report.price)}?</h2>
             <p className="mb-6 text-sm leading-relaxed text-gray-400">
-              ₹25 is a conscious price point — low enough that anyone can unlock their report after a free audit, 
+              {formatPrice(PAYMENT_PRODUCTS.aura_report.price)} is a conscious price point — low enough that anyone can unlock their report after a free audit, 
               but high enough that you value what you get. The analysis is generated locally in your browser 
               using a rule-based engine. No external AI, no subscription, no hidden costs.
             </p>

@@ -1,4 +1,5 @@
 "use client";
+import { PAYMENT_PRODUCTS, formatPrice } from "@/config/pricing";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -34,7 +35,7 @@ export default function GlowupPlanPage() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.12),transparent_50%)]" />
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
-            <Badge variant="premium" className="mb-4">30-Day Glow-Up Plan — ₹499</Badge>
+            <Badge variant="premium" className="mb-4">30-Day Glow-Up Plan — {formatPrice(PAYMENT_PRODUCTS.glowup_plan.price)}</Badge>
             <h1 className="bg-gradient-to-r from-white via-amber-200 to-orange-200 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
               Get a 30-day plan to make your presentation cleaner and more intentional.
             </h1>

@@ -1,23 +1,19 @@
+import { PAYMENT_PRODUCTS, type PaymentProductId } from "@/config/pricing";
 import type { ProductType } from "@/types/payment";
 
-const PRODUCT_PRICES: Record<ProductType, number> = {
-  aura_report: 25,
-  dating_audit: 299,
-  glowup_plan: 499,
-};
-
-const PRODUCT_NAMES: Record<ProductType, string> = {
-  aura_report: "Aura Report",
-  dating_audit: "Dating / Profile Audit",
-  glowup_plan: "30-Day Glow-Up Plan",
-};
+// ponytail: bridge old ProductType to new ProductId
+function toProductId(t: ProductType): PaymentProductId {
+  return (t in PAYMENT_PRODUCTS ? t : "aura_report") as PaymentProductId;
+}
 
 export function getServerProductPrice(productType: ProductType): number {
-  return PRODUCT_PRICES[productType] || 99;
+  const p = PAYMENT_PRODUCTS[toProductId(productType)];
+  return p ? Math.round(p.price / 100) : 0;
 }
 
 export function getServerProductName(productType: ProductType): string {
-  return PRODUCT_NAMES[productType] || "Aura Report";
+  const p = PAYMENT_PRODUCTS[toProductId(productType)];
+  return p?.name || productType;
 }
 
 function normalizeCode(code: string): string {
@@ -35,11 +31,6 @@ function timingSafeEqual(a: string, b: string): boolean {
   return mismatch === 0;
 }
 
-/**
- * Check if the code matches the admin-only override secret.
- * This is the ONLY "backdoor" — a static secret only the founder knows,
- * not derivable from public data. Used for founder's own manual override/testing.
- */
 export function isAdminUnlockCode(code: string): boolean {
   const demoCode = process.env.ADMIN_UNLOCK_CODE || "";
   if (!demoCode) return false;
