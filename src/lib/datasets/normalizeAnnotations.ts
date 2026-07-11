@@ -80,3 +80,9 @@ export function normalizeCSV(
     metadata: {},
   }));
 }
+
+/** Normalize LIVE In the Wild annotations (MOS scores from CSV) */
+export function normalizeLIVEWild(rows: Array<Record<string, string>>): NormalizedAnnotation[] {
+  // ponytail: LIVE Wild CSV typically has columns: filename, MOS, width, height
+  return normalizeCSV(rows, { datasetId: "live-in-the-wild", imageCol: "filename", mosCol: "MOS", widthCol: "width", heightCol: "height" });
+}
