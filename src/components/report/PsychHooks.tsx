@@ -81,7 +81,7 @@ function ScarcityTimer({ createdAt }: { createdAt: string }) {
       <div className="flex items-center justify-center gap-2 rounded-xl border border-amber-500/15 bg-amber-500/5 px-3 py-2 text-center">
         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400" />
         <span className="text-[11px] text-amber-300">
-          Free analysis expires in <span className="font-bold">{remaining}</span> — {parseInt(remaining) < 6 ? 'last chance' : 'today only'}
+          Tip: Retake with better lighting <span className="font-bold">{remaining}</span> — 'for best results'
         </span>
       </div>
     </FadeInView>

@@ -4,7 +4,7 @@ import ExamplesPage from "./ClientPage";
 export const metadata: Metadata = {
   title: "Sample Reports & Examples — See AuraCheck in Action",
   description:
-    "View real sample reports from simulated audits. See the visual breakdown, status leak analysis, budget upgrade path, and before/after comparisons before you decide to unlock.",
+    "View real sample reports from simulated audits. See the visual breakdown, photo-quality issue analysis, budget upgrade path, and before/after comparisons before you decide to unlock.",
   openGraph: {
     title: "AuraCheck Examples — Sample Reports & Before/After Comparisons",
     description:

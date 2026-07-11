@@ -6,13 +6,13 @@ import { Card } from "@/components/ui/Card";
 
 export const metadata: Metadata = {
   title: "Help — AuraCheck",
-  description: "How AuraCheck works: upload a photo, get your visual first-impression score, and discover your biggest status leaks. FAQ and support.",
+  description: "How AuraCheck works: upload a photo, get your visual first-impression score, and discover your biggest photo-quality issues. FAQ and support.",
 };
 
 const faqs = [
   {
     q: "How does AuraCheck work?",
-    a: "Upload a photo or profile screenshot and AuraCheck analyzes it using browser-based rules. You get an Aura Score, status leaks, and an upgrade plan. Everything runs locally — no image leaves your device.",
+    a: "Upload a photo or profile screenshot and AuraCheck analyzes it using browser-based rules. You get an Aura Score, photo-quality issues, and an upgrade plan. Everything runs locally — no image leaves your device.",
   },
   {
     q: "How does local-only storage work?",

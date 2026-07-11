@@ -112,7 +112,7 @@ export function generateGoalStrategy(
       return {
         goal: "Festival / Party Look",
         strategyTitle: "Bold, photogenic, memorable",
-        whatToOptimize: "Optimize for impact. Festivals and parties are about standing out — bold colors, confident posing, and good lighting (even phone flash) make the difference between a forgettable and an iconic photo.",
+        whatToOptimize: "Optimize for impact. Festivals and parties are about standing out — bold colors, confident posing, and good lighting (even phone flash) make a stronger visual impression.",
         whatToAvoid: "Avoid washed-out colors, blurry shots, or dark backgrounds where you disappear. Also avoid over-accessorizing — one statement piece, not five.",
         bestNextMove: "Wear one bold-color piece and stand near a light source. Ask someone to take the photo from slightly above eye level.",
         suggestedPhotoDirection: "Eye-level or slightly above, good lighting on your face, bold outfit as the visual anchor. Use portrait mode if available.",

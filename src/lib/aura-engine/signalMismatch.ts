@@ -127,7 +127,7 @@ export function detectSignalMismatches(
         "If the room or background is part of your presentation, its current complexity level may distract from you. A clean, intentional background signals control.",
       severity: metrics.backgroundComplexityEstimate > 75 ? "high" : "medium",
       correction:
-        "Declutter visible surfaces and use softer, indirect lighting to make the room feel intentional rather than accidental.",
+        "Declutter visible surfaces and use softer, indirect lighting to make the room feel intentional.",
       priorityScore: Math.round(metrics.backgroundComplexityEstimate * 0.7),
     });
   }

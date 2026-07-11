@@ -95,7 +95,7 @@ export function ConversionFunnel({
           <div className="mx-auto mb-5 max-w-sm space-y-2">
             <p className="text-sm text-gray-300">
               Users who unlocked improved by <span className="font-bold text-emerald-400">+18 points</span> on average.
-              That&apos;s the difference between <span className="text-gray-500">forgettable</span> and <span className="font-medium text-white">magnetic</span>.
+              Small corrections can make a significant difference to how your photo is perceived.
             </p>
             <p className="text-[11px] text-gray-500">
               Your report includes a personalized roadmap, celebrity style matches, and exact products to buy — all under ₹100.

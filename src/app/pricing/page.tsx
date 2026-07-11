@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 
 export const metadata: Metadata = {
   title: "Pricing — AuraCheck",
-  description: "Unlock your full Aura Report — one-time payment, no subscription. Get detailed visual analysis, status leak fixes, and personalized upgrade path.",
+  description: "Unlock your full Aura Report — one-time payment, no subscription. Get detailed visual analysis, photo-quality issue fixes, and personalized upgrade path.",
   openGraph: {
     title: "AuraCheck Pricing — Full Report",
     description: "One-time payment. No subscription. Detailed visual analysis and personalized upgrade path.",
@@ -30,7 +30,7 @@ const tiers = [
     features: [
       "Single photo scan",
       "Basic aura score (0–100)",
-      "3 status leak insights",
+      "3 photo-quality issue insights",
       "3 upgrade suggestions",
       "No login required",
     ],
@@ -48,7 +48,7 @@ const tiers = [
       "Score number (no explanation)",
       "No leak analysis",
       "No upgrade plan",
-      "No celebrity match",
+      "No style inspiration",
       "No progress tracking",
     ],
     highlighted: false,
@@ -236,7 +236,7 @@ export default function PricingPage() {
               {[
                 {
                   q: "What do I get in the free version?",
-                  a: "A basic Aura Score, 3 status leak insights, and 3 upgrade suggestions from a single photo.",
+                  a: "A basic Aura Score, 3 photo-quality issue insights, and 3 upgrade suggestions from a single photo.",
                 },
                 {
                   q: "How do I unlock a paid report?",

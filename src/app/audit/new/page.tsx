@@ -4,7 +4,7 @@ import NewAuditPage from "./ClientPage";
 export const metadata: Metadata = {
   title: "Start Free Aura Check — Upload Photo & Get Your Score",
   description:
-    "Upload a photo, answer 3 quick questions, and get your free Aura Score in under 2 minutes. See your biggest status leak and what to fix first.",
+    "Upload a photo, answer 3 quick questions, and get your free Aura Score in under 2 minutes. See your biggest photo-quality issue and what to fix first.",
   openGraph: {
     title: "Start Free Aura Check — Get Your Score in 2 Minutes",
     description:

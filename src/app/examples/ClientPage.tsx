@@ -64,7 +64,7 @@ export default function ExamplesPage() {
       <section className="border-t border-white/[0.04] py-24">
         <Container>
           <FadeInView>
-            <SectionHeading title="What a full report looks like" subtitle="Real UI from a sample Full Aura Report — visual breakdown, status leaks, upgrade path." />
+            <SectionHeading title="What a full report looks like" subtitle="Real UI from a sample Full Aura Report — visual breakdown, photo-quality issues, upgrade path." />
           </FadeInView>
           <ReportMockup />
         </Container>

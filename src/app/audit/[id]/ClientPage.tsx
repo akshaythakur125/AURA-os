@@ -641,7 +641,7 @@ export default function AuditDetailPage() {
                   <div className="mx-auto max-w-xs space-y-2">
                     {[
                       "Reading image signals...",
-                      "Detecting status leaks...",
+                      "Detecting photo-quality issues...",
                       "Building your score...",
                     ].map((text, i) => (
                       <div key={text} className="flex items-center gap-2 text-xs text-gray-400">
@@ -700,7 +700,7 @@ export default function AuditDetailPage() {
                             <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-red-500/10 blur-3xl" />
                             <div className="pointer-events-none absolute -left-20 -bottom-20 h-40 w-40 rounded-full bg-purple-500/10 blur-3xl" />
                             <Badge variant="danger" className="mb-4">
-                              {heroLeak.severity === "high" ? "Critical" : "Major"} Status Leak
+                              {heroLeak.severity === "high" ? "Critical" : "Major"} Photo-Quality Issue
                             </Badge>
                             <h2 className="mb-3 bg-gradient-to-r from-red-300 via-pink-300 to-red-200 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
                               {heroLeak.title}
@@ -794,13 +794,13 @@ export default function AuditDetailPage() {
                     {/* Celebrity match — blurred teaser for free users */}
                     {!isUnlocked && celebMatches.length > 0 && (
                       <div className="relative overflow-hidden rounded-2xl border border-purple-500/15 bg-purple-500/5 p-4">
-                        <div className="absolute inset-0 blur-md cursor-pointer" onClick={() => { setPaywallTrigger("Celebrity style match"); setPaywallOpen(true); }}>
+                        <div className="absolute inset-0 blur-md cursor-pointer" onClick={() => { setPaywallTrigger("Style inspiration"); setPaywallOpen(true); }}>
                           <CelebrityMatch matches={celebMatches} />
                         </div>
                         <div className="relative z-10 text-center py-6">
                           <div className="text-2xl mb-2">✨</div>
                           <p className="text-sm font-medium text-purple-300">
-                            You match with a celebrity style
+                            Inspired by similar styles
                           </p>
                           <p className="text-[11px] text-gray-500 mt-1">
                             Unlock to see who + how to get the look

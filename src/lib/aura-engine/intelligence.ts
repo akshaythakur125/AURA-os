@@ -12,6 +12,7 @@
  */
 
 import type { AuditGoal, ImageSignalMetrics } from "@/types/audit";
+import { calculateAuraScore } from "./scoring";
 
 // ─── Goal-Specific Weight Profiles ───
 // Each goal emphasizes different aspects of the photo
@@ -320,15 +321,9 @@ export function runIntelligenceAnalysis(input: IntelligenceInput): IntelligenceR
     );
   }
 
-  // ─── Step 3: Apply goal-specific weights ───
-  let weightedSum = 0;
-  let totalWeight = 0;
-  for (const [dim, weight] of Object.entries(profile)) {
-    const score = blendedScores[dim as keyof typeof blendedScores] || 50;
-    weightedSum += score * weight;
-    totalWeight += weight;
-  }
-  const auraScore = clamp(Math.round(weightedSum / totalWeight), 35, 95);
+  // ─── Step 3: Use authoritative score from scoring.ts ───
+  // ponytail: one scoring path — intelligence.ts no longer calculates its own overall score
+  const auraScore = calculateAuraScore({ auditType: 'photo', goal, budgetRange: 0, metrics });
 
   // ─── Step 4: Generate intelligent observations ───
   const observations = generateObservations(blendedScores, goal, metrics, skinToneHint);

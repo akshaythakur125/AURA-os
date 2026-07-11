@@ -156,7 +156,7 @@ function pickArchetype(
     return {
       archetype: "Mismatched Flex",
       explanation:
-        "There is a gap between the status items in your frame and the overall presentation quality. Premium items surrounded by weak lighting or a cluttered background create a signal mismatch. Fixing the background and lighting will make the items look intentional, not accidental.",
+        "There is a gap between the status items in your frame and the overall presentation quality. Premium items surrounded by weak lighting or a cluttered background create a signal mismatch. Fixing the background and lighting will make the items look intentional.",
       priority: "Fix the background and lighting before adding more items to the frame.",
       focus: "Background cleanup, lighting improvement, reducing visible items",
     };

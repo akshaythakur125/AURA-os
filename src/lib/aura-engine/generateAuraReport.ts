@@ -27,7 +27,7 @@ function generateStatusLeaks(score: number, metrics: import("@/types/audit").Ima
       severity: metrics.sharpness < 40 ? "high" : "medium",
       category: "clarity",
       title: "Your photo is blurry",
-      description: "A blurry photo looks like an accident. People scroll past blurry images instantly.",
+      description: "A blurry photo reduces visual clarity. Sharpening or retaking can significantly improve how you are perceived.",
       fix: "Use the rear camera, clean the lens, and hold steady.",
       impactScore: Math.round((55 - metrics.sharpness) * 1.2),
     });

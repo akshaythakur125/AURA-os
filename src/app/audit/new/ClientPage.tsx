@@ -29,7 +29,7 @@ import type {
 import { detectUnsafePromptText, getSafetyWarningForAudit } from "@/lib/safety/contentSafety";
 
 const GOALS: { id: AuditGoal; label: string; desc: string; icon: string; emoji: string; color: string }[] = [
-  { id: "dating", label: "Dating", desc: "Make my profile irresistible", icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z", emoji: "❤️", color: "from-rose-500 to-pink-500" },
+  { id: "dating", label: "Dating", desc: "Optimize my photo", icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z", emoji: "❤️", color: "from-rose-500 to-pink-500" },
   { id: "instagram", label: "Instagram", desc: "Level up my grid", icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z", emoji: "📸", color: "from-purple-500 to-fuchsia-500" },
   { id: "content", label: "Content Creator", desc: "Build my visual brand", icon: "M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z", emoji: "🎬", color: "from-violet-500 to-purple-500" },
   { id: "linkedin", label: "LinkedIn", desc: "Professional headshot", icon: "M16 8a6 6 0 01-12 0 6 6 0 0112 0zM2 21a8 8 0 0116 0", emoji: "💼", color: "from-blue-500 to-cyan-500" },
