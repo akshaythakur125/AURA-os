@@ -151,8 +151,6 @@ export async function applyTransformation(
           ctx.putImageData(imageData, 0, 0);
           break;
         }
-      }
-
         case "motion-blur": {
           const angle = ((transformation.parameters.angle as number) || 0) * Math.PI / 180;
           const len = (transformation.parameters.length as number) || 5;
@@ -287,6 +285,7 @@ export async function applyTransformation(
             }
           }
           break;
+      }
         }
       resolve(canvas.toDataURL("image/jpeg", 0.92));
     };
