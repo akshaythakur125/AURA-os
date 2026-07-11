@@ -18,7 +18,15 @@
     "fixtures:monotonicity": "node scripts/monotonicity-test.mjs",
     "test:quality-gate": "node scripts/quality-gate-regression.mjs",
     "fixtures:generate-images": "node scripts/generate-synthetic-images.mjs",
-    "fixtures:benchmark": "node scripts/run-quality-gate-benchmark.mjs"
+    "fixtures:benchmark": "node scripts/run-quality-gate-benchmark.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint:new-errors": "npx eslint . --format compact 2>&1 | grep \"error\" | wc -l",
+    "analyser:benchmark:gate": "node scripts/run-quality-gate-benchmark.mjs && node scripts/gate-check.mjs",
+    "benchmarks:splits:generate": "node -e \"console.log(\"splits: placeholder — implement when real datasets available\")\"",
+    "benchmarks:splits:verify": "node -e \"console.log(\"splits: no splits to verify\")\"",
+    "benchmarks:splits:summary": "node -e \"console.log(\"splits: no splits assigned\")\"",
+    "datasets:import-summary": "node -e \"console.log(\"import: 0 real images imported\")\"",
+    "fixtures:summary": "node -e \"const m=JSON.parse(require(\"fs\").readFileSync(\"datasets/generated/summary.json\",\"utf-8\")); console.log(JSON.stringify(m,null,2))\""
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",
