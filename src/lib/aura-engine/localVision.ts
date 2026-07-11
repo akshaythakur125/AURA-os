@@ -241,57 +241,9 @@ function pickObservation(category: string, score: number): LocalVisionObservatio
  * Completely self-sustained — no external API calls.
  * Model loads from Hugging Face on first use, then cached in browser.
  */
-export async function runLocalVisionAnalysis(imageDataUrl: string): Promise<LocalVisionResult | null> {
-  try {
-    const classifier = await getClassifier();
-    if (!classifier) return null;
-
-    const [lighting, background, outfit, grooming, expression] = await Promise.all([
-      scoreDimension(classifier, imageDataUrl, SCORING_PROMPTS.lighting.positive, SCORING_PROMPTS.lighting.negative),
-      scoreDimension(classifier, imageDataUrl, SCORING_PROMPTS.background.positive, SCORING_PROMPTS.background.negative),
-      scoreDimension(classifier, imageDataUrl, SCORING_PROMPTS.outfit.positive, SCORING_PROMPTS.outfit.negative),
-      scoreDimension(classifier, imageDataUrl, SCORING_PROMPTS.grooming.positive, SCORING_PROMPTS.grooming.negative),
-      scoreDimension(classifier, imageDataUrl, SCORING_PROMPTS.expression.positive, SCORING_PROMPTS.expression.negative),
-    ]);
-
-    const overall = Math.round(lighting * 0.25 + background * 0.15 + outfit * 0.25 + grooming * 0.2 + expression * 0.15);
-    const scores = { lighting, background, outfit, grooming, expression, overall };
-
-    const observations: LocalVisionObservation[] = [
-      pickObservation("lighting", lighting),
-      pickObservation("background", background),
-      pickObservation("outfit", outfit),
-      pickObservation("grooming", grooming),
-      pickObservation("expression", expression),
-    ].sort((a, b) => {
-      const order = { warning: 0, suggestion: 1, positive: 2 };
-      return order[a.severity] - order[b.severity];
-    });
-
-    const dims = [
-      { name: "lighting", score: lighting },
-      { name: "background", score: background },
-      { name: "outfit", score: outfit },
-      { name: "grooming", score: grooming },
-      { name: "expression", score: expression },
-    ].sort((a, b) => a.score - b.score);
-
-    const topLeak = dims[0].name;
-    const quickFixes = dims.slice(0, 3).map((d) => ({
-      title: `Improve your ${d.name}`,
-      description: `Your ${d.name} score is ${d.score}/100 — this is the biggest opportunity for improvement.`,
-      impact: Math.round(100 - d.score),
-    }));
-
-    const improvementTips = [
-      `Your biggest opportunity is ${topLeak} (score: ${dims[0].score}/100). Fixing this alone could improve your overall score by ${Math.round((100 - dims[0].score) * 0.25)} points.`,
-      `Focus on ${dims[1].name} next (score: ${dims[1].score}/100). Combined with better ${topLeak}, you could see a significant improvement.`,
-      `Your strongest dimension is ${dims[4].name} (${dims[4].score}/100) — build on this strength while improving the weaker areas.`,
-    ];
-
-    return { scores, observations, topLeak, quickFixes, improvementTips };
-  } catch (err) {
-    console.error("[local-vision] Analysis failed:", err);
-    return null;
-  }
+export async function runLocalVisionAnalysis(_imageDataUrl: string): Promise<LocalVisionResult | null> {
+  // ponytail: CLIP disabled — no external CDN model downloads
+  // pixel-based metrics in imageMetrics.ts handle all technical analysis
+  console.info("[local-vision] CLIP semantic analysis skipped — using pixel-based metrics only");
+  return null;
 }

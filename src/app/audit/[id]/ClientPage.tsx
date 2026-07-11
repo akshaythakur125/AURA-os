@@ -692,7 +692,7 @@ export default function AuditDetailPage() {
             <>
               {/* ΓöÇΓöÇΓöÇ HERO: The Leak ΓöÇΓöÇΓöÇ */}
               {(() => {
-                const sortedLeaks = [...displayResult.statusLeaks].sort(
+                const sortedLeaks = [...(displayResult.statusLeaks ?? [])].sort(
                   (a, b) => (a.severity === "high" ? 0 : a.severity === "medium" ? 1 : 2) - (b.severity === "high" ? 0 : b.severity === "medium" ? 1 : 2)
                 );
                 const heroLeak = sortedLeaks[0];
@@ -779,11 +779,11 @@ export default function AuditDetailPage() {
                     {/* Signal Sculpture — data-driven 3D visualization */}
                     {displayResult && (() => {
                       const dims = [
-                        { id: "lighting", label: "Lighting", score: displayResult.imageMetrics.lightingScore, confidence: Math.min(95, 50 + Math.round(displayResult.imageMetrics.lightingScore * 0.4)), assessmentStatus: "assessed" as const },
-                        { id: "clarity", label: "Clarity", score: displayResult.imageMetrics.clarityScore, confidence: Math.min(95, 50 + Math.round(displayResult.imageMetrics.clarityScore * 0.4)), assessmentStatus: "assessed" as const },
-                        { id: "composition", label: "Composition", score: displayResult.imageMetrics.compositionScore, confidence: Math.min(90, 40 + Math.round(displayResult.imageMetrics.compositionScore * 0.4)), assessmentStatus: "assessed" as const },
-                        { id: "background", label: "Background", score: Math.max(0, 100 - displayResult.imageMetrics.backgroundComplexityEstimate), confidence: Math.min(85, 35 + Math.round(displayResult.imageMetrics.backgroundComplexityEstimate * 0.3)), assessmentStatus: "assessed" as const },
-                        { id: "colour-harmony", label: "Colour Harmony", score: displayResult.imageMetrics.colorHarmony, confidence: Math.min(80, 30 + Math.round(displayResult.imageMetrics.colorHarmony * 0.3)), assessmentStatus: "assessed" as const },
+                        { id: "lighting", label: "Lighting", score: displayResult.imageMetrics?.lightingScore ?? 50, confidence: Math.min(95, 50 + Math.round((displayResult.imageMetrics?.lightingScore ?? 50) * 0.4)), assessmentStatus: "assessed" as const },
+                        { id: "clarity", label: "Clarity", score: displayResult.imageMetrics?.clarityScore ?? 50, confidence: Math.min(95, 50 + Math.round((displayResult.imageMetrics?.clarityScore ?? 50) * 0.4)), assessmentStatus: "assessed" as const },
+                        { id: "composition", label: "Composition", score: displayResult.imageMetrics?.compositionScore ?? 50, confidence: Math.min(90, 40 + Math.round((displayResult.imageMetrics?.compositionScore ?? 50) * 0.4)), assessmentStatus: "assessed" as const },
+                        { id: "background", label: "Background", score: Math.max(0, 100 - (displayResult.imageMetrics?.backgroundComplexityEstimate ?? 50)), confidence: Math.min(85, 35 + Math.round((displayResult.imageMetrics?.backgroundComplexityEstimate ?? 50) * 0.3)), assessmentStatus: "assessed" as const },
+                        { id: "colour-harmony", label: "Colour Harmony", score: displayResult.imageMetrics?.colorHarmony ?? 50, confidence: Math.min(80, 30 + Math.round((displayResult.imageMetrics?.colorHarmony ?? 50) * 0.3)), assessmentStatus: "assessed" as const },
                         { id: "style", label: "Style", score: null, confidence: 0, assessmentStatus: "not-assessable" as const },
                         { id: "consistency", label: "Consistency", score: null, confidence: 0, assessmentStatus: "not-assessable" as const },
                       ];
@@ -806,8 +806,8 @@ export default function AuditDetailPage() {
                       <ConversionFunnel
                         auditId={audit.id}
                         score={displayResult.auraScore}
-                        photoIssueCount={displayResult.statusLeaks.length}
-                        topLeakTitle={displayResult.statusLeaks[0]?.title || "Unknown"}
+                        photoIssueCount={displayResult.statusLeaks?.length ?? 0}
+                        topLeakTitle={displayResult.statusLeaks?.[0]?.title || "Unknown"}
                       />
                     )}
 
@@ -854,7 +854,7 @@ export default function AuditDetailPage() {
                                   try {
                                     localStorage.setItem("aura_twin_image", audit.imageDataUrl!);
                                     localStorage.setItem("aura_twin_audit_id", audit.id);
-                                    if (displayResult?.statusLeaks[0]) localStorage.setItem("aura_twin_top_finding", displayResult.statusLeaks[0].title);
+                                    if (displayResult?.statusLeaks?.[0]) localStorage.setItem("aura_twin_top_finding", displayResult.statusLeaks[0].title);
                                   } catch {}
                                 }}
                                 className="ml-auto text-[10px] text-violet-400 hover:text-violet-300"
@@ -866,7 +866,7 @@ export default function AuditDetailPage() {
                           <h3 className="text-lg font-bold text-white">3 things you can fix before leaving</h3>
                         </div>
                         <div className="space-y-3">
-                          {displayResult.quickFixes.slice(0, 3).map((fix, i) => (
+                          {(displayResult.quickFixes ?? []).slice(0, 3).map((fix, i) => (
                             <div key={fix.title} className="flex items-start gap-3 rounded-xl bg-white/[0.03] p-3">
                               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500/20 text-sm font-bold text-emerald-400">
                                 {i + 1}
@@ -1037,7 +1037,7 @@ export default function AuditDetailPage() {
               </Card>
 
               {/* ─── Shop For Looks ─── */}
-              {personalization && displayResult && (
+              {personalization != null && displayResult != null && typeof displayResult.auraScore === "number" && (
                 <PersonalizedShop
                   looks={getPersonalizedLooks({
                     styleArchetypes: [personalization.archetype === "Corporate Sharp" ? "professional" : personalization.archetype === "Creator Vibe" ? "creator" : personalization.archetype === "College Casual" ? "college" : personalization.archetype === "Premium Minimalist" ? "premium" : personalization.archetype === "Urban Aspirational" ? "confident" : personalization.archetype === "Loud Flex" ? "bold" : personalization.archetype === "Soft Luxury" ? "understated" : "clean"],
