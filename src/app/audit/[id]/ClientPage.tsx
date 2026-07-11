@@ -33,6 +33,8 @@ import { CelebrityMatch } from "@/components/celebrity/CelebrityMatch";
 import { ScoreBreakdown } from "@/components/report/ScoreBreakdown";
 import { ImprovementRoadmap } from "@/components/report/ImprovementRoadmap";
 import { DynamicGoalAdvice } from "@/components/report/DynamicGoalAdvice";
+import { PsychHooks } from "@/components/report/PsychHooks";
+import { ScoreHistory } from "@/components/report/ScoreHistory";
 import { matchCelebrity, type MatchResult } from "@/lib/aura-engine/celebrityMatch";
 
 const auditTypeLabels: Record<string, string> = {
@@ -1276,6 +1278,14 @@ export default function AuditDetailPage() {
                     {/* Celebrity match — aspirational */}
                     {!isUnlocked && celebMatches.length > 0 && (
                       <CelebrityMatch matches={celebMatches} />
+                    )}
+
+                    {!isUnlocked && displayResult && (
+                      <PsychHooks
+                        auditId={audit.id}
+                        createdAt={audit.createdAt || new Date().toISOString()}
+                        score={displayResult.auraScore}
+                      />
                     )}
 
                     {isUnlocked && (

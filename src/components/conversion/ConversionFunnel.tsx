@@ -44,6 +44,24 @@ export function ConversionFunnel({
             pulling your impression down.
           </p>
 
+          {/* Anchoring — celebrity benchmark */}
+          <div className="mx-auto mb-3 flex max-w-xs items-center justify-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
+            <div className="text-center">
+              <div className="text-[10px] text-gray-500">Celebrity benchmark</div>
+              <div className="text-sm font-bold text-amber-400">94</div>
+            </div>
+            <div className="h-8 w-px bg-white/10" />
+            <div className="text-center">
+              <div className="text-[10px] text-gray-500">Your score</div>
+              <div className="text-sm font-bold text-white">{score}</div>
+            </div>
+            <div className="h-8 w-px bg-white/10" />
+            <div className="text-center">
+              <div className="text-[10px] text-gray-500">Gap to close</div>
+              <div className="text-sm font-bold text-red-400">{Math.max(0, 94 - score)}</div>
+            </div>
+          </div>
+
           <p className="mb-4 text-xs text-gray-400">
             The #1 issue:{" "}
             <span className="font-medium text-white">{topLeakTitle}</span>

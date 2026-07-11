@@ -38,6 +38,22 @@ const tiers = [
     cta: "Start Free",
   },
   {
+    name: "Quick Scan",
+    price: "49",
+    bestFor: "One-time check",
+    description: "A single deep scan of one photo. No tracking, no comparison.",
+    features: [
+      "Single photo scan",
+      "Full score breakdown",
+      "3 status leak insights",
+      "1 upgrade suggestion",
+      "No tracking"
+    ],
+    highlighted: false,
+    href: "/audit/new",
+    cta: "Get Single Scan",
+  },
+  {
     name: "Full Aura Report",
     price: "99",
     bestFor: "Serious upgrade",
