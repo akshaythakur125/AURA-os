@@ -423,57 +423,81 @@ function generateGoalAdvice(goal: string, metrics: ImageSignalMetrics): GoalSpec
 function generateObservations(metrics: ImageSignalMetrics, goal: string): Observation[] {
   const obs: Observation[] = [];
 
-  // ─── Hair observations ───
+  // ─── Hair — sounds like a real person, not a metric dump ───
   if (metrics.hairRegion.neatnessScore > 70) {
     obs.push({
       category: "hair",
       severity: "positive",
-      title: "Hair looks neat and well-kept",
-      detail: `Hair region shows clean edges with a neatness score of ${metrics.hairRegion.neatnessScore}/100. ${metrics.hairRegion.dominantColor !== "unknown" ? `Dominant tone: ${metrics.hairRegion.dominantColor}.` : ""}`,
-      suggestion: "Keep this up. Regular trims every 3-4 weeks maintain this look.",
+      title: "Your hair is working for you",
+      detail: pick([
+        "Clean edges, good texture. This reads as someone who takes care of themselves.",
+        "Hair looks intentional — not overdone, not neglected. That sweet spot.",
+        "The neatness here signals you put thought into your appearance. People notice.",
+      ]),
+      suggestion: pick([
+        "Keep doing what you're doing. A trim every 3-4 weeks maintains this.",
+        "Don't change anything — this is a strength. Build on it.",
+      ]),
     });
   } else if (metrics.hairRegion.neatnessScore < 45) {
     obs.push({
       category: "hair",
       severity: "needs-work",
-      title: "Hair could use more definition",
-      detail: `Hair edge density is high (${metrics.hairRegion.edgeDensity}/100) — this suggests frizz, flyaways, or uneven texture that reduces the polished look.`,
-      suggestion: "A smoothing product or a quick brush before photos makes a visible difference. For curly/wavy hair, a leave-in conditioner helps define texture.",
+      title: "Hair is pulling focus from your face",
+      detail: pick([
+        "Flyaways and uneven texture are creating visual noise. Your face should be the star, not your hair.",
+        "The frizz here is competing for attention. Taming it will instantly clean up the whole photo.",
+        "Hair looks a bit untamed — not bad, but it's distracting from your best features.",
+      ]),
+      suggestion: pick([
+        "Quick fix: brush through before the photo, apply a small amount of smoothing product. 30 seconds, big difference.",
+        "A leave-in conditioner or anti-frizz serum before photos. For curly hair, a diffuser attachment works wonders.",
+        "Before your next photo: dampen slightly, comb through, let it air dry. Done.",
+      ]),
     });
   } else {
     obs.push({
       category: "hair",
       severity: "neutral",
-      title: "Hair is acceptable but not standout",
-      detail: `Neatness score: ${metrics.hairRegion.neatnessScore}/100. The hair region is neither notably neat nor messy.`,
-      suggestion: "A fresh trim or styling product before your next photo can elevate this from neutral to a strength.",
+      title: "Hair is fine — not a strength, not a weakness",
+      detail: pick([
+        "Nothing wrong here, but nothing that makes you memorable either.",
+        "It works, but a fresh style could push this from neutral to a genuine asset.",
+      ]),
+      suggestion: pick([
+        "A fresh trim or a styling product could turn this into a real positive.",
+        "Ask your barber/stylist for a photo-ready look next time. Small change, big impact.",
+      ]),
     });
   }
 
-  // ─── Clothing observations ───
+  // ─── Clothing — real talk about what works ───
   if (metrics.clothingRegion.styleSignal === "solid") {
     obs.push({
       category: "clothing",
       severity: "positive",
-      title: "Solid color clothing reads clean",
-      detail: `Your outfit reads as a solid tone (${metrics.clothingRegion.dominantColor}) with low color variety. Solid colors photograph better than patterns — they reduce visual noise and keep focus on your face.`,
-      suggestion: "This is ideal for profile photos. Stick with solid neutrals (white, navy, grey, black) or one bold color for impact.",
+      title: "Solid colors = smart move",
+      detail: pick([
+        "Your outfit reads clean and intentional. Solid tones keep the focus on your face, exactly where it should be.",
+        "No competing patterns, no visual clutter. This is how people who know what they're doing dress for photos.",
+        "The solid tone here is doing its job — letting your face and expression carry the photo.",
+      ]),
+      suggestion: "This is ideal. Stick with it for profile photos.",
     });
   } else if (metrics.clothingRegion.styleSignal === "varied") {
     obs.push({
       category: "clothing",
       severity: "needs-work",
-      title: "Outfit has too many competing colors",
-      detail: `Color variety score: ${metrics.clothingRegion.colorVariety}/100. Multiple colors or patterns in the outfit split the viewer's attention and reduce the clean signal.`,
-      suggestion: "Simplify to 1-2 colors maximum. A solid top in a neutral or single bold tone works better for photos than multi-color or heavily patterned clothing.",
-    });
-  } else {
-    obs.push({
-      category: "clothing",
-      severity: "neutral",
-      title: "Clothing color mix is moderate",
-      detail: `Dominant tone: ${metrics.clothingRegion.dominantColor}. The outfit has some color variation but isn't overwhelmingly busy.`,
-      suggestion: "For a stronger profile photo, try reducing to one dominant color in your top.",
+      title: "Your outfit is doing too much",
+      detail: pick([
+        "Multiple colors or patterns are splitting the viewer's attention. Your face should be the focal point, not your wardrobe.",
+        "The visual noise from competing colors is pulling attention away from you. Simplify.",
+        "Too many competing elements in the outfit. In a photo, less is always more.",
+      ]),
+      suggestion: pick([
+        "Switch to one solid color. Navy, white, grey, or black — these never miss for photos.",
+        "Pick ONE color for your top and commit. Everything else competes with your face.",
+      ]),
     });
   }
 
@@ -482,129 +506,151 @@ function generateObservations(metrics: ImageSignalMetrics, goal: string): Observ
     obs.push({
       category: "clothing",
       severity: "needs-work",
-      title: "Outfit blends into your skin tone",
-      detail: `Contrast between clothing and skin is only ${metrics.clothingRegion.contrastWithSkin}/100. When clothing and skin have similar brightness, the subject loses definition.`,
-      suggestion: "Wear a top that contrasts with your skin — dark top on lighter skin, or light top on darker skin. This creates visual separation and makes you stand out.",
+      title: "Your top is blending into your skin",
+      detail: pick([
+        "The shirt color is too close to your skin tone — you're losing definition. Darker top on lighter skin, or lighter top on darker skin.",
+        "No contrast between your top and face means you lose visual separation. You need that pop.",
+      ]),
+      suggestion: pick([
+        "Wear something that contrasts your skin. It's the simplest way to make yourself stand out.",
+        "This is an easy fix — one different shirt and the whole photo transforms.",
+      ]),
     });
   }
 
-  // ─── Skin observations ───
+  // ─── Skin — direct, not clinical ───
   if (metrics.skinRegion.evenness > 70) {
     obs.push({
       category: "skin",
       severity: "positive",
-      title: "Skin tone looks even and consistent",
-      detail: `Skin evenness: ${metrics.skinRegion.evenness}/100. The face area shows consistent brightness without harsh shadows or blotchy patches.`,
-      suggestion: "Your skin presentation is a strength. Keep moisturizing and use SPF daily to maintain this.",
+      title: "Skin looks clear and even",
+      detail: pick([
+        "No harsh shadows, no blotchy patches. Your skin is a genuine asset in this photo.",
+        "The even tone here means you can get away with minimal editing. Natural works.",
+      ]),
+      suggestion: "Keep moisturizing and using SPF. This is worth protecting.",
     });
   } else if (metrics.skinRegion.evenness < 45) {
     obs.push({
       category: "skin",
       severity: "needs-work",
-      title: "Skin tone appears uneven in the photo",
-      detail: `Skin evenness: ${metrics.skinRegion.evenness}/100. There may be shadows, dark circles, or uneven lighting creating patches on the face.`,
-      suggestion: "Even lighting is the #1 fix — face a window at 45°. A light concealer under the eyes and a matte moisturizer can even out tone for photos.",
+      title: "Uneven skin tone is showing",
+      detail: pick([
+        "Shadows or uneven lighting are creating patches on your face. This is usually a lighting problem, not a skin problem.",
+        "Dark circles or uneven patches are visible. Good news: this is almost always fixable with better light.",
+      ]),
+      suggestion: pick([
+        "Face a window at 45°. That's it. Natural side light evens everything out.",
+        "The #1 fix: move to a window. Side light at 45° does what ₹5000 of skincare can't.",
+      ]),
     });
   }
 
-  // ─── Grooming (derived from hair + skin + overall) ───
+  // ─── Grooming — honest assessment ───
   const groomingScore = (metrics.hairRegion.neatnessScore + metrics.skinRegion.evenness + metrics.clarityScore) / 3;
   if (groomingScore > 70) {
     obs.push({
       category: "grooming",
       severity: "positive",
-      title: "Grooming reads as intentional",
-      detail: `Combined grooming signal (hair + skin + clarity): ${Math.round(groomingScore)}/100. The overall presentation suggests effort and self-care.`,
-      suggestion: "Maintain this baseline. Small upgrades — eyebrow grooming, lip balm, clean nails — can push it further.",
+      title: "You look put-together",
+      detail: pick([
+        "Hair, skin, and overall clarity all signal that you care. This is what 'effortless' actually looks like — effort, but hidden.",
+        "The grooming here is polished without being overdone. That's the sweet spot for photos.",
+      ]),
+      suggestion: "Maintain this. Small upgrades (eyebrow grooming, lip balm) can push it further.",
     });
   } else if (groomingScore < 45) {
     obs.push({
       category: "grooming",
       severity: "needs-work",
-      title: "Grooming could be more polished",
-      detail: `Combined grooming signal: ${Math.round(groomingScore)}/100. The overall presentation could benefit from more attention to detail.`,
-      suggestion: "Start with basics: clean eyebrows, moisturized skin, neat hair. These are free and make a significant visual difference.",
+      title: "A quick grooming session would change everything",
+      detail: pick([
+        "The basics need attention — tidy eyebrows, moisturized skin, neat hair. These are free and make a visible difference.",
+        "A little grooming effort goes a long way in photos. You're leaving points on the table.",
+      ]),
+      suggestion: pick([
+        "30-minute fix: trim stray hairs, shape brows, moisturize. That's it. The photo will look completely different.",
+        "Before your next photo: groom. It costs nothing and changes everything.",
+      ]),
     });
   }
 
-  // ─── Accessories ───
+  // ─── Accessories — specific, not generic ───
   if (metrics.accessoryDetection.accessoryCount > 0) {
     const items = [];
     if (metrics.accessoryDetection.hasGlasses) items.push("glasses");
-    if (metrics.accessoryDetection.hasWatch) items.push("a watch/bracelet");
-    if (metrics.accessoryDetection.hasEarring) items.push("earrings/jewelry");
+    if (metrics.accessoryDetection.hasWatch) items.push("a watch");
+    if (metrics.accessoryDetection.hasEarring) items.push("jewelry");
     obs.push({
       category: "accessories",
       severity: "positive",
-      title: `Accessory detected: ${items.join(", ")}`,
-      detail: `The analysis picked up ${items.join(" and ")} in your photo. Accessories add personality and signal intentionality when they're minimal and coordinated.`,
-      suggestion: items.includes("glasses")
-        ? "Glasses work well for professional and intellectual signals. Ensure they're clean and the frames complement your face shape."
-        : "Keep accessories minimal — one statement piece is better than multiple competing ones.",
-    });
-  } else {
-    obs.push({
-      category: "accessories",
-      severity: "neutral",
-      title: "No prominent accessories detected",
-      detail: "The analysis didn't pick up glasses, watches, or jewelry in the photo.",
-      suggestion: goal === "dating" || goal === "instagram"
-        ? "A simple watch, bracelet, or subtle earrings can add visual interest without being distracting."
-        : "For professional contexts, a classic watch is a safe, signal-boosting addition.",
+      title: items.includes("glasses") ? "Glasses are working for you" : "Good use of accessories",
+      detail: items.includes("glasses")
+        ? "Glasses signal intelligence and intentionality. They frame your face well — make sure they're clean and the frames suit your face shape."
+        : "One or two accessories add personality without being distracting. That's the right balance.",
+      suggestion: "Keep it minimal — one statement piece, not five.",
     });
   }
 
-  // ─── Background observations ───
-  if (metrics.backgroundObjects.hasPlants) {
+  // ─── Background — what it signals about you ───
+  if (metrics.backgroundComplexityEstimate > 60) {
+    obs.push({
+      category: "background",
+      severity: "needs-work",
+      title: "Background is competing with your face",
+      detail: pick([
+        "Clutter, objects, or visual noise behind you are pulling attention. In a photo, the background either supports you or undermines you.",
+        "The background is too busy. People's eyes are wandering to what's behind you instead of looking at you.",
+      ]),
+      suggestion: pick([
+        "Stand in front of a plain wall, open doorway, or outdoor space with minimal clutter 4+ feet behind you.",
+        "Clean background = clean signal. Move 3 feet closer to a wall or door.",
+      ]),
+    });
+  } else if (metrics.backgroundObjects.hasPlants) {
     obs.push({
       category: "background",
       severity: "positive",
-      title: "Plants or greenery detected in background",
-      detail: "The background contains green elements, which add warmth and a natural feel. This reads as intentional and inviting.",
-      suggestion: "Great choice. Plants signal a cared-for environment. Keep them as a background element — don't let them compete with your face.",
+      title: "Background plants add warmth",
+      detail: "Greenery in the background signals a cared-for environment. It reads as intentional and inviting.",
+      suggestion: "Great choice. Keep them as a background element — don't let them compete with your face.",
     });
   }
 
-  if (metrics.backgroundObjects.isIndoor) {
-    obs.push({
-      category: "background",
-      severity: "neutral",
-      title: "Indoor setting detected",
-      detail: "The photo appears to be taken indoors. Indoor photos can work well with proper lighting and a clean background.",
-      suggestion: "Ensure the background is clean and uncluttered. A plain wall or minimalist room reads better than a busy interior.",
-    });
-  }
-
-  if (metrics.backgroundObjects.hasArtwork) {
-    obs.push({
-      category: "background",
-      severity: "positive",
-      title: "Art or decorative elements in background",
-      detail: "The background contains colorful or decorative elements that add visual interest without being distracting.",
-      suggestion: "This is good — it suggests a curated environment. Just make sure the artwork doesn't pull focus from your face.",
-    });
-  }
-
-  // ─── Posing observations ───
+  // ─── Posing — honest coaching ───
   if (metrics.symmetryScore > 70) {
     obs.push({
       category: "posing",
       severity: "positive",
-      title: "Well-balanced pose and framing",
-      detail: `Symmetry score: ${metrics.symmetryScore}/100. The subject is well-centered and the pose feels balanced.`,
-      suggestion: "This reads as confident and intentional. Maintain this framing in future photos.",
+      title: "Strong, balanced composition",
+      detail: pick([
+        "You're well-centered and the framing feels intentional. This reads as confident.",
+        "Good balance in the frame. You look like you know what you're doing.",
+      ]),
+      suggestion: "Maintain this framing. You've found what works.",
     });
   } else if (metrics.symmetryScore < 45) {
     obs.push({
       category: "posing",
       severity: "needs-work",
-      title: "Pose feels off-balance",
-      detail: `Symmetry score: ${metrics.symmetryScore}/100. The subject positioning creates an unbalanced composition.`,
-      suggestion: "Center yourself in the frame or use the rule of thirds. Slight head tilt (10-15°) can add dynamism without losing balance.",
+      title: "The framing feels slightly off",
+      detail: pick([
+        "You're a bit off-center or tilted, which creates an unbalanced feel. Small adjustment, big difference.",
+        "The composition feels tilted or off-kilter. Centering yourself would fix this instantly.",
+      ]),
+      suggestion: pick([
+        "Center yourself. Eyes at the top-third line. That's the rule that works every time.",
+        "Slight head tilt (10-15°) adds dynamism. More than that looks uncertain.",
+      ]),
     });
   }
 
   return obs;
+}
+
+// ponytail: pick a random string for variety across reports
+function pick(arr: string[]): string {
+  return arr[Math.floor(Math.random() * arr.length)];
 }
 
 function generateFinalVerdict(
@@ -614,12 +660,24 @@ function generateFinalVerdict(
 ): string {
   if (score >= 75) {
     const refineTarget = metrics.lightingScore < 70 ? "lighting" : metrics.sharpness < 70 ? "clarity" : "framing";
-    return `Your presentation is already sending a strong ${category.toLowerCase()} signal. With targeted refinements in ${refineTarget}, you can elevate your visual presence to a premium tier. The foundation is solid — now it's about polish and consistency.`;
+    return pick([
+      `You're already in the top tier. The ${refineTarget} tweak is the last 10% that separates good from exceptional.`,
+      `Strong photo. One targeted fix in ${refineTarget} and you're at a professional level.`,
+      `This is a solid 75+. The ${refineTarget} adjustment is polish, not a rebuild.`,
+    ]);
   }
   if (score >= 60) {
-    return `You have a good baseline, but there are clear areas where your visual signal can be strengthened. Start with the first priority in your upgrade map — fixing this alone can shift how people perceive your presentation. The upgrades here are achievable within your budget.`;
+    return pick([
+      "Good foundation, clear weak spots. Fix the #1 issue in your roadmap and watch the score jump.",
+      "You're closer than you think. Two or three targeted changes and this becomes a genuinely strong photo.",
+      "Above average, but you're leaving easy points on the table. The roadmap shows exactly what to fix.",
+    ]);
   }
-  return `Your presentation has room to grow, and the good news is that the highest-impact changes are also the most affordable. Improving lighting and clarity alone can significantly change how your first impression reads. Start with the free fixes and build up from there.`;
+  return pick([
+    "Honest take: this needs work. But the good news is the biggest improvements are free — lighting and clarity alone can transform this.",
+    "Room to grow, and most of it costs nothing. Start with the free fixes, then build from there.",
+    "This isn't your best photo — but it shows your baseline. Fix the basics and retake. You'll be surprised.",
+  ]);
 }
 
 export async function generateFullAuraReport(

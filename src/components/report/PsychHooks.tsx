@@ -18,7 +18,7 @@ export function PsychHooks({
 }) {
   return (
     <div className="mb-6 space-y-3">
-      <EndowedProgress />
+      <EndowedProgress score={score} />
       <ScarcityTimer createdAt={createdAt} />
       <VariableReward score={score} auditId={auditId} />
     </div>
@@ -26,8 +26,8 @@ export function PsychHooks({
 }
 
 /** Feature 4: Endowed progress — "You've already started" */
-function EndowedProgress() {
-  const pct = 40; // ponytail: static, could be dynamic based on report depth
+function EndowedProgress({ score }: { score: number }) {
+  const pct = Math.min(35 + Math.floor(score / 10), 60); // scales with score
 
   return (
     <FadeInView>

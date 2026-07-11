@@ -70,9 +70,9 @@ export function determineCategory(score: number, metrics: ImageSignalMetrics): s
 
 export function generateVerdict(score: number, _category: string): string {
   void _category;
-  if (score >= 80) return "Your visual presentation is making a strong first impression. Minor refinements can elevate it further.";
-  if (score >= 70) return "You have solid presentation foundations. A few targeted upgrades can unlock a premium signal.";
-  if (score >= 60) return "Your first impression has good elements, but some signals may be holding it back.";
-  if (score >= 50) return "Your presentation is functional, but there are clear opportunities to strengthen your visual signal.";
-  return "Your first impression has room to grow. Small changes in lighting and framing can make a meaningful difference.";
+  if (score >= 80) return "Strong photo. Minor polish and you're at a professional level.";
+  if (score >= 70) return "Good foundation — a few targeted fixes will make this genuinely stand out.";
+  if (score >= 60) return "Decent, but you're leaving easy points on the table. The fixes are simple.";
+  if (score >= 50) return "Average first impression. Two or three changes can push this well above the pack.";
+  return "This needs work — but the biggest improvements are free. Lighting and clarity alone can transform it.";
 }
