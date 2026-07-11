@@ -29,22 +29,63 @@ function metrics(pixels) {
     const idx = (y * width + x) * channels;
     if (Math.abs(data[idx] - data[(y * width + x + 1) * channels]) > 20 || Math.abs(data[idx] - data[((y + 1) * width + x) * channels]) > 20) edges++;
   }
-  return { avgBrightness: avg, stdDev, edgeDensity: edges / total, width, height };
+  // Simple face-count estimation: count distinct bright circular regions
+  // ponytail: heuristic — not a real face detector, but better than hardcoded 1
+  let faceCount = 0;
+  const threshold = avg + stdDev * 0.5;
+  const visited = new Uint8Array(total);
+  for (let y = 0; y < height; y += 4) {
+    for (let x = 0; x < width; x += 4) {
+      const idx = y * width + x;
+      if (visited[idx]) continue;
+      const b = (data[idx * channels] + data[idx * channels + 1] + data[idx * channels + 2]) / 3;
+      if (b > threshold) {
+        // BFS to find connected bright region
+        let area = 0; const queue = [idx]; visited[idx] = 1;
+        while (queue.length > 0 && area < 50000) {
+          const ci = queue.pop(); area++;
+          const cx = ci % width, cy = (ci - cx) / width;
+          for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+            const nx = cx + dx * 4, ny = cy + dy * 4;
+            if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+              const ni = ny * width + nx;
+              if (!visited[ni]) {
+                const nb = (data[ni * channels] + data[ni * channels + 1] + data[ni * channels + 2]) / 3;
+                if (nb > threshold) { visited[ni] = 1; queue.push(ni); }
+              }
+            }
+          }
+        }
+        if (area > 500) faceCount++; // ponytail: minimum region size for a face-like area
+      }
+    }
+  }
+  return { avgBrightness: avg, stdDev, edgeDensity: edges / total, width, height, faceCount: Math.min(faceCount, 5) };
 }
 
 function gate(m) {
   const issues = [];
   let score = 100;
+  // Resolution
   if (m.width < 300 || m.height < 300) { issues.push("too_small"); score -= 30; }
   else if (m.width < 500 || m.height < 500) { issues.push("low_resolution"); score -= 15; }
-  if (m.avgBrightness < 30) { issues.push("too_dark"); score -= 30; }
-  else if (m.avgBrightness < 50) { issues.push("too_dark"); score -= 15; }
-  else if (m.avgBrightness > 230) { issues.push("overexposed"); score -= 30; }
-  else if (m.avgBrightness > 200) { issues.push("too_bright"); score -= 10; }
-  if (m.stdDev < 12) { issues.push("severe_blur"); score -= 40; }
-  else if (m.stdDev < 20) { issues.push("blurry"); score -= 20; }
+  // Brightness
+  if (m.avgBrightness < 20) { issues.push("too_dark"); score -= 30; }
+  else if (m.avgBrightness < 40) { issues.push("too_dark"); score -= 15; }
+  else if (m.avgBrightness > 240) { issues.push("overexposed"); score -= 30; }
+  else if (m.avgBrightness > 220) { issues.push("too_bright"); score -= 10; }
+  // Blur — use face-region-aware threshold
+  if (m.faceRegionSharpness !== undefined && m.faceRegionSharpness < 15) {
+    issues.push("severe_blur"); score -= 40;
+  } else if (m.stdDev < 8) { issues.push("severe_blur"); score -= 40; }
+  else if (m.stdDev < 15) { issues.push("blurry"); score -= 20; }
+  // Face count — use edge-density heuristics
+  if (m.faceCount !== undefined && m.faceCount > 1) { issues.push("multiple_faces"); score -= 30; }
+  if (m.faceCount !== undefined && m.faceCount === 0) { issues.push("no_face"); score -= 40; }
+  // Screenshot — check for uniform margins
+  if (m.edgeDensity > 0.01 && m.stdDev < 25) { issues.push("screenshot_suspect"); score -= 10; }
   score = Math.max(0, Math.min(100, score));
-  const critical = issues.filter(i => ["too_small", "severe_blur", "overexposed", "too_dark"].includes(i));
+  const critical = issues.filter(i => ["too_small", "severe_blur", "overexposed", "too_dark", "no_face", "multiple_faces"].includes(i));
   const status = critical.length > 0 || score < 30 ? "rejected" : issues.length > 0 ? "accepted-with-limitations" : "accepted";
   return { qualityScore: score, issues, status };
 }
