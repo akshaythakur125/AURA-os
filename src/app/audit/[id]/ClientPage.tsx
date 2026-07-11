@@ -793,8 +793,8 @@ export default function AuditDetailPage() {
                       );
                     })()}
 
-                    {/* Conversion funnel — prominent, right after score */}
-                    {!isUnlocked && displayResult && (
+                    {/* Conversion funnel — only for accepted/limited results */}
+                    {!isUnlocked && displayResult && typeof displayResult.auraScore === "number" && (
                       <ConversionFunnel
                         auditId={audit.id}
                         score={displayResult.auraScore}

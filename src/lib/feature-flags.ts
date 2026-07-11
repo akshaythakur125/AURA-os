@@ -15,6 +15,9 @@ export const FEATURE_FLAGS = {
 
   /** Restrict to internal users only */
   FINAL_ANALYSER_INTERNAL_USERS_ONLY: process.env.NEXT_PUBLIC_FINAL_ANALYSER_INTERNAL_USERS_ONLY !== "false",
+
+  /** Disable paid reports until server-side entitlement is verified */
+  PAID_REPORT_ENABLED: process.env.NEXT_PUBLIC_PAID_REPORT_ENABLED === "true",
 } as const;
 
 export type FeatureFlagState = {
