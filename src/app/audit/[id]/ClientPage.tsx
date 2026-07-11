@@ -293,6 +293,7 @@ export default function AuditDetailPage() {
     return getAuditById(id) ?? null;
   });
   const [generating, setGenerating] = useState(false);
+  const [reportReady, setReportReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<FreeAuraResult | null>(null);
   const [fullContent] = useState<FullAuraReportContent | null>(null);
@@ -385,6 +386,12 @@ export default function AuditDetailPage() {
       setError("Something went wrong during analysis. Please try again.");
     } finally {
       setGenerating(false);
+      // ponytail: progressive reveal — score first, then rest
+      setTimeout(() => {
+        setReportReady(true);
+        // Smooth scroll to score card
+        document.querySelector("[data-score-card]")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 300);
     }
   }
 
@@ -620,9 +627,16 @@ export default function AuditDetailPage() {
                 </Card>
               ) : (
                 <div className="text-center">
-                  <Button size="lg" onClick={handleGenerate}>
-                    Generate Free Aura Score
-                  </Button>
+                  {generating ? (
+                    <div className="inline-flex flex-col items-center gap-3">
+                      <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-violet-400" />
+                      <p className="text-sm text-gray-400">Analyzing your photo...</p>
+                    </div>
+                  ) : (
+                    <Button size="lg" onClick={handleGenerate}>
+                      Generate Free Aura Score
+                    </Button>
+                  )}
                 </div>
               )}
               {error && <p className="mt-3 text-center text-sm text-red-400">{error}</p>}
@@ -684,7 +698,7 @@ export default function AuditDetailPage() {
 
                     {/* ΓöÇΓöÇΓöÇ Score Card ΓöÇΓöÇΓöÇ */}
                     <FadeInView delay={100}>
-                      <Card className="relative mb-6 overflow-hidden text-center">
+                      <Card className="relative mb-6 overflow-hidden text-center" data-score-card>
                         <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
                         <Badge variant="premium" className="mb-4">
                           {displayResult.category}
@@ -699,7 +713,7 @@ export default function AuditDetailPage() {
                             style={{ width: `${displayResult.auraScore}%` }}
                           />
                         </div>
-                        <p className="mx-auto mt-4 max-w-md text-sm text-gray-300">
+                        <p className="mx-auto mt-4 max-w-md text-sm text-gray-300 animate-[fade-in-up_0.8s_var(--ease-out-expo)_0.3s_both]">
                           {displayResult.oneLineVerdict}
                         </p>
                         <div className="mx-auto mt-4 max-w-md">
@@ -754,7 +768,7 @@ export default function AuditDetailPage() {
 
                     {isUnlocked && (
                     <>
-                    <FadeInView delay={150}>
+                    <FadeInView delay={50}>
                       <SmartInsights
                         grooming={displayResult?.imageMetrics.groomingResult}
                         style={displayResult?.imageMetrics.detectedStyle}
@@ -762,7 +776,7 @@ export default function AuditDetailPage() {
                       />
                     </FadeInView>
 
-                    <FadeInView delay={150}>
+                    <FadeInView delay={50}>
                       <div className="mb-6 rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-emerald-500/[0.08] to-transparent p-5 sm:p-6">
                         <div className="mb-4 text-center">
                           <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1">
@@ -787,7 +801,7 @@ export default function AuditDetailPage() {
                       </div>
                     </FadeInView>
 
-                                            <FadeInView delay={200}>
+                                            <FadeInView delay={100}>
                         <DynamicGoalAdvice
                           goal={audit.goal || "glowup"}
                           metrics={{
@@ -807,7 +821,7 @@ export default function AuditDetailPage() {
                     </>
 
                     )}
-                    <FadeInView delay={200}>
+                    <FadeInView delay={100}>
                       <Card className="mb-6">
                         <h3 className="mb-3 text-sm font-semibold text-white">
                           Strongest Signals
@@ -822,7 +836,7 @@ export default function AuditDetailPage() {
 
                     {/* ΓöÇΓöÇΓöÇ Remaining Leaks (Blurred Previews) ΓöÇΓöÇΓöÇ */}
                     {otherLeaks.length > 0 && (
-                      <FadeInView delay={250}>
+                      <FadeInView delay={150}>
                         <div className="mb-6">
                         <Card className="relative overflow-hidden">
                           <h3 className="mb-4 text-sm font-semibold text-white">
@@ -859,7 +873,7 @@ export default function AuditDetailPage() {
                       </FadeInView>
                     )}
 
-                    <FadeInView delay={300}>
+                    <FadeInView delay={200}>
                       <Card className="mb-6">
                         <h3 className="mb-4 text-sm font-semibold text-white">
                           Quick Fixes
@@ -880,7 +894,7 @@ export default function AuditDetailPage() {
                       </Card>
                     </FadeInView>
 
-                    <FadeInView delay={350}>
+                    <FadeInView delay={250}>
                       <Card className="mb-6">
                         <h3 className="mb-1 text-sm font-semibold text-white">
                           Budget Upgrade Plan
@@ -902,7 +916,7 @@ export default function AuditDetailPage() {
                     </Card>
                     </FadeInView>
 
-                    <FadeInView delay={370}>
+                    <FadeInView delay={280}>
                       <ImprovementRoadmap
                         metrics={{
                           lightingScore: displayResult.imageMetrics.lightingScore,
