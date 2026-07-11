@@ -31,6 +31,7 @@ import { getBuyLinksForObservation, getTutorialLinks } from "@/lib/aura-engine/p
 import { ConversionFunnel } from "@/components/conversion/ConversionFunnel";
 import { CelebrityMatch } from "@/components/celebrity/CelebrityMatch";
 import { PsychHooks } from "@/components/report/PsychHooks";
+import { SmartInsights } from "@/components/report/SmartInsights";
 import { ScoreBreakdown } from "@/components/report/ScoreBreakdown";
 import { ImprovementRoadmap } from "@/components/report/ImprovementRoadmap";
 import { DynamicGoalAdvice } from "@/components/report/DynamicGoalAdvice";
@@ -745,6 +746,14 @@ export default function AuditDetailPage() {
                         auditId={audit.id}
                         createdAt={audit.createdAt || new Date().toISOString()}
                         score={displayResult.auraScore}
+                      />
+                    )}
+
+                    {!isUnlocked && displayResult && (
+                      <SmartInsights
+                        grooming={displayResult.imageMetrics.groomingResult}
+                        style={displayResult.imageMetrics.detectedStyle}
+                        colorPalette={displayResult.imageMetrics.colorPalette}
                       />
                     )}
 

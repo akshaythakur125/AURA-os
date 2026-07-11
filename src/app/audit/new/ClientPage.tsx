@@ -96,6 +96,7 @@ export default function NewAuditPage() {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [imageDims, setImageDims] = useState<{ width: number; height: number } | null>(null);
+  const [qualityPreview, setQualityPreview] = useState<{ score: number; label: string; color: string } | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [consent, setConsent] = useState(false);
 
@@ -129,7 +130,20 @@ export default function NewAuditPage() {
     setFile(f);
     const url = URL.createObjectURL(f);
     setPreviewUrl(url);
-    getImageDimensions(f).then(setImageDims).catch(() => {});
+    getImageDimensions(f).then((dims) => {
+      setImageDims(dims);
+      // Quick quality preview
+      const res = dims.width * dims.height;
+      let score = 50;
+      let label = 'Acceptable';
+      let color = 'text-amber-400';
+      if (res > 2000000) { score = 90; label = 'Excellent resolution'; color = 'text-emerald-400'; }
+      else if (res > 1000000) { score = 75; label = 'Good resolution'; color = 'text-emerald-400'; }
+      else if (res < 300000) { score = 25; label = 'Low resolution — results may be less accurate'; color = 'text-red-400'; }
+      else { score = 50; label = 'Acceptable resolution'; color = 'text-amber-400'; }
+      if (dims.width < 300 || dims.height < 300) { score = 15; label = 'Image too small — minimum 300x300'; color = 'text-red-400'; }
+      setQualityPreview({ score, label, color });
+    }).catch(() => {});
     trackEvent(EVENTS.QUIZ_PHOTO_UPLOADED, { fileType: f.type, fileSize: f.size });
   }
 
@@ -353,6 +367,14 @@ export default function NewAuditPage() {
                       <p className="mt-2 text-center text-xs text-gray-600">
                         {imageDims.width} &times; {imageDims.height} px
                       </p>
+                    )}
+                    {qualityPreview && (
+                      <div className="mt-2 flex items-center justify-center gap-2">
+                        <div className="h-1.5 w-24 overflow-hidden rounded-full bg-white/5">
+                          <div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all" style={{ width: qualityPreview.score + '%' }} />
+                        </div>
+                        <span className={"text-[10px] " + qualityPreview.color}>{qualityPreview.label}</span>
+                      </div>
                     )}
                     <div className="mt-3 flex justify-center gap-3">
                       <Button variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>Replace</Button>

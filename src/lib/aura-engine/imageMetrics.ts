@@ -2,6 +2,7 @@ import { detectUndertone } from "./engines/undertoneEngine";
 import { runQualityGate } from "./engines/qualityGate";
 import { assessGrooming } from "./engines/groomingEngine";
 import { detectStyle } from "./engines/styleDetectionEngine";
+import { getColorPalette } from "./engines/colorPaletteEngine";
 import type { ImageSignalMetrics } from "@/types/audit";
 
 const ANALYSIS_WIDTH = 256;
@@ -747,7 +748,24 @@ export function analyzeImageDataUrl(
         const regionData = analyzeRegions(imageData.data, w, h, faceZone);
 
         // ─── Run dedicated engines ───
-        const undertoneResult = detectUndertone(stats.r.slice(0, 500), stats.g.slice(0, 500), stats.b.slice(0, 500));
+        // Extract skin-tone pixels from face zone for undertone detection
+        const skinR: number[] = [];
+        const skinG: number[] = [];
+        const skinB: number[] = [];
+        const fd = imageData.data;
+        for (let sy = 0; sy < h; sy += 3) {
+          for (let sx = 0; sx < w; sx += 3) {
+            const si = (sy * w + sx) * 4;
+            if (isSkinTone(fd[si], fd[si + 1], fd[si + 2])) {
+              skinR.push(fd[si]);
+              skinG.push(fd[si + 1]);
+              skinB.push(fd[si + 2]);
+              if (skinR.length >= 500) break;
+            }
+          }
+          if (skinR.length >= 500) break;
+        }
+        const undertoneResult = detectUndertone(skinR, skinG, skinB);
 
         const qualityResult = runQualityGate({
           width: img.width,
@@ -822,6 +840,8 @@ export function analyzeImageDataUrl(
           qualityGate: { qualityScore: qualityResult.qualityScore, issues: qualityResult.issues, canProceed: qualityResult.canProceed, message: qualityResult.message },
           groomingResult: { overallScore: groomingResult.overallScore, hairNeatness: groomingResult.hairNeatness, skinClarity: groomingResult.skinClarity, facialHair: groomingResult.facialHair, eyebrows: groomingResult.eyebrows, assessment: groomingResult.assessment, topFix: groomingResult.topFix },
           detectedStyle: { detectedStyle: styleResult.detectedStyle, confidence: styleResult.confidence, reasoning: styleResult.reasoning, upgradePath: styleResult.upgradePath },
+          // ponytail: color palette uses default occasion, goal-specific wiring in report generation
+          colorPalette: getColorPalette(undertoneResult.undertone, undertoneResult.skinDepth, "default"),
         });
       } catch {
         resolve(fallbackMetrics(img.width, img.height));
@@ -871,5 +891,10 @@ function fallbackMetrics(w: number, h: number): ImageSignalMetrics {
     skinRegion: { evenness: 50, brightnessVariance: 15, toneConsistency: 50 },
     accessoryDetection: { hasGlasses: false, hasWatch: false, hasEarring: false, accessoryCount: 0 },
     backgroundObjects: { isIndoor: true, hasPlants: false, hasFurniture: false, hasArtwork: false, clutterLevel: 30 },
+    undertone: { undertone: "neutral" as const, skinDepth: "medium" as const, confidence: 0 },
+    qualityGate: { qualityScore: 50, issues: [], canProceed: true, message: "Fallback metrics — analysis skipped" },
+    groomingResult: { overallScore: 50, hairNeatness: 50, skinClarity: 50, facialHair: 50, eyebrows: 50, assessment: "Unable to assess", topFix: "Upload a clearer photo for accurate grooming analysis." },
+    detectedStyle: { detectedStyle: "unknown", confidence: 0, reasoning: "Insufficient data", upgradePath: "Upload a clearer photo." },
+    colorPalette: { name: "Default", colors: ["white", "black", "navy", "grey"], avoid: ["neon"], reasoning: "Using defaults — upload a photo for personalized colors." },
   };
 }
