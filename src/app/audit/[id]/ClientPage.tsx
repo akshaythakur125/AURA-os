@@ -28,6 +28,9 @@ import { PaymentTrust } from "@/components/trust/PaymentTrust";
 import type { Audit, FreeAuraResult, FullAuraReportContent, Observation, ImageSignalMetrics } from "@/types/audit";
 import type { PersonalizationResult, SignalMismatch, GoalStrategy } from "@/types/personalization";
 import { getBuyLinksForObservation, getTutorialLinks } from "@/lib/aura-engine/productLinks";
+import { ConversionFunnel } from "@/components/conversion/ConversionFunnel";
+import { CelebrityMatch } from "@/components/celebrity/CelebrityMatch";
+import { matchCelebrity, type MatchResult } from "@/lib/aura-engine/celebrityMatch";
 
 const auditTypeLabels: Record<string, string> = {
   photo: "Photo Aura Check",
@@ -289,6 +292,7 @@ export default function AuditDetailPage() {
   const [confirmAction, setConfirmAction] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ city: string; lat: number; lng: number } | null>(null);
   const [nearbyPlaces, setNearbyPlaces] = useState<{ salons: { name: string; type: string; area: string; rating: number; mapUrl: string }[]; photographers: { name: string; type: string; area: string; rating: number; mapUrl: string }[]; gyms: { name: string; type: string; area: string; rating: number; mapUrl: string }[] }>({ salons: [], photographers: [], gyms: [] });
+  const [celebMatches, setCelebMatches] = useState<MatchResult[]>([]);
 
   function handlePrint() {
     window.print();
@@ -317,6 +321,19 @@ export default function AuditDetailPage() {
 
       const report = await generateFreeAuraReport(audit, visionResults);
       setResult(report);
+
+      // Compute celebrity matches
+      const matches = matchCelebrity({
+        goal: audit.goal || "dating",
+        undertone: visionResults?.scores?.overall ? undefined : undefined,
+        lightingScore: report.imageMetrics.lightingScore,
+        groomingScore: report.imageMetrics.clarityScore,
+        outfitScore: report.imageMetrics.contrast,
+        expressionScore: report.imageMetrics.compositionScore,
+        symmetryScore: report.imageMetrics.symmetryScore,
+        backgroundScore: report.imageMetrics.backgroundBrightness,
+      });
+      setCelebMatches(matches);
 
       const personalization = generateStatusArchetype(audit, report.imageMetrics);
 
@@ -1243,6 +1260,21 @@ export default function AuditDetailPage() {
                       </Card>
                     </FadeInView>
 
+                    {/* Conversion funnel — prominent, right after score */}
+                    {!isUnlocked && displayResult && (
+                      <ConversionFunnel
+                        auditId={audit.id}
+                        score={displayResult.auraScore}
+                        leakCount={displayResult.statusLeaks.length}
+                        topLeakTitle={displayResult.statusLeaks[0]?.title || "Unknown"}
+                      />
+                    )}
+
+                    {/* Celebrity match — aspirational */}
+                    {!isUnlocked && celebMatches.length > 0 && (
+                      <CelebrityMatch matches={celebMatches} />
+                    )}
+
                     {isUnlocked && (
                     <>
                     <FadeInView delay={150}>
@@ -1565,132 +1597,6 @@ export default function AuditDetailPage() {
                       <span className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Before/after preview</span>
                       <span className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Google Maps locations</span>
                       <span className="flex items-center gap-1"><span className="text-emerald-400">✓</span> Product links</span>
-                    </div>
-                  </div>
-                </FadeInView>
-              )}
-
-              {/* ─── Paywall: Personalized Upgrade ─── */}
-              {displayResult && (
-                <FadeInView delay={500}>
-                  <div className="mb-6">
-                    <div className="mb-4">
-                      <SocialProofBar variant="compact" />
-                    </div>
-                    <Card className="relative overflow-hidden border-purple-500/20">
-                      <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
-                      <div className="pointer-events-none absolute -left-16 -bottom-16 h-32 w-32 rounded-full bg-pink-600/10 blur-3xl" />
-                      <div className="text-center">
-                        <Badge variant="premium" className="mb-3">Full Report</Badge>
-                        <h3 className="mb-2 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-xl font-bold text-transparent">
-                          See everything that&apos;s weakening your impression
-                        </h3>
-                        <p className="mx-auto mb-4 max-w-sm text-sm text-gray-400">
-                          You saw <span className="text-white font-medium">{displayResult.statusLeaks[0]?.title}</span> — there&apos;s {displayResult.statusLeaks.length - 1} more leak{displayResult.statusLeaks.length - 1 !== 1 ? "s" : ""} plus your full goal strategy and upgrade path.
-                        </p>
-                        <div className="mb-4 flex items-center justify-center gap-3 text-xs text-gray-500">
-                          <span>Instant unlock</span>
-                          <span className="h-1 w-1 rounded-full bg-gray-600" />
-                          <span>No subscription</span>
-                          <span className="h-1 w-1 rounded-full bg-gray-600" />
-                          <span>Yours forever</span>
-                        </div>
-                        <Link href={`/unlock?auditId=${audit.id}&product=aura_report`} className="block">
-                          <Button size="lg" className="w-full max-w-xs mx-auto">
-                            Unlock Full Report — ₹<CountUp target={99} duration={800} />
-                          </Button>
-                        </Link>
-                        {/* Price anchoring */}
-                        <p className="mt-3 text-[11px] text-gray-500">
-                          ₹99 = less than a chai per day for a week. One-time payment, yours forever.
-                        </p>
-
-                        {/* Social proof — testimonials */}
-                        <div className="mt-4 space-y-2">
-                          {[
-                            { name: "Priya, Delhi", text: "Went from 38 → 74 in two weeks. The lighting fix alone changed everything." },
-                            { name: "Arjun, Mumbai", text: "The budget plan showed me ₹500 changes that made my profile look 10x better." },
-                            { name: "Sneha, Bangalore", text: "Finally understood why my photos weren't hitting. This report nailed it." },
-                          ].map((t) => (
-                            <div key={t.name} className="flex items-start gap-2 rounded-lg bg-white/[0.03] px-3 py-2 text-left">
-                              <span className="mt-0.5 text-amber-400">★</span>
-                              <div>
-                                <p className="text-[11px] text-gray-300">{t.text}</p>
-                                <p className="mt-0.5 text-[10px] text-gray-500">— {t.name}</p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-
-                        {/* Blurred preview of what's inside */}
-                        <div className="relative mt-5 overflow-hidden rounded-xl border border-white/[0.04] bg-white/[0.02] text-left">
-                          <div className="p-4">
-                            <p className="mb-3 text-xs font-medium text-gray-400">What&apos;s inside your full report:</p>
-                            {/* Remaining leaks — blurred */}
-                            <div className="space-y-2">
-                              {displayResult.statusLeaks.slice(1).map((leak, i) => (
-                                <div key={i} className="flex items-start gap-2">
-                                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400/60" />
-                                  <div className="blur-[5px] select-none">
-                                    <p className="text-xs text-gray-300">{leak.title}</p>
-                                    <p className="text-[10px] text-gray-500">{leak.description?.slice(0, 80)}…</p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                            {/* Budget tiers — blurred */}
-                            <div className="mt-3 grid grid-cols-2 gap-2">
-                              {["Under ₹2,000", "Under ₹5,000", "Under ₹10,000", "Photo tips"].map((tier) => (
-                                <div key={tier} className="rounded-lg border border-white/[0.04] bg-white/[0.03] px-3 py-2 blur-[5px] select-none">
-                                  <p className="text-[10px] text-gray-400">{tier}</p>
-                                  <p className="mt-1 text-[10px] text-gray-600">Personalized upgrade path…</p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                          {/* Gradient overlay */}
-                          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0a0a0f] via-[#0a0a0f]/80 to-transparent" />
-                          <div className="absolute inset-x-0 bottom-0 flex flex-col items-center pb-4 pt-8">
-                            <p className="mb-1 text-xs font-semibold text-white">Unlock to reveal your full analysis</p>
-                            <p className="text-[10px] text-gray-400">{displayResult.statusLeaks.length} leaks · Budget plan · Photo guide · Goal strategy</p>
-                          </div>
-                        </div>
-                      </div>
-                    </Card>
-
-                    {/* Trust layer */}
-                    <div className="mt-4">
-                      <PaymentTrust variant="results" />
-                    </div>
-
-                    {/* Secondary products — sequential unlock */}
-                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                      {[
-                        { type: "dating_audit" as const, name: "Dating / Profile Audit", price: 299, desc: "Bio analysis, red flags, suggested bios" },
-                        { type: "glowup_plan" as const, name: "30-Day Glow-Up Plan", price: 499, desc: "Weekly roadmap, daily missions, budget" },
-                      ].map((p) => {
-                        const unlocked = audit.unlockedProducts?.includes(p.type);
-                        const hasReport = p.type === "dating_audit" ? audit.datingProfileReport : audit.glowupPlan;
-                        return (
-                          <Card key={p.type} className={`relative ${unlocked ? "border-emerald-500/20" : ""}`}>
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <h4 className="text-sm font-medium text-white">{p.name}</h4>
-                                <p className="text-xs text-gray-500">{p.desc}</p>
-                              </div>
-                              {unlocked && hasReport ? (
-                                <span className="text-xs text-emerald-400">Unlocked</span>
-                              ) : unlocked ? (
-                                <span className="text-xs text-emerald-400">Unlocked</span>
-                              ) : (
-                                <Link href={`/unlock?auditId=${audit.id}&product=${p.type}`}>
-                                  <Button size="sm" variant="secondary">₹{p.price}</Button>
-                                </Link>
-                              )}
-                            </div>
-                          </Card>
-                        );
-                      })}
                     </div>
                   </div>
                 </FadeInView>
