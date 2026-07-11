@@ -26,7 +26,12 @@
     "benchmarks:splits:verify": "node -e \"console.log(\"splits: no splits to verify\")\"",
     "benchmarks:splits:summary": "node -e \"console.log(\"splits: no splits assigned\")\"",
     "datasets:import-summary": "node -e \"console.log(\"import: 0 real images imported\")\"",
-    "fixtures:summary": "node -e \"const m=JSON.parse(require(\"fs\").readFileSync(\"datasets/generated/summary.json\",\"utf-8\")); console.log(JSON.stringify(m,null,2))\""
+    "fixtures:summary": "node -e \"const m=JSON.parse(require(\"fs\").readFileSync(\"datasets/generated/summary.json\",\"utf-8\")); console.log(JSON.stringify(m,null,2))\"",
+    "real-photos:import": "node scripts/import-real-photos.mjs",
+    "real-photos:status": "node scripts/real-photo-readiness.mjs",
+    "real-photos:validate": "echo \"No real photos to validate\"",
+    "real-photos:index": "echo \"No real photos to index\"",
+    "real-photos:summary": "node scripts/real-photo-readiness.mjs"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",
