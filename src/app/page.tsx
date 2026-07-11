@@ -40,7 +40,7 @@ export default function HomePage() {
         <Container className="relative text-center">
           <FadeInView>
             <div className="mx-auto max-w-md">
-              <p className="mb-4 text-sm font-medium text-rose-400 uppercase tracking-wider">Free · No Signup · 2 Minutes</p>
+              <p className="mb-4 text-sm font-medium text-violet-400 uppercase tracking-wider">Free · No Signup · 2 Minutes</p>
               <Link href="/audit/new">
                 <Button size="lg" className="w-full text-base px-8 py-4">
                   📸 Upload Your Photo
