@@ -36,6 +36,7 @@ import { SmartInsights } from "@/components/report/SmartInsights";
 import { ScoreBreakdown } from "@/components/report/ScoreBreakdown";
 import { ImprovementRoadmap } from "@/components/report/ImprovementRoadmap";
 import { DynamicGoalAdvice } from "@/components/report/DynamicGoalAdvice";
+import { SignalSculpture, SignalSculptureFallback } from "@/components/report/SignalSculpture";
 import { ScoreHistory } from "@/components/report/ScoreHistory";
 import { matchCelebrity, type MatchResult } from "@/lib/aura-engine/celebrityMatch";
 
@@ -729,6 +730,31 @@ export default function AuditDetailPage() {
                         )}
                       </Card>
                     </FadeInView>
+
+                    {/* Signal Sculpture — data-driven 3D visualization */}
+                    {displayResult && (() => {
+                      const dims = [
+                        { id: "lighting", label: "Lighting", score: displayResult.imageMetrics.lightingScore, confidence: 75, assessmentStatus: "assessed" as const },
+                        { id: "clarity", label: "Clarity", score: displayResult.imageMetrics.clarityScore, confidence: 80, assessmentStatus: "assessed" as const },
+                        { id: "composition", label: "Composition", score: displayResult.imageMetrics.compositionScore, confidence: 70, assessmentStatus: "assessed" as const },
+                        { id: "background", label: "Background", score: Math.max(0, 100 - displayResult.imageMetrics.backgroundComplexityEstimate), confidence: 65, assessmentStatus: "assessed" as const },
+                        { id: "colour-harmony", label: "Colour Harmony", score: displayResult.imageMetrics.colorHarmony, confidence: 60, assessmentStatus: "assessed" as const },
+                        { id: "style", label: "Style", score: null, confidence: 0, assessmentStatus: "not-assessable" as const },
+                        { id: "consistency", label: "Consistency", score: null, confidence: 0, assessmentStatus: "not-assessable" as const },
+                      ];
+                      return (
+                        <FadeInView delay={100}>
+                          <div className="mb-6 flex justify-center">
+                            <SignalSculpture
+                              dimensions={dims}
+                              overallScore={displayResult.auraScore}
+                              overallConfidence={70}
+                              interactive
+                            />
+                          </div>
+                        </FadeInView>
+                      );
+                    })()}
 
                     {/* Conversion funnel — prominent, right after score */}
                     {!isUnlocked && displayResult && (
