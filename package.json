@@ -15,7 +15,8 @@
     "analyser:safety": "node scripts/analyser-safety-check.mjs",
     "fixtures:generate": "node scripts/fixture-generate.mjs",
     "fixtures:verify": "node scripts/fixture-generate.mjs && echo Checking manifest... && test -f tests/fixtures/analyser/generated/manifest.json && echo ✅ || echo ❌",
-    "fixtures:monotonicity": "node scripts/monotonicity-test.mjs"
+    "fixtures:monotonicity": "node scripts/monotonicity-test.mjs",
+    "test:quality-gate": "node scripts/quality-gate-regression.mjs"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",
