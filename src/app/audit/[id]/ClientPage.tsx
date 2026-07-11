@@ -752,16 +752,16 @@ export default function AuditDetailPage() {
                       />
                     )}
 
-                    {!isUnlocked && displayResult && (
-                      <SmartInsights
-                        grooming={displayResult.imageMetrics.groomingResult}
-                        style={displayResult.imageMetrics.detectedStyle}
-                        colorPalette={displayResult.imageMetrics.colorPalette}
-                      />
-                    )}
-
                     {isUnlocked && (
                     <>
+                    <FadeInView delay={150}>
+                      <SmartInsights
+                        grooming={displayResult?.imageMetrics.groomingResult}
+                        style={displayResult?.imageMetrics.detectedStyle}
+                        colorPalette={displayResult?.imageMetrics.colorPalette}
+                      />
+                    </FadeInView>
+
                     <FadeInView delay={150}>
                       <div className="mb-6 rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-emerald-500/[0.08] to-transparent p-5 sm:p-6">
                         <div className="mb-4 text-center">
