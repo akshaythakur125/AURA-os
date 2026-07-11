@@ -9,6 +9,17 @@ import { calculateAuraScore, determineCategory, generateVerdict } from "./scorin
 import { getAllVersions } from "./versions";
 import type { AuditGoal, ImageSignalMetrics } from "@/types/audit";
 
+export type AnalysisTrace = {
+  stageId: string;
+  stageLabel: string;
+  startedAt: number;
+  completedAt: number;
+  durationMs: number;
+  status: "success" | "partial" | "failed" | "skipped";
+  warnings: string[];
+  fallbackUsed: boolean;
+};
+
 export type AnalysisInput = {
   imageDataUrl: string;
   goal: AuditGoal;
@@ -32,6 +43,7 @@ export type AnalysisOutput = {
     issues: string[];
   };
   durationMs: number;
+  traces: AnalysisTrace[];
 };
 
 /**
@@ -43,8 +55,13 @@ export async function runAnalysis(input: AnalysisInput): Promise<AnalysisOutput>
   const start = performance.now();
   const versions = getAllVersions();
 
+  const traces: AnalysisTrace[] = [];
+
   try {
+    // Stage: preprocessing
+    const t0 = performance.now();
     const metrics = await analyzeImageDataUrl(input.imageDataUrl);
+    traces.push({ stageId: "preprocessing", stageLabel: "Image Analysis", startedAt: t0, completedAt: performance.now(), durationMs: performance.now() - t0, status: "success", warnings: [], fallbackUsed: false });
 
     // Quality gate check
     if (metrics.qualityGate && !metrics.qualityGate.canProceed) {
@@ -64,7 +81,8 @@ export async function runAnalysis(input: AnalysisInput): Promise<AnalysisOutput>
           issues: metrics.qualityGate.issues as string[],
         },
         durationMs: performance.now() - start,
-      };
+        traces,
+    };
     }
 
     // Score calculation — ONE formula, ONE place
@@ -94,6 +112,7 @@ export async function runAnalysis(input: AnalysisInput): Promise<AnalysisOutput>
         issues: (metrics.qualityGate?.issues as string[]) ?? [],
       },
       durationMs: performance.now() - start,
+      traces,
     };
   } catch (err) {
     return {
@@ -112,6 +131,7 @@ export async function runAnalysis(input: AnalysisInput): Promise<AnalysisOutput>
         issues: [],
       },
       durationMs: performance.now() - start,
+      traces,
     };
   }
 }
