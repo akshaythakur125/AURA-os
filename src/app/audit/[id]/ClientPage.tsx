@@ -808,6 +808,21 @@ export default function AuditDetailPage() {
                           <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1">
                             <span className="text-xs">⚡</span>
                             <span className="text-xs font-medium text-emerald-300">Quick Wins — Fix Now, Free</span>
+                            {audit?.imageDataUrl && (
+                              <Link
+                                href="/aura-twin"
+                                onClick={() => {
+                                  try {
+                                    localStorage.setItem("aura_twin_image", audit.imageDataUrl!);
+                                    localStorage.setItem("aura_twin_audit_id", audit.id);
+                                    if (displayResult?.statusLeaks[0]) localStorage.setItem("aura_twin_top_finding", displayResult.statusLeaks[0].title);
+                                  } catch {}
+                                }}
+                                className="ml-auto text-[10px] text-violet-400 hover:text-violet-300"
+                              >
+                                Preview improvements →
+                              </Link>
+                            )}
                           </div>
                           <h3 className="text-lg font-bold text-white">3 things you can fix before leaving</h3>
                         </div>
