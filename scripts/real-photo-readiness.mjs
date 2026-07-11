@@ -1,36 +1,34 @@
 #!/usr/bin/env node
 /**
- * ponytail: real-photo readiness tracker — checks current state.
+ * ponytail: real-photo readiness — counts only approved/imported, not quarantined.
  * Run: node scripts/real-photo-readiness.mjs
  */
 
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 
-const REAL_DIR = "datasets/real-photos";
-const ANNOTATIONS_KEY = "aura_annotations";
-
-let realCount = 0;
-if (existsSync(REAL_DIR)) {
-  realCount = readdirSync(REAL_DIR).filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f)).length;
+function count(dir) {
+  if (!existsSync(dir)) return 0;
+  return readdirSync(dir).filter(f => /\.(jpg|jpeg|png|webp)$/i.test(f)).length;
 }
 
-// Check annotation state
-let annotationCount = 0;
-try {
-  // Can't read localStorage from Node.js — check if any annotation files exist
-  const annotFiles = readdirSync("artifacts/benchmarks").filter(f => f.includes("annotation"));
-  annotationCount = annotFiles.length;
-} catch { /* ignore */ }
+const quarantined = count("datasets/real-photos/quarantined");
+const pending = count("datasets/real-photos/pending-licence-review");
+const approved = count("datasets/real-photos/approved");
+const imported = count("datasets/real-photos/imported");
+const rejected = count("datasets/real-photos/rejected");
 
 let level = "no-real-images";
-if (realCount > 0 && annotationCount === 0) level = "imported-unlabelled";
-else if (realCount > 0 && annotationCount > 0) level = "partially-labelled";
+if (imported > 0) level = "imported-unlabelled";
+if (approved > 0 && imported === 0) level = "approved-not-imported";
+if (quarantined > 0 && approved === 0) level = "quarantined-only";
 
 console.log(`\n📊 Real-Photo Readiness: ${level}\n`);
-console.log(`  Real photographs: ${realCount}`);
-console.log(`  Annotation files: ${annotationCount}`);
-console.log(`  Target: 500 labelled images for validation-ready`);
-console.log(`  Blocked until: approved real-photo dataset is provided`);
+console.log(`  Quarantined: ${quarantined}`);
+console.log(`  Pending review: ${pending}`);
+console.log(`  Approved: ${approved}`);
+console.log(`  Imported: ${imported}`);
+console.log(`  Rejected: ${rejected}`);
 
-writeFileSync("artifacts/benchmarks/real-photo-readiness.json", JSON.stringify({ level, realImageCount: realCount, annotationFiles: annotationCount, checkedAt: new Date().toISOString() }, null, 2));
+const report = { level, quarantined, pending, approved, imported, rejected, checkedAt: new Date().toISOString() };
+writeFileSync("artifacts/benchmarks/real-photo-readiness.json", JSON.stringify(report, null, 2));

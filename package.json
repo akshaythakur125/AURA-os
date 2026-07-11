@@ -33,7 +33,10 @@
     "real-photos:index": "echo \"No real photos to index\"",
     "real-photos:summary": "node scripts/real-photo-readiness.mjs",
     "real-photos:discover": "node scripts/discover-commons.mjs",
-    "real-photos:discover:commons": "node scripts/discover-commons.mjs"
+    "real-photos:discover:commons": "node scripts/discover-commons.mjs",
+    "real-photos:discover:openverse": "node scripts/discover-openverse.mjs",
+    "real-photos:prefilter": "node scripts/prefilter-candidates.mjs",
+    "real-photos:readiness": "node scripts/real-photo-readiness.mjs"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",

@@ -17,10 +17,11 @@
       "licenceUrl": "",
       "attribution": "",
       "description": "<a href=\"https://en.wikipedia.org/wiki/Helene_Schjerfbeck\" class=\"extiw\" title=\"en:Helene Schjerfbeck\">Helene Schjerfbeck</a>: <i>Self-Portrait, Black Background</i>, 1915.",
-      "status": "downloaded-quarantined",
+      "status": "automated-prefilter-rejected",
       "discoveredAt": "2026-07-11T16:37:17.552Z",
       "licenceReviewRequired": true,
-      "privacyReviewRequired": true
+      "privacyReviewRequired": true,
+      "rejectionReason": "self-portrait without photograph signals"
     },
     {
       "sourceId": "commons-22178664",
@@ -36,10 +37,11 @@
       "licenceUrl": "",
       "attribution": "",
       "description": "\"Self-Portrait, Yawning\" by Joseph Ducreux (French - Google Art Project)",
-      "status": "downloaded-quarantined",
+      "status": "automated-prefilter-rejected",
       "discoveredAt": "2026-07-11T16:37:18.965Z",
       "licenceReviewRequired": true,
-      "privacyReviewRequired": true
+      "privacyReviewRequired": true,
+      "rejectionReason": "self-portrait without photograph signals"
     },
     {
       "sourceId": "commons-61117478",
@@ -55,7 +57,7 @@
       "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
       "attribution": "",
       "description": "Self portrait illustrating the <a href=\"https://en.wikipedia.org/wiki/mordan%C3%A7age\" class=\"extiw\" title=\"en:mordançage\">mordançage</a> technique of altering <a href=\"https://en.wikipedia.org/wiki/g",
-      "status": "downloaded-quarantined",
+      "status": "pending-licence-review",
       "discoveredAt": "2026-07-11T16:37:20.422Z",
       "licenceReviewRequired": true,
       "privacyReviewRequired": true
@@ -74,10 +76,11 @@
       "licenceUrl": "",
       "attribution": "",
       "description": "Self-portrait of Abraham Bogardus, with a facsimile of his signature.<sup id=\"cite_ref-1\" class=\"reference\"><a href=\"#cite_note-1\"><span class=\"cite-bracket\">[</span>1<span class=\"cite-bracket\">]</spa",
-      "status": "downloaded-quarantined",
+      "status": "automated-prefilter-rejected",
       "discoveredAt": "2026-07-11T16:37:21.658Z",
       "licenceReviewRequired": true,
-      "privacyReviewRequired": true
+      "privacyReviewRequired": true,
+      "rejectionReason": "self-portrait without photograph signals"
     },
     {
       "sourceId": "commons-145633922",
@@ -93,7 +96,7 @@
       "licenceUrl": "",
       "attribution": "",
       "description": "<p><a href=\"https://en.wikipedia.org/wiki/Edward_Sheriff_Curtis\" class=\"extiw\" title=\"en:Edward Sheriff Curtis\">Edward Sheriff Curtis</a>, self-portrait. Gelatin silver print\n</p><p>Dimensions:\n</p>\n<",
-      "status": "downloaded-quarantined",
+      "status": "pending-licence-review",
       "discoveredAt": "2026-07-11T16:37:22.780Z",
       "licenceReviewRequired": true,
       "privacyReviewRequired": true
@@ -112,10 +115,11 @@
       "licenceUrl": "",
       "attribution": "",
       "description": "Self-portrait of artist <a href=\"https://en.wikipedia.org/wiki/Jacek_Malczewski\" class=\"extiw\" title=\"w:Jacek Malczewski\">Jacek Malczewski</a> wearing a white traditional 19th century artist's smock (",
-      "status": "downloaded-quarantined",
+      "status": "automated-prefilter-rejected",
       "discoveredAt": "2026-07-11T16:37:26.438Z",
       "licenceReviewRequired": true,
-      "privacyReviewRequired": true
+      "privacyReviewRequired": true,
+      "rejectionReason": "self-portrait without photograph signals"
     },
     {
       "sourceId": "commons-80020484",
@@ -131,7 +135,7 @@
       "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
       "attribution": "",
       "description": "<a href=\"https://en.wikipedia.org/wiki/Photographer\" class=\"extiw\" title=\"en:Photographer\">Photographer</a> taking a group photograph of smiling students rising their elbow with their teacher in the c",
-      "status": "downloaded-quarantined",
+      "status": "pending-licence-review",
       "discoveredAt": "2026-07-11T16:37:27.546Z",
       "licenceReviewRequired": true,
       "privacyReviewRequired": true
@@ -150,10 +154,11 @@
       "licenceUrl": "",
       "attribution": "",
       "description": "",
-      "status": "downloaded-quarantined",
+      "status": "automated-prefilter-rejected",
       "discoveredAt": "2026-07-11T16:37:29.676Z",
       "licenceReviewRequired": true,
-      "privacyReviewRequired": true
+      "privacyReviewRequired": true,
+      "rejectionReason": "title contains \"portrait by\""
     },
     {
       "sourceId": "commons-125587076",
@@ -169,7 +174,7 @@
       "licenceUrl": "",
       "attribution": "",
       "description": "Self-portrait of photographer <a href=\"https://en.wikipedia.org/wiki/Jeremiah_Gurney\" class=\"extiw\" title=\"en:Jeremiah Gurney\">Jeremiah Gurney</a>, c. 1869.  Image:  5 5/8 x 5 15/16 in. (14.29 x 15.08",
-      "status": "downloaded-quarantined",
+      "status": "pending-licence-review",
       "discoveredAt": "2026-07-11T16:37:31.167Z",
       "licenceReviewRequired": true,
       "privacyReviewRequired": true
@@ -188,13 +193,20 @@
       "licenceUrl": "",
       "attribution": "",
       "description": "Self-portrait (per <a href=\"//commons.wikimedia.org/wiki/File:Felix_nadar_c1860.jpg\" title=\"File:Felix nadar c1860.jpg\">File:Felix nadar c1860.jpg</a>) of <a href=\"https://en.wikipedia.org/wiki/Nadar\"",
-      "status": "downloaded-quarantined",
+      "status": "automated-prefilter-rejected",
       "discoveredAt": "2026-07-11T16:37:32.603Z",
       "licenceReviewRequired": true,
-      "privacyReviewRequired": true
+      "privacyReviewRequired": true,
+      "rejectionReason": "self-portrait without photograph signals"
     }
   ],
   "downloaded": 10,
   "skipped": 0,
-  "errors": 0
+  "errors": 0,
+  "prefilter": {
+    "artworkRejected": 6,
+    "photoRetained": 4,
+    "uncertain": 0,
+    "movedToPending": 4
+  }
 }
