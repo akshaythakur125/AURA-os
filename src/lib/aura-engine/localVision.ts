@@ -179,9 +179,9 @@ async function getClassifier(): Promise<any> {
       );
       return classifier;
     } catch (err) {
-      console.error("[local-vision] Failed to load CLIP model:", err);
+      console.warn("[local-vision] CLIP model unavailable — analysis will use pixel-based metrics only:", err);
       classifierPromise = null;
-      throw err;
+      return null;
     }
   })();
 
@@ -244,6 +244,7 @@ function pickObservation(category: string, score: number): LocalVisionObservatio
 export async function runLocalVisionAnalysis(imageDataUrl: string): Promise<LocalVisionResult | null> {
   try {
     const classifier = await getClassifier();
+    if (!classifier) return null;
 
     const [lighting, background, outfit, grooming, expression] = await Promise.all([
       scoreDimension(classifier, imageDataUrl, SCORING_PROMPTS.lighting.positive, SCORING_PROMPTS.lighting.negative),

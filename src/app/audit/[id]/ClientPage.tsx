@@ -382,8 +382,16 @@ export default function AuditDetailPage() {
       });
 
       if (updated) setAudit(updated);
-    } catch {
-      setError("Something went wrong during analysis. Please try again.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error("[analysis] failed:", msg);
+      if (msg.includes("Canvas") || msg.includes("image")) {
+        setError("We could not read this image. Upload the original JPEG, PNG, or WebP file.");
+      } else if (msg.includes("model") || msg.includes("CLIP") || msg.includes("transformers")) {
+        setError("Photo analysis could not start because a local component failed to load. Please refresh and try again.");
+      } else {
+        setError("Something went wrong during analysis. Please try again.");
+      }
     } finally {
       setGenerating(false);
       // ponytail: progressive reveal — score first, then rest
