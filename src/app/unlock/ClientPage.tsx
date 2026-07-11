@@ -48,7 +48,7 @@ function getOwnerWhatsApp(): string | null {
 const PRODUCT_FEATURES: Record<string, string[]> = {
   aura_report: [
     "Full visual breakdown across 7 dimensions",
-    "Detailed status leaks with personalized fixes",
+    "Detailed photo-quality issues with personalized fixes",
     "Budget upgrade plan at every price tier",
     "Goal-specific profile strategy",
     "Photo guidance — lighting, framing, background, editing",

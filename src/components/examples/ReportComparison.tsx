@@ -17,7 +17,7 @@ const ROWS: ComparisonRow[] = [
     glowupPlan: true,
   },
   {
-    label: "Basic status leaks",
+    label: "Basic photo-quality issues",
     free: "3 leaks",
     auraReport: "Unlimited",
     datingAudit: "Profile-specific",

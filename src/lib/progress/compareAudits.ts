@@ -50,9 +50,9 @@ export function compareAudits(
   const afterLeaks = afterAudit.fullReport?.freeResult?.statusLeaks || [];
 
   if (afterLeaks.length < beforeLeaks.length) {
-    improvedSignals.push(`${beforeLeaks.length - afterLeaks.length} fewer status leaks`);
+    improvedSignals.push(`${beforeLeaks.length - afterLeaks.length} fewer photo-quality issues`);
   } else if (afterLeaks.length > beforeLeaks.length) {
-    remainingLeaks.push(`${afterLeaks.length - beforeLeaks.length} new status leaks detected`);
+    remainingLeaks.push(`${afterLeaks.length - beforeLeaks.length} new photo-quality issues detected`);
   }
 
   const beforeArchetype = beforeAudit.personalization?.archetype;

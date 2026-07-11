@@ -1,7 +1,7 @@
 export const config = {
   app: {
     name: "AuraCheck",
-    tagline: "Find Your Biggest Status Leak",
+    tagline: "Find Your Biggest Photo-Quality Issue",
     description:
       "AI-style first-impression audit for photos, profiles, outfits, and lifestyle presentation.",
     url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",

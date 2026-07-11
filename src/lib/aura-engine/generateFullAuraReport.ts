@@ -23,7 +23,7 @@ function clamp(value: number, min = 0, max = 100): number {
   return Math.round(Math.min(max, Math.max(min, value)));
 }
 
-// ─── Personalized status leak generation ───
+// ─── Personalized photo-quality issue generation ───
 // Each leak is now specific to what the analysis actually found
 
 function generateFullStatusLeaks(

@@ -31,7 +31,7 @@ export async function syncAuditToSupabase(audit: Audit): Promise<void> {
     goal: audit.goal ?? null,
     budget_range: audit.budgetRange ?? null,
     archetype: audit.fullReport?.fullContent?.category ?? audit.fullReport?.freeResult?.category ?? null,
-    status_leaks: statusLeaks.length > 0 ? statusLeaks : null,
+    photo_issues: statusLeaks.length > 0 ? statusLeaks : null,
   };
 
   try {
@@ -71,7 +71,7 @@ export async function syncAllLocalAuditsToSupabase(audits: Audit[]): Promise<voi
       goal: audit.goal ?? null,
       budget_range: audit.budgetRange ?? null,
     archetype: audit.fullReport?.fullContent?.category ?? audit.fullReport?.freeResult?.category ?? null,
-      status_leaks: statusLeaks.length > 0 ? statusLeaks : null,
+      photo_issues: statusLeaks.length > 0 ? statusLeaks : null,
     };
   });
 

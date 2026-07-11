@@ -1,5 +1,5 @@
 export type ChallengeType =
-  | "status_leak"
+  | "photo_issue"
   | "glowup_before_after"
   | "budget_upgrade"
   | "clean_profile"

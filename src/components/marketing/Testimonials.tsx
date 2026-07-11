@@ -12,7 +12,7 @@ const EXAMPLE_FINDINGS = [
   {
     quote: "Background clutter quietly undercuts even a strong outfit. Cleaning up what's visible behind you is often the highest-leverage free fix.",
     context: "Background leak",
-    scoreDelta: "up to +12 pts",
+    scoreDelta: "improved",
   },
   {
     quote: "Color consistency across an Instagram grid is a signal people notice without being able to name it. Matching tones tends to read as more intentional.",

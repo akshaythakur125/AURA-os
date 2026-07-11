@@ -3,10 +3,10 @@ import type { Challenge } from "@/types/challenge";
 export const CHALLENGES: Challenge[] = [
   {
     id: "ch-status-leak",
-    title: "Find Your Biggest Status Leak",
+    title: "Find Your Biggest Photo-Quality Issue",
     slug: "biggest-status-leak",
     description: "Upload a photo and find out which single element is weakening your first impression the most.",
-    type: "status_leak",
+    type: "photo_issue",
     entryRequirement: "A completed audit with a free score",
     rewardText: "Know your #1 priority fix",
     isActive: true,

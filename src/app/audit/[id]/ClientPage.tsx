@@ -786,7 +786,7 @@ export default function AuditDetailPage() {
                       <ConversionFunnel
                         auditId={audit.id}
                         score={displayResult.auraScore}
-                        leakCount={displayResult.statusLeaks.length}
+                        photoIssueCount={displayResult.statusLeaks.length}
                         topLeakTitle={displayResult.statusLeaks[0]?.title || "Unknown"}
                       />
                     )}

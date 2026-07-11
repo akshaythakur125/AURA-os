@@ -4,7 +4,7 @@ import UnlockPage from "./ClientPage";
 export const metadata: Metadata = {
   title: "Unlock Full Report — Enter Your Access Code",
   description:
-    "Enter your unlock code to access your full Aura Report. Get detailed visual analysis, status leak fixes, budget upgrade plan, and goal-specific strategy.",
+    "Enter your unlock code to access your full Aura Report. Get detailed visual analysis, photo-quality issue fixes, budget upgrade plan, and goal-specific strategy.",
   openGraph: {
     title: "Unlock Your Full Aura Report",
     description:

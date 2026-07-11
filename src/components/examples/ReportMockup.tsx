@@ -60,7 +60,7 @@ export function ReportMockup() {
 
       {/* Status leaks */}
       <div className="border border-t-0 border-white/[0.06] bg-white/[0.02] px-5 py-4">
-        <div className="mb-3 text-xs font-medium text-white">Status Leaks Detected</div>
+        <div className="mb-3 text-xs font-medium text-white">Photo-Quality Issues Detected</div>
         <div className="space-y-2">
           {LEAKS.map((leak, i) => (
             <div key={i} className={`rounded-lg border p-3 ${

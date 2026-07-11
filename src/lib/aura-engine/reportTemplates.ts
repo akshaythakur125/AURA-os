@@ -15,11 +15,11 @@ function scoreBand(score: number): string {
 export const defaultTemplate: ReportTemplate = {
   generateSummary(score, leaks) {
     const band = scoreBand(score.overall);
-    const leakCount = leaks.length;
+    const photoIssueCount = leaks.length;
     const summaries: Record<string, string> = {
-      strong: `Your visual presentation is making a solid first impression. We identified ${leakCount} minor area${leakCount !== 1 ? "s" : ""} that could refine your image further.`,
-      average: `Your first impression has good foundations but ${leakCount} status signal${leakCount !== 1 ? "s" : ""} could be leaking impact. Small adjustments can make a noticeable difference.`,
-      "needs-attention": `Your visual presentation has several areas that may be weakening your first impression. Addressing the ${leakCount} identified status leaks could significantly change how you are perceived.`,
+      strong: `Your visual presentation is making a solid first impression. We identified ${photoIssueCount} minor area${photoIssueCount !== 1 ? "s" : ""} that could refine your image further.`,
+      average: `Your first impression has good foundations but ${photoIssueCount} status signal${photoIssueCount !== 1 ? "s" : ""} could be leaking impact. Small adjustments can make a noticeable difference.`,
+      "needs-attention": `Your visual presentation has several areas that may be weakening your first impression. Addressing the ${photoIssueCount} identified photo-quality issues could significantly change how you are perceived.`,
     };
     return summaries[band] || summaries.average;
   },

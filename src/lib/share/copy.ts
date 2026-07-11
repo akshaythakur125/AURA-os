@@ -8,7 +8,7 @@ export function buildShareText(data: ShareCardData): string {
   }
 
   if (data.biggestStatusLeak) {
-    parts.push(`Biggest status leak: ${data.biggestStatusLeak}.`);
+    parts.push(`Biggest photo-quality issue: ${data.biggestStatusLeak}.`);
   }
 
   if (data.strongestSignal) {
@@ -19,7 +19,7 @@ export function buildShareText(data: ShareCardData): string {
     parts.push(`Quick fix: ${data.quickFix}.`);
   }
 
-  parts.push("AuraCheck showed my upgrade path. Find your biggest status leak at auracheck.app — your turn!");
+  parts.push("AuraCheck showed my upgrade path. Find your biggest photo-quality issue at auracheck.app — your turn!");
 
   return parts.join(" ");
 }

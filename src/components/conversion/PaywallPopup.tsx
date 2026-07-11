@@ -14,7 +14,7 @@ interface PaywallPopupProps {
 
 const FEATURES = [
   { icon: "📊", text: "Full score breakdown — lighting, grooming, expression, and more" },
-  { icon: "🔍", text: "All status leaks with exact fixes" },
+  { icon: "🔍", text: "All photo-quality issues with exact fixes" },
   { icon: "✨", text: "Celebrity style match + shop the look" },
   { icon: "🗺️", text: "Personalized improvement roadmap — step by step" },
   { icon: "💰", text: "Budget upgrade plan — what to buy and where" },

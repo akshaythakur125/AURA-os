@@ -12,7 +12,7 @@ interface ComparisonRow {
 
 const ROWS: ComparisonRow[] = [
   { label: "Aura Score", free: true, auraReport: true, datingAudit: true, glowupPlan: true },
-  { label: "Basic status leaks", free: "3 leaks", auraReport: "Unlimited", datingAudit: "Profile-specific", glowupPlan: "Weekly check-in" },
+  { label: "Basic photo-quality issues", free: "3 leaks", auraReport: "Unlimited", datingAudit: "Profile-specific", glowupPlan: "Weekly check-in" },
   { label: "Full visual breakdown", free: false, auraReport: true, datingAudit: false, glowupPlan: false },
   { label: "Status archetype", free: false, auraReport: true, datingAudit: false, glowupPlan: false },
   { label: "Signal mismatch map", free: false, auraReport: true, datingAudit: false, glowupPlan: false },

@@ -11,7 +11,7 @@ import { FadeInView } from "@/components/ui/FadeInView";
 interface ConversionFunnelProps {
   auditId: string;
   score: number;
-  leakCount: number;
+  photoIssueCount: number;
   topLeakTitle: string;
 }
 
@@ -22,7 +22,7 @@ interface ConversionFunnelProps {
 export function ConversionFunnel({
   auditId,
   score,
-  leakCount,
+  photoIssueCount,
   topLeakTitle,
 }: ConversionFunnelProps) {
   return (
@@ -40,7 +40,7 @@ export function ConversionFunnel({
             Your score is{" "}
             <span className="font-bold text-white">{score}/100</span>. We found{" "}
             <span className="font-bold text-red-400">
-              {leakCount} status leak{leakCount !== 1 ? "s" : ""}
+              {photoIssueCount} photo-quality issue{photoIssueCount !== 1 ? "s" : ""}
             </span>{" "}
             pulling your impression down.
           </p>

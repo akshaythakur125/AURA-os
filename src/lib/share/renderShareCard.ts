@@ -541,7 +541,7 @@ function drawSquarePremiumDark(
   ctx.fillStyle = "#c084fc";
   ctx.font = "bold 18px Arial, Helvetica, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText("Find your biggest status leak", cx, ctaY + 8);
+  ctx.fillText("Find your biggest photo-quality issue", cx, ctaY + 8);
 
   ctx.fillStyle = "rgba(255,255,255,0.2)";
   ctx.font = "13px Arial, Helvetica, sans-serif";
@@ -639,7 +639,7 @@ function drawSquareCleanMinimal(
   ctx.fillStyle = "#9333ea";
   ctx.font = "bold 17px Arial, Helvetica, sans-serif";
   ctx.textAlign = "center";
-  ctx.fillText("Find your biggest status leak", cx, SQ - 80);
+  ctx.fillText("Find your biggest photo-quality issue", cx, SQ - 80);
 
   ctx.fillStyle = "rgba(0,0,0,0.25)";
   ctx.font = "12px Arial, Helvetica, sans-serif";
@@ -726,7 +726,7 @@ function drawSquareBoldScore(
 
   ctx.fillStyle = "rgba(168, 85, 247, 0.5)";
   ctx.font = "bold 20px Arial, Helvetica, sans-serif";
-  ctx.fillText("Find your biggest status leak", cx, SQ - 90);
+  ctx.fillText("Find your biggest photo-quality issue", cx, SQ - 90);
 
   ctx.fillStyle = "rgba(255,255,255,0.2)";
   ctx.font = "13px Arial, Helvetica, sans-serif";

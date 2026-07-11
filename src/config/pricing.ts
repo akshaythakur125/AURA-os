@@ -22,7 +22,7 @@ export const PAYMENT_PRODUCTS: Record<PaymentProductId, PaymentProduct> = {
     currency: "INR",
     deliverables: [
       "Full score breakdown across 7 dimensions",
-      "All status leaks with exact fixes",
+      "All photo-quality issues with exact fixes",
       "Celebrity style match + shop the look",
       "Personalized improvement roadmap",
       "Budget upgrade plan",
