@@ -648,9 +648,12 @@ function generateObservations(metrics: ImageSignalMetrics, goal: string): Observ
   return obs;
 }
 
-// ponytail: pick a random string for variety across reports
+// ponytail: deterministic pick — same input always produces same output
+let _pickSeed = 0;
+function setPickSeed(seed: number) { _pickSeed = seed; }
 function pick(arr: string[]): string {
-  return arr[Math.floor(Math.random() * arr.length)];
+  if (arr.length === 0) return "";
+  return arr[_pickSeed % arr.length];
 }
 
 function generateFinalVerdict(
@@ -680,6 +683,10 @@ function generateFinalVerdict(
   ]);
 }
 
+function hashMetrics(m: { brightness: number; contrast: number; saturation: number; sharpness: number }): number {
+  return Math.round(m.brightness * 7 + m.contrast * 13 + m.saturation * 17 + m.sharpness * 23) % 10000;
+}
+
 export async function generateFullAuraReport(
   audit: Audit,
   visionResults?: {
@@ -699,6 +706,14 @@ export async function generateFullAuraReport(
   if (!metrics) {
     throw new Error("No image data available to generate full report.");
   }
+
+  // ponytail: quality gate — reject unusable images before scoring
+  if (metrics.qualityGate && !metrics.qualityGate.canProceed) {
+    throw new Error(metrics.qualityGate.message || "Image quality too low for analysis.");
+  }
+
+  // ponytail: seed deterministic pick from image metrics
+  setPickSeed(hashMetrics({ brightness: metrics.brightness, contrast: metrics.contrast, saturation: metrics.saturation, sharpness: metrics.sharpness }));
 
   // Run intelligence analysis with vision results if available
   let intelligenceResult: IntelligenceResult | null = null;

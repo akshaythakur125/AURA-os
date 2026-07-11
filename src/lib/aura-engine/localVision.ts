@@ -227,13 +227,13 @@ function pickObservation(category: string, score: number): LocalVisionObservatio
   else severity = "warning";
 
   const templates = OBSERVATION_TEMPLATES[category]?.[severity] || [];
-  const template = templates[Math.floor(Math.random() * templates.length)] || {
+  const template = templates[0] || {
     title: `${category} analysis`,
     detail: `Your ${category} score is ${score}/100.`,
     suggestion: `Focus on improving your ${category} for a better first impression.`,
   };
 
-  return { category, severity, title: template.title, detail: template.detail, suggestion: template.suggestion, confidence: 0.7 + Math.random() * 0.25 };
+  return { category, severity, title: template.title, detail: template.detail, suggestion: template.suggestion, confidence: 0.75 };
 }
 
 /**

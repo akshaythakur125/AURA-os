@@ -178,6 +178,11 @@ export async function generateFreeAuraReport(
   }
   const metrics = await analyzeImageDataUrl(audit.imageDataUrl);
 
+  // ponytail: quality gate — reject unusable images before scoring
+  if (metrics.qualityGate && !metrics.qualityGate.canProceed) {
+    throw new Error(metrics.qualityGate.message || "Image quality too low for analysis.");
+  }
+
   // Run intelligence analysis with vision results if available
   let intelligenceResult: IntelligenceResult | null = null;
   if (visionResults) {
