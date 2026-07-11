@@ -31,7 +31,9 @@
     "real-photos:status": "node scripts/real-photo-readiness.mjs",
     "real-photos:validate": "echo \"No real photos to validate\"",
     "real-photos:index": "echo \"No real photos to index\"",
-    "real-photos:summary": "node scripts/real-photo-readiness.mjs"
+    "real-photos:summary": "node scripts/real-photo-readiness.mjs",
+    "real-photos:discover": "node scripts/discover-commons.mjs",
+    "real-photos:discover:commons": "node scripts/discover-commons.mjs"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",

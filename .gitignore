@@ -60,3 +60,5 @@ models/
 *.weights
 artifacts/benchmarks/*.json
 artifacts/benchmarks/*.md
+datasets/real-photos/quarantined/
+datasets/real-photos/acquisition-cache/
