@@ -67,13 +67,8 @@ export function clearUnlocks(): void {
   setItem(STORAGE_KEYS.UNLOCKS, []);
 }
 
+import { getServerProductPrice } from "@/lib/payments/serverUnlock";
+
 function getProductAmount(productType: ProductType): number {
-  switch (productType) {
-    case "aura_report":
-      return 99;
-    case "dating_audit":
-      return 299;
-    case "glowup_plan":
-      return 499;
-  }
+  return getServerProductPrice(productType);
 }
