@@ -29,6 +29,7 @@ import type { Audit, FreeAuraResult, FullAuraReportContent, Observation, ImageSi
 import type { PersonalizationResult, SignalMismatch, GoalStrategy } from "@/types/personalization";
 import { getBuyLinksForObservation, getTutorialLinks } from "@/lib/aura-engine/productLinks";
 import { ConversionFunnel } from "@/components/conversion/ConversionFunnel";
+import { PaywallPopup } from "@/components/conversion/PaywallPopup";
 import { CelebrityMatch } from "@/components/celebrity/CelebrityMatch";
 import { PsychHooks } from "@/components/report/PsychHooks";
 import { SmartInsights } from "@/components/report/SmartInsights";
@@ -397,6 +398,8 @@ export default function AuditDetailPage() {
   const hasResult = audit?.reportStatus === "free_generated" && audit?.fullReport?.freeResult;
   const displayResult = result || (hasResult ? (audit!.fullReport!.freeResult as FreeAuraResult) : null);
   const isUnlocked = audit?.reportStatus === "unlocked" && audit?.fullReport?.fullContent;
+  const [paywallOpen, setPaywallOpen] = useState(false);
+  const [paywallTrigger, setPaywallTrigger] = useState("");
   const displayFull = fullContent || (isUnlocked ? (audit!.fullReport!.fullContent as FullAuraReportContent) : null);
   const personalization = audit?.personalization;
 
@@ -726,7 +729,7 @@ export default function AuditDetailPage() {
                     {/* Celebrity match — blurred teaser for free users */}
                     {!isUnlocked && celebMatches.length > 0 && (
                       <div className="relative overflow-hidden rounded-2xl border border-purple-500/15 bg-purple-500/5 p-4">
-                        <div className="pointer-events-none absolute inset-0 blur-md">
+                        <div className="absolute inset-0 blur-md cursor-pointer" onClick={() => { setPaywallTrigger("Celebrity style match"); setPaywallOpen(true); }}>
                           <CelebrityMatch matches={celebMatches} />
                         </div>
                         <div className="relative z-10 text-center py-6">
@@ -837,7 +840,7 @@ export default function AuditDetailPage() {
                                   </Badge>
                                 </div>
                                 {/* Blurred content ΓÇö visible shape, unreadable text */}
-                                <div className="pointer-events-none mt-2 select-none blur-sm">
+                                <div className="mt-2 blur-sm cursor-pointer" onClick={() => { setPaywallTrigger("Status leak details"); setPaywallOpen(true); }}>
                                   <p className="text-xs text-gray-400">{leak.description}</p>
                                   <p className="mt-1 text-xs text-gray-500">
                                     <span className="text-purple-300">Fix:</span> {leak.fix}
@@ -1288,7 +1291,8 @@ export default function AuditDetailPage() {
           />
         </div>
       )}
-    </Container>
+    <PaywallPopup open={paywallOpen} onClose={() => setPaywallOpen(false)} auditId={audit?.id || ""} trigger={paywallTrigger} />
+      </Container>
     </>
   );
 }
