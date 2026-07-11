@@ -4,11 +4,11 @@ import AuraReportPage from "./ClientPage";
 export const metadata: Metadata = {
   title: "Full Aura Report — Detailed Visual Analysis",
   description:
-    "Unlock the full reason behind your Aura Score. 7-dimension visual breakdown, status leaks ranked by severity, signal mismatch detection, budget upgrade plan, and goal-specific strategy.",
+    "Unlock the full reason behind your Aura Score. 7-dimension visual breakdown, photo-quality issues ranked by severity, signal mismatch detection, budget upgrade plan, and goal-specific strategy.",
   openGraph: {
     title: "Full Aura Report — One-Time Unlock",
     description:
-      "Get your full visual breakdown, ranked status leaks, budget upgrade path, and personalized strategy. No subscription.",
+      "Get your full visual breakdown, ranked photo-quality issues, budget upgrade path, and personalized strategy. No subscription.",
     images: [
       {
         url: "/api/og?category=Full+Aura+Report&leak=One-time+unlock+unlock",

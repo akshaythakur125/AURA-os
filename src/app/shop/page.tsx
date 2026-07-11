@@ -4,7 +4,7 @@ import ShopPage from "./ClientPage";
 export const metadata: Metadata = {
   title: "Shop Curated Upgrades — Visual Signal Products",
   description:
-    "Browse curated upgrades targeting your specific status leaks — grooming, outfits, lighting, backgrounds. Filter by category, budget, and goal. Prices and links verified.",
+    "Browse curated upgrades targeting your specific photo-quality issues — grooming, outfits, lighting, backgrounds. Filter by category, budget, and goal. Prices and links verified.",
   openGraph: {
     title: "AuraCheck Shop — Targeted Upgrades for Your Biggest Leaks",
     description:

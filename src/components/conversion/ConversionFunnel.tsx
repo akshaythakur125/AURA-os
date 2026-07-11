@@ -48,7 +48,7 @@ export function ConversionFunnel({
           {/* Anchoring — celebrity benchmark */}
           <div className="mx-auto mb-3 flex max-w-xs items-center justify-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3">
             <div className="text-center">
-              <div className="text-[10px] text-gray-500">Celebrity benchmark</div>
+              <div className="text-[10px] text-gray-500">Photo-quality score</div>
               <div className="text-sm font-bold text-amber-400">94</div>
             </div>
             <div className="h-8 w-px bg-white/10" />

@@ -61,7 +61,7 @@ export default function AuraReportPage() {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
               { title: "Full visual breakdown", desc: "7-dimension analysis: lighting, clarity, composition, background control, color signal, premium signal, and overall consistency." },
-              { title: "Detailed status leaks", desc: "Every element weakening your first impression, ranked by severity. No fluff — just what matters." },
+              { title: "Detailed photo-quality issues", desc: "Every issue affecting your photo quality, ranked by severity. No fluff — just what matters." },
               { title: "Status archetype", desc: "See which of 11 status archetypes your presentation matches and which direction to upgrade." },
               { title: "Signal mismatch map", desc: "AuraCheck detects contradictions — expensive phone with cluttered background, premium outfit with poor lighting." },
               { title: "Budget upgrade plan", desc: "From free tweaks to ₹25,000 — ranked by impact per rupee so you never waste money on the wrong upgrade." },

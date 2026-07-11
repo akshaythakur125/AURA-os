@@ -183,7 +183,7 @@ export default function ShopPage() {
             Upgrade Your Visual Signal
           </h1>
           <p className="mt-2 text-sm text-gray-400">
-            Curated upgrades that target your biggest status leaks — without
+            Curated upgrades that target your biggest photo-quality issues — without
             wasting money.
           </p>
           <p className="mt-1 text-xs text-gray-600">
