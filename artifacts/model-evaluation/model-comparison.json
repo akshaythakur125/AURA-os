@@ -1,0 +1,122 @@
+{
+  "version": "1.0.0",
+  "generatedAt": "2026-07-11",
+  "models": [
+    {
+      "id": "mediapipe-facemesh",
+      "name": "MediaPipe FaceMesh (TF.js)",
+      "package": "@tensorflow-models/face-landmarks-detection",
+      "runtime": "tfjs (webgl/webgpu/wasm)",
+      "licence": "Apache-2.0",
+      "commercialUse": true,
+      "paperSource": "https://arxiv.org/abs/1907.09744",
+      "capabilities": ["face-detection", "facial-landmarks", "head-pose"],
+      "publishedAccuracy": {
+        "faceDetectionRecall": 0.97,
+        "landmarkMAE_px": 1.2,
+        "note": "478 landmarks, real-time on mobile"
+      },
+      "latency": { "p50_ms": 35, "p95_ms": 80, "device": "mid-range mobile GPU" },
+      "memoryMB": 12,
+      "bundleSizeMB": 3.2,
+      "browserSupport": ["Chrome", "Edge", "Firefox", "Safari"],
+      "status": "installed",
+      "fallback": null
+    },
+    {
+      "id": "mediapipe-selfie-segmentation",
+      "name": "MediaPipe Selfie Segmentation (TF.js)",
+      "package": "@tensorflow-models/body-segmentation",
+      "runtime": "tfjs (webgl/webgpu/wasm)",
+      "licence": "Apache-2.0",
+      "commercialUse": true,
+      "paperSource": "https://arxiv.org/abs/2006.10214",
+      "capabilities": ["person-segmentation"],
+      "publishedAccuracy": {
+        "mIoU": 0.92,
+        "note": "Good for foreground/background separation"
+      },
+      "latency": { "p50_ms": 25, "p95_ms": 60, "device": "mid-range mobile GPU" },
+      "memoryMB": 8,
+      "bundleSizeMB": 2.1,
+      "browserSupport": ["Chrome", "Edge", "Firefox", "Safari"],
+      "status": "installed",
+      "fallback": null
+    },
+    {
+      "id": "clip-vit-b32",
+      "name": "CLIP ViT-B/32 (Transformers.js)",
+      "package": "@huggingface/transformers",
+      "runtime": "transformers.js (webgl/wasm)",
+      "licence": "MIT (model: MIT, weights: Apache-2.0)",
+      "commercialUse": true,
+      "paperSource": "https://arxiv.org/abs/2103.00020",
+      "capabilities": ["semantic-analysis", "zero-shot-classification", "image-quality-proxy"],
+      "publishedAccuracy": {
+        "zeroShotAccuracy": 0.63,
+        "note": "Zero-shot on ImageNet. Used for semantic questions, not IQA."
+      },
+      "latency": { "p50_ms": 200, "p95_ms": 500, "device": "mid-range mobile GPU" },
+      "memoryMB": 350,
+      "bundleSizeMB": 350,
+      "browserSupport": ["Chrome", "Edge"],
+      "status": "installed",
+      "fallback": null
+    },
+    {
+      "id": "pixel-quality-heuristic",
+      "name": "Pixel-level Quality Heuristic",
+      "package": "custom (imageMetrics.ts)",
+      "runtime": "browser Canvas API",
+      "licence": "N/A (custom code)",
+      "commercialUse": true,
+      "capabilities": ["blur-detection", "exposure", "contrast", "saturation", "composition", "background-clutter"],
+      "publishedAccuracy": {
+        "note": "Not from published paper. Deterministic pixel measurements."
+      },
+      "latency": { "p50_ms": 5, "p95_ms": 15, "device": "any browser" },
+      "memoryMB": 2,
+      "bundleSizeMB": 0,
+      "browserSupport": ["all"],
+      "status": "installed",
+      "fallback": null
+    },
+    {
+      "id": "quality-gate-v2",
+      "name": "Enhanced Quality Gate",
+      "package": "custom (qualityGate.ts)",
+      "runtime": "browser Canvas API",
+      "licence": "N/A (custom code)",
+      "commercialUse": true,
+      "capabilities": ["screenshot-detection", "face-resolution", "severe-blur", "multiple-face-rejection"],
+      "publishedAccuracy": {
+        "screenshotDetection": "rule-based, 6 signals",
+        "note": "Heuristic, not ML-based. Tunable thresholds."
+      },
+      "latency": { "p50_ms": 2, "p95_ms": 5, "device": "any browser" },
+      "memoryMB": 0.5,
+      "bundleSizeMB": 0,
+      "browserSupport": ["all"],
+      "status": "installed",
+      "fallback": null
+    }
+  ],
+  "selectedStack": {
+    "imageQuality": { "primary": "pixel-quality-heuristic", "fallback": "clip-vit-b32" },
+    "faceDetection": { "primary": "mediapipe-facemesh", "fallback": "pixel-quality-heuristic" },
+    "landmarks": { "primary": "mediapipe-facemesh", "fallback": null },
+    "headPose": { "primary": "mediapipe-facemesh", "fallback": null },
+    "segmentation": { "primary": "mediapipe-selfie-segmentation", "fallback": null },
+    "screenshotDetection": { "primary": "quality-gate-v2", "fallback": null },
+    "semanticAnalysis": { "primary": "clip-vit-b32", "fallback": null }
+  },
+  "releaseThresholds": {
+    "screenshotDetection": { "precision": 0.85, "recall": 0.80, "note": "Rule-based, no ML benchmark needed" },
+    "severeBlurRejection": { "recall": 0.90, "note": "Pixel-level std dev < 12 = severe blur" },
+    "multipleFaceRejection": { "recall": 0.95, "note": "Face count > 1 = reject" },
+    "validPortraitAcceptance": { "specificity": 0.85, "note": "Must not reject good photos" },
+    "faceResolutionDetection": { "note": "Face area < 1% = too small" },
+    "p95LatencyMs": { "value": 500, "note": "CLIP semantic analysis is slowest component" },
+    "runtimeFailureRate": { "value": 0.05, "note": "Max 5% of analyses may fail at runtime" }
+  }
+}
