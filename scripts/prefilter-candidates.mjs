@@ -23,13 +23,7 @@ const ARTWORK_TERMS = [
   "oil on canvas", "tempera", "fresco", "woodcut", "print", "plate",
 ];
 
-// Known artist-painters (their self-portraits are paintings)
-const KNOWN_PAINTERS = [
-  "rembrandt", "bernini", "schjerfbeck", "malczewski", "bilińska", "bohdanowiczowa",
-  "van gogh", "monet", "picasso", "michelangelo", "raphael", "da vinci", "titian",
-  "velazquez", "goya", " degas", "cezanne", "matisse", "modigliani", "kahlo",
-  "rockwell", "hopper", "warhol", "pollock", "klimt", "munch",
-];
+// ponytail: no name-based rejection — media type must come from metadata, not names
 
 function isArtwork(candidate) {
   const title = (candidate.title || "").toLowerCase();
@@ -42,12 +36,7 @@ function isArtwork(candidate) {
     if (title.includes(term)) return { yes: true, reason: `title contains "${term}"` };
   }
 
-  // Check if creator is a known painter
-  for (const painter of KNOWN_PAINTERS) {
-    if (creator.includes(painter) && (title.includes("self-portrait") || title.includes("portrait"))) {
-      return { yes: true, reason: `creator is known painter "${painter}"` };
-    }
-  }
+
 
   // Check categories for artwork
   const artworkCats = ["paintings", "sculptures", "drawings", "engravings", "illustrations", "artwork", "museum", "gallery", "canvas"];
@@ -60,10 +49,7 @@ function isArtwork(candidate) {
     if (desc.includes(term)) return { yes: true, reason: `description contains "${term}"` };
   }
 
-  // Self-portrait without camera/photograph signals is likely a painting
-  if (title.includes("self-portrait") && !desc.includes("photograph") && !desc.includes("photo") && !desc.includes("camera")) {
-    return { yes: true, reason: "self-portrait without photograph signals" };
-  }
+
 
   return { yes: false, reason: "" };
 }
