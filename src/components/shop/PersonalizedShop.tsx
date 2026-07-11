@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
@@ -10,6 +11,8 @@ import type { StatusLeakTag } from "@/types/product";
 import { buildRetailerUrl, type Retailer } from "@/lib/shop/linkBuilder";
 import { ShopCategoryImage } from "./ShopCategoryImage";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
+import { rankLooks, searchLooks } from "@/lib/shop/ranking";
+import { useSavedProducts } from "@/hooks/useSavedProducts";
 
 interface PersonalizedShopProps {
   looks: Look[];
@@ -113,11 +116,15 @@ export function PersonalizedShop({
 }: PersonalizedShopProps) {
   const [showAll, setShowAll] = useState(false);
   const [budgetFilter, setBudgetFilter] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const { isSaved, toggleSave } = useSavedProducts();
 
-  const filteredLooks = budgetFilter
-    ? looks.filter((l) => l.price <= budgetFilter)
-    : looks;
-  const visibleLooks = showAll ? filteredLooks : filteredLooks.slice(0, 12);
+  // ponytail: deterministic ranking + search
+  const ranked = rankLooks(looks, { leakTags, goalTags: [], maxBudget: budgetFilter || undefined });
+  const searched = searchQuery ? searchLooks(ranked, searchQuery) : ranked;
+  const visibleLooks = showAll ? searched : searched.slice(0, 12);
+  const compareLooks = looks.filter((l) => compareIds.includes(l.id));
 
   const worstLeak = leakTags && leakTags.length > 0 ? leakTags[0] : null;
 
@@ -165,6 +172,19 @@ export function PersonalizedShop({
               )}
               {!worstLeak && "Curated based on your audit results"}
             </p>
+          </div>
+        </FadeInView>
+
+        {/* Search */}
+        <FadeInView delay={30}>
+          <div className="mb-4 max-w-md mx-auto">
+            <input
+              type="text"
+              placeholder="Search by category, style, or need..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-violet-500/30"
+            />
           </div>
         </FadeInView>
 
@@ -235,9 +255,9 @@ export function PersonalizedShop({
                   <LookImage look={look} />
                   <div className="mt-3 flex-1">
                     <div className="mb-1 flex items-start justify-between gap-2">
-                      <h3 className="text-sm font-semibold text-white leading-tight">
+                      <Link href={"/shop/look/" + look.id} className="text-sm font-semibold text-white leading-tight hover:underline">
                         {look.title}
-                      </h3>
+                      </Link>
                       <span className="text-xs font-medium text-amber-400 whitespace-nowrap">
                         {look.priceLabel}
                       </span>
@@ -262,14 +282,67 @@ export function PersonalizedShop({
                       ))}
                     </div>
                   </div>
-                  <div className="mt-3">
-                    <ShopLinks look={look} />
+                  <div className="mt-3 flex gap-2">
+                    <div className="flex-1"><ShopLinks look={look} /></div>
+                    <button
+                      onClick={() => toggleSave({ id: look.id, title: look.title, category: look.category, priceLabel: look.priceLabel })}
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] text-xs transition-colors hover:bg-white/[0.06]"
+                      aria-label={isSaved(look.id) ? "Remove from saved" : "Save product"}
+                      title={isSaved(look.id) ? "Saved" : "Save"}
+                    >
+                      {isSaved(look.id) ? "★" : "☆"}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCompareIds((prev) =>
+                          prev.includes(look.id)
+                            ? prev.filter((id) => id !== look.id)
+                            : prev.length < 4 ? [...prev, look.id] : prev
+                        );
+                      }}
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] text-xs transition-colors hover:bg-white/[0.06]"
+                      aria-label={compareIds.includes(look.id) ? "Remove from compare" : "Add to compare"}
+                    >
+                      {compareIds.includes(look.id) ? "✓" : "⇔"}
+                    </button>
                   </div>
                 </Card>
               </FadeInView>
             );
           })}
         </div>
+
+        {/* Comparison table */}
+        {compareLooks.length >= 2 && (
+          <FadeInView delay={100}>
+            <div className="mb-8 overflow-x-auto rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-white">Compare ({compareLooks.length})</h3>
+                <button onClick={() => setCompareIds([])} className="text-xs text-gray-500 hover:text-white">Clear</button>
+              </div>
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-white/[0.06]">
+                    <th className="py-2 pr-3 text-left text-gray-500">Product</th>
+                    <th className="py-2 pr-3 text-left text-gray-500">Category</th>
+                    <th className="py-2 pr-3 text-left text-gray-500">Price</th>
+                    <th className="py-2 pr-3 text-left text-gray-500">Addresses</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {compareLooks.map((l) => (
+                    <tr key={l.id} className="border-b border-white/[0.03]">
+                      <td className="py-2 pr-3 font-medium text-white">{l.title}</td>
+                      <td className="py-2 pr-3 text-gray-400">{l.category}</td>
+                      <td className="py-2 pr-3 text-amber-400">{l.priceLabel}</td>
+                      <td className="py-2 pr-3 text-gray-400">{l.statusLeakTags.join(", ") || "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </FadeInView>
+        )}
 
         {/* Affiliate disclosure */}
         <FadeInView delay={150}>
