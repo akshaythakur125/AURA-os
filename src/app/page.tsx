@@ -27,62 +27,42 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      {/* Hero — Apple-style: image + headline + CTA */}
+      {/* ─── Aurora Mesh ─── */}
+      <div className="aurora-mesh" />
+      <div className="aurora-mesh-third" />
+
+      {/* ─── Hero ─── */}
       <Hero3D />
 
-      {/* Feature highlights — clean, minimal, Apple-style product tiles */}
-      <section className="bg-black py-20 sm:py-28">
-        <Container>
+      {/* ─── Free CTA ─── */}
+      <section className="relative overflow-hidden py-16 sm:py-20">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(251,113,133,0.08),transparent_60%)]" />
+        <Container className="relative text-center">
           <FadeInView>
-            <div className="grid gap-8 sm:grid-cols-3">
-              {[
-                {
-                  icon: "⚡",
-                  title: "60-Second Analysis",
-                  desc: "Upload a photo, get scored instantly. No signup, no waiting.",
-                },
-                {
-                  icon: "🎯",
-                  title: "Goal-Aware Scoring",
-                  desc: "Dating, Instagram, LinkedIn — each goal gets its own scoring engine.",
-                },
-                {
-                  icon: "🛍️",
-                  title: "Actionable Fixes",
-                  desc: "Not just a score. Personalized tips, product links, and a roadmap.",
-                },
-              ].map((f) => (
-                <div key={f.title} className="text-center">
-                  <div className="mb-4 text-3xl">{f.icon}</div>
-                  <h3 className="mb-2 text-lg font-semibold text-white">{f.title}</h3>
-                  <p className="text-sm text-gray-500">{f.desc}</p>
-                </div>
-              ))}
+            <div className="mx-auto max-w-md">
+              <p className="mb-4 text-sm font-medium text-violet-400 uppercase tracking-wider">Free · No Signup · 2 Minutes</p>
+              <Link href="/audit/new">
+                <Button size="lg" className="w-full text-base px-8 py-4">
+                  📸 Upload Your Photo
+                </Button>
+              </Link>
+              <p className="mt-3 text-xs text-gray-500">
+                Get your free Aura Score instantly
+              </p>
             </div>
           </FadeInView>
         </Container>
       </section>
 
-      {/* Final CTA — Apple-style product section */}
-      <section className="bg-black py-20 sm:py-28">
-        <Container className="text-center">
-          <FadeInView>
-            <h2 className="text-3xl font-bold text-white sm:text-4xl">
-              Your first impression matters.
-            </h2>
-            <p className="mx-auto mt-4 max-w-md text-gray-400">
-              Find out what your photo is really saying. Free, instant, no signup.
-            </p>
-            <div className="mt-8">
-              <Link href="/audit/new">
-                <Button size="lg" className="px-10 py-4 text-base font-semibold">
-                  Check Your Aura — Free
-                </Button>
-              </Link>
-            </div>
-          </FadeInView>
+      {/* ─── Safety Note ─── */}
+      <section className="border-t border-white/[0.04] py-6">
+        <Container>
+          <p className="text-center text-xs text-gray-600">
+            AuraCheck analyzes presentation, not human worth.
+          </p>
         </Container>
       </section>
     </>
   );
 }
+// trigger redeploy
