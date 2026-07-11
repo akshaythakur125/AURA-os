@@ -180,7 +180,22 @@ export async function generateFreeAuraReport(
 
   // ponytail: quality gate — reject unusable images before scoring
   if (metrics.qualityGate && !metrics.qualityGate.canProceed) {
-    throw new Error(metrics.qualityGate.message || "Image quality too low for analysis.");
+    return {
+      auditId: audit.id,
+      generatedAt: new Date().toISOString(),
+      auraScore: null,
+      category: "Insufficient Quality",
+      oneLineVerdict: metrics.qualityGate.message || "Image quality too low for reliable analysis.",
+      statusLeaks: [],
+      quickFixes: [{ title: "Retake", description: metrics.qualityGate.message || "Please try again with a better photo.", effort: "Retake required", cost: "Free" }],
+      imageMetrics: metrics,
+      intelligenceInsights: [],
+      goalStrategy: null,
+      personalityProfile: null,
+      confidence: { overall: 0, perDimension: {} },
+      limitations: [metrics.qualityGate.message || "Image quality insufficient."],
+      qualityGate: metrics.qualityGate,
+    } as any;
   }
 
   // Run intelligence analysis with vision results if available

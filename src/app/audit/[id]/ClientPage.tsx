@@ -726,12 +726,23 @@ export default function AuditDetailPage() {
                     <FadeInView delay={100}>
                       <Card className="relative mb-6 overflow-hidden text-center" data-score-card>
                         <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
-                        <Badge variant="premium" className="mb-4">
-                          {displayResult.category}
-                        </Badge>
-                        <div className="text-6xl font-bold text-white">
-                          <CountUp target={displayResult.auraScore} duration={1400} />
-                        </div>
+                        {displayResult.auraScore === null ? (
+                          <>
+                            <Badge variant="danger" className="mb-4">Insufficient Quality</Badge>
+                            <p className="text-sm text-gray-300">{displayResult.oneLineVerdict}</p>
+                            {(displayResult as any).limitations?.map((l: string, i: number) => (
+                              <p key={i} className="mt-2 text-xs text-gray-500">{l}</p>
+                            ))}
+                            <Link href="/audit/new" className="mt-4 inline-block text-sm text-purple-400 hover:text-purple-300 underline">Upload another photo</Link>
+                          </>
+                        ) : (
+                          <>
+                            <Badge variant="premium" className="mb-4">
+                              {displayResult.category}
+                            </Badge>
+                            <div className="text-6xl font-bold text-white">
+                              <CountUp target={displayResult.auraScore} duration={1400} />
+                            </div>
                         <div className="mt-1 text-sm text-gray-500">/ 100</div>
                         <div className="mx-auto mt-4 h-2 max-w-xs overflow-hidden rounded-full bg-white/5">
                           <div
@@ -742,6 +753,8 @@ export default function AuditDetailPage() {
                         <p className="mx-auto mt-4 max-w-md text-sm text-gray-300 animate-[fade-in-up_0.8s_var(--ease-out-expo)_0.3s_both]">
                           {displayResult.oneLineVerdict}
                         </p>
+                          </>
+                        )}
                         <div className="mx-auto mt-4 max-w-md">
                           <PercentileBadge score={displayResult.auraScore} />
                         </div>
