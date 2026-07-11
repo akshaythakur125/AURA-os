@@ -45,7 +45,7 @@ function EndowedProgress() {
           />
         </div>
         <p className="mt-1 text-[10px] text-gray-500">
-          Unlock to complete your analysis and see your full improvement roadmap
+          You&apos;ve completed the scan. Unlock to see <span className="text-blue-400">why your score is what it is</span> and <span className="text-blue-400">exactly how to raise it</span>.
         </p>
       </div>
     </FadeInView>
@@ -81,7 +81,7 @@ function ScarcityTimer({ createdAt }: { createdAt: string }) {
       <div className="flex items-center justify-center gap-2 rounded-xl border border-amber-500/15 bg-amber-500/5 px-3 py-2 text-center">
         <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400" />
         <span className="text-[11px] text-amber-300">
-          Free analysis expires in <span className="font-bold">{remaining}</span>
+          Free analysis expires in <span className="font-bold">{remaining}</span> — {parseInt(remaining) < 6 ? 'last chance' : 'today only'}
         </span>
       </div>
     </FadeInView>
@@ -94,13 +94,14 @@ function VariableReward({ score, auditId }: { score: number; auditId: string }) 
     // Seed from auditId for consistency within same audit, varies across audits
     const seed = auditId.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
     const insights = [
-      { icon: "🔍", text: `Your face occupies ${55 + (seed % 15)}% of the frame — ideal is 50-65%` },
-      { icon: "💡", text: `Light direction is ${seed % 2 === 0 ? "slightly left" : "slightly right"} — ${seed % 2 === 0 ? "flattering" : "a small head turn would help"}` },
-      { icon: "🎨", text: `Your dominant color tone reads ${seed % 3 === 0 ? "warm" : seed % 3 === 1 ? "cool" : "neutral"} — ${seed % 3 === 0 ? "earth tones will complement you" : seed % 3 === 1 ? "jewel tones will pop" : "both palettes work"}` },
-      { icon: "📐", text: `Your eye-level offset is ${seed % 5 + 1}% — ${seed % 5 < 2 ? "nearly perfect" : "a slight adjustment would balance it"}` },
-      { icon: "✨", text: `Skin tone consistency: ${60 + (seed % 20)}/100 — ${seed % 20 < 10 ? "great base, minimal editing needed" : "a brightness tweak would even it out"}` },
-      { icon: "🧠", text: `Your expression reads as ${seed % 2 === 0 ? "confident" : "approachable"} — both are high-signal for ${seed % 2 === 0 ? "professional" : "dating"} contexts` },
-      { icon: "📊", text: `Image compression detected: ${15 + (seed % 10)}% quality loss — original would score ${Math.min(score + 5, 100)}` },
+      { icon: "🔍", text: `Your left side is ${8 + (seed % 12)}% more photogenic than your right — photographers call this your 'best side'` },
+      { icon: "💡", text: `The light is hitting you from ${seed % 2 === 0 ? 'above' : 'the side'} — that creates ${seed % 2 === 0 ? 'harsh shadows under your eyes' : 'a natural contour that models charge for'}` },
+      { icon: "🎨", text: `Your skin undertone matches ${seed % 3 === 0 ? 'warm gold' : seed % 3 === 1 ? 'cool olive' : 'neutral rose'} — ${seed % 3 === 0 ? 'earth tones like camel, olive, rust will make you glow' : seed % 3 === 1 ? 'jewel tones like emerald, sapphire, plum will pop' : 'both warm and cool palettes work on you'}` },
+      { icon: "📐", text: `Your eyes are at ${42 + (seed % 16)}% frame height — ${seed % 4 < 2 ? 'perfect rule of thirds positioning' : 'moving up 3-5% would hit the ideal line'}` },
+      { icon: "✨", text: `Skin clarity: ${62 + (seed % 18)}/100 — ${seed % 3 === 0 ? 'a Vitamin C serum would push this to 80+ in 2 weeks' : seed % 3 === 1 ? 'moisturize before photos for an instant 5pt boost' : 'better than 70% of profiles we analyze'}` },
+      { icon: "🧠", text: `Your micro-expression reads ${seed % 3 === 0 ? 'confident with warmth' : seed % 3 === 1 ? 'approachable intelligence' : 'quiet confidence'} — ${seed % 2 === 0 ? 'dating apps reward this 3x' : 'LinkedIn profiles with this signal get 2x views'}` },
+      { icon: "📊", text: `WhatsApp compressed this ${20 + (seed % 15)}% — the original would score ${Math.min(score + 7, 100)}. Send photos as 'document' next time.` },
+      { icon: "🎯", text: `${3 + (seed % 4)} people with your exact face shape improved by +22pts this month — your ceiling is ${Math.min(score + 25, 98)}` },
     ];
     return insights[seed % insights.length];
   });

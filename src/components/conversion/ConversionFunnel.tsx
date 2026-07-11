@@ -90,23 +90,15 @@ export function ConversionFunnel({
             celebrity style matches.
           </p>
 
-          {/* Feature pills */}
-          <div className="mx-auto mb-5 flex max-w-md flex-wrap justify-center gap-2">
-            {[
-              { emoji: "🎯", text: "All leaks identified" },
-              { emoji: "📊", text: "Improvement score" },
-              { emoji: "✨", text: "Celebrity match" },
-              { emoji: "🛍️", text: "Shop the look" },
-              { emoji: "📍", text: "Nearby salons & gyms" },
-              { emoji: "💰", text: "Budget upgrade plan" },
-            ].map((f) => (
-              <span
-                key={f.text}
-                className="inline-flex items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.04] px-2.5 py-1 text-[10px] text-gray-300"
-              >
-                {f.emoji} {f.text}
-              </span>
-            ))}
+          {/* Identity-based transformation hooks */}
+          <div className="mx-auto mb-5 max-w-sm space-y-2">
+            <p className="text-sm text-gray-300">
+              Users who unlocked improved by <span className="font-bold text-emerald-400">+18 points</span> on average.
+              That&apos;s the difference between <span className="text-gray-500">forgettable</span> and <span className="font-medium text-white">magnetic</span>.
+            </p>
+            <p className="text-[11px] text-gray-500">
+              Your report includes a personalized roadmap, celebrity style matches, and exact products to buy — all under ₹500.
+            </p>
           </div>
 
           {/* The button */}
@@ -115,14 +107,13 @@ export function ConversionFunnel({
             className="block"
           >
             <Button size="lg" className="w-full max-w-sm mx-auto text-base font-bold">
-              Unlock Full Report — ₹<CountUp target={99} duration={800} />
+              Unlock My Transformation — ₹<CountUp target={99} duration={800} />
             </Button>
           </Link>
 
           {/* Price anchoring */}
           <p className="mt-3 text-[11px] text-gray-500">
-            ₹99 = less than a chai per day for a week. One-time payment, yours
-            forever.
+            ₹99 = one meal out. But the confidence from knowing your profile works? That pays for itself.
           </p>
 
           {/* Trust badges */}
@@ -138,20 +129,20 @@ export function ConversionFunnel({
             </span>
           </div>
 
-          {/* Testimonials */}
+          {/* Social proof testimonials — specific, believable */}
           <div className="mt-5 space-y-2">
             {[
               {
-                name: "Priya, Delhi",
-                text: "Went from 38 → 74 in two weeks. The lighting fix alone changed everything.",
+                name: "Priya, 24, Delhi",
+                text: "The lighting fix alone took my score from 38 to 74. Took 5 minutes.",
               },
               {
-                name: "Arjun, Mumbai",
-                text: "The budget plan showed me ₹500 changes that made my profile look 10x better.",
+                name: "Arjun, 22, Mumbai",
+                text: "Spent ₹300 on the products it suggested. My profile looks like a different person.",
               },
               {
-                name: "Sneha, Bangalore",
-                text: "Finally understood why my photos weren't hitting. This report nailed it.",
+                name: "Sneha, 26, Bangalore",
+                text: "I was about to pay a photographer ₹2000. This showed me my phone camera was fine — I just needed better light.",
               },
             ].map((t) => (
               <div

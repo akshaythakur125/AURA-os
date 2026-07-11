@@ -1262,6 +1262,14 @@ export default function AuditDetailPage() {
                         <div className="mx-auto mt-4 max-w-md">
                           <PercentileBadge score={displayResult.auraScore} />
                         </div>
+                        {!isUnlocked && (
+                          <p className="mt-3 text-center text-[11px] text-gray-500">
+                            <Link href="/audit/new" className="text-purple-400 hover:text-purple-300 underline underline-offset-2">
+                              Try a different photo
+                            </Link>{' '}
+                            — see how your score changes
+                          </p>
+                        )}
                       </Card>
                     </FadeInView>
 
@@ -1275,9 +1283,22 @@ export default function AuditDetailPage() {
                       />
                     )}
 
-                    {/* Celebrity match — aspirational */}
+                    {/* Celebrity match — blurred teaser for free users */}
                     {!isUnlocked && celebMatches.length > 0 && (
-                      <CelebrityMatch matches={celebMatches} />
+                      <div className="relative overflow-hidden rounded-2xl border border-purple-500/15 bg-purple-500/5 p-4">
+                        <div className="pointer-events-none absolute inset-0 blur-md">
+                          <CelebrityMatch matches={celebMatches} />
+                        </div>
+                        <div className="relative z-10 text-center py-6">
+                          <div className="text-2xl mb-2">✨</div>
+                          <p className="text-sm font-medium text-purple-300">
+                            You match with a celebrity style
+                          </p>
+                          <p className="text-[11px] text-gray-500 mt-1">
+                            Unlock to see who + how to get the look
+                          </p>
+                        </div>
+                      </div>
                     )}
 
                     {!isUnlocked && displayResult && (
