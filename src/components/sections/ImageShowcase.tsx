@@ -14,7 +14,7 @@ const comparisons = [
       label: "After",
       wins: ["Natural window light", "Clean neutral backdrop", "Subject takes focus"],
     },
-    delta: "+18 pts",
+    delta: "improved",
   },
 ];
 

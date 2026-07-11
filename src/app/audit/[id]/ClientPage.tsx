@@ -1043,7 +1043,7 @@ export default function AuditDetailPage() {
                   <div className="mb-6 rounded-2xl border border-purple-500/20 bg-gradient-to-b from-purple-500/[0.06] to-transparent p-6 text-center">
                     <p className="mb-2 text-sm text-gray-300">
                       Your score is <span className="font-bold text-white">{displayResult.auraScore}</span>.
-                      Users who fixed their top leaks improved by <span className="font-bold text-emerald-400">+18 points</span> on average.
+                      Small corrections to your top issues can make a meaningful difference.
                     </p>
                     <p className="mb-4 text-xs text-gray-500">Your full report includes {displayResult.statusLeaks.length} personalized fixes, nearby salons & gyms, and buy links for every recommendation.</p>
                     <div className="flex flex-wrap justify-center gap-2 text-xs text-gray-500">

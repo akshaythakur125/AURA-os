@@ -314,9 +314,9 @@ function generateTieredBudgetPlan(_budget: number): TieredBudgetPlan {
     ],
     under5000: [
       "Overshirt or lightweight jacket",
-      "Reliable deodorant or mild perfume",
+      "Grooming basics — skincare, hair products",
       "Simple watch or minimal accessory",
-      "Full grooming session — hair, face, nails",
+      "Full grooming — haircut, skincare, styling",
     ],
     under10000: [
       "Complete outfit set — top, bottom, shoes",

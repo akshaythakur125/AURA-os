@@ -97,7 +97,7 @@ function VariableReward({ score, auditId }: { score: number; auditId: string }) 
       { icon: "🔍", text: `Your left side is ${8 + (seed % 12)}% more photogenic than your right — photographers call this your 'best side'` },
       { icon: "💡", text: `The light is hitting you from ${seed % 2 === 0 ? 'above' : 'the side'} — that creates ${seed % 2 === 0 ? 'harsh shadows under your eyes' : 'a natural contour that models charge for'}` },
       { icon: "🎨", text: `Your skin undertone matches ${seed % 3 === 0 ? 'warm gold' : seed % 3 === 1 ? 'cool olive' : 'neutral rose'} — ${seed % 3 === 0 ? 'earth tones like camel, olive, rust will make you glow' : seed % 3 === 1 ? 'jewel tones like emerald, sapphire, plum will pop' : 'both warm and cool palettes work on you'}` },
-      { icon: "📐", text: `Your eyes are at ${42 + (seed % 16)}% frame height — ${seed % 4 < 2 ? 'perfect rule of thirds positioning' : 'moving up 3-5% would hit the ideal line'}` },
+      { icon: "📐", text: "Composition can be improved by adjusting headroom and subject position." },
       { icon: "✨", text: `Skin clarity: ${62 + (seed % 18)}/100 — ${seed % 3 === 0 ? 'a Vitamin C serum would push this to 80+ in 2 weeks' : seed % 3 === 1 ? 'moisturize before photos for an instant 5pt boost' : 'better than 70% of profiles we analyze'}` },
       { icon: "🧠", text: `Your micro-expression reads ${seed % 3 === 0 ? 'confident with warmth' : seed % 3 === 1 ? 'approachable intelligence' : 'quiet confidence'} — ${seed % 2 === 0 ? 'dating apps reward this 3x' : 'LinkedIn profiles with this signal get 2x views'}` },
       { icon: "📊", text: `WhatsApp compressed this ${20 + (seed % 15)}% — the original would score ${Math.min(score + 7, 100)}. Send photos as 'document' next time.` },

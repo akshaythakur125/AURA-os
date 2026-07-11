@@ -79,7 +79,7 @@ export function ConversionFunnel({
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-purple-400/30 bg-purple-500/20 px-3 py-1">
             <span className="text-xs">🚀</span>
             <span className="text-xs font-semibold text-purple-200">
-              Users improved by +18 points on average
+              Small corrections make a meaningful difference
             </span>
           </div>
 
@@ -94,7 +94,7 @@ export function ConversionFunnel({
           {/* Identity-based transformation hooks */}
           <div className="mx-auto mb-5 max-w-sm space-y-2">
             <p className="text-sm text-gray-300">
-              Users who unlocked improved by <span className="font-bold text-emerald-400">+18 points</span> on average.
+              Small corrections to your top issues can make a meaningful difference.
               Small corrections can make a significant difference to how your photo is perceived.
             </p>
             <p className="text-[11px] text-gray-500">

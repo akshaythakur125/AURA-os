@@ -5,7 +5,7 @@ const COMPARISONS = [
     title: "Lighting fix",
     before: { label: "Before", issues: ["Overhead fluorescent", "Harsh shadows", "Flat, washed-out skin"] },
     after: { label: "After", wins: ["Window light at 45°", "Soft, even skin tone", "Dimensional depth"] },
-    scoreDelta: "+18 points",
+    scoreDelta: "improved",
   },
   {
     title: "Background fix",

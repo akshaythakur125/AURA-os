@@ -34,7 +34,7 @@ function buildRoadmap(metrics: {
         priority: 1,
         title: "Fix your lighting first",
         description:
-          "Face a window at 45°. Light should hit your face from the side — not from behind or above. This alone can boost your score by 15-20 points.",
+          "Face a window at 45°. Light should hit your face from the side — not from behind or above. This is one of the highest-impact corrections you can make.",
         effort: "free",
         timeframe: "5 minutes",
         impactPercent: 20,

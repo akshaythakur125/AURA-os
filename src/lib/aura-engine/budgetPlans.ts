@@ -32,9 +32,9 @@ export function getBudgetUpgradePlan(budget: BudgetAmount): BudgetUpgradePlan {
       budgetRange: 5000,
       priority: "Focused Upgrade — ₹5,000",
       actions: [
-        "Upgrade footwear — clean, minimal sneakers or casual shoes",
+        "Upgrade clothing basics — well-fitted basics, solid colours",
         "Add an overshirt or lightweight jacket to your wardrobe",
-        "Buy a reliable deodorant or mild perfume",
+        "Upgrade grooming basics — skincare, hair products",
         "Full grooming session — haircut, face, nails",
         "Add a simple watch or minimal accessory",
       ],
@@ -60,7 +60,7 @@ export function getBudgetUpgradePlan(budget: BudgetAmount): BudgetUpgradePlan {
       actions: [
         "Build a small wardrobe capsule — 3–5 coordinated outfits",
         "Book a professional photoshoot for profile photos",
-        "Premium grooming — skin, hair, nails, fragrance",
+        "Premium grooming — skincare, haircut, styling products",
         "Join a fitness or grooming program (3-month commitment)",
         "Refresh your social/profile presence across platforms",
       ],

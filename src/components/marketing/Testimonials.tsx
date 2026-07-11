@@ -7,7 +7,7 @@ const EXAMPLE_FINDINGS = [
   {
     quote: "A lighting fix like switching from overhead fluorescent to window light is a common first move — it alone can meaningfully shift a score.",
     context: "Lighting leak",
-    scoreDelta: "up to +18 pts",
+    scoreDelta: "improved",
   },
   {
     quote: "Background clutter quietly undercuts even a strong outfit. Cleaning up what's visible behind you is often the highest-leverage free fix.",
@@ -17,7 +17,7 @@ const EXAMPLE_FINDINGS = [
   {
     quote: "Color consistency across an Instagram grid is a signal people notice without being able to name it. Matching tones tends to read as more intentional.",
     context: "Color signal leak",
-    scoreDelta: "up to +15 pts",
+    scoreDelta: "improved",
   },
 ];
 
