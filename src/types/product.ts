@@ -26,7 +26,7 @@ export type StatusLeakTag =
   | "room_clutter"
   | "posture";
 
-export type GoalTag = "dating" | "instagram" | "college" | "office" | "glowup";
+export type GoalTag = "dating" | "instagram" | "college" | "office" | "glowup" | "content" | "linkedin" | "festival" | "travel" | "confidence";
 
 export type AuditTypeTag = "photo" | "instagram" | "dating" | "outfit" | "room";
 
