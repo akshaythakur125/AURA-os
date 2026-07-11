@@ -129,37 +129,6 @@ export function ConversionFunnel({
               <span className="text-emerald-400">✓</span> Secure payment
             </span>
           </div>
-
-          {/* Social proof testimonials — specific, believable */}
-          <div className="mt-5 space-y-2">
-            {[
-              {
-                name: "Priya, 24, Delhi",
-                text: "The lighting fix alone took my score from 38 to 74. Took 5 minutes.",
-              },
-              {
-                name: "Arjun, 22, Mumbai",
-                text: "Spent ₹300 on the products it suggested. My profile looks like a different person.",
-              },
-              {
-                name: "Sneha, 26, Bangalore",
-                text: "I was about to pay a photographer ₹2000. This showed me my phone camera was fine — I just needed better light.",
-              },
-            ].map((t) => (
-              <div
-                key={t.name}
-                className="flex items-start gap-2 rounded-lg bg-white/[0.03] px-3 py-2 text-left"
-              >
-                <span className="mt-0.5 text-amber-400">★</span>
-                <div>
-                  <p className="text-[11px] text-gray-300">{t.text}</p>
-                  <p className="mt-0.5 text-[10px] text-gray-500">
-                    — {t.name}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </FadeInView>
     </div>

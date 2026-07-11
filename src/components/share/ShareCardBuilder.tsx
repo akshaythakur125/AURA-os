@@ -30,6 +30,18 @@ export function ShareCardBuilder({ audit, type }: Props) {
   const [copied, setCopied] = useState(false);
   const [shareMsg, setShareMsg] = useState<string | null>(null);
 
+  // ponytail: rejected images cannot generate share cards
+  const freeResult = audit.fullReport?.freeResult as any;
+  const isRejected = freeResult?.auraScore === null && freeResult?.qualityGate?.canProceed === false;
+
+  if (isRejected) {
+    return (
+      <Card className="p-6 text-center">
+        <p className="text-sm text-gray-400">Share cards are not available for images that could not be reliably analysed.</p>
+      </Card>
+    );
+  }
+
   const data = buildShareCardData(audit, type);
 
   const generate = useCallback(async () => {

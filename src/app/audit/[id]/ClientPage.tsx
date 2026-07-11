@@ -31,7 +31,6 @@ import { getBuyLinksForObservation, getTutorialLinks } from "@/lib/aura-engine/p
 import { ConversionFunnel } from "@/components/conversion/ConversionFunnel";
 import { PaywallPopup } from "@/components/conversion/PaywallPopup";
 import { CelebrityMatch } from "@/components/celebrity/CelebrityMatch";
-import { PsychHooks } from "@/components/report/PsychHooks";
 import { SmartInsights } from "@/components/report/SmartInsights";
 import { ScoreBreakdown } from "@/components/report/ScoreBreakdown";
 import { ImprovementRoadmap } from "@/components/report/ImprovementRoadmap";
@@ -822,13 +821,7 @@ export default function AuditDetailPage() {
                       </div>
                     )}
 
-                    {!isUnlocked && displayResult && (
-                      <PsychHooks
-                        auditId={audit.id}
-                        createdAt={audit.createdAt || new Date().toISOString()}
-                        score={displayResult.auraScore}
-                      />
-                    )}
+
 
                     {isUnlocked && (
                     <>
