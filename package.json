@@ -12,7 +12,10 @@
     "datasets:list": "node scripts/dataset-status.mjs",
     "datasets:status": "node scripts/dataset-status.mjs",
     "analyser:benchmark": "node scripts/analyser-benchmark.mjs",
-    "analyser:safety": "node scripts/analyser-safety-check.mjs"
+    "analyser:safety": "node scripts/analyser-safety-check.mjs",
+    "fixtures:generate": "node scripts/fixture-generate.mjs",
+    "fixtures:verify": "node scripts/fixture-generate.mjs && echo Checking manifest... && test -f tests/fixtures/analyser/generated/manifest.json && echo ✅ || echo ❌",
+    "fixtures:monotonicity": "node scripts/monotonicity-test.mjs"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",

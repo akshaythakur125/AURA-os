@@ -13,7 +13,7 @@ export type TransformationType =
   | "cool-cast"
   | "reduce-saturation"
   | "add-headroom"
-  | "crop";
+  | "crop" | "motion-blur" | "rotate" | "perspective" | "contrast" | "saturation";
 
 export type SyntheticTransformation = {
   id: string;
@@ -153,6 +153,79 @@ export async function applyTransformation(
         }
       }
 
+        case "motion-blur": {
+          const angle = ((transformation.parameters.angle as number) || 0) * Math.PI / 180;
+          const len = (transformation.parameters.length as number) || 5;
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const out = ctx.createImageData(canvas.width, canvas.height);
+          const dx = Math.cos(angle) * len;
+          const dy = Math.sin(angle) * len;
+          for (let y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++) {
+              let r = 0, g = 0, b = 0, count = 0;
+              for (let s = -len; s <= len; s++) {
+                const sx = Math.round(x - dx * s / len);
+                const sy = Math.round(y - dy * s / len);
+                if (sx >= 0 && sx < canvas.width && sy >= 0 && sy < canvas.height) {
+                  const idx = (sy * canvas.width + sx) * 4;
+                  r += imageData.data[idx]; g += imageData.data[idx + 1]; b += imageData.data[idx + 2];
+                  count++;
+                }
+              }
+              const idx = (y * canvas.width + x) * 4;
+              out.data[idx] = r / count; out.data[idx + 1] = g / count; out.data[idx + 2] = b / count; out.data[idx + 3] = 255;
+            }
+          }
+          ctx.putImageData(out, 0, 0);
+          break;
+        }
+        case "rotate": {
+          const degrees = (transformation.parameters.degrees as number) || 0;
+          const rad = degrees * Math.PI / 180;
+          const tmp = document.createElement("canvas");
+          tmp.width = canvas.width; tmp.height = canvas.height;
+          const tmpCtx = tmp.getContext("2d")!;
+          tmpCtx.translate(canvas.width / 2, canvas.height / 2);
+          tmpCtx.rotate(rad);
+          tmpCtx.drawImage(img, -img.naturalWidth / 2, -img.naturalHeight / 2);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = "#808080";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(tmp, 0, 0);
+          break;
+        }
+        case "perspective": {
+          const skewX = (transformation.parameters.skewX as number) || 0;
+          const skewY = (transformation.parameters.skewY as number) || 0;
+          ctx.setTransform(1, skewY, skewX, 1, 0, 0);
+          ctx.drawImage(img, 0, 0);
+          ctx.setTransform(1, 0, 0, 1, 0, 0);
+          break;
+        }
+        case "contrast": {
+          const factor = (transformation.parameters.factor as number) || 1;
+          const intercept = 128 * (1 - factor);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          for (let i = 0; i < imageData.data.length; i += 4) {
+            imageData.data[i] = Math.min(255, Math.max(0, imageData.data[i] * factor + intercept));
+            imageData.data[i + 1] = Math.min(255, Math.max(0, imageData.data[i + 1] * factor + intercept));
+            imageData.data[i + 2] = Math.min(255, Math.max(0, imageData.data[i + 2] * factor + intercept));
+          }
+          ctx.putImageData(imageData, 0, 0);
+          break;
+        }
+        case "saturation": {
+          const factor = (transformation.parameters.factor as number) || 1;
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          for (let i = 0; i < imageData.data.length; i += 4) {
+            const gray = imageData.data[i] * 0.299 + imageData.data[i + 1] * 0.587 + imageData.data[i + 2] * 0.114;
+            imageData.data[i] = Math.min(255, Math.max(0, gray + factor * (imageData.data[i] - gray)));
+            imageData.data[i + 1] = Math.min(255, Math.max(0, gray + factor * (imageData.data[i + 1] - gray)));
+            imageData.data[i + 2] = Math.min(255, Math.max(0, gray + factor * (imageData.data[i + 2] - gray)));
+          }
+          ctx.putImageData(imageData, 0, 0);
+          break;
+        }
       resolve(canvas.toDataURL("image/jpeg", 0.92));
     };
     img.onerror = () => reject(new Error("Failed to load image"));
@@ -176,3 +249,43 @@ export const EVALUATION_TRANSFORMATIONS: SyntheticTransformation[] = [
   { id: "add-headroom", sourceImageId: "source-1", type: "add-headroom", parameters: { pixels: 150 } },
   { id: "aggressive-crop", sourceImageId: "source-1", type: "crop", parameters: { top: 0.4, bottom: 0.7 } },
 ];
+
+// ─── Additional transformations ───
+
+const EXTRA_TRANSFORMATIONS: SyntheticTransformation[] = [
+  // Motion blur
+  { id: "motion-blur-mild", sourceImageId: "source-1", type: "motion-blur", parameters: { angle: 0, length: 5 } },
+  { id: "motion-blur-severe", sourceImageId: "source-1", type: "motion-blur", parameters: { angle: 0, length: 20 } },
+  // Defocus blur (simulated via variable-radius blur)
+  { id: "defocus-mild", sourceImageId: "source-1", type: "gaussian-blur", parameters: { strength: 2 } },
+  { id: "defocus-severe", sourceImageId: "source-1", type: "gaussian-blur", parameters: { strength: 8 } },
+  // Rotation
+  { id: "rotate-15deg", sourceImageId: "source-1", type: "rotate", parameters: { degrees: 15 } },
+  { id: "rotate-45deg", sourceImageId: "source-1", type: "rotate", parameters: { degrees: 45 } },
+  // Perspective (simulated via skew)
+  { id: "perspective-skew", sourceImageId: "source-1", type: "perspective", parameters: { skewX: 0.15, skewY: 0 } },
+  // Highlight clipping
+  { id: "highlight-clip", sourceImageId: "source-1", type: "overexposure", parameters: { factor: 3.0 } },
+  // Shadow clipping
+  { id: "shadow-clip", sourceImageId: "source-1", type: "underexposure", parameters: { factor: 0.05 } },
+  // Excessive contrast
+  { id: "high-contrast", sourceImageId: "source-1", type: "contrast", parameters: { factor: 2.0 } },
+  { id: "low-contrast", sourceImageId: "source-1", type: "contrast", parameters: { factor: 0.4 } },
+  // Excessive saturation
+  { id: "high-saturation", sourceImageId: "source-1", type: "saturation", parameters: { factor: 2.0 } },
+  // Upscale (blur then resize back)
+  { id: "upscale-artifact", sourceImageId: "source-1", type: "gaussian-blur", parameters: { strength: 1.5 } },
+  // Multiple severity levels for blur
+  { id: "blur-extreme", sourceImageId: "source-1", type: "gaussian-blur", parameters: { strength: 25 } },
+  // Multiple severity levels for exposure
+  { id: "underexpose-extreme", sourceImageId: "source-1", type: "underexposure", parameters: { factor: 0.03 } },
+  { id: "overexpose-extreme", sourceImageId: "source-1", type: "overexposure", parameters: { factor: 4.0 } },
+  // Composition: excessive headroom
+  { id: "headroom-excessive", sourceImageId: "source-1", type: "add-headroom", parameters: { pixels: 300 } },
+  // Composition: aggressive crop
+  { id: "crop-face-cut", sourceImageId: "source-1", type: "crop", parameters: { top: 0.0, bottom: 0.3 } },
+  // Composition: subject too small (downscale)
+  { id: "subject-tiny", sourceImageId: "source-1", type: "downscale", parameters: { scale: 0.08 } },
+];
+
+export const ALL_TRANSFORMATIONS = [...EVALUATION_TRANSFORMATIONS, ...EXTRA_TRANSFORMATIONS];
