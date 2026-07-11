@@ -24,7 +24,7 @@ const faqs = [
   },
   {
     q: "How do I unlock paid reports?",
-    a: "After generating a free score, visit the Unlock page. Select the product (Full Aura Report ₹99, Dating Audit ₹299, or Glow-Up Plan ₹499), send payment via UPI to the displayed ID, and contact the owner with your transaction reference to receive an unlock code.",
+    a: "After generating a free score, visit the Unlock page. Select the product (Full Aura Report ₹25, Dating Audit ₹299, or Glow-Up Plan ₹499), send payment via UPI to the displayed ID, and contact the owner with your transaction reference to receive an unlock code.",
   },
   {
     q: "How do I get an unlock code?",

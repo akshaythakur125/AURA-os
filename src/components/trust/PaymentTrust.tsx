@@ -65,7 +65,7 @@ export function PaymentTrust({ variant = "results" }: Props) {
             ))}
           </div>
           <p className="mt-2 text-[11px] text-gray-400">
-            &ldquo;Worth ₹99 just for the background tips. Saved me thousands.&rdquo;
+            &ldquo;Worth ₹25 just for the background tips. Saved me thousands.&rdquo;
           </p>
         </div>
       </div>

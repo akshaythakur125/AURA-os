@@ -7,9 +7,9 @@ import { Badge } from "@/components/ui/Badge";
 
 export const metadata: Metadata = {
   title: "Pricing — AuraCheck",
-  description: "Unlock your full Aura Report for ₹99. One-time payment, no subscription. Get detailed visual analysis, status leak fixes, and personalized upgrade path.",
+  description: "Unlock your full Aura Report for ₹25. One-time payment, no subscription. Get detailed visual analysis, status leak fixes, and personalized upgrade path.",
   openGraph: {
-    title: "AuraCheck Pricing — Full Report for ₹99",
+    title: "AuraCheck Pricing — Full Report for ₹25",
     description: "One-time payment. No subscription. Detailed visual analysis and personalized upgrade path.",
     type: "website",
   },
@@ -39,7 +39,7 @@ const tiers = [
   },
   {
     name: "Quick Glance",
-    price: "49",
+    price: "15",
     bestFor: "Just curious",
     description: "Bare-minimum scan. One photo, no breakdown, no roadmap.",
     features: [

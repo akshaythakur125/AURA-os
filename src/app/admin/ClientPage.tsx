@@ -173,7 +173,7 @@ export default function AdminPage() {
     { id: "whatsapp", label: "Set owner WhatsApp (NEXT_PUBLIC_OWNER_WHATSAPP)" },
     { id: "admin_code", label: "Set local admin code (NEXT_PUBLIC_LOCAL_ADMIN_CODE)" },
     { id: "free_score", label: "Test free score generation" },
-    { id: "aura_report", label: "Test Aura Report unlock (₹99)" },
+    { id: "aura_report", label: "Test Aura Report unlock (₹25)" },
     { id: "dating_audit", label: "Test Dating Audit unlock (₹299)" },
     { id: "glowup_plan", label: "Test Glow-Up Plan unlock (₹499)" },
     { id: "offer_codes", label: "Test offer codes (EARLY50, AURA99, etc.)" },

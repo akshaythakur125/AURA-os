@@ -1,7 +1,7 @@
 import type { ProductType } from "@/types/payment";
 
 const PRODUCT_PRICES: Record<ProductType, number> = {
-  aura_report: 99,
+  aura_report: 25,
   dating_audit: 299,
   glowup_plan: 499,
 };

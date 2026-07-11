@@ -97,7 +97,7 @@ export function ConversionFunnel({
               That&apos;s the difference between <span className="text-gray-500">forgettable</span> and <span className="font-medium text-white">magnetic</span>.
             </p>
             <p className="text-[11px] text-gray-500">
-              Your report includes a personalized roadmap, celebrity style matches, and exact products to buy — all under ₹500.
+              Your report includes a personalized roadmap, celebrity style matches, and exact products to buy — all under ₹100.
             </p>
           </div>
 
@@ -107,13 +107,13 @@ export function ConversionFunnel({
             className="block"
           >
             <Button size="lg" className="w-full max-w-sm mx-auto text-base font-bold">
-              Unlock My Transformation — ₹<CountUp target={99} duration={800} />
+              Unlock My Transformation — ₹<CountUp target={25} duration={800} />
             </Button>
           </Link>
 
           {/* Price anchoring */}
           <p className="mt-3 text-[11px] text-gray-500">
-            ₹99 = one meal out. But the confidence from knowing your profile works? That pays for itself.
+            ₹25 = one meal out. But the confidence from knowing your profile works? That pays for itself.
           </p>
 
           {/* Trust badges */}

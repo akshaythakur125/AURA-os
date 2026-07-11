@@ -293,7 +293,7 @@ export default function DashboardPage() {
                     </Link>
                     {audit.reportStatus === "free_generated" && audit.unlockStatus === "locked" && (
                       <Link href={`/unlock?auditId=${audit.id}&product=aura_report`}>
-                        <Button size="sm">Unlock ₹99</Button>
+                        <Button size="sm">Unlock ₹25</Button>
                       </Link>
                     )}
                     <button

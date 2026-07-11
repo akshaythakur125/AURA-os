@@ -139,7 +139,7 @@ function Cell({
 
 const HEADERS = [
   { label: "Free", className: "" },
-  { label: "₹99 Aura Report", className: "text-purple-300" },
+  { label: "₹25 Aura Report", className: "text-purple-300" },
   { label: "₹299 Dating", className: "text-pink-300" },
   { label: "₹499 Glow-Up", className: "text-amber-300" },
 ];
