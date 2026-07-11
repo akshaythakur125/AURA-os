@@ -216,12 +216,13 @@ export default function NewAuditPage() {
       router.push(`/audit/${audit.id}`);
     } catch (err) {
       console.error("[AuraCheck submission failed]", { stage, error: err instanceof Error ? err.message : String(err) });
-      if (stage === "compressing-image") {
-        setErrors(["We could not read this image. Upload the original JPEG, PNG, or WebP file."]);
+      const errMsg = err instanceof Error ? err.message : String(err);
+      if (stage === "compressing-image" || errMsg.includes("IMAGE") || errMsg.includes("CANVAS")) {
+        setErrors(["We could not read this image. Upload the original JPEG, PNG, or WebP file. (" + stage + ")"]);
       } else if (stage === "saving-audit") {
-        setErrors(["The analysis could not be saved. Please try again."]);
+        setErrors(["The analysis could not be saved. Please try again. (" + stage + ")"]);
       } else {
-        setErrors(["Something went wrong. Please try again."]);
+        setErrors(["Something went wrong during " + stage + ". Please try again."]);
       }
       setSubmitting(false);
     }

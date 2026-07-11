@@ -53,45 +53,90 @@ export function getImageDimensions(file: File): Promise<ImageDimensions> {
   });
 }
 
-export function compressImageToDataUrl(
+// ponytail: robust image compression — createImageBitmap first, Image fallback
+// Returns data URL for localStorage compatibility in audit store
+export async function compressImageToDataUrl(
   file: File,
   options: CompressOptions = {}
 ): Promise<CompressResult> {
-  const { maxWidth = 1200, maxHeight = 1200, quality = 0.78 } = options;
+  const { maxWidth = 1600, maxHeight = 1600, quality = 0.85 } = options;
 
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const img = new Image();
-      img.onload = () => {
-        let { width, height } = img;
-        if (width > maxWidth || height > maxHeight) {
-          const ratio = Math.min(maxWidth / width, maxHeight / height);
-          width = Math.round(width * ratio);
-          height = Math.round(height * ratio);
-        }
+  if (!file || file.size === 0) throw new Error("IMAGE_FILE_MISSING");
 
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          reject(new Error("Canvas context not available"));
-          return;
-        }
+  // Try createImageBitmap first (no DOM, works in workers)
+  let bitmap: ImageBitmap | null = null;
+  try {
+    bitmap = await createImageBitmap(file);
+  } catch {
+    // fallback below
+  }
 
-        ctx.drawImage(img, 0, 0, width, height);
-        const mime =
-          file.type === "image/png" ? "image/png" : "image/jpeg";
-        const dataUrl = canvas.toDataURL(mime, quality);
-        resolve({ dataUrl, width, height });
-      };
-      img.onerror = () => reject(new Error("Failed to decode image"));
-      img.src = reader.result as string;
-    };
-    reader.onerror = () => reject(new Error("Failed to read file"));
-    reader.readAsDataURL(file);
+  let imgWidth: number, imgHeight: number, drawToCanvas: (ctx: CanvasRenderingContext2D, w: number, h: number) => void;
+
+  if (bitmap) {
+    imgWidth = bitmap.width;
+    imgHeight = bitmap.height;
+    drawToCanvas = (ctx, w, h) => { ctx.drawImage(bitmap!, 0, 0, w, h); };
+  } else {
+    // Fallback: Image element
+    const url = URL.createObjectURL(file);
+    try {
+      const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+        const el = new Image();
+        el.onload = () => resolve(el);
+        el.onerror = () => reject(new Error("IMAGE_DECODE_FAILED"));
+        el.src = url;
+      });
+      // Try image.decode() for mobile browsers
+      if (typeof img.decode === "function") {
+        try { await img.decode(); } catch { /* decode() failed, continue */ }
+      }
+      imgWidth = img.naturalWidth || img.width;
+      imgHeight = img.naturalHeight || img.height;
+      drawToCanvas = (ctx, w, h) => { ctx.drawImage(img, 0, 0, w, h); };
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  if (imgWidth === 0 || imgHeight === 0) throw new Error("IMAGE_DECODE_FAILED");
+
+  // Scale down
+  let width = imgWidth, height = imgHeight;
+  if (width > maxWidth || height > maxHeight) {
+    const ratio = Math.min(maxWidth / width, maxHeight / height);
+    width = Math.round(width * ratio);
+    height = Math.round(height * ratio);
+  }
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("CANVAS_FAILED");
+
+  drawToCanvas(ctx, width, height);
+
+  // Convert to blob then data URL
+  const mime = file.type === "image/png" ? "image/png" : "image/jpeg";
+  const blob = await new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((b) => b ? resolve(b) : reject(new Error("CANVAS_TO_BLOB_FAILED")), mime, quality);
   });
+
+  // Clean canvas
+  canvas.width = 0;
+  canvas.height = 0;
+
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result as string);
+    r.onerror = () => reject(new Error("BLOB_READ_FAILED"));
+    r.readAsDataURL(blob);
+  });
+
+  if (bitmap) bitmap.close();
+
+  return { dataUrl, width, height };
 }
 
 export function estimateDataUrlSize(dataUrl: string): number {
