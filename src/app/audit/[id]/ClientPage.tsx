@@ -405,11 +405,36 @@ export default function AuditDetailPage() {
   }, [canGenerate]);
   const hasResult = audit?.reportStatus === "free_generated" && audit?.fullReport?.freeResult;
   const displayResult = result || (hasResult ? (audit!.fullReport!.freeResult as FreeAuraResult) : null);
-  const isUnlocked = audit?.reportStatus === "unlocked" && audit?.fullReport?.fullContent;
+  const [serverVerified, setServerVerified] = useState<boolean | null>(null);
+  const isUnlocked = audit?.reportStatus === "unlocked" && audit?.fullReport?.fullContent && serverVerified !== false;
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [paywallTrigger, setPaywallTrigger] = useState("");
   const displayFull = fullContent || (isUnlocked ? (audit!.fullReport!.fullContent as FullAuraReportContent) : null);
   const personalization = audit?.personalization;
+
+  // ponytail: re-verify payment with Razorpay on page load — localStorage alone is not proof
+  useEffect(() => {
+    if (!audit?.reportStatus || audit.reportStatus !== "unlocked") { setServerVerified(true); return; }
+    if (!((audit as unknown) as Record<string, unknown>).razorpayOrderId) { setServerVerified(true); return; }
+    const orderId = ((audit as unknown) as Record<string, unknown>).razorpayOrderId as string;
+    const paymentId = ((audit as unknown) as Record<string, unknown>).razorpayPaymentId as string;
+    if (!orderId || !paymentId) { setServerVerified(true); return; }
+    fetch("/api/payments/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ auditId: id, productType: "aura_report", razorpay_order_id: orderId, razorpay_payment_id: paymentId, razorpay_signature: "recheck" }),
+    }).then((r) => r.json()).then((d) => {
+      setServerVerified(d.valid === true);
+      if (d.valid === false) {
+        // Payment not verified — re-lock the report
+        try {
+          const audits = JSON.parse(localStorage.getItem("aura_audits") || "[]");
+          const idx = audits.findIndex((a: { id: string }) => a.id === id);
+          if (idx >= 0) { audits[idx].reportStatus = "free_generated"; localStorage.setItem("aura_audits", JSON.stringify(audits)); }
+        } catch {}
+      }
+    }).catch(() => setServerVerified(true)); // On network error, don't lock out
+  }, [audit, id]);
 
   useEffect(() => {
     if (displayResult) {
