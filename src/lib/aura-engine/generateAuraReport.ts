@@ -193,9 +193,11 @@ export async function generateFreeAuraReport(
       goalStrategy: null,
       personalityProfile: null,
       confidence: { overall: 0, perDimension: {} },
+      strongestSignals: [],
+      budgetUpgradePlan: getBudgetUpgradePlan(audit.budgetRange),
       limitations: [metrics.qualityGate.message || "Image quality insufficient."],
       qualityGate: metrics.qualityGate,
-    } as any;
+    } as unknown as FreeAuraResult;
   }
 
   // Run intelligence analysis with vision results if available

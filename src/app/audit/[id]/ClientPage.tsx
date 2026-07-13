@@ -14,7 +14,6 @@ import { CountUp } from "@/components/ui/CountUp";
 import { getAuditById, updateAudit, deleteAudit, createAudit } from "@/lib/storage/auditStore";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
-import { runLocalVisionAnalysis } from "@/lib/aura-engine/localVision";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
 import { ReferralShare } from "@/components/referral/ReferralShare";
@@ -315,89 +314,88 @@ export default function AuditDetailPage() {
     setGenerating(true);
     setError(null);
     trackEvent(EVENTS.ANALYSIS_STARTED, { auditId: audit.id });
+    let stage = "init";
 
     try {
-      // Run local CLIP vision analysis if not already done
-      let visionResults = audit.visionResults;
-      if (!visionResults && audit.imageDataUrl) {
-        const vr = await runLocalVisionAnalysis(audit.imageDataUrl);
-        if (vr) {
-          visionResults = vr;
-          updateAudit(audit.id, { visionResults });
-        }
-      }
-
-      const report = await generateFreeAuraReport(audit, visionResults);
+      stage = "running-pixel-analysis";
+      const report = await generateFreeAuraReport(audit);
+      if (!report) throw new Error("REPORT_GENERATION_FAILED");
       setResult(report);
 
-      // Compute celebrity matches
-      const matches = matchCelebrity({
-        goal: audit.goal || "dating",
-        undertone: visionResults?.scores?.overall ? undefined : undefined,
-        lightingScore: report.imageMetrics.lightingScore,
-        groomingScore: report.imageMetrics.clarityScore,
-        outfitScore: report.imageMetrics.contrast,
-        expressionScore: report.imageMetrics.compositionScore,
-        symmetryScore: report.imageMetrics.symmetryScore,
-        backgroundScore: report.imageMetrics.backgroundBrightness,
-      });
-      setCelebMatches(matches);
+      // ponytail: wrap every downstream step — none must crash the page
+      stage = "computing-celebrity-matches";
+      try {
+        const im = report.imageMetrics;
+        const matches = matchCelebrity({
+          goal: audit.goal || "dating",
+          lightingScore: im?.lightingScore ?? 50,
+          groomingScore: im?.clarityScore ?? 50,
+          outfitScore: im?.contrast ?? 50,
+          expressionScore: im?.compositionScore ?? 50,
+          symmetryScore: im?.symmetryScore ?? 50,
+          backgroundScore: im?.backgroundBrightness ?? 50,
+        });
+        setCelebMatches(matches);
+      } catch (e) {
+        console.error("[analysis] celebrity match failed:", e);
+      }
 
-      const personalization = generateStatusArchetype(audit, report.imageMetrics);
-
-      const updated = updateAudit(audit.id, {
-        freeScore: report.auraScore,
-        freeSummary: report.oneLineVerdict,
-        reportStatus: "free_generated",
-        unlockStatus: "locked",
-        personalization,
-        fullReport: {
-          id: audit.id + "-report",
-          auditId: audit.id,
-          score: {
-            overall: report.auraScore,
-            categories: {
-              visual: report.imageMetrics.lightingScore,
-              presentation: report.imageMetrics.clarityScore,
-              signals: Math.round(
-                (report.imageMetrics.contrast + report.imageMetrics.saturation) / 2
-              ),
-              cohesion: report.imageMetrics.compositionScore,
+      stage = "building-personalization";
+      try {
+        const personalization = generateStatusArchetype(audit, report.imageMetrics);
+        const im = report.imageMetrics;
+        const updated = updateAudit(audit.id, {
+          freeScore: report.auraScore,
+          freeSummary: report.oneLineVerdict,
+          reportStatus: "free_generated",
+          unlockStatus: "locked",
+          personalization,
+          fullReport: {
+            id: audit.id + "-report",
+            auditId: audit.id,
+            score: {
+              overall: report.auraScore,
+              categories: {
+                visual: im?.lightingScore ?? 50,
+                presentation: im?.clarityScore ?? 50,
+                signals: Math.round(((im?.contrast ?? 50) + (im?.saturation ?? 50)) / 2),
+                cohesion: im?.compositionScore ?? 50,
+              },
             },
+            leaks: report.statusLeaks ?? [],
+            suggestions: (report.quickFixes ?? []).map((q) => ({
+              id: "qf-" + (q.title || "untitled").toLowerCase().replace(/\s+/g, "-"),
+              category: "quick-fix",
+              title: q.title,
+              description: q.description,
+              effort: q.effort,
+              cost: q.cost,
+            })),
+            summary: report.oneLineVerdict,
+            createdAt: report.generatedAt,
+            isPremium: false,
+            freeResult: report,
           },
-          leaks: report.statusLeaks,
-          suggestions: report.quickFixes.map((q) => ({
-            id: "qf-" + q.title.toLowerCase().replace(/\s+/g, "-"),
-            category: "quick-fix",
-            title: q.title,
-            description: q.description,
-            effort: q.effort,
-            cost: q.cost,
-          })),
-          summary: report.oneLineVerdict,
-          createdAt: report.generatedAt,
-          isPremium: false,
-          freeResult: report,
-        },
-      });
+        });
+        if (updated) setAudit(updated);
+      } catch (e) {
+        console.error("[analysis] audit save failed:", e);
+        // Result is still set — page can show it even if save failed
+      }
 
-      if (updated) setAudit(updated);
+      stage = "done";
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.error("[analysis] failed:", msg);
-      if (msg.includes("Canvas") || msg.includes("image")) {
-        setError("We could not read this image. Upload the original JPEG, PNG, or WebP file.");
-      } else if (msg.includes("model") || msg.includes("CLIP") || msg.includes("transformers")) {
-        setError("Photo analysis could not start because a local component failed to load. Please refresh and try again.");
+      console.error("[AuraCheck] generation failed", { stage, error: msg });
+      if (stage === "running-pixel-analysis") {
+        setError("Analysis failed (" + stage + "). We could not read this image. Upload the original JPEG, PNG, or WebP file.");
       } else {
-        setError("Something went wrong during analysis. Please try again.");
+        setError("Analysis failed during " + stage + ". Please try again.");
       }
     } finally {
       setGenerating(false);
-      // ponytail: progressive reveal — score first, then rest
       setTimeout(() => {
         setReportReady(true);
-        // Smooth scroll to score card
         document.querySelector("[data-score-card]")?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 300);
     }
@@ -885,8 +883,8 @@ export default function AuditDetailPage() {
                         <DynamicGoalAdvice
                           goal={audit.goal || "glowup"}
                           metrics={{
-                            lightingScore: displayResult.imageMetrics.lightingScore,
-                            clarityScore: displayResult.imageMetrics.clarityScore,
+                            lightingScore: displayResult.imageMetrics?.lightingScore ?? 50,
+                            clarityScore: displayResult.imageMetrics?.clarityScore ?? 50,
                             groomingScore: Math.round((displayResult.imageMetrics.hairRegion?.neatnessScore || 50) + (displayResult.imageMetrics.skinRegion?.evenness || 50)) / 2,
                             expressionScore: displayResult.imageMetrics.symmetryScore || 50,
                             clothingScore: displayResult.imageMetrics.clothingRegion?.contrastWithSkin || 50,
@@ -999,9 +997,9 @@ export default function AuditDetailPage() {
                     <FadeInView delay={280}>
                       <ImprovementRoadmap
                         metrics={{
-                          lightingScore: displayResult.imageMetrics.lightingScore,
-                          clarityScore: displayResult.imageMetrics.clarityScore,
-                          compositionScore: displayResult.imageMetrics.compositionScore,
+                          lightingScore: displayResult.imageMetrics?.lightingScore ?? 50,
+                          clarityScore: displayResult.imageMetrics?.clarityScore ?? 50,
+                          compositionScore: displayResult.imageMetrics?.compositionScore ?? 50,
                           groomingScore: Math.round((displayResult.imageMetrics.hairRegion?.neatnessScore || 50) + (displayResult.imageMetrics.skinRegion?.evenness || 50)) / 2,
                           expressionScore: displayResult.imageMetrics.symmetryScore || 50,
                           backgroundComplexityEstimate: displayResult.imageMetrics.backgroundComplexityEstimate || 50,

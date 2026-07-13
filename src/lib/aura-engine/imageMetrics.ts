@@ -650,8 +650,19 @@ function averageSaturation(
 export function analyzeImageDataUrl(
   dataUrl: string
 ): Promise<ImageSignalMetrics> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const img = new Image();
+
+    // ponytail: timeout for mobile browsers where image may never load
+    const timeout = setTimeout(() => {
+      resolve(fallbackMetrics(0, 0));
+    }, 15000);
+
+    img.onerror = () => {
+      clearTimeout(timeout);
+      resolve(fallbackMetrics(0, 0));
+    };
+
     img.onload = () => {
       try {
         const canvas = document.createElement("canvas");
@@ -663,13 +674,16 @@ export function analyzeImageDataUrl(
 
         const ctx = canvas.getContext("2d");
         if (!ctx) {
-          resolve(fallbackMetrics(img.width, img.height));
+          clearTimeout(timeout);
+        resolve(fallbackMetrics(img.width, img.height));
           return;
         }
 
         ctx.drawImage(img, 0, 0, w, h);
         const stats = extractPixelStats(ctx, w, h);
         const imageData = ctx.getImageData(0, 0, w, h);
+
+        clearTimeout(timeout);
 
         // ─── Core metrics ───
         const avgBrightness = mean(stats.brightnessValues);
