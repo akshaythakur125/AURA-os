@@ -2,28 +2,23 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
-import type { AuraDimension } from "./AuraCore";
 
-const AuraCore = dynamic(() => import("./AuraCore").then((m) => m.AuraCore), {
+const AuraPlayground = dynamic(() => import("@/components/three/AuraPlayground"), {
   ssr: false,
-  loading: () => <div className="w-[320px] h-[320px] sm:w-[380px] sm:h-[380px] animate-pulse rounded-full bg-white/5" />,
+  loading: () => (
+    <div className="grid h-full w-full place-items-center rounded-3xl bg-white/5">
+      <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#a78bfa]/30 border-t-[#a78bfa]" />
+    </div>
+  ),
 });
 
-const SAMPLE_DIMENSIONS: AuraDimension[] = [
-  { id: "lighting", label: "Lighting", score: 72, color: "#a78bfa" },
-  { id: "clarity", label: "Clarity", score: 85, color: "#60a5fa" },
-  { id: "composition", label: "Composition", score: 64, color: "#34d399" },
-  { id: "background", label: "Background", score: 58, color: "#fbbf24" },
-  { id: "colour", label: "Colour Harmony", score: 78, color: "#f472b6" },
-  { id: "style", label: "Style", score: 70, color: "#c084fc" },
-  { id: "consistency", label: "Consistency", score: 66, color: "#fb923c" },
-];
-
 export function HeroSection() {
+  const router = useRouter();
   return (
     <section className="relative min-h-[90vh] flex items-center bg-[#0a0a12] overflow-hidden">
       {/* Subtle gradient background */}
@@ -79,10 +74,28 @@ export function HeroSection() {
             </FadeInView>
           </div>
 
-          {/* Aura Core */}
+          {/* Interactive 3D archetype playground */}
           <div className="order-1 lg:order-2 flex justify-center">
             <FadeInView delay={200}>
-              <ErrorBoundary fallback={<div className="w-[320px] h-[320px] rounded-full bg-white/5 flex items-center justify-center text-xs text-gray-500">3D view unavailable</div>}><AuraCore dimensions={SAMPLE_DIMENSIONS} interactive /></ErrorBoundary>
+              <div className="relative aspect-square w-[min(88vw,440px)] overflow-hidden rounded-3xl border border-white/10 bg-[#0a0a1a] shadow-2xl shadow-violet-900/30">
+                <ErrorBoundary fallback={<div className="grid h-full w-full place-items-center text-xs text-gray-500">3D view unavailable</div>}>
+                  <AuraPlayground onSelect={() => router.push("/explore")} />
+                </ErrorBoundary>
+
+                {/* corner badge */}
+                <div className="pointer-events-none absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full border border-[#a78bfa]/30 bg-black/40 px-2.5 py-1 text-[10px] font-semibold text-[#c4b5fd] backdrop-blur">
+                  <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#34d399]" />
+                  Live 3D · drag me
+                </div>
+
+                {/* explore link */}
+                <Link
+                  href="/explore"
+                  className="absolute bottom-3 right-3 rounded-lg border border-white/10 bg-black/50 px-3 py-1.5 text-[11px] font-semibold text-white backdrop-blur transition hover:border-[#a78bfa]/50"
+                >
+                  Open playground →
+                </Link>
+              </div>
             </FadeInView>
           </div>
         </div>

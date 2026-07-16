@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import type { AuraDim } from "@/components/three/AuraPlayground";
+import type { AuraOrb } from "@/components/three/AuraPlayground";
 
 const AuraPlayground = dynamic(() => import("@/components/three/AuraPlayground"), {
   ssr: false,
@@ -21,7 +21,7 @@ const AuraPlayground = dynamic(() => import("@/components/three/AuraPlayground")
 
 export default function ExploreClient() {
   const [mounted, setMounted] = useState(false);
-  const [selected, setSelected] = useState<AuraDim | null>(null);
+  const [selected, setSelected] = useState<AuraOrb | null>(null);
   useEffect(() => setMounted(true), []);
 
   return (
@@ -36,7 +36,7 @@ export default function ExploreClient() {
       <div className="pointer-events-none relative z-20 mx-auto max-w-6xl px-6 pt-24 sm:pt-28">
         <div className="pointer-events-auto inline-flex items-center gap-2 rounded-full border border-[#a78bfa]/30 bg-[#a78bfa]/10 px-4 py-1.5 text-[11px] font-semibold text-[#c4b5fd] backdrop-blur">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#34d399]" />
-          Live WebGL · 7 aura signals in orbit
+          Live WebGL · 11 status archetypes in orbit
         </div>
 
         <h1 className="mt-6 max-w-2xl text-4xl font-extrabold leading-[1.05] sm:text-6xl">
@@ -47,9 +47,9 @@ export default function ExploreClient() {
         </h1>
 
         <p className="mt-5 max-w-md text-sm leading-relaxed text-[#c7c7d9]">
-          Every first-impression signal is a living orb. <b className="text-white">Drag</b> to
+          Every status archetype is a living orb. <b className="text-white">Drag</b> to
           grab and <b className="text-white">fling</b> it, watch them collide and bounce, then{" "}
-          <b className="text-white">tap</b> any orb to see how to fix it.
+          <b className="text-white">tap</b> any orb to meet the archetype — and its level-up.
         </p>
       </div>
 
@@ -120,7 +120,7 @@ export default function ExploreClient() {
               href="/audit/new"
               className="mt-5 block rounded-xl bg-gradient-to-b from-[#a78bfa] to-[#7c3aed] px-4 py-3 text-center text-sm font-bold text-white shadow-lg shadow-[#7c3aed]/25 transition hover:brightness-110"
             >
-              Score my photo on all 7 signals →
+              Find my real archetype →
             </Link>
           </div>
         </div>

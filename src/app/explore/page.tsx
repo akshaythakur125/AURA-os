@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import ExploreClient from "./ExploreClient";
 
 export const metadata: Metadata = {
-  title: "Aura Playground — Play With The 7 Signals",
+  title: "Aura Playground — Play With The 11 Status Archetypes",
   description:
-    "A playable 3D playground of the 7 aura audit dimensions. Grab, fling and bounce the signal orbs, then tap one to see the fix. Built with WebGL.",
+    "A playable 3D playground of the 11 status archetypes. Grab, fling and bounce the archetype orbs, then tap one to meet it and its level-up. Built with WebGL.",
   openGraph: {
-    title: "Aura Playground — The 7 Signals, In Your Hands",
+    title: "Aura Playground — The 11 Archetypes, In Your Hands",
     description:
-      "Grab, fling and bounce the 7 aura signal orbs, then tap one to see the fix.",
+      "Grab, fling and bounce the 11 status-archetype orbs, then tap one to meet it and its level-up.",
     images: [
       {
-        url: "/api/og?category=Aura+Playground&leak=Play+with+the+7+signals",
+        url: "/api/og?category=Aura+Playground&leak=Play+with+the+11+archetypes",
         width: 1200,
         height: 630,
         alt: "AuraCheck — Aura Playground",

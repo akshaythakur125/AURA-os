@@ -3,11 +3,11 @@
 /**
  * AuraPlayground — a fully interactive, "tactile" WebGL playground.
  *
- * Each of the 7 aura audit dimensions becomes a glowing orb floating inside an
+ * Each of the 11 status archetypes becomes a glowing orb floating inside an
  * invisible bounded box. You can:
  *   • hover  → orb lifts + label brightens
  *   • drag   → grab the orb and fling it (velocity is imparted on release)
- *   • click  → open that dimension's fix card
+ *   • click  → open that archetype's card (vibe + leak + level-up)
  * Orbs collide with each other and bounce off the walls with damping. Hand-rolled
  * physics (no physics dep), bloom-lit for that premium WebGL glow.
  */
@@ -18,27 +18,32 @@ import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-export type AuraDim = {
+export type AuraOrb = {
   name: string;
   icon: string;
   color: string;
-  desc: string;
-  issue: string;
-  fix: string;
+  desc: string;   // the vibe
+  issue: string;  // where it leaks status
+  fix: string;    // the level-up move
 };
 
-export const AURA_DIMENSIONS: AuraDim[] = [
-  { name: "Lighting", icon: "💡", color: "#f59e0b", desc: "How light falls on your face.", issue: "Flat overhead lighting removes dimension and reads as low-effort.", fix: "Face a window at 45°. Natural side light is the single biggest upgrade." },
-  { name: "Clarity", icon: "🔍", color: "#60a5fa", desc: "Sharpness, focus, resolution.", issue: "Motion blur or soft focus makes you look like an afterthought.", fix: "Use the rear camera, clean the lens, hold steady or use a timer." },
-  { name: "Composition", icon: "📐", color: "#a78bfa", desc: "Framing, headroom, placement.", issue: "Cut off at the shoulders or too much headroom looks accidental.", fix: "Center yourself, eyes at the top-third line, chest-up framing." },
-  { name: "Background", icon: "🏠", color: "#34d399", desc: "What's behind you and what it signals.", issue: "Cluttered rooms or busy streets distract from you.", fix: "Stand in front of a plain wall, open doorway, or clean outdoor space." },
-  { name: "Colour Harmony", icon: "🎨", color: "#ec4899", desc: "How outfit colours meet your skin tone.", issue: "Washed-out or clashing colours reduce visual impact.", fix: "Wear colours that contrast your skin — dark on light, light on dark." },
-  { name: "Style", icon: "👔", color: "#7c3aed", desc: "Clothing and grooming signals.", issue: "Wrinkled, ill-fitting or overly casual clothes lower perceived effort.", fix: "Solid colours, well-fitted basics, and clean grooming go a long way." },
-  { name: "Consistency", icon: "📊", color: "#22d3ee", desc: "How the whole presentation holds together.", issue: "Mixing a formal top with a casual background sends mixed signals.", fix: "Align outfit, background, and expression to one clear message." },
+/** The 11 status archetypes (from lib/aura-engine/archetypes.ts). */
+export const ARCHETYPES: AuraOrb[] = [
+  { name: "Clean Basic", icon: "🧼", color: "#60a5fa", desc: "Tidy, safe, low-risk.", issue: "Reads as reliable but forgettable — nothing signals status.", fix: "Add one intentional signal: better fit, a cleaner background, warmer light." },
+  { name: "Urban Aspirational", icon: "🏙️", color: "#f59e0b", desc: "Reaching for the next tier.", issue: "The ambition shows more than the arrival — effort is visible.", fix: "Trade three loud signals for one quiet, well-made one." },
+  { name: "Premium Minimalist", icon: "🖤", color: "#cbd5e1", desc: "Quiet, expensive restraint.", issue: "Can tip into cold or unapproachable.", fix: "Keep the restraint, add one warm human cue — a relaxed expression." },
+  { name: "Loud Flex", icon: "📢", color: "#ef4444", desc: "Status turned up to 11.", issue: "Overt logos and props read as insecurity, not wealth.", fix: "Remove the two loudest items. Let one detail do the talking." },
+  { name: "Soft Luxury", icon: "🤍", color: "#f9a8d4", desc: "Understated, textured, calm.", issue: "Subtle signals get lost in a busy frame.", fix: "Simplify the background so the texture and fit read clearly." },
+  { name: "Creator Vibe", icon: "🎬", color: "#ec4899", desc: "Content-forward, expressive.", issue: "Energy is great; grooming and lighting often lag behind.", fix: "Lock the lighting and framing — personality already lands." },
+  { name: "College Casual", icon: "🎒", color: "#34d399", desc: "Young, relaxed, low-budget.", issue: "Casual can slide into low-effort fast.", fix: "One fitted solid-colour top + side light = instant upgrade, ₹0." },
+  { name: "Corporate Sharp", icon: "💼", color: "#2563eb", desc: "Formal, competent, precise.", issue: "Can read stiff or generic in social contexts.", fix: "Loosen one layer and soften the expression for warmth." },
+  { name: "Try-Hard Signal", icon: "😅", color: "#f97316", desc: "Effort you can feel.", issue: "Visible effort undercuts the status you're signalling.", fix: "Subtract, don't add. The most confident look is the calmest one." },
+  { name: "Mismatched Flex", icon: "🎭", color: "#a78bfa", desc: "Signals pulling in different directions.", issue: "A formal top over a messy room sends a confused message.", fix: "Align outfit, background and expression to one clear story." },
+  { name: "Low-Clarity Potential", icon: "🌫️", color: "#22d3ee", desc: "The person is hiding behind the pixels.", issue: "Poor light and focus mask everything else.", fix: "Fix lighting and clarity first — the cheapest, highest-impact wins." },
 ];
 
 type Body = {
-  dim: AuraDim;
+  dim: AuraOrb;
   color: THREE.Color;
   radius: number;
   pos: THREE.Vector3;
@@ -48,15 +53,15 @@ type Body = {
 };
 
 /* Bounds of the play box (half-extents) */
-const BOX = new THREE.Vector3(5.6, 3.2, 2.2);
+const BOX = new THREE.Vector3(6.2, 3.5, 2.4);
 const RESTITUTION = 0.72;
 const DAMPING = 0.992;
 
-function buildBodies(dims: AuraDim[]): Body[] {
+function buildBodies(dims: AuraOrb[]): Body[] {
   return dims.map((dim) => ({
     dim,
     color: new THREE.Color(dim.color),
-    radius: 0.62,
+    radius: 0.54,
     pos: new THREE.Vector3(
       (Math.random() * 2 - 1) * (BOX.x - 1),
       (Math.random() * 2 - 1) * (BOX.y - 1),
@@ -72,9 +77,9 @@ function buildBodies(dims: AuraDim[]): Body[] {
   }));
 }
 
-function Playground({ onSelect }: { onSelect: (d: AuraDim) => void }) {
+function Playground({ onSelect }: { onSelect: (d: AuraOrb) => void }) {
   const { camera, gl } = useThree();
-  const bodies = useMemo(() => buildBodies(AURA_DIMENSIONS), []);
+  const bodies = useMemo(() => buildBodies(ARCHETYPES), []);
 
   const [hovered, setHovered] = useState<number | null>(null);
   const grabbed = useRef<number | null>(null);
@@ -276,7 +281,7 @@ function Cage() {
   );
 }
 
-export default function AuraPlayground({ onSelect }: { onSelect: (d: AuraDim) => void }) {
+export default function AuraPlayground({ onSelect }: { onSelect: (d: AuraOrb) => void }) {
   const [dpr, setDpr] = useState(1);
   const [enableFx, setEnableFx] = useState(true);
 
