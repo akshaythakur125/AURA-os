@@ -28,7 +28,7 @@ const ITEMS = [
 
 export function PrivacyMethodology() {
   return (
-    <section className="py-20 sm:py-28 bg-[#ECE4D6]">
+    <section className="py-20 sm:py-28 bg-[#ECE4D6]/55">
       <Container>
         <FadeInView>
           <div className="mb-12 text-center">

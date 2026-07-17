@@ -7,7 +7,7 @@ import { FadeInView } from "@/components/ui/FadeInView";
 
 export function FinalCTA() {
   return (
-    <section className="py-20 sm:py-28 bg-[#F2ECE1]">
+    <section className="py-20 sm:py-28 bg-[#F2ECE1]/55">
       <Container className="text-center">
         <FadeInView>
           <h2 className="text-3xl font-bold text-[#1C1917] sm:text-4xl">

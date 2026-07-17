@@ -15,7 +15,7 @@ const DIMENSIONS = [
 
 export function AuditDimensions() {
   return (
-    <section className="py-20 sm:py-28 bg-[#F2ECE1]">
+    <section className="py-20 sm:py-28 bg-[#F2ECE1]/55">
       <Container>
         <FadeInView>
           <div className="mb-12 text-center">

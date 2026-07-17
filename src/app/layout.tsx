@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { WorldBackground } from "@/components/world/WorldBackground";
 import { ToastProvider } from "@/components/ui/Toast";
 import { AuditSyncProvider } from "@/components/providers/AuditSyncProvider";
 import { PostHogProvider } from "@/components/providers/PostHogProvider";
@@ -64,17 +65,18 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-depth text-[#ededf0]">
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-lg focus:bg-red-600 focus:px-4 focus:py-2 focus:text-[#1C1917] focus:outline-none">
+      <body className="flex min-h-full flex-col bg-depth text-[#1c1917]">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-lg focus:bg-red-600 focus:px-4 focus:py-2 focus:text-white focus:outline-none">
           Skip to content
         </a>
+        <WorldBackground />
         <div className="grain-overlay" aria-hidden="true" />
         <PostHogProvider>
           <PageViewTracker />
           <ToastProvider>
             <AuditSyncProvider>
               <Header />
-              <main id="main-content" className="flex-1">{children}</main>
+              <main id="main-content" className="relative flex-1">{children}</main>
               <Footer />
             </AuditSyncProvider>
           </ToastProvider>

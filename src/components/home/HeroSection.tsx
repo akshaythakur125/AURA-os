@@ -20,7 +20,7 @@ const SAMPLE_DIMENSIONS: AuraDimension[] = [
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-[90vh] flex items-center bg-[#F2ECE1] overflow-hidden">
+    <section className="relative min-h-[90vh] flex items-center bg-[#F2ECE1]/60 overflow-hidden">
       {/* Warm paper grain + a faint darkroom vignette */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_75%_35%,rgba(225,68,52,0.06),transparent_55%),radial-gradient(ellipse_at_15%_85%,rgba(28,25,23,0.05),transparent_50%)]" />
 
