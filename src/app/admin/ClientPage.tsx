@@ -96,7 +96,7 @@ function AdminGate({ onUnlock }: { onUnlock: () => void }) {
     <>
       <div className="aurora-mesh" />
       <Container className="relative py-24">
-        <GlowOrb color="rgba(147, 51, 234, 0.1)" size={350} className="top-[20%] left-[15%]" delay={0} />
+        <GlowOrb color="rgba(225, 68, 52, 0.1)" size={350} className="top-[20%] left-[15%]" delay={0} />
         <Card className="relative mx-auto max-w-sm py-12 text-center">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-red-500">
           <svg className="h-6 w-6 text-[#1C1917]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m0 0v2m0-2h2m-2 0H10" /></svg>
@@ -332,7 +332,7 @@ export default function AdminPage() {
       <>
         <div className="aurora-mesh" />
         <Container className="relative py-24">
-          <GlowOrb color="rgba(147, 51, 234, 0.08)" size={300} className="top-[20%] left-[15%]" delay={0} />
+          <GlowOrb color="rgba(225, 68, 52, 0.08)" size={300} className="top-[20%] left-[15%]" delay={0} />
           <Card className="relative mx-auto max-w-sm py-12 text-center">
             <p className="text-sm text-[#857b6e]">Verifying admin session...</p>
           </Card>
@@ -349,7 +349,7 @@ export default function AdminPage() {
     <>
       <div className="aurora-mesh" />
       <Container className="relative py-16">
-        <GlowOrb color="rgba(147, 51, 234, 0.06)" size={300} className="top-[5%] right-[5%]" delay={0} />
+        <GlowOrb color="rgba(225, 68, 52, 0.06)" size={300} className="top-[5%] right-[5%]" delay={0} />
         <GlowOrb color="rgba(245, 158, 11, 0.05)" size={200} className="bottom-[10%] left-[10%]" delay={300} />
       <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
         <SectionHeading title="Admin Panel" subtitle="Orders, analytics, unlock codes, and exports." />

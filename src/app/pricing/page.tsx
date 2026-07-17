@@ -20,6 +20,7 @@ import { ComparisonTable } from "@/components/marketing/ComparisonTable";
 import { GlowOrb } from "@/components/ui/GlowOrb";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
+import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 
 const tiers = [
   {
@@ -122,10 +123,13 @@ export default function PricingPage() {
       <div className="aurora-mesh-third" />
 
       <section className="parallax-section relative overflow-hidden py-24 sm:py-32">
-        <GlowOrb color="rgba(147, 51, 234, 0.12)" size={400} className="top-[-5%] right-[10%]" delay={0} />
-        <GlowOrb color="rgba(236, 72, 153, 0.08)" size={300} className="bottom-[10%] left-[5%]" delay={500} />
+        <GlowOrb color="rgba(225, 68, 52, 0.12)" size={400} className="top-[-5%] right-[10%]" delay={0} />
+        <GlowOrb color="rgba(225, 68, 52, 0.08)" size={300} className="bottom-[10%] left-[5%]" delay={500} />
         <Container className="relative">
           <FadeInView>
+            <div className="mb-6 flex justify-center">
+              <Scene3DAccent size={190} />
+            </div>
             <SectionHeading
               title="Simple pricing, real results"
               subtitle="Start free. Upgrade when you want the full picture."

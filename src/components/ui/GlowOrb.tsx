@@ -11,7 +11,7 @@ interface GlowOrbProps {
 }
 
 export function GlowOrb({
-  color = "rgba(147, 51, 234, 0.15)",
+  color = "rgba(225, 68, 52, 0.15)",
   size = 300,
   className = "",
   delay = 0,

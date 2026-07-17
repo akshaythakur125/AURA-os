@@ -11,6 +11,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ComparisonTable } from "@/components/marketing/ComparisonTable";
 import { LeadCaptureCard } from "@/components/marketing/LeadCaptureCard";
 import { SAMPLE_REPORTS } from "@/config/sampleReports";
+import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { getBestAuditForUpsell } from "@/lib/audits/getBestAuditForUpsell";
 import type { ProductType } from "@/types/payment";
 
@@ -37,9 +38,12 @@ export default function AuraReportPage() {
   return (
     <>
       <section className="relative overflow-hidden pb-32 pt-24 sm:pt-32">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(147,51,234,0.12),transparent_50%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225, 68, 52,0.12),transparent_50%)]" />
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-6 flex justify-center">
+              <Scene3DAccent size={190} />
+            </div>
             <Badge variant="premium" className="mb-4">Full Aura Report — {formatPrice(PAYMENT_PRODUCTS.aura_report.price)}</Badge>
             <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
               Unlock the full reason behind your Aura Score.

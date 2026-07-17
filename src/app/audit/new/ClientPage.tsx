@@ -248,8 +248,8 @@ export default function NewAuditPage() {
     <>
       <div className="aurora-mesh" />
       <Container className="relative py-8">
-        <GlowOrb color="rgba(147, 51, 234, 0.1)" size={300} className="top-[10%] right-[10%]" delay={0} />
-        <GlowOrb color="rgba(236, 72, 153, 0.07)" size={220} className="bottom-[15%] left-[5%]" delay={300} />
+        <GlowOrb color="rgba(225, 68, 52, 0.1)" size={300} className="top-[10%] right-[10%]" delay={0} />
+        <GlowOrb color="rgba(225, 68, 52, 0.07)" size={220} className="bottom-[15%] left-[5%]" delay={300} />
 
         <div className="mx-auto max-w-lg">
           {/* Progress bar */}

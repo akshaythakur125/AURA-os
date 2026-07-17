@@ -31,7 +31,7 @@ export function HeroMockup({ depthRef, entranceRef }: HeroMockupProps) {
         style={{ transformStyle: "preserve-3d" }}
       >
         {/* Phone frame */}
-        <div className="relative mx-auto max-w-[320px] overflow-hidden rounded-[2.5rem] border-[3px] border-white/[0.08] bg-[#F2ECE1] shadow-[0_0_80px_rgba(147,51,234,0.15),0_20px_60px_rgba(0,0,0,0.5)]">
+        <div className="relative mx-auto max-w-[320px] overflow-hidden rounded-[2.5rem] border-[3px] border-white/[0.08] bg-[#F2ECE1] shadow-[0_0_80px_rgba(225, 68, 52,0.15),0_20px_60px_rgba(0,0,0,0.5)]">
           {/* Notch */}
           <div className="absolute left-1/2 top-0 z-10 h-6 w-28 -translate-x-1/2 rounded-b-2xl bg-[#F2ECE1]" />
 

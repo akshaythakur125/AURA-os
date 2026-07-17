@@ -98,7 +98,7 @@ export default function ProgressPage() {
       <div className="aurora-mesh" />
       <Container className="relative py-12">
         <GlowOrb color="rgba(16, 185, 129, 0.08)" size={250} className="top-[8%] right-[10%]" delay={0} />
-        <GlowOrb color="rgba(147, 51, 234, 0.06)" size={200} className="bottom-[20%] left-[8%]" delay={400} />
+        <GlowOrb color="rgba(225, 68, 52, 0.06)" size={200} className="bottom-[20%] left-[8%]" delay={400} />
       <SectionHeading title="Track Your Improvement" subtitle="Compare two audits and see your progress over time." />
 
       {stats && (

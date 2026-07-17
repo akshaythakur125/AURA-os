@@ -42,7 +42,7 @@ const footerLinks = [
 export function Footer() {
   return (
     <footer className="relative mt-auto border-t border-[#1c1917]/[0.08]">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.04),transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(225, 68, 52,0.04),transparent_60%)]" />
       <Container className="relative py-16">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>

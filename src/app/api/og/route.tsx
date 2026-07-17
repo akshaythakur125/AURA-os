@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
             width: "60%",
             height: "60%",
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(147, 51, 234, 0.3) 0%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(225, 68, 52, 0.3) 0%, transparent 70%)",
             filter: "blur(60px)",
           }}
         />
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
             width: "40%",
             height: "40%",
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(225, 68, 52, 0.2) 0%, transparent 70%)",
             filter: "blur(40px)",
           }}
         />

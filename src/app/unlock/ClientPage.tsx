@@ -367,7 +367,7 @@ function UnlockForm() {
     <>
       <div className="aurora-mesh" />
       <Container className="relative py-12">
-        <GlowOrb color="rgba(147, 51, 234, 0.08)" size={300} className="top-[10%] right-[8%]" delay={0} />
+        <GlowOrb color="rgba(225, 68, 52, 0.08)" size={300} className="top-[10%] right-[8%]" delay={0} />
         <GlowOrb color="rgba(245, 158, 11, 0.06)" size={200} className="bottom-[20%] left-[10%]" delay={400} />
         <div className="mb-6">
           <Link href={`/audit/${auditId}`} className="text-sm text-[#857b6e] hover:text-[#4a443d]">&larr; Back to Report</Link>

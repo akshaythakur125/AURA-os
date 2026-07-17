@@ -33,7 +33,7 @@ export default function DatingAuditPage() {
   return (
     <>
       <section className="relative overflow-hidden pb-32 pt-24 sm:pt-32">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(236,72,153,0.12),transparent_50%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225, 68, 52,0.12),transparent_50%)]" />
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="premium" className="mb-4">Dating / Profile Audit — {formatPrice(PAYMENT_PRODUCTS.dating_audit.price)}</Badge>

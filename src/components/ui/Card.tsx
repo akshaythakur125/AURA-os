@@ -74,7 +74,8 @@ export function Card({ children, className, hover = false, tilt = false, onClick
           "hover:border-[#1c1917]/10"
         )}
         style={{
-          boxShadow: "0 2px 4px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25), 0 24px 48px -12px rgba(0,0,0,0.2)",
+          transformStyle: "preserve-3d",
+          boxShadow: "0 2px 4px rgba(28,25,23,0.06), 0 12px 32px rgba(28,25,23,0.1), 0 28px 56px -16px rgba(28,25,23,0.12)",
         }}
       >
         {children}

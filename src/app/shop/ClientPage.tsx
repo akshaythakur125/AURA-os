@@ -174,7 +174,7 @@ export default function ShopPage() {
     <>
       <div className="aurora-mesh" />
       <Container className="relative py-12">
-        <GlowOrb color="rgba(147, 51, 234, 0.1)" size={350} className="top-[5%] right-[5%]" delay={0} />
+        <GlowOrb color="rgba(225, 68, 52, 0.1)" size={350} className="top-[5%] right-[5%]" delay={0} />
         <GlowOrb color="rgba(14, 165, 233, 0.06)" size={250} className="bottom-[20%] left-[10%]" delay={500} />
 
         {/* Hero */}

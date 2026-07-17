@@ -127,7 +127,7 @@ export function AuraCore({
             left: center - (compact ? 15 : 25),
             top: center - (compact ? 15 : 25),
             background: "radial-gradient(circle at 35% 35%, #c4b5fd, #7c3aed, #4c1d95)",
-            boxShadow: `0 0 ${compact ? 20 : 40}px rgba(124,58,237,0.4), inset 0 -2px 6px rgba(0,0,0,0.3)`,
+            boxShadow: `0 0 ${compact ? 20 : 40}px rgba(225, 68, 52,0.4), inset 0 -2px 6px rgba(0,0,0,0.3)`,
           }}
         />
 
