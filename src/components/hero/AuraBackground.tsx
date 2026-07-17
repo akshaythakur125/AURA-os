@@ -33,7 +33,10 @@ export function AuraBackground() {
     const motionListener = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
     motionMq.addEventListener("change", motionListener);
 
-    const widthMq = window.matchMedia("(max-width: 640px)");
+    // The orb is aligned to sit behind AuraCore in the two-column desktop
+    // layout, which only exists at lg+ (1024px). Below that the layout stacks
+    // and the orb can't be reliably aligned, so we fall back to the CSS glow.
+    const widthMq = window.matchMedia("(max-width: 1023px)");
     setIsNarrow(widthMq.matches);
     const widthListener = (e: MediaQueryListEvent) => setIsNarrow(e.matches);
     widthMq.addEventListener("change", widthListener);
@@ -44,12 +47,12 @@ export function AuraBackground() {
     };
   }, []);
 
-  const showWebGL = !reducedMotion && webglSupported === true;
+  const showWebGL = !reducedMotion && webglSupported === true && !isNarrow;
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       {!showWebGL && <FallbackGlow />}
-      {showWebGL && <AuraOrbScene dense={!isNarrow} />}
+      {showWebGL && <AuraOrbScene dense />}
     </div>
   );
 }
