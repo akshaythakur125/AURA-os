@@ -4,7 +4,7 @@ import { useRef } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
-import { GlowOrb } from "@/components/ui/GlowOrb";
+import { AuraBackground } from "@/components/hero/AuraBackground";
 import { HeroMockup } from "@/components/hero/HeroMockup";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
 import { RecentScores } from "@/components/social-proof/RecentScores";
@@ -82,12 +82,8 @@ export function Hero3D() {
         <div className="absolute right-[25%] top-[45%] h-5 w-5 rounded-full border border-blue-400/10 bg-blue-400/5 animate-[float-dramatic_7s_ease-in-out_infinite_0.5s]" />
       </div>
 
-      <div ref={orbLayerRef}>
-        <GlowOrb color="rgba(251, 113, 133, 0.22)" size={700} className="top-[-15%] left-[5%]" delay={0} />
-        <GlowOrb color="rgba(225, 29, 72, 0.18)" size={550} className="top-[15%] right-[0%]" delay={600} />
-        <GlowOrb color="rgba(37, 99, 235, 0.1)" size={450} className="bottom-[5%] left-[25%]" delay={1200} />
-        <GlowOrb color="rgba(251, 113, 133, 0.08)" size={350} className="top-[30%] left-[40%]" delay={200} />
-        <GlowOrb color="rgba(96, 165, 250, 0.06)" size={300} className="bottom-[20%] right-[30%]" delay={800} />
+      <div ref={orbLayerRef} className="absolute inset-0">
+        <AuraBackground />
       </div>
 
       <Container className="relative text-center">
