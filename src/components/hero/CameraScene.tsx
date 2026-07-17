@@ -2,7 +2,7 @@
 
 import { Suspense, useRef, useEffect, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useGLTF, Environment, Lightformer, Sparkles, Float } from "@react-three/drei";
+import { useGLTF, Environment, Lightformer, Float, ContactShadows } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 
@@ -68,30 +68,30 @@ export default function CameraScene({ dense = true }: CameraSceneProps) {
       gl={{ antialias: true, alpha: true, powerPreference: "low-power" }}
       style={{ position: "absolute", inset: 0 }}
     >
-      <ambientLight intensity={0.5} />
-      <pointLight color="#a78bfa" position={[4, 3, 5]} intensity={80} decay={2} />
-      <pointLight color="#60a5fa" position={[-3, -1, 4]} intensity={55} decay={2} />
+      <ambientLight intensity={0.85} />
+      <pointLight color="#fff4e6" position={[4, 5, 5]} intensity={110} decay={2} />
+      <pointLight color="#ffe9d0" position={[-3, 1, 4]} intensity={60} decay={2} />
 
       <Suspense fallback={null}>
         <Float speed={1} rotationIntensity={0.15} floatIntensity={0.5}>
           <CameraModel />
         </Float>
 
-        {dense && (
-          <Sparkles count={45} scale={[8, 6, 5]} size={1.5} speed={0.2} color="#c4b5fd" opacity={0.45} />
-        )}
+        {/* Soft contact shadow grounds the camera like an editorial product shot */}
+        <ContactShadows position={[0, -2.1, 0]} opacity={0.35} scale={9} blur={2.6} far={4} color="#2a1c14" />
 
-        {/* Procedural studio lighting → real reflections on the brass/leather,
-            no external HDR, so it stays inside the same-origin CSP. */}
+        {/* Warm studio softboxes → bright, neutral reflections on the
+            brass/leather. No external HDR — stays inside the same-origin CSP. */}
         <Environment resolution={256}>
-          <Lightformer intensity={2.4} color="#ffffff" position={[2, 4, 3]} scale={[4, 4, 1]} />
-          <Lightformer intensity={1.8} color="#a78bfa" position={[-4, 1, 3]} scale={[5, 5, 1]} />
-          <Lightformer intensity={1.4} color="#60a5fa" position={[3, -2, 2]} scale={[6, 3, 1]} />
+          <Lightformer intensity={3} color="#ffffff" position={[2, 4, 3]} scale={[5, 5, 1]} />
+          <Lightformer intensity={2.2} color="#fff2e0" position={[-4, 2, 3]} scale={[6, 6, 1]} />
+          <Lightformer intensity={1.6} color="#ffe6c8" position={[3, -2, 2]} scale={[6, 3, 1]} />
         </Environment>
       </Suspense>
 
+      {/* Just a whisper of bloom for the lens/metal glints — no haze on a light bg */}
       <EffectComposer enableNormalPass={false}>
-        <Bloom intensity={0.5} luminanceThreshold={0.6} luminanceSmoothing={0.6} mipmapBlur radius={0.6} />
+        <Bloom intensity={0.18} luminanceThreshold={0.8} luminanceSmoothing={0.7} mipmapBlur radius={0.5} />
       </EffectComposer>
     </Canvas>
   );
