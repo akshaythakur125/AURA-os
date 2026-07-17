@@ -7,6 +7,8 @@ import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { GlowOrb } from "@/components/ui/GlowOrb";
+import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
+import { GoalTiltCard } from "@/components/audit/GoalTiltCard";
 import { createAudit, updateAudit } from "@/lib/storage/auditStore";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import {
@@ -291,6 +293,9 @@ export default function NewAuditPage() {
             {step === 0 && (
               <div className="animate-slide-in">
                 <div className="mb-8 text-center">
+                  <div className="mb-5 flex justify-center">
+                    <Scene3DAccent size={150} />
+                  </div>
                   <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-3xl font-bold text-transparent">
                     What&apos;s your goal?
                   </h1>
@@ -300,46 +305,13 @@ export default function NewAuditPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                   {GOALS.map((g, i) => (
-                    <motion.button
+                    <GoalTiltCard
                       key={g.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05, duration: 0.3 }}
-                      whileHover={{ scale: 1.03, y: -2 }}
-                      whileTap={{ scale: 0.97 }}
-                      onClick={() => setGoal(g.id)}
-                      className={`group relative flex flex-col items-center gap-2 rounded-2xl border p-4 text-center transition-all duration-200 ${
-                        goal === g.id
-                          ? "border-red-500/50 bg-red-500/10 ring-2 ring-red-500/30 shadow-lg shadow-red-500/10"
-                          : "border-[#1c1917]/10 bg-[#1c1917]/[0.02] hover:border-[#1c1917]/10 hover:bg-[#1c1917]/[0.03]"
-                      }`}
-                    >
-                      {goal === g.id && (
-                        <motion.div
-                          layoutId="goal-glow"
-                          className="absolute inset-0 rounded-2xl bg-gradient-to-br from-red-500/10 to-red-500/5"
-                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                        />
-                      )}
-                      <div className={`relative flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${g.color} text-lg shadow-lg`}>
-                        {g.emoji}
-                      </div>
-                      <div className="relative">
-                        <div className="text-sm font-semibold text-[#1C1917]">{g.label}</div>
-                        <div className="text-[11px] text-[#857b6e]">{g.desc}</div>
-                      </div>
-                      {goal === g.id && (
-                        <motion.div
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-gradient-to-r from-red-600 to-red-500 flex items-center justify-center shadow-md"
-                        >
-                          <svg className="h-3 w-3 text-[#1C1917]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </motion.div>
-                      )}
-                    </motion.button>
+                      goal={g}
+                      index={i}
+                      selected={goal === g.id}
+                      onSelect={() => setGoal(g.id)}
+                    />
                   ))}
                 </div>
               </div>
