@@ -15,9 +15,9 @@ const AuraOrbScene = dynamic(() => import("@/components/hero/AuraOrbScene"), {
 function FallbackGlow() {
   return (
     <>
-      <GlowOrb color="rgba(251, 113, 133, 0.22)" size={700} className="top-[-15%] left-[5%]" delay={0} />
-      <GlowOrb color="rgba(225, 29, 72, 0.15)" size={550} className="top-[15%] right-[0%]" delay={600} />
-      <GlowOrb color="rgba(37, 99, 235, 0.1)" size={450} className="bottom-[5%] left-[25%]" delay={1200} />
+      <GlowOrb color="rgba(167, 139, 250, 0.22)" size={700} className="top-[-15%] left-[5%]" delay={0} />
+      <GlowOrb color="rgba(96, 165, 250, 0.15)" size={550} className="top-[15%] right-[0%]" delay={600} />
+      <GlowOrb color="rgba(103, 232, 249, 0.1)" size={450} className="bottom-[5%] left-[25%]" delay={1200} />
     </>
   );
 }

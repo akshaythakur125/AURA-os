@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { AuraBackground } from "@/components/hero/AuraBackground";
 import type { AuraDimension } from "./AuraCore";
 
 const AuraCore = dynamic(() => import("./AuraCore").then((m) => m.AuraCore), {
@@ -28,6 +29,10 @@ export function HeroSection() {
     <section className="relative min-h-[90vh] flex items-center bg-[#0a0a12] overflow-hidden">
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(124,58,237,0.08),transparent_50%),radial-gradient(ellipse_at_70%_80%,rgba(59,130,246,0.05),transparent_50%)]" />
+
+      {/* Real rendered WebGL depth — falls back to the gradient above on
+          reduced-motion or no WebGL support */}
+      <AuraBackground />
 
       <Container className="relative z-10 py-20 sm:py-28">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">

@@ -19,8 +19,8 @@ function AuraOrb() {
     group.rotation.y = t * 0.08 + Math.sin(t * 0.07) * 0.3;
     group.rotation.z = Math.sin(t * 0.19) * 0.06;
 
-    const baseX = 1.5;
-    const baseY = -1.7;
+    const baseX = 1.9;
+    const baseY = 0;
     const targetX = baseX + state.pointer.x * 0.3;
     const targetY = baseY + state.pointer.y * 0.18;
     group.position.x = THREE.MathUtils.lerp(group.position.x, targetX, 0.02);
@@ -28,19 +28,19 @@ function AuraOrb() {
   });
 
   return (
-    <group ref={groupRef} position={[1.5, -1.7, 0]}>
-      <mesh scale={0.85}>
+    <group ref={groupRef} position={[1.9, 0, -0.6]}>
+      <mesh scale={0.95}>
         <icosahedronGeometry args={[1, 16]} />
         <MeshDistortMaterial
-          color="#fb7185"
-          emissive="#e11d48"
-          emissiveIntensity={0.35}
+          color="#a78bfa"
+          emissive="#7c3aed"
+          emissiveIntensity={0.3}
           roughness={0.15}
           metalness={0.2}
           distort={0.32}
           speed={1.3}
           transparent
-          opacity={0.62}
+          opacity={0.5}
         />
       </mesh>
     </group>
@@ -71,9 +71,9 @@ export default function AuraOrbScene({ dense = true }: AuraOrbSceneProps) {
       style={{ position: "absolute", inset: 0 }}
     >
       <ambientLight intensity={0.5} />
-      <pointLight color="#fb7185" position={[4, 2, 5]} intensity={110} decay={2} />
-      <pointLight color="#3b82f6" position={[-2, -2, 4]} intensity={75} decay={2} />
-      <pointLight color="#60a5fa" position={[0, -4, -2]} intensity={55} decay={2} />
+      <pointLight color="#a78bfa" position={[4, 2, 5]} intensity={110} decay={2} />
+      <pointLight color="#60a5fa" position={[-2, -2, 4]} intensity={75} decay={2} />
+      <pointLight color="#67e8f9" position={[0, -4, -2]} intensity={55} decay={2} />
       <Suspense fallback={null}>
         <AuraOrb />
         {dense && (
@@ -82,7 +82,7 @@ export default function AuraOrbScene({ dense = true }: AuraOrbSceneProps) {
             scale={[7, 6, 4]}
             size={1.8}
             speed={0.2}
-            color="#fda4af"
+            color="#c4b5fd"
             opacity={0.4}
           />
         )}
