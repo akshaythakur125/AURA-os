@@ -22,6 +22,7 @@ import { ReferralProgress } from "@/components/referral/ReferralProgress";
 import { ReferralShare } from "@/components/referral/ReferralShare";
 import type { Audit, AuditStats } from "@/types/audit";
 import type { LocalUser } from "@/types/user";
+import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 
 const auditTypeLabels: Record<string, string> = {
   photo: "Photo Aura Check",
@@ -116,6 +117,9 @@ export default function DashboardPage() {
 
       <div className="mb-10 flex items-start justify-between gap-4">
         <div>
+          <div className="mb-3">
+            <Scene3DAccent size={88} />
+          </div>
           <h1 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">
             {user?.displayName
               ? `Welcome back, ${user.displayName}`

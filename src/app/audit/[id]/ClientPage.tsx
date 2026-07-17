@@ -707,7 +707,7 @@ export default function AuditDetailPage() {
                             <Badge variant="danger" className="mb-4">
                               {heroLeak.severity === "high" ? "Critical" : "Major"} Photo-Quality Issue
                             </Badge>
-                            <h2 className="mb-3 bg-gradient-to-r from-red-300 via-red-300 to-red-200 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
+                            <h2 className="mb-3 bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
                               {heroLeak.title}
                             </h2>
                             <p className="mx-auto mb-4 max-w-md text-sm text-[#4a443d]">

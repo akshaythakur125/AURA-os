@@ -14,6 +14,7 @@ import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import type { Look, LookCategory } from "@/lib/shop/catalogTypes";
 import type { GoalTag, BudgetTag } from "@/types/product";
 import type { StyleIntent } from "@/types/personalization";
+import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 
 const CATEGORY_OPTIONS: { label: string; value: LookCategory | null }[] = [
   { label: "All Categories", value: null },
@@ -179,6 +180,9 @@ export default function ShopPage() {
 
         {/* Hero */}
         <div className="mb-10 relative">
+          <div className="mb-4">
+            <Scene3DAccent size={96} />
+          </div>
           <h1 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">
             Upgrade Your Visual Signal
           </h1>

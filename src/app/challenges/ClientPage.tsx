@@ -14,6 +14,7 @@ import { getChallengeEntries } from "@/lib/storage/challengeStore";
 import { getAudits } from "@/lib/storage/auditStore";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 import { LocalLeaderboard } from "@/components/challenges/LocalLeaderboard";
+import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 
 export default function ChallengesPage() {
   const challenges = getActiveChallenges();
@@ -33,6 +34,9 @@ export default function ChallengesPage() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(225, 68, 52,0.12),transparent_50%)]" />
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
+            <div className="mb-6 flex justify-center">
+              <Scene3DAccent size={190} />
+            </div>
             <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
               Turn your Aura Score into a challenge.
             </h1>
