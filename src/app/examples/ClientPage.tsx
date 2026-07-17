@@ -21,10 +21,10 @@ export default function ExamplesPage() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(147,51,234,0.12),transparent_50%)]" />
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
+            <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
               See what AuraCheck actually gives you.
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-400">
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-[#6f675e]">
               Real sample reports from simulated audits. See the format, the insights, and the upgrade plans before you decide to unlock.
             </p>
             <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -35,7 +35,7 @@ export default function ExamplesPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <FadeInView>
             <SectionHeading title="Sample reports" subtitle="Three products, three different outputs. All generated locally." />
@@ -50,7 +50,7 @@ export default function ExamplesPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <FadeInView>
             <SectionHeading title="Free vs Paid comparison" subtitle="See exactly what changes when you unlock." />
@@ -61,7 +61,7 @@ export default function ExamplesPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <FadeInView>
             <SectionHeading title="What a full report looks like" subtitle="Real UI from a sample Full Aura Report — visual breakdown, photo-quality issues, upgrade path." />
@@ -70,7 +70,7 @@ export default function ExamplesPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <FadeInView>
             <SectionHeading title="Before and after" subtitle="How specific fixes change your score — real report logic, sample data." />
@@ -81,7 +81,7 @@ export default function ExamplesPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <FadeInView>
             <SectionHeading title="Full report insights" subtitle="Expanded details from a sample Full Aura Report." />
@@ -111,14 +111,14 @@ export default function ExamplesPage() {
             </div>
             <div className="space-y-4">
               <Card>
-                <h4 className="mb-3 text-sm font-semibold text-white">Sample archetype: Urban Aspirational</h4>
-                <p className="mb-3 text-xs text-gray-400">
+                <h4 className="mb-3 text-sm font-semibold text-[#1C1917]">Sample archetype: Urban Aspirational</h4>
+                <p className="mb-3 text-xs text-[#6f675e]">
                   You invest in visible status items (phone, watch, shoes) but often miss the framing — background, lighting, and fit. Your upgrade path is about polishing the details around your assets.
                 </p>
-                <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
-                  <div className="text-xs text-gray-500">Biggest signal mismatch</div>
-                  <div className="text-sm text-gray-300">Premium watch + cluttered background</div>
-                  <div className="mt-2 text-xs text-gray-500">Fix: Crop tight or shoot against a clean wall</div>
+                <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
+                  <div className="text-xs text-[#857b6e]">Biggest signal mismatch</div>
+                  <div className="text-sm text-[#4a443d]">Premium watch + cluttered background</div>
+                  <div className="mt-2 text-xs text-[#857b6e]">Fix: Crop tight or shoot against a clean wall</div>
                 </div>
               </Card>
               <LeadCaptureCard source="examples-page" />
@@ -127,11 +127,11 @@ export default function ExamplesPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <Card className="mx-auto max-w-lg text-center">
-            <h3 className="mb-2 text-lg font-semibold text-white">Ready to see your own report?</h3>
-            <p className="mb-6 text-sm text-gray-400">
+            <h3 className="mb-2 text-lg font-semibold text-[#1C1917]">Ready to see your own report?</h3>
+            <p className="mb-6 text-sm text-[#6f675e]">
               Upload a photo, answer 3 questions, and get your free Aura Score in under 2 minutes.
             </p>
             <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
@@ -142,9 +142,9 @@ export default function ExamplesPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-12">
+      <section className="border-t border-[#1c1917]/[0.08] py-12">
         <Container>
-          <div className="mx-auto max-w-2xl rounded-xl border border-white/[0.04] bg-white/[0.02] p-6 text-center text-xs text-gray-500">
+          <div className="mx-auto max-w-2xl rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-6 text-center text-xs text-[#857b6e]">
             <p>AuraCheck analyzes presentation, not human worth. Scores are guidance, not objective truth.</p>
             <p className="mt-2">No external AI service is used in this MVP. No data is uploaded to any server.</p>
           </div>

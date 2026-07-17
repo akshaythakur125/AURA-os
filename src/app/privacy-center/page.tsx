@@ -62,10 +62,10 @@ export default function PrivacyCenterPage() {
     <Container className="py-16">
       <div className="mx-auto max-w-3xl">
         <div className="mb-10 text-center">
-          <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+          <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
             Privacy Center
           </h1>
-          <p className="mt-3 text-gray-400">
+          <p className="mt-3 text-[#6f675e]">
             How AuraCheck handles your data — completely transparent, completely local.
           </p>
         </div>
@@ -73,38 +73,38 @@ export default function PrivacyCenterPage() {
         <div className="space-y-6">
           {sections.map((s) => (
             <Card key={s.title}>
-              <h2 className="mb-3 text-lg font-semibold text-white">{s.title}</h2>
-              <p className="text-sm leading-relaxed text-gray-400">{s.content}</p>
+              <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">{s.title}</h2>
+              <p className="text-sm leading-relaxed text-[#6f675e]">{s.content}</p>
             </Card>
           ))}
         </div>
 
         {/* Key statements */}
-        <Card className="mt-8 border-purple-500/20 bg-purple-500/5">
-          <h2 className="mb-4 text-lg font-semibold text-white">What AuraCheck states clearly</h2>
-          <ul className="space-y-3 text-sm text-gray-300">
+        <Card className="mt-8 border-red-500/20 bg-red-500/5">
+          <h2 className="mb-4 text-lg font-semibold text-[#1C1917]">What AuraCheck states clearly</h2>
+          <ul className="space-y-3 text-sm text-[#4a443d]">
             <li className="flex items-start gap-2">
-              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
+              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
               No external AI is used in this MVP
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
+              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
               No image is uploaded to a server
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
+              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
               No automatic payment verification
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
+              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
               Scores are guidance, not objective truth
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
+              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
               AuraCheck analyzes presentation signals, not human worth
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-purple-400" />
+              <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
               It does not infer caste, religion, ethnicity, sexuality, health, exact income, or protected traits
             </li>
           </ul>
@@ -120,7 +120,7 @@ export default function PrivacyCenterPage() {
           </Link>
         </div>
 
-        <p className="mt-8 text-center text-xs text-gray-600">
+        <p className="mt-8 text-center text-xs text-[#9c9184]">
           Questions about privacy? Contact {supportEmail}
         </p>
       </div>

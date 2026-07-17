@@ -11,8 +11,8 @@ const PRODUCT_LINKS: Record<string, string> = {
 };
 
 const PRODUCT_COLORS: Record<string, string> = {
-  aura_report: "from-purple-600 to-pink-500",
-  dating_audit: "from-pink-500 to-rose-500",
+  aura_report: "from-red-600 to-red-500",
+  dating_audit: "from-red-500 to-red-500",
   glowup_plan: "from-amber-500 to-orange-500",
 };
 
@@ -20,51 +20,51 @@ export function SampleReportCard({ report }: { report: SampleReport }) {
   return (
     <Card className="relative flex flex-col overflow-hidden">
       <div
-        className={`pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br ${PRODUCT_COLORS[report.productType] || "from-purple-600 to-pink-500"} opacity-10 blur-3xl`}
+        className={`pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-gradient-to-br ${PRODUCT_COLORS[report.productType] || "from-red-600 to-red-500"} opacity-10 blur-3xl`}
       />
       <Badge variant="premium" className="mb-3 self-start">
         {report.productName}
       </Badge>
 
       <div className="mb-4">
-        <div className="text-xs text-gray-500">Score</div>
+        <div className="text-xs text-[#857b6e]">Score</div>
         <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-bold text-white">{report.score}</span>
-          <span className="text-sm text-gray-500">/ 100</span>
+          <span className="text-4xl font-bold text-[#1C1917]">{report.score}</span>
+          <span className="text-sm text-[#857b6e]">/ 100</span>
         </div>
-        <div className="mt-1 h-2 overflow-hidden rounded-full bg-white/5">
+        <div className="mt-1 h-2 overflow-hidden rounded-full bg-[#1c1917]/[0.04]">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500"
+            className="h-full rounded-full bg-gradient-to-r from-red-600 to-red-500"
             style={{ width: `${report.score}%` }}
           />
         </div>
       </div>
 
       {report.archetype && (
-        <div className="mb-2 text-xs text-gray-500">
-          Archetype: <span className="text-purple-300">{report.archetype}</span>
+        <div className="mb-2 text-xs text-[#857b6e]">
+          Archetype: <span className="text-red-300">{report.archetype}</span>
         </div>
       )}
 
       <div className="mb-3 rounded-lg border border-red-500/10 bg-red-500/5 px-3 py-2">
         <div className="text-xs text-red-400">Primary bottleneck</div>
-        <div className="text-sm text-gray-300">{report.bottleneck}</div>
+        <div className="text-sm text-[#4a443d]">{report.bottleneck}</div>
       </div>
 
       <div className="mb-4 flex-1">
-        <div className="mb-2 text-xs text-gray-500">Top insight</div>
-        <p className="text-sm leading-relaxed text-gray-400">
+        <div className="mb-2 text-xs text-[#857b6e]">Top insight</div>
+        <p className="text-sm leading-relaxed text-[#6f675e]">
           {report.topInsight}
         </p>
       </div>
 
       <div className="mb-4">
-        <div className="mb-2 text-xs text-gray-500">Sample recommendations</div>
+        <div className="mb-2 text-xs text-[#857b6e]">Sample recommendations</div>
         <ul className="space-y-1">
           {report.sampleRecommendations.map((r, i) => (
             <li
               key={i}
-              className="flex items-start gap-2 text-xs text-gray-300"
+              className="flex items-start gap-2 text-xs text-[#4a443d]"
             >
               <svg
                 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400"
@@ -85,8 +85,8 @@ export function SampleReportCard({ report }: { report: SampleReport }) {
         </ul>
       </div>
 
-      <div className="mt-auto flex items-center justify-between rounded-lg border border-white/[0.04] bg-white/[0.03] px-3 py-2">
-        <span className="text-xs text-gray-500">
+      <div className="mt-auto flex items-center justify-between rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] px-3 py-2">
+        <span className="text-xs text-[#857b6e]">
           Budget range:{" "}
           <span className="text-amber-400">{report.budgetRange}</span>
         </span>

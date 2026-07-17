@@ -121,31 +121,31 @@ export default function DataPage() {
   return (
     <Container className="py-12">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white sm:text-3xl">Your Local Data</h1>
-        <p className="mt-1 text-sm text-gray-500">See what AuraCheck stores in your browser and manage your data.</p>
+        <h1 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">Your Local Data</h1>
+        <p className="mt-1 text-sm text-[#857b6e]">See what AuraCheck stores in your browser and manage your data.</p>
       </div>
 
       {/* Storage Health */}
       <Card className="mb-8">
-        <h3 className="mb-4 text-sm font-semibold text-white">Storage Health</h3>
+        <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Storage Health</h3>
         <div className="grid gap-4 sm:grid-cols-4">
-          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
-            <div className="text-xs text-gray-500">localStorage Available</div>
-            <div className="mt-1 text-sm font-medium text-white">{storageAvail.available ? "Yes" : "No"}</div>
+          <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
+            <div className="text-xs text-[#857b6e]">localStorage Available</div>
+            <div className="mt-1 text-sm font-medium text-[#1C1917]">{storageAvail.available ? "Yes" : "No"}</div>
             {storageAvail.error && <p className="mt-1 text-[10px] text-amber-400">{storageAvail.error}</p>}
           </div>
-          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
-            <div className="text-xs text-gray-500">Estimated Usage</div>
-            <div className="mt-1 text-sm font-medium text-white">{formatStorageBytes(storageUsage.totalBytes)}</div>
+          <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
+            <div className="text-xs text-[#857b6e]">Estimated Usage</div>
+            <div className="mt-1 text-sm font-medium text-[#1C1917]">{formatStorageBytes(storageUsage.totalBytes)}</div>
             {lowStorage && <p className="mt-1 text-[10px] text-amber-400">Storage is running low</p>}
           </div>
-          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
-            <div className="text-xs text-gray-500">Total Items</div>
-            <div className="mt-1 text-sm font-medium text-white">{totalItems}</div>
+          <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
+            <div className="text-xs text-[#857b6e]">Total Items</div>
+            <div className="mt-1 text-sm font-medium text-[#1C1917]">{totalItems}</div>
           </div>
-          <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
-            <div className="text-xs text-gray-500">Private Mode</div>
-            <div className="mt-1 text-sm font-medium text-white">{storageAvail.isPrivateMode === null ? "Unknown" : storageAvail.isPrivateMode ? "Likely" : "No"}</div>
+          <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
+            <div className="text-xs text-[#857b6e]">Private Mode</div>
+            <div className="mt-1 text-sm font-medium text-[#1C1917]">{storageAvail.isPrivateMode === null ? "Unknown" : storageAvail.isPrivateMode ? "Likely" : "No"}</div>
           </div>
         </div>
         <div className="mt-4 flex gap-3">
@@ -155,11 +155,11 @@ export default function DataPage() {
 
       {/* Data Summary Table */}
       <Card className="mb-8">
-        <h3 className="mb-4 text-sm font-semibold text-white">Data Summary</h3>
+        <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Data Summary</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-white/[0.04] text-gray-500">
+              <tr className="border-b border-[#1c1917]/[0.08] text-[#857b6e]">
                 <th className="pb-2 pr-4 font-medium">Data Type</th>
                 <th className="pb-2 pr-4 font-medium">Count</th>
                 <th className="pb-2 pr-4 font-medium">Estimated Size</th>
@@ -169,11 +169,11 @@ export default function DataPage() {
             </thead>
             <tbody>
               {dataTypes.map((dt) => (
-                <tr key={dt.key} className="border-b border-white/[0.04] text-gray-300">
-                  <td className="py-2 pr-4 text-white">{dt.label}</td>
+                <tr key={dt.key} className="border-b border-[#1c1917]/[0.08] text-[#4a443d]">
+                  <td className="py-2 pr-4 text-[#1C1917]">{dt.label}</td>
                   <td className="py-2 pr-4">{dt.count}</td>
-                  <td className="py-2 pr-4 text-gray-500">{formatStorageBytes(dt.size)}</td>
-                  <td className="py-2 pr-4 text-[10px] text-gray-500">{formatDate(dt.updated)}</td>
+                  <td className="py-2 pr-4 text-[#857b6e]">{formatStorageBytes(dt.size)}</td>
+                  <td className="py-2 pr-4 text-[10px] text-[#857b6e]">{formatDate(dt.updated)}</td>
                   <td className="py-2">
                     {dt.count > 0 && (
                       <button
@@ -194,28 +194,28 @@ export default function DataPage() {
       {/* Export/Import */}
       <div className="mb-8 grid gap-6 sm:grid-cols-2">
         <Card>
-          <h3 className="mb-2 text-sm font-semibold text-white">Export All Data</h3>
-          <p className="mb-4 text-xs text-gray-500">Download a JSON backup of all your local AuraCheck data. Includes audits, orders, analytics, and more.</p>
+          <h3 className="mb-2 text-sm font-semibold text-[#1C1917]">Export All Data</h3>
+          <p className="mb-4 text-xs text-[#857b6e]">Download a JSON backup of all your local AuraCheck data. Includes audits, orders, analytics, and more.</p>
           <Button size="sm" onClick={handleExport}>Download Backup</Button>
         </Card>
         <Card>
-          <h3 className="mb-2 text-sm font-semibold text-white">Import Data</h3>
-          <p className="mb-4 text-xs text-gray-500">Restore from a previous backup. Choose merge (adds to existing) or replace (overwrites).</p>
+          <h3 className="mb-2 text-sm font-semibold text-[#1C1917]">Import Data</h3>
+          <p className="mb-4 text-xs text-[#857b6e]">Restore from a previous backup. Choose merge (adds to existing) or replace (overwrites).</p>
           <div className="flex gap-2 mb-3">
             <button
               onClick={() => setImportMode("merge")}
-              className={`rounded-lg px-3 py-1 text-xs transition-colors ${importMode === "merge" ? "bg-purple-500/20 text-purple-300" : "bg-white/5 text-gray-500 hover:text-white"}`}
+              className={`rounded-lg px-3 py-1 text-xs transition-colors ${importMode === "merge" ? "bg-red-500/20 text-red-300" : "bg-[#1c1917]/[0.04] text-[#857b6e] hover:text-[#1C1917]"}`}
             >
               Merge
             </button>
             <button
               onClick={() => setImportMode("replace")}
-              className={`rounded-lg px-3 py-1 text-xs transition-colors ${importMode === "replace" ? "bg-purple-500/20 text-purple-300" : "bg-white/5 text-gray-500 hover:text-white"}`}
+              className={`rounded-lg px-3 py-1 text-xs transition-colors ${importMode === "replace" ? "bg-red-500/20 text-red-300" : "bg-[#1c1917]/[0.04] text-[#857b6e] hover:text-[#1C1917]"}`}
             >
               Replace
             </button>
           </div>
-          <label className="inline-block cursor-pointer rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-xs text-gray-300 transition-colors hover:bg-white/10">
+          <label className="inline-block cursor-pointer rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-4 py-2 text-xs text-[#4a443d] transition-colors hover:bg-[#1c1917]/[0.06]">
             Select Backup File
             <input type="file" accept=".json" onChange={handleImportFile} className="hidden" />
           </label>
@@ -225,11 +225,11 @@ export default function DataPage() {
 
       {/* Import Preview */}
       {importPreview && (
-        <Card className="mb-8 border-purple-500/30">
-          <h3 className="mb-4 text-sm font-semibold text-white">Import Preview</h3>
-          <div className="space-y-2 text-xs text-gray-400">
-            <p><span className="text-gray-500">Backup created:</span> {formatDate(importPreview.exportedAt)}</p>
-            <p><span className="text-gray-500">Data types included:</span> {Object.keys(importPreview.data).length}</p>
+        <Card className="mb-8 border-red-500/30">
+          <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Import Preview</h3>
+          <div className="space-y-2 text-xs text-[#6f675e]">
+            <p><span className="text-[#857b6e]">Backup created:</span> {formatDate(importPreview.exportedAt)}</p>
+            <p><span className="text-[#857b6e]">Data types included:</span> {Object.keys(importPreview.data).length}</p>
             <div className="flex flex-wrap gap-2 mt-2">
               {Object.entries(importPreview.data).map(([key, val]) => {
                 const count = Array.isArray(val) ? val.length : typeof val === "object" && val ? 1 : 0;
@@ -247,7 +247,7 @@ export default function DataPage() {
       {/* Danger Zone */}
       <Card className="mb-8 border-red-500/20">
         <h3 className="mb-4 text-sm font-semibold text-red-400">Danger Zone</h3>
-        <p className="mb-4 text-xs text-gray-500">These actions cannot be undone. Make sure you have exported your data first.</p>
+        <p className="mb-4 text-xs text-[#857b6e]">These actions cannot be undone. Make sure you have exported your data first.</p>
         <div className="flex flex-wrap gap-3">
           <Button variant="ghost" size="sm" onClick={() => handleClear("all")}>Clear All Local Data</Button>
           <Button variant="ghost" size="sm" onClick={() => handleClear("audits")}>Clear Only Audits</Button>
@@ -258,7 +258,7 @@ export default function DataPage() {
         </div>
       </Card>
 
-      <div className="rounded-xl border border-white/[0.04] bg-white/[0.02] p-4 text-center text-xs text-gray-600">
+      <div className="rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-4 text-center text-xs text-[#9c9184]">
         AuraCheck MVP stores data locally in this browser. Nothing is uploaded to an external server.
         Clearing browser data may remove your audits and reports.
       </div>

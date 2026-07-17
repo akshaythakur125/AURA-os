@@ -17,11 +17,11 @@ export function SocialProofBar({ variant = "inline", className = "" }: Props) {
     return (
       <div className={`flex items-center justify-center gap-6 sm:gap-10 ${className}`}>
         <LiveCounter value={data.totalChecks} label="checks completed" />
-        <div className="h-8 w-px bg-white/10" />
+        <div className="h-8 w-px bg-[#1c1917]/[0.06]" />
         <LiveCounter value={data.checksToday} label="today" />
         {data.averageScore !== null && (
           <>
-            <div className="h-8 w-px bg-white/10" />
+            <div className="h-8 w-px bg-[#1c1917]/[0.06]" />
             <LiveCounter value={data.averageScore} label="avg score" />
           </>
         )}
@@ -31,7 +31,7 @@ export function SocialProofBar({ variant = "inline", className = "" }: Props) {
 
   if (variant === "compact") {
     return (
-      <div className={`flex items-center justify-center gap-4 text-xs text-gray-500 ${className}`}>
+      <div className={`flex items-center justify-center gap-4 text-xs text-[#857b6e] ${className}`}>
         <span className="flex items-center gap-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
           {data.totalChecks.toLocaleString()} checks completed
@@ -48,13 +48,13 @@ export function SocialProofBar({ variant = "inline", className = "" }: Props) {
       <LiveCounter value={data.totalChecks} label="total checks" />
       {data.checksToday > 0 && (
         <>
-          <div className="h-6 w-px bg-white/10" />
+          <div className="h-6 w-px bg-[#1c1917]/[0.06]" />
           <LiveCounter value={data.checksToday} label="today" />
         </>
       )}
       {data.averageScore !== null && (
         <>
-          <div className="h-6 w-px bg-white/10" />
+          <div className="h-6 w-px bg-[#1c1917]/[0.06]" />
           <LiveCounter value={data.averageScore} label="avg score" />
         </>
       )}

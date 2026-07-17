@@ -18,13 +18,13 @@ const ICONS: Record<string, string> = {
 export function EmptyState({ icon = "inbox", title, description, action }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5">
-        <svg className="h-8 w-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#1c1917]/[0.04]">
+        <svg className="h-8 w-8 text-[#857b6e]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={ICONS[icon] || ICONS.inbox} />
         </svg>
       </div>
-      <p className="mb-2 text-lg text-gray-300">{title}</p>
-      {description && <p className="mb-6 text-sm text-gray-500 max-w-md">{description}</p>}
+      <p className="mb-2 text-lg text-[#4a443d]">{title}</p>
+      {description && <p className="mb-6 text-sm text-[#857b6e] max-w-md">{description}</p>}
       {action && <div>{action}</div>}
     </div>
   );

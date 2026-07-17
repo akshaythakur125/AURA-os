@@ -151,7 +151,7 @@ function buildRoadmap(metrics: {
 const effortColors: Record<string, string> = {
   free: "text-emerald-400 border-emerald-500/30",
   cheap: "text-amber-400 border-amber-500/30",
-  invest: "text-purple-400 border-purple-500/30",
+  invest: "text-red-400 border-red-500/30",
 };
 
 const effortLabels: Record<string, string> = {
@@ -192,8 +192,8 @@ export function ImprovementRoadmap({
     return (
       <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-transparent p-5 text-center">
         <div className="mb-2 text-3xl">🎉</div>
-        <h3 className="text-lg font-bold text-white">Your profile is already strong</h3>
-        <p className="mt-1 text-xs text-gray-400">
+        <h3 className="text-lg font-bold text-[#1C1917]">Your profile is already strong</h3>
+        <p className="mt-1 text-xs text-[#6f675e]">
           Minor refinements only — you&apos;re in the top tier. Consider a professional
           photoshoot to push further.
         </p>
@@ -202,16 +202,16 @@ export function ImprovementRoadmap({
   }
 
   return (
-    <div className="rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/[0.08] to-transparent p-5">
+    <div className="rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-500/[0.08] to-transparent p-5">
       <div className="mb-4">
-        <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-purple-500/20 bg-purple-500/10 px-3 py-1">
+        <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-red-500/20 bg-red-500/10 px-3 py-1">
           <span className="text-xs">🗺️</span>
-          <span className="text-xs font-medium text-purple-300">Your Improvement Roadmap</span>
+          <span className="text-xs font-medium text-red-300">Your Improvement Roadmap</span>
         </div>
-        <h3 className="text-base font-bold text-white">
+        <h3 className="text-base font-bold text-[#1C1917]">
           Follow these steps in order for the biggest improvement
         </h3>
-        <p className="mt-1 text-[11px] text-gray-500">
+        <p className="mt-1 text-[11px] text-[#857b6e]">
           Estimated total improvement: <span className="text-emerald-400 font-medium">+{totalImpact} points</span> if you complete all steps
         </p>
       </div>
@@ -219,7 +219,7 @@ export function ImprovementRoadmap({
       <div className="space-y-3">
         {steps.map((step, i) => (
           <FadeInView key={step.title} delay={i * 80}>
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.03] p-4">
+            <div className="rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.03] p-4">
               <div className="mb-2 flex items-center gap-2 flex-wrap">
                 <Badge variant="default" className={priorityColors[step.priority]}>
                   {priorityLabels[step.priority]}
@@ -227,18 +227,18 @@ export function ImprovementRoadmap({
                 <Badge variant="default" className={effortColors[step.effort]}>
                   {effortLabels[step.effort]}
                 </Badge>
-                <span className="text-[10px] text-gray-600 ml-auto">{step.timeframe}</span>
+                <span className="text-[10px] text-[#9c9184] ml-auto">{step.timeframe}</span>
               </div>
-              <h4 className="text-sm font-semibold text-white">{step.title}</h4>
-              <p className="mt-1 text-xs text-gray-400 leading-relaxed">{step.description}</p>
+              <h4 className="text-sm font-semibold text-[#1C1917]">{step.title}</h4>
+              <p className="mt-1 text-xs text-[#6f675e] leading-relaxed">{step.description}</p>
               <div className="mt-2 flex items-center gap-2">
-                <div className="h-1 flex-1 overflow-hidden rounded-full bg-white/5">
+                <div className="h-1 flex-1 overflow-hidden rounded-full bg-[#1c1917]/[0.04]">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500"
+                    className="h-full rounded-full bg-gradient-to-r from-red-500 to-red-500"
                     style={{ width: `${step.impactPercent * 5}%` }}
                   />
                 </div>
-                <span className="text-[10px] text-purple-400">+{step.impactPercent} pts</span>
+                <span className="text-[10px] text-red-400">+{step.impactPercent} pts</span>
               </div>
             </div>
           </FadeInView>

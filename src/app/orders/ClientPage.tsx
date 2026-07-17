@@ -12,8 +12,8 @@ const STATUS_COLORS: Record<string, string> = {
   paid: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
   pending: "text-amber-400 bg-amber-500/10 border-amber-500/20",
   failed: "text-red-400 bg-red-500/10 border-red-500/20",
-  refunded: "text-gray-400 bg-gray-500/10 border-gray-500/20",
-  created: "text-gray-400 bg-gray-500/10 border-gray-500/20",
+  refunded: "text-[#6f675e] bg-gray-500/10 border-gray-500/20",
+  created: "text-[#6f675e] bg-gray-500/10 border-gray-500/20",
 };
 
 export default function OrdersPage() {
@@ -27,22 +27,22 @@ export default function OrdersPage() {
   return (
     <Container className="py-12">
       <FadeInView>
-        <h1 className="mb-2 text-2xl font-bold text-white">Order History</h1>
-        <p className="mb-8 text-sm text-gray-500">Your purchases and payment history.</p>
+        <h1 className="mb-2 text-2xl font-bold text-[#1C1917]">Order History</h1>
+        <p className="mb-8 text-sm text-[#857b6e]">Your purchases and payment history.</p>
       </FadeInView>
 
       {loading && (
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 animate-pulse rounded-xl bg-white/5" />
+            <div key={i} className="h-20 animate-pulse rounded-xl bg-[#1c1917]/[0.04]" />
           ))}
         </div>
       )}
 
       {!loading && orders.length === 0 && (
         <Card className="py-12 text-center">
-          <p className="text-sm text-gray-400">No orders yet.</p>
-          <Link href="/audit/new" className="mt-3 inline-block text-xs text-violet-400 hover:text-violet-300">
+          <p className="text-sm text-[#6f675e]">No orders yet.</p>
+          <Link href="/audit/new" className="mt-3 inline-block text-xs text-red-400 hover:text-red-300">
             Start your first aura check →
           </Link>
         </Card>
@@ -56,10 +56,10 @@ export default function OrdersPage() {
               <FadeInView key={order.id}>
                 <Card className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4">
                   <div>
-                    <p className="text-sm font-medium text-white">
+                    <p className="text-sm font-medium text-[#1C1917]">
                       {product?.name || order.productId}
                     </p>
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-xs text-[#857b6e]">
                       {new Date(order.createdAt).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
@@ -79,7 +79,7 @@ export default function OrdersPage() {
                     {order.status === "paid" && (
                       <Link
                         href={`/audit/${order.auditId}`}
-                        className="text-xs text-violet-400 hover:text-violet-300"
+                        className="text-xs text-red-400 hover:text-red-300"
                       >
                         View Report →
                       </Link>

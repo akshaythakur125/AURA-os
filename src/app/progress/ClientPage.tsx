@@ -103,22 +103,22 @@ export default function ProgressPage() {
 
       {stats && (
         <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <Card><div className="text-xs text-gray-500">Comparisons</div><div className="mt-1 text-2xl font-bold text-white">{stats.total}</div></Card>
-          <Card><div className="text-xs text-gray-500">Avg Change</div><div className="mt-1 text-2xl font-bold text-white">{stats.avg >= 0 ? "+" : ""}{stats.avg}</div></Card>
-          <Card><div className="text-xs text-gray-500">Best Improvement</div><div className="mt-1 text-2xl font-bold text-emerald-400">+{stats.best}</div></Card>
-          <Card><div className="text-xs text-gray-500">Biggest Drop</div><div className="mt-1 text-2xl font-bold text-red-400">{stats.worst}</div></Card>
+          <Card><div className="text-xs text-[#857b6e]">Comparisons</div><div className="mt-1 text-2xl font-bold text-[#1C1917]">{stats.total}</div></Card>
+          <Card><div className="text-xs text-[#857b6e]">Avg Change</div><div className="mt-1 text-2xl font-bold text-[#1C1917]">{stats.avg >= 0 ? "+" : ""}{stats.avg}</div></Card>
+          <Card><div className="text-xs text-[#857b6e]">Best Improvement</div><div className="mt-1 text-2xl font-bold text-emerald-400">+{stats.best}</div></Card>
+          <Card><div className="text-xs text-[#857b6e]">Biggest Drop</div><div className="mt-1 text-2xl font-bold text-red-400">{stats.worst}</div></Card>
         </div>
       )}
 
       <Card className="mb-8">
-        <h3 className="mb-4 text-sm font-semibold text-white">New Comparison</h3>
+        <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">New Comparison</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1 block text-xs text-gray-500">Before Audit</label>
+            <label className="mb-1 block text-xs text-[#857b6e]">Before Audit</label>
             <select
               value={beforeId}
               onChange={(e) => setBeforeId(e.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
+              className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] focus:border-red-500/50 focus:outline-none"
             >
               <option value="">Select...</option>
               {audits.map((a) => (
@@ -129,11 +129,11 @@ export default function ProgressPage() {
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-xs text-gray-500">After Audit</label>
+            <label className="mb-1 block text-xs text-[#857b6e]">After Audit</label>
             <select
               value={afterId}
               onChange={(e) => setAfterId(e.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
+              className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] focus:border-red-500/50 focus:outline-none"
             >
               <option value="">Select...</option>
               {audits.map((a) => (
@@ -156,33 +156,33 @@ export default function ProgressPage() {
 
       {comparisons.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-white">Past Comparisons ({comparisons.length})</h3>
+          <h3 className="text-sm font-semibold text-[#1C1917]">Past Comparisons ({comparisons.length})</h3>
           {comparisons.map((c) => (
             <Card key={c.id}>
               <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
                 <div className="flex items-center gap-4">
                   <div className="text-center">
-                    <div className="text-xs text-gray-500">Before</div>
-                    <div className="text-xl font-bold text-white">{c.beforeScore}</div>
+                    <div className="text-xs text-[#857b6e]">Before</div>
+                    <div className="text-xl font-bold text-[#1C1917]">{c.beforeScore}</div>
                   </div>
-                  <svg className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="h-5 w-5 text-[#9c9184]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                   <div className="text-center">
-                    <div className="text-xs text-gray-500">After</div>
-                    <div className="text-xl font-bold text-white">{c.afterScore}</div>
+                    <div className="text-xs text-[#857b6e]">After</div>
+                    <div className="text-xl font-bold text-[#1C1917]">{c.afterScore}</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-xs text-gray-500">Delta</div>
+                    <div className="text-xs text-[#857b6e]">Delta</div>
                     <div className={`text-xl font-bold ${c.scoreDelta >= 0 ? "text-emerald-400" : "text-red-400"}`}>
                       {c.scoreDelta >= 0 ? "+" : ""}{c.scoreDelta}
                     </div>
                   </div>
                 </div>
-                <span className="text-[10px] text-gray-600">{formatDate(c.createdAt)}</span>
+                <span className="text-[10px] text-[#9c9184]">{formatDate(c.createdAt)}</span>
               </div>
 
-              <p className="mb-3 text-sm text-gray-300">{c.summary}</p>
+              <p className="mb-3 text-sm text-[#4a443d]">{c.summary}</p>
 
               <div className="grid gap-3 sm:grid-cols-2">
                 {c.improvedSignals.length > 0 && (
@@ -211,7 +211,7 @@ export default function ProgressPage() {
                 <Link href={`/audit/${c.afterAuditId}`}>
                   <Button variant="secondary" size="sm">View After Audit</Button>
                 </Link>
-                <button onClick={() => handleDelete(c.id)} className="rounded-lg px-2 py-1 text-xs text-gray-500 hover:text-red-400">
+                <button onClick={() => handleDelete(c.id)} className="rounded-lg px-2 py-1 text-xs text-[#857b6e] hover:text-red-400">
                   Delete
                 </button>
               </div>
@@ -222,13 +222,13 @@ export default function ProgressPage() {
 
       {comparisons.length === 0 && (
         <Card className="py-12 text-center">
-          <p className="mb-2 text-lg text-gray-300">No comparisons yet</p>
-          <p className="mb-6 text-sm text-gray-500">Select two audits above and compare them to see your progress.</p>
+          <p className="mb-2 text-lg text-[#4a443d]">No comparisons yet</p>
+          <p className="mb-6 text-sm text-[#857b6e]">Select two audits above and compare them to see your progress.</p>
           <Link href="/audit/new"><Button>Create First Audit</Button></Link>
         </Card>
       )}
 
-      <div className="mt-8 rounded-xl border border-white/[0.04] bg-white/[0.02] p-4 text-center text-xs text-gray-600">
+      <div className="mt-8 rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-4 text-center text-xs text-[#9c9184]">
         <p>AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
       </div>
       </Container>

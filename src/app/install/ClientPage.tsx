@@ -19,22 +19,22 @@ export default function InstallPage() {
 
         <Card className="mb-8">
           <Badge variant="premium" className="mb-3">Browser Install</Badge>
-          <h3 className="mb-4 text-lg font-semibold text-white">Chrome on Android</h3>
-          <ol className="space-y-3 text-sm text-gray-400">
+          <h3 className="mb-4 text-lg font-semibold text-[#1C1917]">Chrome on Android</h3>
+          <ol className="space-y-3 text-sm text-[#6f675e]">
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">1</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">1</span>
               Open AuraCheck in Chrome.
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">2</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">2</span>
               Tap the menu icon (three dots) in the top-right corner.
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">3</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">3</span>
               Tap &quot;Add to Home screen&quot; or &quot;Install app&quot;.
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">4</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">4</span>
               Follow the prompts to install.
             </li>
           </ol>
@@ -42,22 +42,22 @@ export default function InstallPage() {
 
         <Card className="mb-8">
           <Badge variant="premium" className="mb-3">iOS / Safari</Badge>
-          <h3 className="mb-4 text-lg font-semibold text-white">Safari on iPhone/iPad</h3>
-          <ol className="space-y-3 text-sm text-gray-400">
+          <h3 className="mb-4 text-lg font-semibold text-[#1C1917]">Safari on iPhone/iPad</h3>
+          <ol className="space-y-3 text-sm text-[#6f675e]">
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">1</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">1</span>
               Open AuraCheck in Safari.
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">2</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">2</span>
               Tap the Share button (square with arrow) at the bottom.
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">3</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">3</span>
               Scroll down and tap &quot;Add to Home Screen&quot;.
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">4</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">4</span>
               Tap &quot;Add&quot; in the top-right corner.
             </li>
           </ol>
@@ -65,24 +65,24 @@ export default function InstallPage() {
 
         <Card className="mb-8">
           <Badge variant="premium" className="mb-3">Desktop</Badge>
-          <h3 className="mb-4 text-lg font-semibold text-white">Chrome / Edge on Desktop</h3>
-          <ol className="space-y-3 text-sm text-gray-400">
+          <h3 className="mb-4 text-lg font-semibold text-[#1C1917]">Chrome / Edge on Desktop</h3>
+          <ol className="space-y-3 text-sm text-[#6f675e]">
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">1</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">1</span>
               Open AuraCheck in Chrome or Edge.
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">2</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">2</span>
               Look for the install icon in the address bar (or menu).
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">3</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">3</span>
               Click &quot;Install&quot; to add AuraCheck as a standalone app.
             </li>
           </ol>
         </Card>
 
-        <div className="rounded-xl border border-white/[0.04] bg-white/[0.02] p-4 text-center text-xs text-gray-600">
+        <div className="rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-4 text-center text-xs text-[#9c9184]">
           <p>AuraCheck is a progressive web app. Once installed, it works like a native app on your device.</p>
           <p className="mt-1">Your data remains local in your browser. No uploads, no servers.</p>
         </div>

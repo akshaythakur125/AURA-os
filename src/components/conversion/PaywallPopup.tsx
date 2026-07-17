@@ -36,22 +36,22 @@ export function PaywallPopup({ open, onClose, auditId, trigger }: PaywallPopupPr
       {/* Modal */}
       <FadeInView>
         <div
-          className="relative w-full max-w-md rounded-3xl border border-white/[0.08] bg-[#0a0a1a] p-6 shadow-2xl"
+          className="relative w-full max-w-md rounded-3xl border border-[#1c1917]/10 bg-[#F2ECE1] p-6 shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close */}
-          <button onClick={onClose} className="absolute right-4 top-4 text-gray-500 hover:text-white text-lg">
+          <button onClick={onClose} className="absolute right-4 top-4 text-[#857b6e] hover:text-[#1C1917] text-lg">
             ✕
           </button>
 
           {/* Header */}
           <div className="mb-5 text-center">
-            <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-amber-500 text-xl">
+            <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500 to-amber-500 text-xl">
               🔓
             </div>
-            <h2 className="text-xl font-bold text-white">Unlock Your Full Report</h2>
+            <h2 className="text-xl font-bold text-[#1C1917]">Unlock Your Full Report</h2>
             {trigger && (
-              <p className="mt-1 text-xs text-gray-500">You tried to view: {trigger}</p>
+              <p className="mt-1 text-xs text-[#857b6e]">You tried to view: {trigger}</p>
             )}
           </div>
 
@@ -60,15 +60,15 @@ export function PaywallPopup({ open, onClose, auditId, trigger }: PaywallPopupPr
             {FEATURES.map((f) => (
               <div key={f.text} className="flex items-start gap-2.5">
                 <span className="mt-0.5 text-sm">{f.icon}</span>
-                <span className="text-xs text-gray-300">{f.text}</span>
+                <span className="text-xs text-[#4a443d]">{f.text}</span>
               </div>
             ))}
           </div>
 
           {/* Price */}
-          <div className="mb-4 rounded-xl border border-white/[0.06] bg-white/[0.03] p-4 text-center">
-            <div className="text-3xl font-bold text-white">{formatPrice(PAYMENT_PRODUCTS.aura_report.price)}</div>
-            <div className="text-[11px] text-gray-500">One-time payment · No subscription · Yours forever</div>
+          <div className="mb-4 rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.03] p-4 text-center">
+            <div className="text-3xl font-bold text-[#1C1917]">{formatPrice(PAYMENT_PRODUCTS.aura_report.price)}</div>
+            <div className="text-[11px] text-[#857b6e]">One-time payment · No subscription · Yours forever</div>
           </div>
 
           {/* CTA */}
@@ -78,7 +78,7 @@ export function PaywallPopup({ open, onClose, auditId, trigger }: PaywallPopupPr
             </Button>
           </Link>
 
-          <p className="mt-3 text-center text-[10px] text-gray-600">
+          <p className="mt-3 text-center text-[10px] text-[#9c9184]">
             Secure payment via Razorpay · Instant access
           </p>
         </div>

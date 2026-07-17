@@ -27,8 +27,8 @@ export function LocalLeaderboard({
   if (sorted.length === 0) {
     return (
       <Card>
-        <h3 className="mb-2 text-sm font-semibold text-white">Local Leaderboard</h3>
-        <p className="text-xs text-gray-500">No entries yet. Be the first to enter this challenge!</p>
+        <h3 className="mb-2 text-sm font-semibold text-[#1C1917]">Local Leaderboard</h3>
+        <p className="text-xs text-[#857b6e]">No entries yet. Be the first to enter this challenge!</p>
       </Card>
     );
   }
@@ -36,14 +36,14 @@ export function LocalLeaderboard({
   return (
     <Card>
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white">Local Leaderboard</h3>
-        <span className="text-xs text-gray-500">Top {maxDisplay}</span>
+        <h3 className="text-sm font-semibold text-[#1C1917]">Local Leaderboard</h3>
+        <span className="text-xs text-[#857b6e]">Top {maxDisplay}</span>
       </div>
       <div className="space-y-2">
         {sorted.map((entry, idx) => (
           <div
             key={entry.id}
-            className="flex items-center justify-between rounded-lg border border-white/[0.04] bg-white/[0.03] px-3 py-2"
+            className="flex items-center justify-between rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] px-3 py-2"
           >
             <div className="flex items-center gap-3">
               <span
@@ -51,31 +51,31 @@ export function LocalLeaderboard({
                   idx === 0
                     ? "bg-amber-500/20 text-amber-400"
                     : idx === 1
-                      ? "bg-gray-400/20 text-gray-300"
+                      ? "bg-gray-400/20 text-[#4a443d]"
                       : idx === 2
                         ? "bg-orange-500/20 text-orange-400"
-                        : "bg-white/5 text-gray-600"
+                        : "bg-[#1c1917]/[0.04] text-[#9c9184]"
                 }`}
               >
                 {idx + 1}
               </span>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-medium text-white">{entry.auraScore}</span>
+                  <span className="text-sm font-medium text-[#1C1917]">{entry.auraScore}</span>
                   {entry.archetype && (
                     <Badge variant="premium" className="text-[9px] px-1.5 py-0">{entry.archetype}</Badge>
                   )}
                 </div>
                 {entry.biggestStatusLeak && (
-                  <div className="text-[10px] text-gray-500">Leak: {entry.biggestStatusLeak}</div>
+                  <div className="text-[10px] text-[#857b6e]">Leak: {entry.biggestStatusLeak}</div>
                 )}
               </div>
             </div>
-            <span className="text-[10px] text-gray-600">{formatDate(entry.createdAt)}</span>
+            <span className="text-[10px] text-[#9c9184]">{formatDate(entry.createdAt)}</span>
           </div>
         ))}
       </div>
-      <p className="mt-3 text-[10px] text-gray-600">
+      <p className="mt-3 text-[10px] text-[#9c9184]">
         Local leaderboard only. Public leaderboards require a backend later.
       </p>
     </Card>

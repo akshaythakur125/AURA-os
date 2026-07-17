@@ -153,10 +153,10 @@ export default function AnnotatePage() {
   if (!images.length) {
     return (
       <Container className="py-8">
-        <h1 className="mb-2 text-xl font-bold text-white">Portrait Annotation</h1>
-        <p className="mb-6 text-xs text-gray-500">Internal tool. Upload approved images (licensed, synthetic, consented). No public indexing.</p>
+        <h1 className="mb-2 text-xl font-bold text-[#1C1917]">Portrait Annotation</h1>
+        <p className="mb-6 text-xs text-[#857b6e]">Internal tool. Upload approved images (licensed, synthetic, consented). No public indexing.</p>
         <Card className="p-6">
-          <p className="mb-4 text-sm text-gray-400">Upload images. QC duplicates auto-added every 5th image.</p>
+          <p className="mb-4 text-sm text-[#6f675e]">Upload images. QC duplicates auto-added every 5th image.</p>
           <label className="inline-block cursor-pointer">
             <input type="file" accept="image/*" multiple className="hidden" onChange={handleImageUpload} />
             <Button size="sm">Upload Images</Button>
@@ -170,13 +170,13 @@ export default function AnnotatePage() {
     return (
       <Container className="py-8">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-bold text-white">Audit Log</h1>
+          <h1 className="text-xl font-bold text-[#1C1917]">Audit Log</h1>
           <Button size="sm" onClick={() => setView("annotate")}>Back</Button>
         </div>
         <div className="space-y-1">
           {auditLog.slice(-50).reverse().map((entry, i) => (
-            <p key={i} className="text-[10px] text-gray-400">
-              <span className="text-gray-500">{new Date(entry.timestamp).toLocaleTimeString()}</span> {entry.action} {entry.imageId.slice(0, 20)} by {entry.annotatorId.slice(0, 12)}{entry.details ? ` (${entry.details})` : ""}
+            <p key={i} className="text-[10px] text-[#6f675e]">
+              <span className="text-[#857b6e]">{new Date(entry.timestamp).toLocaleTimeString()}</span> {entry.action} {entry.imageId.slice(0, 20)} by {entry.annotatorId.slice(0, 12)}{entry.details ? ` (${entry.details})` : ""}
             </p>
           ))}
         </div>
@@ -189,33 +189,33 @@ export default function AnnotatePage() {
     return (
       <Container className="py-8">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-bold text-white">Annotation Report</h1>
+          <h1 className="text-xl font-bold text-[#1C1917]">Annotation Report</h1>
           <div className="flex gap-2"><Button size="sm" onClick={() => setView("annotate")}>Back</Button><Button size="sm" onClick={handleExport}>Export</Button></div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-          <Card className="p-3"><p className="text-xs text-gray-500">Total</p><p className="text-lg font-bold text-white">{r.total}</p></Card>
-          <Card className="p-3"><p className="text-xs text-gray-500">Annotated</p><p className="text-lg font-bold text-emerald-400">{r.annotated}</p></Card>
-          <Card className="p-3"><p className="text-xs text-gray-500">Skipped</p><p className="text-lg font-bold text-yellow-400">{r.skipped}</p></Card>
-          <Card className="p-3"><p className="text-xs text-gray-500">Missing Labels</p><p className="text-lg font-bold text-orange-400">{r.missingLabels}</p></Card>
+          <Card className="p-3"><p className="text-xs text-[#857b6e]">Total</p><p className="text-lg font-bold text-[#1C1917]">{r.total}</p></Card>
+          <Card className="p-3"><p className="text-xs text-[#857b6e]">Annotated</p><p className="text-lg font-bold text-emerald-400">{r.annotated}</p></Card>
+          <Card className="p-3"><p className="text-xs text-[#857b6e]">Skipped</p><p className="text-lg font-bold text-yellow-400">{r.skipped}</p></Card>
+          <Card className="p-3"><p className="text-xs text-[#857b6e]">Missing Labels</p><p className="text-lg font-bold text-orange-400">{r.missingLabels}</p></Card>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <Card className="p-4">
-            <h3 className="mb-2 text-xs font-semibold text-white">By Goal ({r.goalBalance})</h3>
-            {r.byGoal.map(g => <p key={g.goal} className="text-xs text-gray-400">{g.goal}: {g.count}</p>)}
+            <h3 className="mb-2 text-xs font-semibold text-[#1C1917]">By Goal ({r.goalBalance})</h3>
+            {r.byGoal.map(g => <p key={g.goal} className="text-xs text-[#6f675e]">{g.goal}: {g.count}</p>)}
           </Card>
           <Card className="p-4">
-            <h3 className="mb-2 text-xs font-semibold text-white">By Usability ({r.usabilityBalance})</h3>
-            {r.byUsability.map(u => <p key={u.label} className="text-xs text-gray-400">{u.label}: {u.count}</p>)}
+            <h3 className="mb-2 text-xs font-semibold text-[#1C1917]">By Usability ({r.usabilityBalance})</h3>
+            {r.byUsability.map(u => <p key={u.label} className="text-xs text-[#6f675e]">{u.label}: {u.count}</p>)}
           </Card>
           <Card className="p-4">
-            <h3 className="mb-2 text-xs font-semibold text-white">By Annotator</h3>
-            {r.byAnnotator.map(a => <p key={a.id} className="text-xs text-gray-400">{a.id}: {a.count} annotated, {a.skipped} skipped</p>)}
+            <h3 className="mb-2 text-xs font-semibold text-[#1C1917]">By Annotator</h3>
+            {r.byAnnotator.map(a => <p key={a.id} className="text-xs text-[#6f675e]">{a.id}: {a.count} annotated, {a.skipped} skipped</p>)}
           </Card>
           <Card className="p-4">
-            <h3 className="mb-2 text-xs font-semibold text-white">Inter-Rater</h3>
-            <p className="text-xs text-gray-400">Multi-rater images: {r.multiRater}</p>
-            <p className="text-xs text-gray-400">Consensus: {r.consensus}</p>
-            <p className="text-xs text-gray-400">Disagreement: {r.disagreement}</p>
+            <h3 className="mb-2 text-xs font-semibold text-[#1C1917]">Inter-Rater</h3>
+            <p className="text-xs text-[#6f675e]">Multi-rater images: {r.multiRater}</p>
+            <p className="text-xs text-[#6f675e]">Consensus: {r.consensus}</p>
+            <p className="text-xs text-[#6f675e]">Disagreement: {r.disagreement}</p>
           </Card>
         </div>
       </Container>
@@ -227,14 +227,14 @@ export default function AnnotatePage() {
   return (
     <Container className="py-8">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold text-white">Annotate</h1>
+        <h1 className="text-xl font-bold text-[#1C1917]">Annotate</h1>
         <div className="flex gap-2">
           <Button size="sm" onClick={() => setView("report")}>Report</Button>
           <Button size="sm" onClick={() => setView("audit")}>Audit</Button>
           <Button size="sm" onClick={handleExport}>Export</Button>
         </div>
       </div>
-      <p className="mb-4 text-xs text-gray-500">
+      <p className="mb-4 text-xs text-[#857b6e]">
         Image {currentIndex + 1}/{images.length} · Goal: {image?.goal}{image?.isQc ? " · ⚠️ QC DUPLICATE" : ""} · Annotator: {annotatorId.slice(0, 12)}
         {existingForImage && <span className="ml-2 text-emerald-400">✓ already annotated</span>}
       </p>
@@ -254,7 +254,7 @@ export default function AnnotatePage() {
           <Card className="p-2">
             <img src={image.src} alt={image.label} className="w-full rounded-lg object-contain" style={{ maxHeight: "60vh" }} />
             <div className="mt-2 flex items-center justify-between">
-              <p className="text-[10px] text-gray-500">{image.label}</p>
+              <p className="text-[10px] text-[#857b6e]">{image.label}</p>
               <button className="text-[10px] text-red-400 hover:text-red-300" onClick={() => setDeleteConfirm(image.id)}>Delete</button>
             </div>
           </Card>
@@ -273,8 +273,8 @@ export default function AnnotatePage() {
             <Sel label="Recommendation Relevance" value={current.recommendationRelevance} onChange={v => setCurrent(p => ({ ...p, recommendationRelevance: v as RecommendationRelevance }))} opts={["high", "medium", "low", "not-supported"]} />
             <Sel label="Recommendation Supported by Evidence" value={current.recommendationSupported} onChange={v => setCurrent(p => ({ ...p, recommendationSupported: v as Supported }))} opts={["yes", "partially", "no"]} />
             <div>
-              <label className="mb-1 block text-xs text-gray-400">Notes</label>
-              <textarea className="w-full rounded-lg border border-white/[0.06] bg-white/[0.03] p-2 text-xs text-white" rows={2} value={current.notes || ""} onChange={e => setCurrent(p => ({ ...p, notes: e.target.value }))} />
+              <label className="mb-1 block text-xs text-[#6f675e]">Notes</label>
+              <textarea className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.03] p-2 text-xs text-[#1C1917]" rows={2} value={current.notes || ""} onChange={e => setCurrent(p => ({ ...p, notes: e.target.value }))} />
             </div>
             <div className="flex gap-2">
               <Button size="sm" onClick={() => handleSave(false)}>Save</Button>
@@ -290,8 +290,8 @@ export default function AnnotatePage() {
 function Sel({ label, value, onChange, opts }: { label: string; value?: string | null; onChange: (v: string) => void; opts: string[] }) {
   return (
     <div>
-      <label className="mb-1 block text-xs text-gray-400">{label}</label>
-      <select className="w-full rounded-lg border border-white/[0.06] bg-white/[0.03] p-2 text-xs text-white" value={value || ""} onChange={e => onChange(e.target.value)}>
+      <label className="mb-1 block text-xs text-[#6f675e]">{label}</label>
+      <select className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.03] p-2 text-xs text-[#1C1917]" value={value || ""} onChange={e => onChange(e.target.value)}>
         <option value="">— select —</option>
         {opts.map(o => <option key={o} value={o}>{o}</option>)}
       </select>

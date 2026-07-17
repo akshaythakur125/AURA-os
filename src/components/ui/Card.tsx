@@ -19,7 +19,7 @@ const CardInner = forwardRef<HTMLDivElement, CardProps>(
         onClick={onClick}
         className={cn(
           "glass-card rounded-2xl p-6 transition-all duration-500",
-          hover && "card-3d cursor-pointer hover:border-white/[0.08]",
+          hover && "card-3d cursor-pointer hover:border-[#1c1917]/10",
           onClick && "cursor-pointer",
           className
         )}
@@ -71,7 +71,7 @@ export function Card({ children, className, hover = false, tilt = false, onClick
         onClick={onClick}
         className={cn(
           "glass-card rounded-2xl p-6 cursor-pointer transition-all",
-          "hover:border-white/[0.08]"
+          "hover:border-[#1c1917]/10"
         )}
         style={{
           boxShadow: "0 2px 4px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25), 0 24px 48px -12px rgba(0,0,0,0.2)",

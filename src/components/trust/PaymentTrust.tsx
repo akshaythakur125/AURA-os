@@ -15,15 +15,15 @@ export function PaymentTrust({ variant = "results" }: Props) {
     <div className="space-y-3">
       {/* Social proof numbers */}
       {proof.totalChecks > 0 && (
-        <div className="flex items-center justify-center gap-4 text-xs text-gray-500">
+        <div className="flex items-center justify-center gap-4 text-xs text-[#857b6e]">
           <span>
-            <span className="font-medium text-white">{proof.totalChecks.toLocaleString()}</span> checks completed
+            <span className="font-medium text-[#1C1917]">{proof.totalChecks.toLocaleString()}</span> checks completed
           </span>
           {proof.checksToday > 0 && (
             <>
               <span className="h-1 w-1 rounded-full bg-gray-600" />
               <span>
-                <span className="font-medium text-white">{proof.checksToday}</span> today
+                <span className="font-medium text-[#1C1917]">{proof.checksToday}</span> today
               </span>
             </>
           )}
@@ -38,14 +38,14 @@ export function PaymentTrust({ variant = "results" }: Props) {
           </svg>
           <span className="text-sm font-medium text-emerald-400">Satisfaction Promise</span>
         </div>
-        <p className="mt-2 text-xs text-gray-400">
+        <p className="mt-2 text-xs text-[#6f675e]">
           If this doesn&apos;t feel accurate, tell us — we&apos;ll make it right.
         </p>
       </div>
 
       {/* Testimonial-style trust signals */}
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-lg border border-white/[0.04] bg-white/[0.02] p-3">
+        <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-3">
           <div className="flex items-center gap-1 text-amber-400">
             {[...Array(5)].map((_, i) => (
               <svg key={i} className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
@@ -53,11 +53,11 @@ export function PaymentTrust({ variant = "results" }: Props) {
               </svg>
             ))}
           </div>
-          <p className="mt-2 text-[11px] text-gray-400">
+          <p className="mt-2 text-[11px] text-[#6f675e]">
             &ldquo;Spot-on. The lighting leak was exactly what I needed to fix.&rdquo;
           </p>
         </div>
-        <div className="rounded-lg border border-white/[0.04] bg-white/[0.02] p-3">
+        <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-3">
           <div className="flex items-center gap-1 text-amber-400">
             {[...Array(5)].map((_, i) => (
               <svg key={i} className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
@@ -65,7 +65,7 @@ export function PaymentTrust({ variant = "results" }: Props) {
               </svg>
             ))}
           </div>
-          <p className="mt-2 text-[11px] text-gray-400">
+          <p className="mt-2 text-[11px] text-[#6f675e]">
             &ldquo;Worth {formatPrice(PAYMENT_PRODUCTS.aura_report.price)} just for the background tips. Saved me thousands.&rdquo;
           </p>
         </div>
@@ -73,7 +73,7 @@ export function PaymentTrust({ variant = "results" }: Props) {
 
       {/* Instant unlock reassurance */}
       {variant === "unlock" && (
-        <div className="flex items-center justify-center gap-4 text-[10px] text-gray-600">
+        <div className="flex items-center justify-center gap-4 text-[10px] text-[#9c9184]">
           <span>Instant unlock</span>
           <span className="h-1 w-1 rounded-full bg-gray-600" />
           <span>No subscription</span>

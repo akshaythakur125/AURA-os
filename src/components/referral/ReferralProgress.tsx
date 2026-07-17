@@ -21,8 +21,8 @@ export function ReferralProgress() {
     <Card className="mb-6">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
-          <h3 className="text-sm font-semibold text-white">Referral Progress</h3>
-          <p className="mt-1 text-xs text-gray-500">
+          <h3 className="text-sm font-semibold text-[#1C1917]">Referral Progress</h3>
+          <p className="mt-1 text-xs text-[#857b6e]">
             {totalClaimsLocal === 0
               ? "Share your link to start earning rewards"
               : `${totalClaimsLocal} friend${totalClaimsLocal !== 1 ? "s" : ""} have claimed so far`}
@@ -35,13 +35,13 @@ export function ReferralProgress() {
 
       {/* Progress bar */}
       <div className="mt-4">
-        <div className="flex items-center justify-between text-[10px] text-gray-600">
+        <div className="flex items-center justify-between text-[10px] text-[#9c9184]">
           <span>0</span>
           <span>{maxTier?.claimsNeeded || 10}</span>
         </div>
-        <div className="relative mt-1 h-2 overflow-hidden rounded-full bg-white/5">
+        <div className="relative mt-1 h-2 overflow-hidden rounded-full bg-[#1c1917]/[0.04]">
           <div
-            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-500"
+            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-red-600 to-red-500 transition-all duration-500"
             style={{ width: `${progressPercent}%` }}
           />
           {REFERRAL_REWARD_TIERS.map((tier) => (
@@ -52,7 +52,7 @@ export function ReferralProgress() {
             >
               <div
                 className={`h-3 w-0.5 ${
-                  totalClaimsLocal >= tier.claimsNeeded ? "bg-emerald-400" : "bg-white/10"
+                  totalClaimsLocal >= tier.claimsNeeded ? "bg-emerald-400" : "bg-[#1c1917]/[0.06]"
                 }`}
               />
             </div>
@@ -62,13 +62,13 @@ export function ReferralProgress() {
 
       {/* Next reward */}
       {nextReward && (
-        <div className="mt-4 rounded-lg border border-white/[0.04] bg-white/[0.02] p-3">
+        <div className="mt-4 rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-3">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-[10px] text-gray-600">Next reward in {claimsToNextReward} more</div>
-              <div className="mt-0.5 text-xs text-white">{nextReward.reward}</div>
+              <div className="text-[10px] text-[#9c9184]">Next reward in {claimsToNextReward} more</div>
+              <div className="mt-0.5 text-xs text-[#1C1917]">{nextReward.reward}</div>
             </div>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-purple-500/20 text-xs font-bold text-purple-300">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-red-500/20 text-xs font-bold text-red-300">
               {nextReward.claimsNeeded}
             </div>
           </div>

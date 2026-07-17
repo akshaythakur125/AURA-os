@@ -25,15 +25,15 @@ export function Testimonials() {
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       {EXAMPLE_FINDINGS.map((f, i) => (
-        <div key={i} className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
-          <div className="mb-3 inline-flex items-center rounded-full border border-purple-400/20 bg-purple-500/10 px-2.5 py-1 text-[10px] font-medium text-purple-300">
+        <div key={i} className="rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-5">
+          <div className="mb-3 inline-flex items-center rounded-full border border-red-400/20 bg-red-500/10 px-2.5 py-1 text-[10px] font-medium text-red-300">
             {f.context}
           </div>
-          <p className="mb-4 text-sm leading-relaxed text-gray-300">
+          <p className="mb-4 text-sm leading-relaxed text-[#4a443d]">
             {f.quote}
           </p>
           <div className="text-xs font-bold text-emerald-400">{f.scoreDelta}</div>
-          <div className="text-[9px] text-gray-600">typical score impact</div>
+          <div className="text-[9px] text-[#9c9184]">typical score impact</div>
         </div>
       ))}
     </div>

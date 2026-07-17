@@ -30,11 +30,11 @@ export function SmartInsights({ grooming, style, colorPalette }: SmartInsightsPr
 
   return (
     <FadeInView delay={150}>
-      <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+      <div className="rounded-2xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-4">
         <div className="mb-3 flex items-center gap-2">
           <span className="text-sm">🧠</span>
-          <span className="text-xs font-semibold text-white">Smart Insights</span>
-          <span className="rounded-full bg-purple-500/10 px-2 py-0.5 text-[9px] text-purple-300">Local analysis</span>
+          <span className="text-xs font-semibold text-[#1C1917]">Smart Insights</span>
+          <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-[9px] text-red-300">Local analysis</span>
         </div>
 
         <div className="space-y-3">
@@ -45,12 +45,12 @@ export function SmartInsights({ grooming, style, colorPalette }: SmartInsightsPr
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-medium text-white">Grooming</span>
+                  <span className="text-[11px] font-medium text-[#1C1917]">Grooming</span>
                   <span className={`text-[10px] font-bold ${grooming.overallScore >= 70 ? 'text-emerald-400' : grooming.overallScore >= 45 ? 'text-amber-400' : 'text-red-400'}`}>
                     {grooming.overallScore}/100
                   </span>
                 </div>
-                <p className="text-[10px] text-gray-500">{grooming.assessment}</p>
+                <p className="text-[10px] text-[#857b6e]">{grooming.assessment}</p>
               </div>
             </div>
           )}
@@ -61,22 +61,22 @@ export function SmartInsights({ grooming, style, colorPalette }: SmartInsightsPr
                 👔
               </div>
               <div>
-                <span className="text-[11px] font-medium text-white capitalize">{style.detectedStyle} style</span>
-                <p className="text-[10px] text-gray-500">{style.reasoning}</p>
+                <span className="text-[11px] font-medium text-[#1C1917] capitalize">{style.detectedStyle} style</span>
+                <p className="text-[10px] text-[#857b6e]">{style.reasoning}</p>
               </div>
             </div>
           )}
 
           {colorPalette && colorPalette.colors.length > 0 && (
             <div className="flex items-start gap-3">
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-pink-500/10 text-sm">
+              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-red-500/10 text-sm">
                 🎨
               </div>
               <div>
-                <span className="text-[11px] font-medium text-white">{colorPalette.name}</span>
+                <span className="text-[11px] font-medium text-[#1C1917]">{colorPalette.name}</span>
                 <div className="mt-1 flex flex-wrap gap-1">
                   {colorPalette.colors.slice(0, 5).map((c) => (
-                    <span key={c} className="rounded-full border border-white/[0.06] bg-white/[0.04] px-2 py-0.5 text-[9px] text-gray-400 capitalize">
+                    <span key={c} className="rounded-full border border-[#1c1917]/10 bg-[#1c1917]/[0.03] px-2 py-0.5 text-[9px] text-[#6f675e] capitalize">
                       {c}
                     </span>
                   ))}

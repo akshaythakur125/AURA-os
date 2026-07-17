@@ -37,10 +37,10 @@ export default function DatingAuditPage() {
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="premium" className="mb-4">Dating / Profile Audit — {formatPrice(PAYMENT_PRODUCTS.dating_audit.price)}</Badge>
-            <h1 className="bg-gradient-to-r from-white via-pink-200 to-rose-200 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
+            <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
               Fix the friction in your dating/profile presentation.
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-400">
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-[#6f675e]">
               AuraCheck reviews your profile photo/screenshot, bio, prompts, and visual signal to show what may be weakening first-impression clarity.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -51,7 +51,7 @@ export default function DatingAuditPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
@@ -64,7 +64,7 @@ export default function DatingAuditPage() {
                   "Photo order and signal coherence",
                   "Red-flag detection: negativity, clichés, low effort, aggression, desperation",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-gray-300">
+                  <li key={item} className="flex items-start gap-3 text-sm text-[#4a443d]">
                     <svg className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     {item}
                   </li>
@@ -88,7 +88,7 @@ export default function DatingAuditPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <SectionHeading title="What you get" />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -101,15 +101,15 @@ export default function DatingAuditPage() {
               { title: "Overall advice", desc: "A clear summary of your biggest friction points and what to change first." },
             ].map((f) => (
               <Card key={f.title} hover>
-                <h3 className="mb-2 text-sm font-semibold text-white">{f.title}</h3>
-                <p className="text-sm leading-relaxed text-gray-400">{f.desc}</p>
+                <h3 className="mb-2 text-sm font-semibold text-[#1C1917]">{f.title}</h3>
+                <p className="text-sm leading-relaxed text-[#6f675e]">{f.desc}</p>
               </Card>
             ))}
           </div>
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
@@ -117,11 +117,11 @@ export default function DatingAuditPage() {
               <div className="space-y-4">
                 <Card>
                   <Badge variant="warning" className="mb-2">Before</Badge>
-                  <p className="text-sm text-gray-400">&ldquo;I like traveling, food, and hanging out with friends.&rdquo;</p>
+                  <p className="text-sm text-[#6f675e]">&ldquo;I like traveling, food, and hanging out with friends.&rdquo;</p>
                 </Card>
                 <Card>
                   <Badge variant="success" className="mb-2">After</Badge>
-                  <p className="text-sm text-gray-300">&ldquo;Trying to find someone who also thinks a 3-hour chai is a valid personality trait. Bonus points if you let me pick the playlist.&rdquo;</p>
+                  <p className="text-sm text-[#4a443d]">&ldquo;Trying to find someone who also thinks a 3-hour chai is a valid personality trait. Bonus points if you let me pick the playlist.&rdquo;</p>
                 </Card>
               </div>
             </div>
@@ -130,13 +130,13 @@ export default function DatingAuditPage() {
               <Card>
                 <div className="mb-3 flex items-center justify-between">
                   <Badge variant="premium">Sample — Dating Audit</Badge>
-                  <span className="text-2xl font-bold text-white">{SAMPLE_REPORTS[1].score}</span>
+                  <span className="text-2xl font-bold text-[#1C1917]">{SAMPLE_REPORTS[1].score}</span>
                 </div>
                 <div className="mb-3 rounded-lg border border-red-500/10 bg-red-500/5 p-3">
                   <div className="text-xs text-red-400">Main friction</div>
-                  <div className="text-sm text-gray-300">{SAMPLE_REPORTS[1].bottleneck}</div>
+                  <div className="text-sm text-[#4a443d]">{SAMPLE_REPORTS[1].bottleneck}</div>
                 </div>
-                <p className="text-sm text-gray-400">{SAMPLE_REPORTS[1].topInsight}</p>
+                <p className="text-sm text-[#6f675e]">{SAMPLE_REPORTS[1].topInsight}</p>
               </Card>
               <div className="mt-4">
                 <LeadCaptureCard source="dating-audit-page" defaultProduct="dating_audit" />
@@ -146,7 +146,7 @@ export default function DatingAuditPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <SectionHeading title="Free vs Paid" />
           <div className="mx-auto max-w-4xl">
@@ -155,9 +155,9 @@ export default function DatingAuditPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-12">
+      <section className="border-t border-[#1c1917]/[0.08] py-12">
         <Container>
-          <div className="mx-auto max-w-2xl rounded-xl border border-white/[0.04] bg-white/[0.02] p-6 text-center text-xs text-gray-500">
+          <div className="mx-auto max-w-2xl rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-6 text-center text-xs text-[#857b6e]">
             <p>AuraCheck analyzes presentation signals, not attractiveness. No guaranteed matches or dating outcomes.</p>
             <p className="mt-2">Manual UPI unlock flow — payment is not automatically verified. Contact support if you have issues.</p>
           </div>

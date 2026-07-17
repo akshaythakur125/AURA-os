@@ -119,7 +119,7 @@ function ShopLinks({ look }: { look: Look }) {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="block rounded-lg px-3 py-2 text-xs text-gray-300 transition-colors hover:bg-white/[0.06] hover:text-white"
+              className="block rounded-lg px-3 py-2 text-xs text-[#4a443d] transition-colors hover:bg-[#1c1917]/[0.04] hover:text-[#1C1917]"
               onClick={() => {
                 setOpen(false);
                 trackEvent(EVENTS.SHOP_LINK_CLICKED, {
@@ -179,14 +179,14 @@ export default function ShopPage() {
 
         {/* Hero */}
         <div className="mb-10 relative">
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">
+          <h1 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">
             Upgrade Your Visual Signal
           </h1>
-          <p className="mt-2 text-sm text-gray-400">
+          <p className="mt-2 text-sm text-[#6f675e]">
             Curated upgrades that target your biggest photo-quality issues — without
             wasting money.
           </p>
-          <p className="mt-1 text-xs text-gray-600">
+          <p className="mt-1 text-xs text-[#9c9184]">
             {allLooks.length} looks · Real retailer search links · Prices verified
           </p>
         </div>
@@ -196,11 +196,11 @@ export default function ShopPage() {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {/* Category */}
             <div>
-              <label className="mb-1.5 block text-xs text-gray-500">Category</label>
+              <label className="mb-1.5 block text-xs text-[#857b6e]">Category</label>
               <select
                 value={category || ""}
                 onChange={(e) => setCategory(e.target.value as LookCategory || null)}
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
+                className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] focus:border-red-500/50 focus:outline-none"
               >
                 {CATEGORY_OPTIONS.map((c) => (
                   <option key={c.label} value={c.value ?? ""}>{c.label}</option>
@@ -210,11 +210,11 @@ export default function ShopPage() {
 
             {/* Budget */}
             <div>
-              <label className="mb-1.5 block text-xs text-gray-500">Budget</label>
+              <label className="mb-1.5 block text-xs text-[#857b6e]">Budget</label>
               <select
                 value={budget ?? ""}
                 onChange={(e) => setBudget(e.target.value ? (Number(e.target.value) as BudgetTag) : null)}
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
+                className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] focus:border-red-500/50 focus:outline-none"
               >
                 {BUDGET_OPTIONS.map((b) => (
                   <option key={b.label} value={b.value ?? ""}>{b.label}</option>
@@ -224,11 +224,11 @@ export default function ShopPage() {
 
             {/* Goal */}
             <div>
-              <label className="mb-1.5 block text-xs text-gray-500">Goal</label>
+              <label className="mb-1.5 block text-xs text-[#857b6e]">Goal</label>
               <select
                 value={goal || ""}
                 onChange={(e) => setGoal(e.target.value as GoalTag || null)}
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
+                className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] focus:border-red-500/50 focus:outline-none"
               >
                 {GOAL_OPTIONS.map((g) => (
                   <option key={g.label} value={g.value ?? ""}>{g.label}</option>
@@ -238,11 +238,11 @@ export default function ShopPage() {
 
             {/* Style */}
             <div>
-              <label className="mb-1.5 block text-xs text-gray-500">Style</label>
+              <label className="mb-1.5 block text-xs text-[#857b6e]">Style</label>
               <select
                 value={style || ""}
                 onChange={(e) => setStyle(e.target.value as StyleIntent || null)}
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
+                className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] focus:border-red-500/50 focus:outline-none"
               >
                 {STYLE_OPTIONS.map((s) => (
                   <option key={s.label} value={s.value ?? ""}>{s.label}</option>
@@ -252,11 +252,11 @@ export default function ShopPage() {
 
             {/* Gender */}
             <div>
-              <label className="mb-1.5 block text-xs text-gray-500">Gender</label>
+              <label className="mb-1.5 block text-xs text-[#857b6e]">Gender</label>
               <select
                 value={gender || ""}
                 onChange={(e) => setGender(e.target.value as "men" | "women" | "unisex" || null)}
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
+                className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] focus:border-red-500/50 focus:outline-none"
               >
                 {GENDER_OPTIONS.map((g) => (
                   <option key={g.label} value={g.value ?? ""}>{g.label}</option>
@@ -269,7 +269,7 @@ export default function ShopPage() {
               <div className="flex items-end">
                 <button
                   onClick={() => { setCategory(null); setBudget(null); setGoal(null); setStyle(null); setGender(null); }}
-                  className="rounded-lg border border-white/10 px-4 py-2 text-xs text-gray-400 transition-colors hover:border-white/20 hover:text-white"
+                  className="rounded-lg border border-[#1c1917]/10 px-4 py-2 text-xs text-[#6f675e] transition-colors hover:border-[#1c1917]/20 hover:text-[#1C1917]"
                 >
                   Clear all filters
                 </button>
@@ -281,17 +281,17 @@ export default function ShopPage() {
         {/* Results */}
         {filtered.length === 0 ? (
           <Card className="py-12 text-center">
-            <p className="text-sm text-gray-400">No looks match your filters.</p>
+            <p className="text-sm text-[#6f675e]">No looks match your filters.</p>
             <button
               onClick={() => { setCategory(null); setBudget(null); setGoal(null); setStyle(null); setGender(null); }}
-              className="mt-3 text-xs text-purple-400 hover:text-purple-300"
+              className="mt-3 text-xs text-red-400 hover:text-red-300"
             >
               Clear filters
             </button>
           </Card>
         ) : (
           <>
-            <p className="mb-4 text-xs text-gray-500">
+            <p className="mb-4 text-xs text-[#857b6e]">
               Showing {visibleLooks.length} of {filtered.length} look{filtered.length === 1 ? "" : "s"}
             </p>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -301,14 +301,14 @@ export default function ShopPage() {
                     <ShopCategoryImage category={look.category} title={look.title} />
                     <div className="mt-3 flex-1">
                       <div className="mb-1 flex items-start justify-between gap-2">
-                        <h3 className="text-sm font-semibold text-white leading-tight">
+                        <h3 className="text-sm font-semibold text-[#1C1917] leading-tight">
                           {look.title}
                         </h3>
                         <span className="text-xs font-medium text-amber-400 whitespace-nowrap">
                           {look.priceLabel}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-500 line-clamp-2">
+                      <p className="text-xs text-[#857b6e] line-clamp-2">
                         {look.description}
                       </p>
                       <div className="mt-2 flex flex-wrap gap-1">
@@ -346,7 +346,7 @@ export default function ShopPage() {
 
         {/* Trust */}
         <Card className="mt-8 text-center relative">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-[#857b6e]">
             AuraCheck does not guarantee social, dating, career, or financial
             outcomes. Prices are approximate. Verify details before buying from any vendor.
           </p>

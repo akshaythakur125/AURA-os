@@ -52,16 +52,16 @@ export function ScoreHistory({ currentScore }: { currentScore: number }) {
                 className={`w-full rounded-sm transition-all duration-500 ${
                   i === history.length - 1
                     ? "bg-gradient-to-t from-emerald-500 to-green-400"
-                    : "bg-white/10"
+                    : "bg-[#1c1917]/[0.06]"
                 }`}
                 style={{ height: `${(s / 100) * 36}px` }}
               />
-              <span className="text-[8px] text-gray-600">{s}</span>
+              <span className="text-[8px] text-[#9c9184]">{s}</span>
             </div>
           ))}
         </div>
 
-        <p className="mt-2 text-[10px] text-gray-500">
+        <p className="mt-2 text-[10px] text-[#857b6e]">
           {history.length} scans tracked.{" "}
           {trending
             ? "You're improving — keep going."

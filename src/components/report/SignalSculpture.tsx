@@ -220,12 +220,12 @@ export function SignalSculpture({
               className="absolute z-10 pointer-events-none"
               style={{ left: center, top: center - (compact ? 60 : 90), transform: "translateX(-50%)" }}
             >
-              <div className="rounded-xl border border-white/10 bg-black/85 backdrop-blur-sm px-4 py-2.5 text-center min-w-[140px]">
-                <div className="text-xs font-semibold text-white">{dim.label}</div>
+              <div className="rounded-xl border border-[#1c1917]/10 bg-black/85 backdrop-blur-sm px-4 py-2.5 text-center min-w-[140px]">
+                <div className="text-xs font-semibold text-[#1C1917]">{dim.label}</div>
                 <div className="mt-1 text-lg font-bold" style={{ color: getScoreColor(dim.score, dim.assessmentStatus) }}>
                   {dim.score !== null ? `${dim.score}/100` : STATUS_LABELS[dim.assessmentStatus]}
                 </div>
-                <div className="text-[10px] text-gray-400">
+                <div className="text-[10px] text-[#6f675e]">
                   Confidence: {dim.confidence >= 70 ? "High" : dim.confidence >= 40 ? "Moderate" : "Limited"}
                 </div>
                 {dim.strongestFinding && (
@@ -249,8 +249,8 @@ export function SignalSculptureFallback({ dimensions }: { dimensions: SignalDime
     <div className="w-full max-w-sm space-y-2" role="list" aria-label="Dimension scores">
       {dimensions.map((d) => (
         <div key={d.id} className="flex items-center gap-3" role="listitem">
-          <span className="w-28 text-xs text-gray-400">{d.label}</span>
-          <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
+          <span className="w-28 text-xs text-[#6f675e]">{d.label}</span>
+          <div className="flex-1 h-2 rounded-full bg-[#1c1917]/[0.04] overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-500"
               style={{

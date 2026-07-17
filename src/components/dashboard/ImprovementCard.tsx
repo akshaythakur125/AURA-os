@@ -54,14 +54,14 @@ export function ImprovementCard({ audits }: Props) {
             <span className="text-xs font-medium text-emerald-400">Improvement Detected</span>
           </div>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-white">+{improvement.totalDelta}</span>
-            <span className="text-sm text-gray-400">points since your last check</span>
+            <span className="text-3xl font-bold text-[#1C1917]">+{improvement.totalDelta}</span>
+            <span className="text-sm text-[#6f675e]">points since your last check</span>
           </div>
         </div>
       </div>
       {improvement.bestDelta > 0 && (
         <div className="mt-3 border-t border-emerald-500/10 pt-3">
-          <div className="text-xs text-gray-500">Your best improvement</div>
+          <div className="text-xs text-[#857b6e]">Your best improvement</div>
           <div className="mt-1 text-sm text-emerald-400">
             +{improvement.bestDelta} points from your first check to your latest
           </div>

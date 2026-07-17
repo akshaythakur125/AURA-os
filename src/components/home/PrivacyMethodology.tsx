@@ -28,24 +28,24 @@ const ITEMS = [
 
 export function PrivacyMethodology() {
   return (
-    <section className="py-20 sm:py-28 bg-[#0a0a12]">
+    <section className="py-20 sm:py-28 bg-[#ECE4D6]">
       <Container>
         <FadeInView>
           <div className="mb-12 text-center">
-            <h2 className="text-2xl font-bold text-white sm:text-3xl">Privacy & methodology</h2>
-            <p className="mt-3 text-sm text-gray-500">What we measure, how we measure it, and what we do with your data.</p>
+            <h2 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">Privacy & methodology</h2>
+            <p className="mt-3 text-sm text-[#857b6e]">What we measure, how we measure it, and what we do with your data.</p>
           </div>
         </FadeInView>
 
         <div className="mx-auto max-w-2xl space-y-4">
           {ITEMS.map((item, i) => (
             <FadeInView key={item.q} delay={i * 80}>
-              <details className="group rounded-xl border border-white/[0.06] bg-white/[0.02]">
-                <summary className="flex cursor-pointer items-center justify-between p-4 text-sm font-medium text-white list-none">
+              <details className="group rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02]">
+                <summary className="flex cursor-pointer items-center justify-between p-4 text-sm font-medium text-[#1C1917] list-none">
                   {item.q}
-                  <span className="text-gray-600 group-open:rotate-45 transition-transform duration-200 text-lg">+</span>
+                  <span className="text-[#9c9184] group-open:rotate-45 transition-transform duration-200 text-lg">+</span>
                 </summary>
-                <div className="px-4 pb-4 text-sm text-gray-400 leading-relaxed">
+                <div className="px-4 pb-4 text-sm text-[#6f675e] leading-relaxed">
                   {item.a}
                 </div>
               </details>

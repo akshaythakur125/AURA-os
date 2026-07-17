@@ -72,24 +72,24 @@ export default function HelpPage() {
     <Container className="py-16">
       <div className="mx-auto max-w-3xl">
         <div className="mb-10 text-center">
-          <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
+          <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-3xl font-bold text-transparent sm:text-4xl">
             Help & Support
           </h1>
-          <p className="mt-3 text-gray-400">
+          <p className="mt-3 text-[#6f675e]">
             Everything you need to know about using AuraCheck.
           </p>
         </div>
 
         <div className="space-y-4">
           {faqs.map((faq) => (
-            <details key={faq.q} className="group rounded-xl border border-white/[0.04] bg-white/[0.02]">
-              <summary className="flex cursor-pointer items-center gap-2 px-5 py-4 text-sm font-medium text-white hover:bg-white/[0.03]">
-                <svg className="h-4 w-4 shrink-0 text-purple-400 transition-transform group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <details key={faq.q} className="group rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02]">
+              <summary className="flex cursor-pointer items-center gap-2 px-5 py-4 text-sm font-medium text-[#1C1917] hover:bg-[#1c1917]/[0.03]">
+                <svg className="h-4 w-4 shrink-0 text-red-400 transition-transform group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
                 {faq.q}
               </summary>
-              <div className="px-5 pb-4 text-sm leading-relaxed text-gray-400">
+              <div className="px-5 pb-4 text-sm leading-relaxed text-[#6f675e]">
                 {faq.a}
               </div>
             </details>
@@ -98,12 +98,12 @@ export default function HelpPage() {
 
         {/* Contact */}
         <Card className="mt-10 text-center">
-          <h2 className="mb-3 text-lg font-semibold text-white">Still need help?</h2>
-          <p className="mb-4 text-sm text-gray-400">
+          <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Still need help?</h2>
+          <p className="mb-4 text-sm text-[#6f675e]">
             Reach out to us directly.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a href={`mailto:${supportEmail}`} className="text-sm text-purple-400 hover:text-purple-300 underline">{supportEmail}</a>
+            <a href={`mailto:${supportEmail}`} className="text-sm text-red-400 hover:text-red-300 underline">{supportEmail}</a>
             {whatsapp && (
               <a
                 href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`}

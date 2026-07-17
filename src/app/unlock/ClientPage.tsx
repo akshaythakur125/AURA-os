@@ -293,8 +293,8 @@ function UnlockForm() {
     return (
       <Container className="py-16 text-center">
         <Card className="mx-auto max-w-md py-12">
-          <p className="mb-2 text-lg text-gray-300">No audit selected</p>
-          <p className="mb-6 text-sm text-gray-500">Please create an audit first and generate a free score before unlocking.</p>
+          <p className="mb-2 text-lg text-[#4a443d]">No audit selected</p>
+          <p className="mb-6 text-sm text-[#857b6e]">Please create an audit first and generate a free score before unlocking.</p>
           <Link href="/audit/new"><Button>Create New Audit</Button></Link>
         </Card>
       </Container>
@@ -306,8 +306,8 @@ function UnlockForm() {
     return (
       <Container className="py-16 text-center">
         <Card className="mx-auto max-w-md py-12">
-          <p className="mb-2 text-lg text-gray-300">Audit not found</p>
-          <p className="mb-6 text-sm text-gray-500">This audit does not exist or may have been deleted.</p>
+          <p className="mb-2 text-lg text-[#4a443d]">Audit not found</p>
+          <p className="mb-6 text-sm text-[#857b6e]">This audit does not exist or may have been deleted.</p>
           <Link href="/dashboard"><Button variant="secondary">Back to Dashboard</Button></Link>
         </Card>
       </Container>
@@ -323,8 +323,8 @@ function UnlockForm() {
             <svg className="h-8 w-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           </div>
           <Badge variant="premium" className="mb-2">{productName}</Badge>
-          <p className="mb-2 text-lg text-white">Already Unlocked</p>
-          <p className="mb-6 text-sm text-gray-500">This product has already been unlocked for this audit.</p>
+          <p className="mb-2 text-lg text-[#1C1917]">Already Unlocked</p>
+          <p className="mb-6 text-sm text-[#857b6e]">This product has already been unlocked for this audit.</p>
           <Link href={`/audit/${auditId}`}><Button>View Report</Button></Link>
         </Card>
       </Container>
@@ -339,8 +339,8 @@ function UnlockForm() {
     return (
       <Container className="py-16 text-center">
         <Card className="mx-auto max-w-md py-12">
-          <p className="mb-2 text-lg text-gray-300">Cannot Generate {productName}</p>
-          <p className="mb-6 text-sm text-gray-500">{msg}</p>
+          <p className="mb-2 text-lg text-[#4a443d]">Cannot Generate {productName}</p>
+          <p className="mb-6 text-sm text-[#857b6e]">{msg}</p>
           <Link href="/audit/new"><Button>Create New Audit</Button></Link>
         </Card>
       </Container>
@@ -356,8 +356,8 @@ function UnlockForm() {
             <svg className="h-8 w-8 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
           </div>
           <Badge variant="premium" className="mb-2">{productName}</Badge>
-          <p className="mb-2 text-lg text-white">Report Unlocked!</p>
-          <p className="text-sm text-gray-500">Redirecting to your report...</p>
+          <p className="mb-2 text-lg text-[#1C1917]">Report Unlocked!</p>
+          <p className="text-sm text-[#857b6e]">Redirecting to your report...</p>
         </Card>
       </Container>
     );
@@ -370,18 +370,18 @@ function UnlockForm() {
         <GlowOrb color="rgba(147, 51, 234, 0.08)" size={300} className="top-[10%] right-[8%]" delay={0} />
         <GlowOrb color="rgba(245, 158, 11, 0.06)" size={200} className="bottom-[20%] left-[10%]" delay={400} />
         <div className="mb-6">
-          <Link href={`/audit/${auditId}`} className="text-sm text-gray-500 hover:text-gray-300">&larr; Back to Report</Link>
+          <Link href={`/audit/${auditId}`} className="text-sm text-[#857b6e] hover:text-[#4a443d]">&larr; Back to Report</Link>
         </div>
 
       <div className="mx-auto max-w-2xl">
         {/* Product Info Card */}
         <Card className="mb-6">
           <Badge variant="premium" className="mb-3">{productName}</Badge>
-          <h1 className="mb-2 text-2xl font-bold text-white">Unlock {productName}</h1>
-          <p className="mb-6 text-sm text-gray-400">One-time payment of <span className="text-amber-400">{finalPriceLabel}</span></p>
+          <h1 className="mb-2 text-2xl font-bold text-[#1C1917]">Unlock {productName}</h1>
+          <p className="mb-6 text-sm text-[#6f675e]">One-time payment of <span className="text-amber-400">{finalPriceLabel}</span></p>
           <ul className="mb-6 space-y-3">
             {features.map((f) => (
-              <li key={f} className="flex items-start gap-3 text-sm text-gray-300">
+              <li key={f} className="flex items-start gap-3 text-sm text-[#4a443d]">
                 <svg className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                 {f}
               </li>
@@ -405,13 +405,13 @@ function UnlockForm() {
             const isActive = i === currentIdx;
             return (
               <div key={s} className="flex items-center gap-2">
-                <div className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-medium ${isDone ? "bg-emerald-500/30 text-emerald-300" : isActive ? "bg-purple-600 text-white" : "bg-white/5 text-gray-600"}`}>
+                <div className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-medium ${isDone ? "bg-emerald-500/30 text-emerald-300" : isActive ? "bg-red-600 text-[#1C1917]" : "bg-[#1c1917]/[0.04] text-[#9c9184]"}`}>
                   {isDone ? "✓" : i + 1}
                 </div>
-                <span className={`${isActive ? "text-white" : isDone ? "text-emerald-400" : "text-gray-600"}`}>
+                <span className={`${isActive ? "text-[#1C1917]" : isDone ? "text-emerald-400" : "text-[#9c9184]"}`}>
                   {s === "request" ? "Pay" : s === "submit" ? "Submit" : "Unlock"}
                 </span>
-                {i < 2 && <div className={`mx-1 h-px w-6 ${isDone || (isActive && i === 0) ? "bg-emerald-500/40" : "bg-white/5"}`} />}
+                {i < 2 && <div className={`mx-1 h-px w-6 ${isDone || (isActive && i === 0) ? "bg-emerald-500/40" : "bg-[#1c1917]/[0.04]"}`} />}
               </div>
             );
           })}
@@ -422,14 +422,14 @@ function UnlockForm() {
           <>
             {/* Offer Code */}
             <Card className="mb-6">
-              <h3 className="mb-3 text-sm font-semibold text-white">Have an offer code?</h3>
+              <h3 className="mb-3 text-sm font-semibold text-[#1C1917]">Have an offer code?</h3>
               <div className="flex items-center gap-2">
                 <input
                   type="text"
                   value={offerCode}
                   onChange={(e) => setOfferCode(e.target.value)}
                   placeholder="e.g. EARLY50"
-                  className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+                  className="flex-1 rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none"
                 />
                 <Button variant="secondary" size="sm" onClick={handleApplyOffer}>
                   Apply
@@ -440,38 +440,38 @@ function UnlockForm() {
                   {offerResult.message}
                 </div>
               )}
-              <p className="mt-3 text-[10px] text-gray-600">
-                Referred by a friend? Code <span className="font-mono text-gray-500">{getFriendDiscountCode()}</span> gives you 20% off
+              <p className="mt-3 text-[10px] text-[#9c9184]">
+                Referred by a friend? Code <span className="font-mono text-[#857b6e]">{getFriendDiscountCode()}</span> gives you 20% off
               </p>
             </Card>
 
             <Card className="mb-6">
-              <h3 className="mb-4 text-sm font-semibold text-white">Step 1: Pay via UPI</h3>
-              <div className="rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
-                <p className="mb-2 text-xs text-gray-500">Send <span className="text-amber-400">{finalPriceLabel}</span> to:</p>
+              <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Step 1: Pay via UPI</h3>
+              <div className="rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-4">
+                <p className="mb-2 text-xs text-[#857b6e]">Send <span className="text-amber-400">{finalPriceLabel}</span> to:</p>
                 <div className="flex items-center justify-between gap-2">
-                  <p className="font-mono text-lg text-purple-300">{upiId}</p>
-                  <button onClick={() => handleCopy(upiId, "upi")} className="shrink-0 rounded-lg border border-white/10 px-2.5 py-1 text-xs text-gray-400 hover:border-purple-500/30 hover:text-purple-300">
+                  <p className="font-mono text-lg text-red-300">{upiId}</p>
+                  <button onClick={() => handleCopy(upiId, "upi")} className="shrink-0 rounded-lg border border-[#1c1917]/10 px-2.5 py-1 text-xs text-[#6f675e] hover:border-red-500/30 hover:text-red-300">
                     {copied === "upi" ? "Copied!" : "Copy"}
                   </button>
                 </div>
               </div>
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
-                  <div className="text-xs text-gray-500">Amount</div>
+                <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
+                  <div className="text-xs text-[#857b6e]">Amount</div>
                   <div className="mt-1 flex items-center justify-between">
                     <span className="text-lg font-bold text-amber-400">{productPriceLabel}</span>
-                    <button onClick={() => handleCopy(productPriceLabel, "amount")} className="text-xs text-gray-500 hover:text-purple-300">
+                    <button onClick={() => handleCopy(productPriceLabel, "amount")} className="text-xs text-[#857b6e] hover:text-red-300">
                       {copied === "amount" ? "Copied!" : "Copy"}
                     </button>
                   </div>
                 </div>
-                <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
-                  <div className="text-xs text-gray-500">Audit ID</div>
+                <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
+                  <div className="text-xs text-[#857b6e]">Audit ID</div>
                   <div className="mt-1 flex items-center justify-between">
-                    <span className="text-sm text-white truncate">{auditId.slice(0, 12)}...</span>
-                    <button onClick={() => handleCopy(auditId, "audit")} className="text-xs text-gray-500 hover:text-purple-300">
+                    <span className="text-sm text-[#1C1917] truncate">{auditId.slice(0, 12)}...</span>
+                    <button onClick={() => handleCopy(auditId, "audit")} className="text-xs text-[#857b6e] hover:text-red-300">
                       {copied === "audit" ? "Copied!" : "Copy"}
                     </button>
                   </div>
@@ -487,14 +487,14 @@ function UnlockForm() {
                 </Button>
               </div>
 
-              <div className="mt-4 rounded-xl border border-dashed border-white/10 bg-white/[0.02] p-4 text-center">
-                <p className="text-xs text-gray-500">QR code can be added later. For now, copy UPI ID or use the UPI app button above.</p>
+              <div className="mt-4 rounded-xl border border-dashed border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-4 text-center">
+                <p className="text-xs text-[#857b6e]">QR code can be added later. For now, copy UPI ID or use the UPI app button above.</p>
               </div>
             </Card>
 
             <Card className="mb-6">
-              <h3 className="mb-4 text-sm font-semibold text-white">Step 2: After Payment</h3>
-              <p className="text-sm text-gray-400">After you have sent the payment, click below to submit your payment details and request an unlock code.</p>
+              <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Step 2: After Payment</h3>
+              <p className="text-sm text-[#6f675e]">After you have sent the payment, click below to submit your payment details and request an unlock code.</p>
             </Card>
 
             <div className="flex justify-center">
@@ -503,7 +503,7 @@ function UnlockForm() {
               </Button>
             </div>
 
-            <div className="mt-4 rounded-xl border border-amber-500/10 bg-amber-500/5 p-4 text-center text-xs text-gray-400">
+            <div className="mt-4 rounded-xl border border-amber-500/10 bg-amber-500/5 p-4 text-center text-xs text-[#6f675e]">
               <p className="mb-1 font-medium text-amber-300">Manual MVP Payment Flow</p>
               <p>AuraCheck does not automatically verify UPI payments yet. After payment, send your payment summary to the owner/admin and enter the unlock code you receive.</p>
             </div>
@@ -511,13 +511,13 @@ function UnlockForm() {
             {/* Razorpay Checkout */}
             <div className="mt-6">
               <div className="mb-3 flex items-center gap-3">
-                <div className="h-px flex-1 bg-white/10" />
-                <span className="text-xs text-gray-500">or pay instantly</span>
-                <div className="h-px flex-1 bg-white/10" />
+                <div className="h-px flex-1 bg-[#1c1917]/[0.06]" />
+                <span className="text-xs text-[#857b6e]">or pay instantly</span>
+                <div className="h-px flex-1 bg-[#1c1917]/[0.06]" />
               </div>
               <Button
                 size="lg"
-                className="w-full bg-[#072654] hover:bg-[#0a3370] text-white"
+                className="w-full bg-[#072654] hover:bg-[#0a3370] text-[#1C1917]"
                 onClick={async () => {
                   try {
                     setError(null);
@@ -609,7 +609,7 @@ function UnlockForm() {
         {/* ─── STAGE 2: Submit Payment Details ─── */}
         {stage === "submit" && (
           <Card className="mb-6">
-            <h3 className="mb-4 text-sm font-semibold text-white">Submit Payment Details</h3>
+            <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Submit Payment Details</h3>
             {offerResult?.isValid && offerResult.finalAmount !== productPrice && (
               <div className="mb-4 rounded-lg bg-emerald-500/10 px-3 py-2 text-xs text-emerald-400">
                 Offer {offerResult.code} applied: {productPriceLabel} → <span className="font-bold">{finalPriceLabel}</span>
@@ -617,20 +617,20 @@ function UnlockForm() {
             )}
             <div className="space-y-4">
               <div>
-                <label className="mb-1 block text-xs text-gray-500">Your Name <span className="text-gray-600">(optional)</span></label>
-                <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="e.g. Rahul" className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none" />
+                <label className="mb-1 block text-xs text-[#857b6e]">Your Name <span className="text-[#9c9184]">(optional)</span></label>
+                <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="e.g. Rahul" className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none" />
               </div>
               <div>
-                <label className="mb-1 block text-xs text-gray-500">WhatsApp / Contact <span className="text-gray-600">(optional)</span></label>
-                <input type="text" value={customerContact} onChange={(e) => setCustomerContact(e.target.value)} placeholder="e.g. +91 98765 43210" className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none" />
+                <label className="mb-1 block text-xs text-[#857b6e]">WhatsApp / Contact <span className="text-[#9c9184]">(optional)</span></label>
+                <input type="text" value={customerContact} onChange={(e) => setCustomerContact(e.target.value)} placeholder="e.g. +91 98765 43210" className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none" />
               </div>
               <div>
-                <label className="mb-1 block text-xs text-gray-500">UPI Transaction Reference <span className="text-gray-600">(optional)</span></label>
-                <input type="text" value={upiTxRef} onChange={(e) => setUpiTxRef(e.target.value)} placeholder="e.g. UPI123456789" className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none" />
+                <label className="mb-1 block text-xs text-[#857b6e]">UPI Transaction Reference <span className="text-[#9c9184]">(optional)</span></label>
+                <input type="text" value={upiTxRef} onChange={(e) => setUpiTxRef(e.target.value)} placeholder="e.g. UPI123456789" className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none" />
               </div>
               <div>
-                <label className="mb-1 block text-xs text-gray-500">Note <span className="text-gray-600">(optional)</span></label>
-                <textarea value={userNote} onChange={(e) => setUserNote(e.target.value)} placeholder="Any additional information for the owner..." className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none" rows={2} />
+                <label className="mb-1 block text-xs text-[#857b6e]">Note <span className="text-[#9c9184]">(optional)</span></label>
+                <textarea value={userNote} onChange={(e) => setUserNote(e.target.value)} placeholder="Any additional information for the owner..." className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none" rows={2} />
               </div>
 
               {error && <p className="rounded-lg bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
@@ -640,7 +640,7 @@ function UnlockForm() {
               </Button>
 
               <div className="flex justify-center">
-                <button onClick={() => setStage("request")} className="text-xs text-gray-500 hover:text-gray-300">Back to payment details</button>
+                <button onClick={() => setStage("request")} className="text-xs text-[#857b6e] hover:text-[#4a443d]">Back to payment details</button>
               </div>
             </div>
           </Card>
@@ -651,23 +651,23 @@ function UnlockForm() {
           <>
             <Card className="mb-6 border-emerald-500/20">
               <Badge variant="success" className="mb-3">Payment Submitted</Badge>
-              <h3 className="mb-4 text-sm font-semibold text-white">Payment Request Summary</h3>
-              <div className="space-y-3 rounded-xl border border-white/[0.04] bg-white/[0.03] p-4">
-                <div className="flex justify-between text-sm"><span className="text-gray-500">Product</span><span className="text-white">{productName}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-gray-500">Amount</span><span className="text-amber-400">{finalPriceLabel}</span></div>
+              <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Payment Request Summary</h3>
+              <div className="space-y-3 rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-4">
+                <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Product</span><span className="text-[#1C1917]">{productName}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Amount</span><span className="text-amber-400">{finalPriceLabel}</span></div>
               {offerResult?.isValid && offerResult.finalAmount !== productPrice && (
-                <div className="flex justify-between text-sm"><span className="text-gray-500">Original</span><span className="text-gray-500 line-through">{productPriceLabel}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Original</span><span className="text-[#857b6e] line-through">{productPriceLabel}</span></div>
               )}
               {offerResult?.isValid && offerResult.finalAmount !== productPrice && (
-                <div className="flex justify-between text-sm"><span className="text-gray-500">Discount</span><span className="text-emerald-400">-₹{offerResult.discountAmount}</span></div>
+                <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Discount</span><span className="text-emerald-400">-₹{offerResult.discountAmount}</span></div>
               )}
-                <div className="flex justify-between text-sm"><span className="text-gray-500">Audit ID</span><span className="text-white text-xs truncate max-w-[200px]">{auditId}</span></div>
-                {customerName && <div className="flex justify-between text-sm"><span className="text-gray-500">Name</span><span className="text-white">{customerName}</span></div>}
-                {customerContact && <div className="flex justify-between text-sm"><span className="text-gray-500">Contact</span><span className="text-white">{customerContact}</span></div>}
-                {upiTxRef && <div className="flex justify-between text-sm"><span className="text-gray-500">UPI Ref</span><span className="text-white">{upiTxRef}</span></div>}
-                <div className="flex justify-between text-sm"><span className="text-gray-500">Status</span><Badge variant="success">Payment Submitted</Badge></div>
+                <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Audit ID</span><span className="text-[#1C1917] text-xs truncate max-w-[200px]">{auditId}</span></div>
+                {customerName && <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Name</span><span className="text-[#1C1917]">{customerName}</span></div>}
+                {customerContact && <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Contact</span><span className="text-[#1C1917]">{customerContact}</span></div>}
+                {upiTxRef && <div className="flex justify-between text-sm"><span className="text-[#857b6e]">UPI Ref</span><span className="text-[#1C1917]">{upiTxRef}</span></div>}
+                <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Status</span><Badge variant="success">Payment Submitted</Badge></div>
               </div>
-              <p className="mt-4 text-xs text-gray-500">Send this summary to the owner/admin to receive your unlock code.</p>
+              <p className="mt-4 text-xs text-[#857b6e]">Send this summary to the owner/admin to receive your unlock code.</p>
             </Card>
 
             <div className="mb-6 flex flex-wrap gap-3">
@@ -685,12 +685,12 @@ function UnlockForm() {
             </div>
 
             <Card className="mb-6">
-              <h3 className="mb-4 text-sm font-semibold text-white">Step 3: Enter Unlock Code</h3>
-              <p className="mb-4 text-xs text-gray-500">Once the owner/admin sends you an unlock code, enter it below.</p>
+              <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Step 3: Enter Unlock Code</h3>
+              <p className="mb-4 text-xs text-[#857b6e]">Once the owner/admin sends you an unlock code, enter it below.</p>
               <div className="space-y-4">
                 <div>
-                  <label className="mb-1 block text-xs text-gray-500">Unlock Code <span className="text-red-400">*</span></label>
-                  <input type="text" value={unlockCode} onChange={(e) => setUnlockCode(e.target.value)} placeholder="e.g. AURA-XXXXXX" className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none" />
+                  <label className="mb-1 block text-xs text-[#857b6e]">Unlock Code <span className="text-red-400">*</span></label>
+                  <input type="text" value={unlockCode} onChange={(e) => setUnlockCode(e.target.value)} placeholder="e.g. AURA-XXXXXX" className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none" />
                 </div>
                 {error && <p className="rounded-lg bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
                 <Button className="w-full" size="lg" onClick={handleUnlock} disabled={unlocking}>
@@ -704,11 +704,11 @@ function UnlockForm() {
         {/* ─── STAGE 3: Unlock (standalone when user already has code) ─── */}
         {stage === "unlock" && (
           <Card className="mb-6">
-            <h3 className="mb-4 text-sm font-semibold text-white">Enter Unlock Code</h3>
-            <p className="mb-4 text-xs text-gray-500">If you already have an unlock code from the owner/admin, enter it here.</p>
+            <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Enter Unlock Code</h3>
+            <p className="mb-4 text-xs text-[#857b6e]">If you already have an unlock code from the owner/admin, enter it here.</p>
             <div className="space-y-4">
               <div>
-                <input type="text" value={unlockCode} onChange={(e) => setUnlockCode(e.target.value)} placeholder="e.g. AURA-XXXXXX" className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none" />
+                <input type="text" value={unlockCode} onChange={(e) => setUnlockCode(e.target.value)} placeholder="e.g. AURA-XXXXXX" className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none" />
               </div>
               {error && <p className="rounded-lg bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
               <Button className="w-full" size="lg" onClick={handleUnlock} disabled={unlocking}>
@@ -719,10 +719,10 @@ function UnlockForm() {
         )}
 
         {/* Copy + trust */}
-        <div className="space-y-2 text-center text-xs text-gray-600">
+        <div className="space-y-2 text-center text-xs text-[#9c9184]">
           <p>Manual MVP payment flow: AuraCheck does not automatically verify UPI payments yet. After payment, send your payment summary to the owner/admin and enter the unlock code you receive.</p>
           <p>Your audit remains stored locally in this browser. No image or report is uploaded to a server in this MVP.</p>
-          <p>For support or code issues, contact: <a href={`mailto:${supportEmail}`} className="text-purple-300 hover:underline">{supportEmail}</a></p>
+          <p>For support or code issues, contact: <a href={`mailto:${supportEmail}`} className="text-red-300 hover:underline">{supportEmail}</a></p>
           <p>AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
         </div>
       </div>
@@ -733,7 +733,7 @@ function UnlockForm() {
 
 export default function UnlockPage() {
   return (
-    <Suspense fallback={<Container className="py-16 text-center"><p className="text-gray-500">Loading...</p></Container>}>
+    <Suspense fallback={<Container className="py-16 text-center"><p className="text-[#857b6e]">Loading...</p></Container>}>
       <UnlockForm />
     </Suspense>
   );

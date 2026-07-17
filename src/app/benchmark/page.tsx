@@ -47,8 +47,8 @@ export default function BenchmarkPage() {
 
   return (
     <Container className="py-8">
-      <h1 className="mb-2 text-xl font-bold text-white">Analyser Benchmark</h1>
-      <p className="mb-6 text-xs text-gray-500">Upload test images to evaluate analyser output.</p>
+      <h1 className="mb-2 text-xl font-bold text-[#1C1917]">Analyser Benchmark</h1>
+      <p className="mb-6 text-xs text-[#857b6e]">Upload test images to evaluate analyser output.</p>
 
       <div className="mb-6">
         <label className="inline-block cursor-pointer">
@@ -61,11 +61,11 @@ export default function BenchmarkPage() {
 
       {results.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-white">Results</h2>
+          <h2 className="text-sm font-semibold text-[#1C1917]">Results</h2>
           <div className="overflow-x-auto">
-            <table className="w-full text-xs text-gray-400">
+            <table className="w-full text-xs text-[#6f675e]">
               <thead>
-                <tr className="border-b border-white/[0.06]">
+                <tr className="border-b border-[#1c1917]/10">
                   <th className="p-2 text-left">File</th>
                   <th className="p-2 text-left">Status</th>
                   <th className="p-2 text-left">Score</th>
@@ -76,7 +76,7 @@ export default function BenchmarkPage() {
               <tbody>
                 {results.map((r, i) => (
                   <tr key={i} className="border-b border-white/[0.03]">
-                    <td className="p-2 text-white">{r.fileName}</td>
+                    <td className="p-2 text-[#1C1917]">{r.fileName}</td>
                     <td className="p-2">
                       <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
                         r.output.status === "completed" ? "bg-emerald-500/10 text-emerald-400" :
@@ -86,11 +86,11 @@ export default function BenchmarkPage() {
                         {r.output.status}
                       </span>
                     </td>
-                    <td className="p-2 font-medium text-white">{r.output.overallScore ?? "N/A"}</td>
+                    <td className="p-2 font-medium text-[#1C1917]">{r.output.overallScore ?? "N/A"}</td>
                     <td className="p-2">
                       {r.output.qualityGate.canProceed ? "✅ Passed" : "❌ Blocked"}
                       {r.output.qualityGate.issues.length > 0 && (
-                        <span className="ml-1 text-[10px] text-gray-500">({r.output.qualityGate.issues.join(", ")})</span>
+                        <span className="ml-1 text-[10px] text-[#857b6e]">({r.output.qualityGate.issues.join(", ")})</span>
                       )}
                     </td>
                     <td className="p-2">{Math.round(r.duration)}ms</td>
@@ -102,23 +102,23 @@ export default function BenchmarkPage() {
 
           {/* Summary */}
           <Card className="p-4">
-            <h3 className="mb-2 text-xs font-semibold text-white">Summary</h3>
+            <h3 className="mb-2 text-xs font-semibold text-[#1C1917]">Summary</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
               <div>
-                <p className="text-gray-500">Total</p>
-                <p className="text-lg font-bold text-white">{results.length}</p>
+                <p className="text-[#857b6e]">Total</p>
+                <p className="text-lg font-bold text-[#1C1917]">{results.length}</p>
               </div>
               <div>
-                <p className="text-gray-500">Passed</p>
+                <p className="text-[#857b6e]">Passed</p>
                 <p className="text-lg font-bold text-emerald-400">{results.filter(r => r.output.status === "completed").length}</p>
               </div>
               <div>
-                <p className="text-gray-500">Rejected</p>
+                <p className="text-[#857b6e]">Rejected</p>
                 <p className="text-lg font-bold text-red-400">{results.filter(r => r.output.status === "rejected").length}</p>
               </div>
               <div>
-                <p className="text-gray-500">Avg Duration</p>
-                <p className="text-lg font-bold text-white">{Math.round(results.reduce((s, r) => s + r.duration, 0) / results.length)}ms</p>
+                <p className="text-[#857b6e]">Avg Duration</p>
+                <p className="text-lg font-bold text-[#1C1917]">{Math.round(results.reduce((s, r) => s + r.duration, 0) / results.length)}ms</p>
               </div>
             </div>
           </Card>

@@ -35,9 +35,9 @@ export function PercentileBadge({ score, className = "" }: Props) {
   };
 
   return (
-    <div className={`animate-slide-in rounded-xl border border-purple-500/15 bg-purple-500/5 px-4 py-3 text-center ${className}`}>
-      <div className="text-xs text-gray-500">Your percentile</div>
-      <div className="mt-1 text-sm font-medium text-purple-300">
+    <div className={`animate-slide-in rounded-xl border border-red-500/15 bg-red-500/5 px-4 py-3 text-center ${className}`}>
+      <div className="text-xs text-[#857b6e]">Your percentile</div>
+      <div className="mt-1 text-sm font-medium text-red-300">
         {getCopy(percentile)}
       </div>
     </div>

@@ -29,9 +29,9 @@ import type {
 import { detectUnsafePromptText, getSafetyWarningForAudit } from "@/lib/safety/contentSafety";
 
 const GOALS: { id: AuditGoal; label: string; desc: string; icon: string; emoji: string; color: string }[] = [
-  { id: "dating", label: "Dating", desc: "Optimize my photo", icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z", emoji: "❤️", color: "from-rose-500 to-pink-500" },
-  { id: "instagram", label: "Instagram", desc: "Level up my grid", icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z", emoji: "📸", color: "from-purple-500 to-fuchsia-500" },
-  { id: "content", label: "Content Creator", desc: "Build my visual brand", icon: "M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z", emoji: "🎬", color: "from-violet-500 to-purple-500" },
+  { id: "dating", label: "Dating", desc: "Optimize my photo", icon: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z", emoji: "❤️", color: "from-red-500 to-red-500" },
+  { id: "instagram", label: "Instagram", desc: "Level up my grid", icon: "M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z", emoji: "📸", color: "from-red-500 to-red-500" },
+  { id: "content", label: "Content Creator", desc: "Build my visual brand", icon: "M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z", emoji: "🎬", color: "from-red-500 to-red-500" },
   { id: "linkedin", label: "LinkedIn", desc: "Professional headshot", icon: "M16 8a6 6 0 01-12 0 6 6 0 0112 0zM2 21a8 8 0 0116 0", emoji: "💼", color: "from-blue-500 to-cyan-500" },
   { id: "college", label: "College", desc: "Stand out on campus", icon: "M12 14l9-5-9-5-9 5 9 5z", emoji: "🎓", color: "from-emerald-500 to-teal-500" },
   { id: "festival", label: "Festival / Party", desc: "Bold, photogenic look", icon: "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z", emoji: "⭐", color: "from-amber-500 to-orange-500" },
@@ -70,8 +70,8 @@ function PillButton({ selected, onClick, children }: { selected: boolean; onClic
       onClick={onClick}
       className={`rounded-lg border px-3 py-1.5 text-xs transition-all duration-200 ${
         selected
-          ? "border-purple-500/50 bg-purple-500/20 text-purple-300 scale-[1.02]"
-          : "border-white/10 text-gray-400 hover:border-white/20 hover:text-gray-300"
+          ? "border-red-500/50 bg-red-500/20 text-red-300 scale-[1.02]"
+          : "border-[#1c1917]/10 text-[#6f675e] hover:border-[#1c1917]/20 hover:text-[#4a443d]"
       }`}
     >
       {children}
@@ -260,27 +260,27 @@ export default function NewAuditPage() {
                   <div
                     className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium transition-all duration-300 ${
                       i === step
-                        ? "bg-gradient-to-r from-purple-600 to-pink-500 text-white scale-110"
+                        ? "bg-gradient-to-r from-red-600 to-red-500 text-[#1C1917] scale-110"
                         : i < step
-                          ? "bg-purple-500/30 text-purple-300"
-                          : "bg-white/5 text-gray-600"
+                          ? "bg-red-500/30 text-red-300"
+                          : "bg-[#1c1917]/[0.04] text-[#9c9184]"
                     }`}
                   >
                     {i < step ? "✓" : i + 1}
                   </div>
-                  <span className={`hidden text-xs sm:inline transition-colors ${i === step ? "text-white" : "text-gray-600"}`}>
+                  <span className={`hidden text-xs sm:inline transition-colors ${i === step ? "text-[#1C1917]" : "text-[#9c9184]"}`}>
                     {s.label}
                   </span>
                 </div>
               ))}
             </div>
-            <div className="h-1 overflow-hidden rounded-full bg-white/5">
+            <div className="h-1 overflow-hidden rounded-full bg-[#1c1917]/[0.04]">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all duration-500 ease-out"
+                className="h-full rounded-full bg-gradient-to-r from-red-600 to-red-500 transition-all duration-500 ease-out"
                 style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
               />
             </div>
-            <p className="mt-2 text-center text-xs text-gray-600">
+            <p className="mt-2 text-center text-xs text-[#9c9184]">
               {STEPS[step].preview}
             </p>
           </div>
@@ -291,10 +291,10 @@ export default function NewAuditPage() {
             {step === 0 && (
               <div className="animate-slide-in">
                 <div className="mb-8 text-center">
-                  <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent">
+                  <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-3xl font-bold text-transparent">
                     What&apos;s your goal?
                   </h1>
-                  <p className="mt-2 text-sm text-gray-500">
+                  <p className="mt-2 text-sm text-[#857b6e]">
                     We&apos;ll personalize your results around this.
                   </p>
                 </div>
@@ -310,14 +310,14 @@ export default function NewAuditPage() {
                       onClick={() => setGoal(g.id)}
                       className={`group relative flex flex-col items-center gap-2 rounded-2xl border p-4 text-center transition-all duration-200 ${
                         goal === g.id
-                          ? "border-purple-500/50 bg-purple-500/10 ring-2 ring-purple-500/30 shadow-lg shadow-purple-500/10"
-                          : "border-white/[0.06] bg-white/[0.02] hover:border-white/10 hover:bg-white/[0.04]"
+                          ? "border-red-500/50 bg-red-500/10 ring-2 ring-red-500/30 shadow-lg shadow-red-500/10"
+                          : "border-[#1c1917]/10 bg-[#1c1917]/[0.02] hover:border-[#1c1917]/10 hover:bg-[#1c1917]/[0.03]"
                       }`}
                     >
                       {goal === g.id && (
                         <motion.div
                           layoutId="goal-glow"
-                          className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500/10 to-pink-500/5"
+                          className="absolute inset-0 rounded-2xl bg-gradient-to-br from-red-500/10 to-red-500/5"
                           transition={{ type: "spring", stiffness: 300, damping: 30 }}
                         />
                       )}
@@ -325,16 +325,16 @@ export default function NewAuditPage() {
                         {g.emoji}
                       </div>
                       <div className="relative">
-                        <div className="text-sm font-semibold text-white">{g.label}</div>
-                        <div className="text-[11px] text-gray-500">{g.desc}</div>
+                        <div className="text-sm font-semibold text-[#1C1917]">{g.label}</div>
+                        <div className="text-[11px] text-[#857b6e]">{g.desc}</div>
                       </div>
                       {goal === g.id && (
                         <motion.div
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
-                          className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 flex items-center justify-center shadow-md"
+                          className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-gradient-to-r from-red-600 to-red-500 flex items-center justify-center shadow-md"
                         >
-                          <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="h-3 w-3 text-[#1C1917]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                           </svg>
                         </motion.div>
@@ -349,10 +349,10 @@ export default function NewAuditPage() {
             {step === 1 && (
               <div className="animate-slide-in">
                 <div className="mb-8 text-center">
-                  <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent">
+                  <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-3xl font-bold text-transparent">
                     Drop your photo
                   </h1>
-                  <p className="mt-2 text-sm text-gray-500">
+                  <p className="mt-2 text-sm text-[#857b6e]">
                     JPEG, PNG, or WebP. Max 8 MB.
                   </p>
                 </div>
@@ -362,15 +362,15 @@ export default function NewAuditPage() {
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={handleDrop}
                     onClick={() => fileInputRef.current?.click()}
-                    className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/10 bg-white/[0.02] p-8 sm:p-12 transition-all hover:border-purple-500/30 hover:bg-white/[0.04]"
+                    className="group flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-8 sm:p-12 transition-all hover:border-red-500/30 hover:bg-[#1c1917]/[0.03]"
                   >
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 transition-colors group-hover:bg-purple-500/10">
-                      <svg className="h-7 w-7 text-gray-500 group-hover:text-purple-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#1c1917]/[0.04] transition-colors group-hover:bg-red-500/10">
+                      <svg className="h-7 w-7 text-[#857b6e] group-hover:text-red-400 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </div>
-                    <p className="text-sm text-gray-400">
-                      Drag & drop or <span className="text-purple-400">browse</span>
+                    <p className="text-sm text-[#6f675e]">
+                      Drag & drop or <span className="text-red-400">browse</span>
                     </p>
                     <input
                       ref={fileInputRef}
@@ -382,19 +382,19 @@ export default function NewAuditPage() {
                   </div>
                 ) : (
                   <div className="relative">
-                    <div className="overflow-hidden rounded-2xl border border-white/[0.04]">
+                    <div className="overflow-hidden rounded-2xl border border-[#1c1917]/[0.08]">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={previewUrl} alt="Preview" className="max-h-[320px] w-full object-contain" />
                     </div>
                     {imageDims && (
-                      <p className="mt-2 text-center text-xs text-gray-600">
+                      <p className="mt-2 text-center text-xs text-[#9c9184]">
                         {imageDims.width} &times; {imageDims.height} px
                       </p>
                     )}
                     {qualityPreview && (
                       <div className="mt-2 flex items-center justify-center gap-2">
-                        <div className="h-1.5 w-24 overflow-hidden rounded-full bg-white/5">
-                          <div className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all" style={{ width: qualityPreview.score + '%' }} />
+                        <div className="h-1.5 w-24 overflow-hidden rounded-full bg-[#1c1917]/[0.04]">
+                          <div className="h-full rounded-full bg-gradient-to-r from-red-600 to-red-500 transition-all" style={{ width: qualityPreview.score + '%' }} />
                         </div>
                         <span className={"text-[10px] " + qualityPreview.color}>{qualityPreview.label}</span>
                       </div>
@@ -410,7 +410,7 @@ export default function NewAuditPage() {
 
                 {imageError && <p className="mt-3 text-center text-sm text-red-400">{imageError}</p>}
 
-                <div className="mt-4 rounded-xl border border-purple-500/10 bg-purple-500/5 p-3 text-center text-xs text-gray-500">
+                <div className="mt-4 rounded-xl border border-red-500/10 bg-red-500/5 p-3 text-center text-xs text-[#857b6e]">
                   Your image stays in this browser. Not uploaded anywhere.
                 </div>
               </div>
@@ -420,17 +420,17 @@ export default function NewAuditPage() {
             {step === 2 && (
               <div className="animate-slide-in">
                 <div className="mb-8 text-center">
-                  <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-3xl font-bold text-transparent">
+                  <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-3xl font-bold text-transparent">
                     Almost there
                   </h1>
-                  <p className="mt-2 text-sm text-gray-500">
+                  <p className="mt-2 text-sm text-[#857b6e]">
                     Optional tweaks, then we analyze.
                   </p>
                 </div>
 
                 {/* Quick personalization */}
                 <Card className="mb-4 p-4">
-                  <h3 className="mb-3 text-sm font-semibold text-white">What do you want to look like?</h3>
+                  <h3 className="mb-3 text-sm font-semibold text-[#1C1917]">What do you want to look like?</h3>
                   <div className="flex flex-wrap gap-2">
                     {STYLE_OPTIONS.map((s) => (
                       <PillButton key={s.id} selected={styleIntent === s.id} onClick={() => setStyleIntent(s.id)}>
@@ -441,7 +441,7 @@ export default function NewAuditPage() {
                 </Card>
 
                 <Card className="mb-4 p-4">
-                  <h3 className="mb-3 text-sm font-semibold text-white">Biggest concern?</h3>
+                  <h3 className="mb-3 text-sm font-semibold text-[#1C1917]">Biggest concern?</h3>
                   <div className="flex flex-wrap gap-2">
                     {CONCERN_OPTIONS.map((c) => (
                       <PillButton key={c.id} selected={biggestConcern === c.id} onClick={() => setBiggestConcern(c.id)}>
@@ -455,8 +455,8 @@ export default function NewAuditPage() {
                   <label className="flex cursor-pointer items-center gap-3">
                     <input type="checkbox" checked={wantsBrutalFeedback}
                       onChange={(e) => setWantsBrutalFeedback(e.target.checked)}
-                      className="h-4 w-4 rounded border-white/20 bg-white/5 text-purple-600 focus:ring-purple-500" />
-                    <span className="text-sm text-gray-300">Direct/brutal feedback</span>
+                      className="h-4 w-4 rounded border-[#1c1917]/20 bg-[#1c1917]/[0.04] text-red-600 focus:ring-red-500" />
+                    <span className="text-sm text-[#4a443d]">Direct/brutal feedback</span>
                   </label>
                 </Card>
 
@@ -470,23 +470,23 @@ export default function NewAuditPage() {
                       setSafetyError(result.unsafe ? "AuraCheck analyzes presentation for self-improvement, not to shame or judge." : null);
                     }}
                     placeholder="Anything specific to consider? (optional)"
-                    className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+                    className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none"
                     rows={2}
                   />
                   {safetyError && <p className="mt-2 text-xs text-red-400">{safetyError}</p>}
                 </Card>
 
                 {/* Consent */}
-                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-white/[0.04] bg-white/[0.02] p-4">
+                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-4">
                   <input type="checkbox" checked={consent}
                     onChange={(e) => setConsent(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-white/10 bg-white/5 text-purple-600 focus:ring-purple-500/50" />
-                  <span className="text-xs leading-relaxed text-gray-400">
+                    className="mt-0.5 h-4 w-4 rounded border-[#1c1917]/10 bg-[#1c1917]/[0.04] text-red-600 focus:ring-red-500/50" />
+                  <span className="text-xs leading-relaxed text-[#6f675e]">
                     I own this image or have permission to analyze it. I am using AuraCheck for self-improvement. Scores are guidance, not objective truth.
                   </span>
                 </label>
 
-                <div className="mt-4 rounded-xl border border-purple-500/10 bg-purple-500/5 p-3 text-center text-xs text-gray-500">
+                <div className="mt-4 rounded-xl border border-red-500/10 bg-red-500/5 p-3 text-center text-xs text-[#857b6e]">
                   All fields on this step are optional except consent.
                 </div>
               </div>

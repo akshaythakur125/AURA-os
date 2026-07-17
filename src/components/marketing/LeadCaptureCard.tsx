@@ -86,10 +86,10 @@ export function LeadCaptureCard({
               />
             </svg>
           </div>
-          <p className="mb-2 text-sm font-medium text-white">
+          <p className="mb-2 text-sm font-medium text-[#1C1917]">
             Contact saved locally
           </p>
-          <p className="mb-4 text-xs text-gray-500">
+          <p className="mb-4 text-xs text-[#857b6e]">
             Copy the message below and send it to the owner to let them know
             you are interested.
           </p>
@@ -122,46 +122,46 @@ export function LeadCaptureCard({
 
   return (
     <Card>
-      <h4 className="mb-1 text-sm font-semibold text-white">
+      <h4 className="mb-1 text-sm font-semibold text-[#1C1917]">
         Want unlock help?
       </h4>
-      <p className="mb-4 text-xs text-gray-500">
+      <p className="mb-4 text-xs text-[#857b6e]">
         Save your contact locally and copy a message to send to the owner.
       </p>
       <div className="space-y-3">
         <div>
-          <label className="mb-1 block text-xs text-gray-500">
-            Your name <span className="text-gray-600">(optional)</span>
+          <label className="mb-1 block text-xs text-[#857b6e]">
+            Your name <span className="text-[#9c9184]">(optional)</span>
           </label>
           <input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Rahul"
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+            className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-gray-500">
-            WhatsApp / contact <span className="text-gray-600">(optional)</span>
+          <label className="mb-1 block text-xs text-[#857b6e]">
+            WhatsApp / contact <span className="text-[#9c9184]">(optional)</span>
           </label>
           <input
             type="text"
             value={contact}
             onChange={(e) => setContact(e.target.value)}
             placeholder="e.g. +91 98765 43210"
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+            className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-gray-500">
+          <label className="mb-1 block text-xs text-[#857b6e]">
             Interested product{" "}
-            <span className="text-gray-600">(optional)</span>
+            <span className="text-[#9c9184]">(optional)</span>
           </label>
           <select
             value={interestProduct}
             onChange={(e) => setInterestProduct(e.target.value as ProductType | "")}
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
+            className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] focus:border-red-500/50 focus:outline-none"
           >
             <option value="">Not sure yet</option>
             <option value="aura_report">Full Aura Report — {formatPrice(PAYMENT_PRODUCTS.aura_report.price)}</option>
@@ -170,14 +170,14 @@ export function LeadCaptureCard({
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-xs text-gray-500">
-            Note <span className="text-gray-600">(optional)</span>
+          <label className="mb-1 block text-xs text-[#857b6e]">
+            Note <span className="text-[#9c9184]">(optional)</span>
           </label>
           <textarea
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder="Any questions or requests..."
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+            className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none"
             rows={2}
           />
         </div>

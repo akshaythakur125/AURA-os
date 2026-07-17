@@ -39,8 +39,8 @@ export function ConfirmDialog({
   if (!open) return null;
 
   const canConfirm = requireTypedConfirm ? typedText === requireTypedConfirm : true;
-  const colorClass = variant === "danger" ? "border-red-500/30" : variant === "warning" ? "border-amber-500/30" : "border-white/10";
-  const btnClass = variant === "danger" ? "bg-red-500/20 text-red-300 hover:bg-red-500/30" : variant === "warning" ? "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30" : "bg-purple-500/20 text-purple-300 hover:bg-purple-500/30";
+  const colorClass = variant === "danger" ? "border-red-500/30" : variant === "warning" ? "border-amber-500/30" : "border-[#1c1917]/10";
+  const btnClass = variant === "danger" ? "bg-red-500/20 text-red-300 hover:bg-red-500/30" : variant === "warning" ? "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30" : "bg-red-500/20 text-red-300 hover:bg-red-500/30";
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onCancel}>
@@ -48,11 +48,11 @@ export function ConfirmDialog({
         className={`mx-4 w-full max-w-md rounded-2xl border ${colorClass} bg-black p-6 shadow-2xl`}
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="mb-2 text-lg font-bold text-white">{title}</h3>
-        <p className="mb-4 text-sm text-gray-400">{message}</p>
+        <h3 className="mb-2 text-lg font-bold text-[#1C1917]">{title}</h3>
+        <p className="mb-4 text-sm text-[#6f675e]">{message}</p>
         {requireTypedConfirm && (
           <div className="mb-4">
-            <p className="mb-1.5 text-xs text-gray-500">
+            <p className="mb-1.5 text-xs text-[#857b6e]">
               Type <span className="font-mono text-red-400">{requireTypedConfirm}</span> to confirm:
             </p>
             <input
@@ -60,7 +60,7 @@ export function ConfirmDialog({
               type="text"
               value={typedText}
               onChange={(e) => setTypedText(e.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+              className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none"
               placeholder={`Type "${requireTypedConfirm}"`}
             />
           </div>
@@ -68,7 +68,7 @@ export function ConfirmDialog({
         <div className="flex justify-end gap-3">
           <button
             onClick={onCancel}
-            className="rounded-lg px-4 py-2 text-sm text-gray-400 transition-colors hover:bg-white/5"
+            className="rounded-lg px-4 py-2 text-sm text-[#6f675e] transition-colors hover:bg-[#1c1917]/[0.04]"
           >
             {cancelLabel}
           </button>

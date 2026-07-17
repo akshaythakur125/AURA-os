@@ -15,14 +15,14 @@ export function ErrorState({ title = "Something went wrong", message, action, on
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
         </svg>
       </div>
-      <p className="mb-2 text-lg text-gray-300">{title}</p>
-      <p className="mb-6 text-sm text-gray-500 max-w-md">{message}</p>
+      <p className="mb-2 text-lg text-[#4a443d]">{title}</p>
+      <p className="mb-6 text-sm text-[#857b6e] max-w-md">{message}</p>
       <div className="flex gap-3">
         {action}
         {onRetry && (
           <button
             onClick={onRetry}
-            className="rounded-lg bg-white/5 px-4 py-2 text-sm text-gray-400 transition-colors hover:bg-white/10"
+            className="rounded-lg bg-[#1c1917]/[0.04] px-4 py-2 text-sm text-[#6f675e] transition-colors hover:bg-[#1c1917]/[0.06]"
           >
             Try Again
           </button>

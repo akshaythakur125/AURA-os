@@ -46,8 +46,8 @@ export default function ChallengeDetailPage() {
     return (
       <Container className="py-16 text-center">
         <Card className="mx-auto max-w-md py-12">
-          <p className="mb-2 text-lg text-gray-300">Challenge not found</p>
-          <p className="mb-6 text-sm text-gray-500">This challenge may have been removed or does not exist.</p>
+          <p className="mb-2 text-lg text-[#4a443d]">Challenge not found</p>
+          <p className="mb-6 text-sm text-[#857b6e]">This challenge may have been removed or does not exist.</p>
           <Link href="/challenges"><Button>View All Challenges</Button></Link>
         </Card>
       </Container>
@@ -96,28 +96,28 @@ export default function ChallengeDetailPage() {
   return (
     <Container className="py-12">
       <div className="mb-6">
-        <Link href="/challenges" className="text-sm text-gray-500 hover:text-gray-300">&larr; Back to Challenges</Link>
+        <Link href="/challenges" className="text-sm text-[#857b6e] hover:text-[#4a443d]">&larr; Back to Challenges</Link>
       </div>
 
       <div className="mx-auto max-w-3xl">
         <Card className="mb-8">
           <Badge variant="premium" className="mb-3">{challenge.type.replace(/_/g, " ")}</Badge>
-          <h1 className="mb-3 text-2xl font-bold text-white sm:text-3xl">{challenge.title}</h1>
-          <p className="mb-6 text-sm leading-relaxed text-gray-400">{challenge.description}</p>
+          <h1 className="mb-3 text-2xl font-bold text-[#1C1917] sm:text-3xl">{challenge.title}</h1>
+          <p className="mb-6 text-sm leading-relaxed text-[#6f675e]">{challenge.description}</p>
 
           <div className="mb-6 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
-              <div className="text-xs text-gray-500">Requirement</div>
-              <p className="mt-1 text-sm text-gray-300">{challenge.entryRequirement}</p>
+            <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
+              <div className="text-xs text-[#857b6e]">Requirement</div>
+              <p className="mt-1 text-sm text-[#4a443d]">{challenge.entryRequirement}</p>
             </div>
-            <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
-              <div className="text-xs text-gray-500">Reward</div>
+            <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
+              <div className="text-xs text-[#857b6e]">Reward</div>
               <p className="mt-1 text-sm text-amber-400">{challenge.rewardText}</p>
             </div>
           </div>
 
           {message && (
-            <div className="mb-4 rounded-lg bg-purple-500/10 px-3 py-2 text-sm text-purple-300">
+            <div className="mb-4 rounded-lg bg-red-500/10 px-3 py-2 text-sm text-red-300">
               {message}
             </div>
           )}
@@ -141,22 +141,22 @@ export default function ChallengeDetailPage() {
         </Card>
 
         <section className="mb-8">
-          <h2 className="mb-4 text-lg font-semibold text-white">How to participate</h2>
-          <ol className="space-y-2 text-sm text-gray-400">
+          <h2 className="mb-4 text-lg font-semibold text-[#1C1917]">How to participate</h2>
+          <ol className="space-y-2 text-sm text-[#6f675e]">
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">1</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">1</span>
               Complete an Aura Check audit (upload a photo, select goal and budget).
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">2</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">2</span>
               Generate your free Aura Score.
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">3</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">3</span>
               Click &quot;Enter This Challenge&quot; to submit your score to the local leaderboard.
             </li>
             <li className="flex items-start gap-2">
-              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/20 text-[10px] text-purple-300">4</span>
+              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">4</span>
               Share the challenge with friends to invite them to participate.
             </li>
           </ol>
@@ -164,7 +164,7 @@ export default function ChallengeDetailPage() {
 
         <LocalLeaderboard entries={entries} />
 
-        <div className="mt-8 rounded-xl border border-white/[0.04] bg-white/[0.02] p-4 text-center text-xs text-gray-600">
+        <div className="mt-8 rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-4 text-center text-xs text-[#9c9184]">
           <p>Local MVP: challenge entries are stored in this browser only.</p>
           <p className="mt-1">AuraCheck does not judge human worth. Challenges are for self-improvement and entertainment.</p>
         </div>

@@ -37,7 +37,7 @@ export function ShareCardBuilder({ audit, type }: Props) {
   if (isRejected) {
     return (
       <Card className="p-6 text-center">
-        <p className="text-sm text-gray-400">Share cards are not available for images that could not be reliably analysed.</p>
+        <p className="text-sm text-[#6f675e]">Share cards are not available for images that could not be reliably analysed.</p>
       </Card>
     );
   }
@@ -112,10 +112,10 @@ export function ShareCardBuilder({ audit, type }: Props) {
 
   return (
     <Card>
-      <h3 className="mb-2 text-sm font-semibold text-white">
+      <h3 className="mb-2 text-sm font-semibold text-[#1C1917]">
         Share your result
       </h3>
-      <p className="mb-4 text-xs text-gray-500">
+      <p className="mb-4 text-xs text-[#857b6e]">
         Your image is never included unless you turn it on. One-tap share to Instagram Stories.
       </p>
 
@@ -128,8 +128,8 @@ export function ShareCardBuilder({ audit, type }: Props) {
               onClick={() => setOptions((p) => ({ ...p, format: fmt }))}
               className={`flex-1 rounded-lg border px-3 py-2 text-xs transition-colors ${
                 options.format === fmt
-                  ? "border-purple-500/50 bg-purple-500/20 text-purple-300"
-                  : "border-white/10 text-gray-500 hover:border-white/20"
+                  ? "border-red-500/50 bg-red-500/20 text-red-300"
+                  : "border-[#1c1917]/10 text-[#857b6e] hover:border-[#1c1917]/20"
               }`}
             >
               {label}
@@ -147,8 +147,8 @@ export function ShareCardBuilder({ audit, type }: Props) {
               onClick={() => setOptions((p) => ({ ...p, cardStyle: style }))}
               className={`flex-1 rounded-lg border px-2 py-1.5 text-[10px] transition-colors ${
                 options.cardStyle === style
-                  ? "border-purple-500/50 bg-purple-500/20 text-purple-300"
-                  : "border-white/10 text-gray-500 hover:border-white/20"
+                  ? "border-red-500/50 bg-red-500/20 text-red-300"
+                  : "border-[#1c1917]/10 text-[#857b6e] hover:border-[#1c1917]/20"
               }`}
             >
               {style === "premium_dark" ? "Aurora" : style === "clean_minimal" ? "Clean" : "Bold"}
@@ -170,8 +170,8 @@ export function ShareCardBuilder({ audit, type }: Props) {
             onClick={() => setOptions((p) => ({ ...p, [t.key]: !p[t.key] }))}
             className={`rounded-md border px-2 py-1 text-[10px] transition-colors ${
               options[t.key]
-                ? "border-purple-500/40 bg-purple-500/15 text-purple-300"
-                : "border-white/10 text-gray-600 hover:text-gray-400"
+                ? "border-red-500/40 bg-red-500/15 text-red-300"
+                : "border-[#1c1917]/10 text-[#9c9184] hover:text-[#6f675e]"
             }`}
           >
             {t.label}
@@ -180,7 +180,7 @@ export function ShareCardBuilder({ audit, type }: Props) {
       </div>
 
       {/* Preview */}
-      <div className="mb-4 overflow-hidden rounded-xl border border-white/[0.04] bg-black">
+      <div className="mb-4 overflow-hidden rounded-xl border border-[#1c1917]/[0.08] bg-black">
         <canvas
           ref={previewRef}
           width={1080}
@@ -189,7 +189,7 @@ export function ShareCardBuilder({ audit, type }: Props) {
           style={{ aspectRatio: isStory ? "9/16" : "1/1" }}
         />
         {generating && (
-          <div className="flex h-[200px] items-center justify-center text-xs text-gray-500">
+          <div className="flex h-[200px] items-center justify-center text-xs text-[#857b6e]">
             Generating...
           </div>
         )}
@@ -215,8 +215,8 @@ export function ShareCardBuilder({ audit, type }: Props) {
       </div>
 
       {type !== "full_report" && (
-        <div className="mt-4 rounded-lg border border-purple-500/20 bg-purple-500/10 p-3 text-center">
-          <p className="text-xs text-purple-300">
+        <div className="mt-4 rounded-lg border border-red-500/20 bg-red-500/10 p-3 text-center">
+          <p className="text-xs text-red-300">
             Unlock the full report for a premium card with detailed breakdown.
           </p>
         </div>

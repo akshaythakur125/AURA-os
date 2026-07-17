@@ -37,11 +37,11 @@ export default function AuraTwinPage() {
   if (!imageDataUrl) {
     return (
       <Container className="py-20 text-center">
-        <h1 className="mb-4 text-2xl font-bold text-white">Aura Twin Studio</h1>
-        <p className="mb-6 text-sm text-gray-400">
+        <h1 className="mb-4 text-2xl font-bold text-[#1C1917]">Aura Twin Studio</h1>
+        <p className="mb-6 text-sm text-[#6f675e]">
           Upload a photo to preview improvements before making changes in real life.
         </p>
-        <p className="mb-4 text-[10px] text-gray-600">
+        <p className="mb-4 text-[10px] text-[#9c9184]">
           All processing happens locally in your browser. Your image never leaves your device.
         </p>
         <label className="inline-block cursor-pointer">

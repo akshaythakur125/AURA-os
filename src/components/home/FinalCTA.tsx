@@ -7,13 +7,13 @@ import { FadeInView } from "@/components/ui/FadeInView";
 
 export function FinalCTA() {
   return (
-    <section className="py-20 sm:py-28 bg-[#0a0a12]">
+    <section className="py-20 sm:py-28 bg-[#F2ECE1]">
       <Container className="text-center">
         <FadeInView>
-          <h2 className="text-3xl font-bold text-white sm:text-4xl">
+          <h2 className="text-3xl font-bold text-[#1C1917] sm:text-4xl">
             Ready to see what your photo really says?
           </h2>
-          <p className="mx-auto mt-4 max-w-md text-gray-500">
+          <p className="mx-auto mt-4 max-w-md text-[#857b6e]">
             Free, instant, private. No account required.
           </p>
           <div className="mt-8">

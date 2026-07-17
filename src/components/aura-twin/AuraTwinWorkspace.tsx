@@ -62,17 +62,17 @@ export function AuraTwinWorkspace({ imageDataUrl, auditId, topFinding, findingCa
   return (
     <Container className="py-8 sm:py-12">
       <FadeInView>
-        <Link href={auditId ? `/audit/${auditId}` : "/"} className="mb-6 inline-flex items-center gap-1 text-xs text-gray-500 hover:text-white">
+        <Link href={auditId ? `/audit/${auditId}` : "/"} className="mb-6 inline-flex items-center gap-1 text-xs text-[#857b6e] hover:text-[#1C1917]">
           ← Back to {auditId ? "report" : "home"}
         </Link>
 
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">Aura Twin Studio</h1>
-          <p className="mt-2 text-sm text-gray-400">
+          <h1 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">Aura Twin Studio</h1>
+          <p className="mt-2 text-sm text-[#6f675e]">
             Preview improvements to your photo before making changes in real life.
           </p>
-          <p className="mt-1 text-[10px] text-gray-600">
+          <p className="mt-1 text-[10px] text-[#9c9184]">
             All processing happens locally in your browser. Your image never leaves your device.
           </p>
         </div>
@@ -90,13 +90,13 @@ export function AuraTwinWorkspace({ imageDataUrl, auditId, topFinding, findingCa
                 height={400}
               />
             ) : (
-              <div className="relative overflow-hidden rounded-xl border border-white/[0.06]">
+              <div className="relative overflow-hidden rounded-xl border border-[#1c1917]/10">
                 <img src={imageDataUrl} alt="Your uploaded photo" className="w-full max-h-[400px] object-contain" />
               </div>
             )}
 
             {/* Limitation notice */}
-            <p className="mt-3 text-[10px] text-gray-600 text-center">
+            <p className="mt-3 text-[10px] text-[#9c9184] text-center">
               This preview estimates how the change may affect the image. Real results depend on your camera, environment, and actual adjustments.
             </p>
 
@@ -121,11 +121,11 @@ export function AuraTwinWorkspace({ imageDataUrl, auditId, topFinding, findingCa
           <div className="space-y-4">
             {/* Recommended transformation */}
             {recommended && (
-              <Card className="border-violet-500/20 bg-violet-500/[0.04]">
-                <p className="mb-2 text-xs font-semibold text-violet-300">Preview My Top Improvement</p>
-                <p className="mb-2 text-xs text-gray-400">{recommended.description}</p>
+              <Card className="border-red-500/20 bg-red-500/[0.04]">
+                <p className="mb-2 text-xs font-semibold text-red-300">Preview My Top Improvement</p>
+                <p className="mb-2 text-xs text-[#6f675e]">{recommended.description}</p>
                 {topFinding && (
-                  <p className="mb-3 text-[10px] text-gray-500">Addresses: {topFinding}</p>
+                  <p className="mb-3 text-[10px] text-[#857b6e]">Addresses: {topFinding}</p>
                 )}
                 <Button
                   size="sm"
@@ -140,7 +140,7 @@ export function AuraTwinWorkspace({ imageDataUrl, auditId, topFinding, findingCa
 
             {/* All transformations */}
             <Card>
-              <p className="mb-3 text-xs font-semibold text-white">Choose Another Change</p>
+              <p className="mb-3 text-xs font-semibold text-[#1C1917]">Choose Another Change</p>
               <div className="space-y-2">
                 {TRANSFORM_PRESETS.map((preset) => (
                   <button
@@ -149,12 +149,12 @@ export function AuraTwinWorkspace({ imageDataUrl, auditId, topFinding, findingCa
                     disabled={processing}
                     className={`w-full rounded-lg border px-3 py-2 text-left text-xs transition-all ${
                       selectedPreset === preset.id
-                        ? "border-violet-500/30 bg-violet-500/10 text-white"
-                        : "border-white/[0.06] bg-white/[0.02] text-gray-400 hover:bg-white/[0.06]"
+                        ? "border-red-500/30 bg-red-500/10 text-[#1C1917]"
+                        : "border-[#1c1917]/10 bg-[#1c1917]/[0.02] text-[#6f675e] hover:bg-[#1c1917]/[0.04]"
                     }`}
                   >
                     <div className="font-medium">{preset.label}</div>
-                    <div className="mt-0.5 text-[10px] text-gray-500">{preset.category} · {preset.confidence} confidence</div>
+                    <div className="mt-0.5 text-[10px] text-[#857b6e]">{preset.category} · {preset.confidence} confidence</div>
                   </button>
                 ))}
               </div>
@@ -163,13 +163,13 @@ export function AuraTwinWorkspace({ imageDataUrl, auditId, topFinding, findingCa
             {/* Active transformation details */}
             {activePreset && (
               <Card>
-                <p className="mb-2 text-xs font-semibold text-white">What this does</p>
-                <p className="mb-2 text-xs text-gray-400">{activePreset.description}</p>
+                <p className="mb-2 text-xs font-semibold text-[#1C1917]">What this does</p>
+                <p className="mb-2 text-xs text-[#6f675e]">{activePreset.description}</p>
                 <div className="rounded-lg bg-emerald-500/[0.04] border border-emerald-500/15 p-2">
                   <p className="text-[10px] font-medium text-emerald-400">Real-world action:</p>
-                  <p className="text-[10px] text-gray-400">{activePreset.action}</p>
+                  <p className="text-[10px] text-[#6f675e]">{activePreset.action}</p>
                 </div>
-                <p className="mt-2 text-[10px] text-gray-600">
+                <p className="mt-2 text-[10px] text-[#9c9184]">
                   Processing: Local (Canvas API) · Confidence: {activePreset.confidence}
                 </p>
               </Card>
@@ -178,16 +178,16 @@ export function AuraTwinWorkspace({ imageDataUrl, auditId, topFinding, findingCa
             {/* History */}
             {history.length > 1 && (
               <Card>
-                <p className="mb-2 text-xs font-semibold text-white">Variants ({history.length})</p>
+                <p className="mb-2 text-xs font-semibold text-[#1C1917]">Variants ({history.length})</p>
                 <div className="flex gap-2 overflow-x-auto pb-1">
                   {history.map((h) => (
                     <button
                       key={h.id}
                       onClick={() => setResultUrl(h.url)}
-                      className="shrink-0 rounded-lg border border-white/[0.06] bg-white/[0.02] p-1 hover:bg-white/[0.06]"
+                      className="shrink-0 rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-1 hover:bg-[#1c1917]/[0.04]"
                     >
                       <img src={h.url} alt={h.label} className="h-12 w-12 rounded-md object-cover" />
-                      <p className="mt-1 text-[9px] text-gray-500">{h.label}</p>
+                      <p className="mt-1 text-[9px] text-[#857b6e]">{h.label}</p>
                     </button>
                   ))}
                 </div>

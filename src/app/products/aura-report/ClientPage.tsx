@@ -41,10 +41,10 @@ export default function AuraReportPage() {
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="premium" className="mb-4">Full Aura Report — {formatPrice(PAYMENT_PRODUCTS.aura_report.price)}</Badge>
-            <h1 className="bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
+            <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
               Unlock the full reason behind your Aura Score.
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-400">
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-[#6f675e]">
               The free score tells you what is leaking. The Full Aura Report tells you what to fix first, what to avoid, and how to upgrade your visual signal under your budget.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -55,7 +55,7 @@ export default function AuraReportPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <SectionHeading title="What you get" subtitle="Everything in the free score, plus a detailed breakdown." />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -71,15 +71,15 @@ export default function AuraReportPage() {
               { title: "Print / save report", desc: "Export your full report as a printable page. Keep it, share it, track your progress." },
             ].map((f) => (
               <Card key={f.title} hover>
-                <h3 className="mb-2 text-sm font-semibold text-white">{f.title}</h3>
-                <p className="text-sm leading-relaxed text-gray-400">{f.desc}</p>
+                <h3 className="mb-2 text-sm font-semibold text-[#1C1917]">{f.title}</h3>
+                <p className="text-sm leading-relaxed text-[#6f675e]">{f.desc}</p>
               </Card>
             ))}
           </div>
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
@@ -92,7 +92,7 @@ export default function AuraReportPage() {
                   "You want a shareable score card",
                   "You want a budget-aware plan — not a generic checklist",
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-gray-300">
+                  <li key={item} className="flex items-start gap-3 text-sm text-[#4a443d]">
                     <svg className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     {item}
                   </li>
@@ -104,13 +104,13 @@ export default function AuraReportPage() {
               <Card className="mb-4">
                 <div className="mb-3 flex items-center justify-between">
                   <Badge variant="premium">Sample — Urban Aspirational</Badge>
-                  <span className="text-2xl font-bold text-white">{sampleReport.score}</span>
+                  <span className="text-2xl font-bold text-[#1C1917]">{sampleReport.score}</span>
                 </div>
                 <div className="mb-3 rounded-lg border border-red-500/10 bg-red-500/5 p-3">
                   <div className="text-xs text-red-400">Primary bottleneck</div>
-                  <div className="text-sm text-gray-300">{sampleReport.bottleneck}</div>
+                  <div className="text-sm text-[#4a443d]">{sampleReport.bottleneck}</div>
                 </div>
-                <p className="text-sm text-gray-400">{sampleReport.topInsight}</p>
+                <p className="text-sm text-[#6f675e]">{sampleReport.topInsight}</p>
               </Card>
               <LeadCaptureCard source="aura-report-page" defaultProduct="aura_report" />
             </div>
@@ -118,7 +118,7 @@ export default function AuraReportPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <SectionHeading title="Free vs Paid" subtitle="See exactly what changes when you unlock the full report." />
           <div className="mx-auto max-w-4xl">
@@ -127,11 +127,11 @@ export default function AuraReportPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
-          <div className="mx-auto max-w-2xl rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-pink-500/5 p-8 text-center">
-            <h2 className="mb-4 text-2xl font-bold text-white">Why {formatPrice(PAYMENT_PRODUCTS.aura_report.price)}?</h2>
-            <p className="mb-6 text-sm leading-relaxed text-gray-400">
+          <div className="mx-auto max-w-2xl rounded-2xl border border-red-500/20 bg-gradient-to-br from-red-500/5 to-red-500/5 p-8 text-center">
+            <h2 className="mb-4 text-2xl font-bold text-[#1C1917]">Why {formatPrice(PAYMENT_PRODUCTS.aura_report.price)}?</h2>
+            <p className="mb-6 text-sm leading-relaxed text-[#6f675e]">
               {formatPrice(PAYMENT_PRODUCTS.aura_report.price)} is a conscious price point — low enough that anyone can unlock their report after a free audit, 
               but high enough that you value what you get. The analysis is generated locally in your browser 
               using a rule-based engine. No external AI, no subscription, no hidden costs.
@@ -144,9 +144,9 @@ export default function AuraReportPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-12">
+      <section className="border-t border-[#1c1917]/[0.08] py-12">
         <Container>
-          <div className="mx-auto max-w-2xl rounded-xl border border-white/[0.04] bg-white/[0.02] p-6 text-center text-xs text-gray-500">
+          <div className="mx-auto max-w-2xl rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-6 text-center text-xs text-[#857b6e]">
             <p>AuraCheck analyzes presentation, not human worth. Scores are guidance, not objective truth.</p>
             <p className="mt-2">Manual UPI unlock flow — payment is not automatically verified. Contact support if you have issues.</p>
           </div>

@@ -15,32 +15,32 @@ const DIMENSIONS = [
 
 export function AuditDimensions() {
   return (
-    <section className="py-20 sm:py-28 bg-[#0c0c18]">
+    <section className="py-20 sm:py-28 bg-[#F2ECE1]">
       <Container>
         <FadeInView>
           <div className="mb-12 text-center">
-            <h2 className="text-2xl font-bold text-white sm:text-3xl">What the audit examines</h2>
-            <p className="mt-3 text-sm text-gray-500">Seven dimensions that shape first impressions.</p>
+            <h2 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">What the audit examines</h2>
+            <p className="mt-3 text-sm text-[#857b6e]">Seven dimensions that shape first impressions.</p>
           </div>
         </FadeInView>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {DIMENSIONS.map((d, i) => (
             <FadeInView key={d.name} delay={i * 60}>
-              <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+              <div className="rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-5">
                 <div className="mb-3 flex items-center gap-2">
                   <span className="text-lg">{d.icon}</span>
-                  <h3 className="text-sm font-semibold text-white">{d.name}</h3>
+                  <h3 className="text-sm font-semibold text-[#1C1917]">{d.name}</h3>
                 </div>
-                <p className="mb-3 text-xs text-gray-500">{d.desc}</p>
+                <p className="mb-3 text-xs text-[#857b6e]">{d.desc}</p>
                 <div className="space-y-2 text-xs">
                   <div>
                     <span className="text-red-400 font-medium">Common issue: </span>
-                    <span className="text-gray-400">{d.issue}</span>
+                    <span className="text-[#6f675e]">{d.issue}</span>
                   </div>
                   <div>
                     <span className="text-emerald-400 font-medium">Quick fix: </span>
-                    <span className="text-gray-400">{d.fix}</span>
+                    <span className="text-[#6f675e]">{d.fix}</span>
                   </div>
                 </div>
               </div>

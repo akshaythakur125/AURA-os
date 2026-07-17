@@ -37,16 +37,16 @@ export function DynamicGoalAdvice({
             <span className="text-xs">{headline.icon}</span>
             <span className="text-xs font-medium text-blue-300">{headline.badge}</span>
           </div>
-          <h3 className="text-base font-bold text-white">{headline.title}</h3>
-          <p className="mt-1 text-xs text-gray-400">{subtext}</p>
+          <h3 className="text-base font-bold text-[#1C1917]">{headline.title}</h3>
+          <p className="mt-1 text-xs text-[#6f675e]">{subtext}</p>
         </div>
 
         <div className="grid gap-2 sm:grid-cols-3">
           {tips.map((tip) => (
-            <div key={tip.label} className="rounded-xl bg-white/[0.03] p-3 text-center">
+            <div key={tip.label} className="rounded-xl bg-[#1c1917]/[0.03] p-3 text-center">
               <div className="mb-1 text-lg">{tip.icon}</div>
-              <div className="text-xs font-medium text-white">{tip.label}</div>
-              <div className="text-[10px] text-gray-500">{tip.detail}</div>
+              <div className="text-xs font-medium text-[#1C1917]">{tip.label}</div>
+              <div className="text-[10px] text-[#857b6e]">{tip.detail}</div>
             </div>
           ))}
         </div>
@@ -56,7 +56,7 @@ export function DynamicGoalAdvice({
           <div className="text-[10px] font-medium text-blue-400 uppercase tracking-wider mb-1">
             Your #1 priority right now
           </div>
-          <p className="text-sm text-white font-medium">{getTopPriority(goal, metrics)}</p>
+          <p className="text-sm text-[#1C1917] font-medium">{getTopPriority(goal, metrics)}</p>
         </div>
       </div>
     </FadeInView>

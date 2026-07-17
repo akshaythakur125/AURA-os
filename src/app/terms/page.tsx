@@ -12,12 +12,12 @@ export default function TermsPage() {
   return (
     <Container className="py-16">
       <div className="mx-auto max-w-3xl">
-        <h1 className="mb-2 text-3xl font-bold text-white">Terms of Service</h1>
-        <p className="mb-8 text-sm text-gray-500">Last updated: 2024</p>
+        <h1 className="mb-2 text-3xl font-bold text-[#1C1917]">Terms of Service</h1>
+        <p className="mb-8 text-sm text-[#857b6e]">Last updated: 2024</p>
 
-        <div className="space-y-6 text-sm leading-relaxed text-gray-400">
+        <div className="space-y-6 text-sm leading-relaxed text-[#6f675e]">
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-white">Service Description</h2>
+            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Service Description</h2>
             <p>
               AuraCheck provides first-impression analysis, presentation guidance, and self-improvement suggestions 
               based on user-uploaded images and profile text. All scores, archetypes, and recommendations are 
@@ -27,7 +27,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-white">No Guaranteed Outcomes</h2>
+            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">No Guaranteed Outcomes</h2>
             <p>
               AuraCheck does not guarantee any specific social, professional, romantic, dating, or financial outcomes. 
               Scores and recommendations reflect algorithmic analysis of visual presentation signals. They are not 
@@ -36,11 +36,11 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-white">User Responsibility</h2>
+            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">User Responsibility</h2>
             <p>
               You are responsible for the content you upload. By using AuraCheck, you confirm:
             </p>
-            <ul className="mt-2 list-inside list-disc space-y-1 text-gray-400">
+            <ul className="mt-2 list-inside list-disc space-y-1 text-[#6f675e]">
               <li>You own the uploaded image or have permission to analyze it</li>
               <li>You are using AuraCheck for self-improvement/presentation guidance</li>
               <li>You will not use AuraCheck to harass, shame, or publicly rank others</li>
@@ -50,11 +50,11 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-white">Prohibited Uses</h2>
+            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Prohibited Uses</h2>
             <p>
               You may not use AuraCheck to:
             </p>
-            <ul className="mt-2 list-inside list-disc space-y-1 text-gray-400">
+            <ul className="mt-2 list-inside list-disc space-y-1 text-[#6f675e]">
               <li>Harass, shame, or judge individuals based on appearance, protected traits, or presentation style</li>
               <li>Upload images of others without their explicit consent for analysis</li>
               <li>Request analysis that infers protected traits (caste, religion, ethnicity, sexuality, health, income)</li>
@@ -64,11 +64,11 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-white">Paid Services & Manual Payment</h2>
+            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Paid Services & Manual Payment</h2>
             <p>
               Premium reports and modules are unlocked via manual UPI transfer. Key terms:
             </p>
-            <ul className="mt-2 list-inside list-disc space-y-1 text-gray-400">
+            <ul className="mt-2 list-inside list-disc space-y-1 text-[#6f675e]">
               <li>Payment is processed through your UPI app outside of AuraCheck — the app does not process payments</li>
               <li>Unlock codes are provided manually after payment confirmation by the owner</li>
               <li>Refunds are handled on a case-by-case basis. Contact support with your order details</li>
@@ -78,11 +78,11 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-white">Local Data Risk</h2>
+            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Local Data Risk</h2>
             <p>
               AuraCheck stores all data locally in your browser&apos;s localStorage. This means:
             </p>
-            <ul className="mt-2 list-inside list-disc space-y-1 text-gray-400">
+            <ul className="mt-2 list-inside list-disc space-y-1 text-[#6f675e]">
               <li>Clearing browser data will permanently remove your audits, reports, and orders</li>
               <li>Data is specific to the browser/device you use — it does not sync across devices</li>
               <li>We recommend exporting a backup before clearing browser data</li>
@@ -91,7 +91,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-white">Limitation of Liability</h2>
+            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Limitation of Liability</h2>
             <p>
               AuraCheck is provided &quot;as is&quot; without warranty of any kind. The app is an MVP 
               (minimum viable product) for testing and feedback purposes. To the maximum extent permitted 
@@ -101,7 +101,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-white">Not Professional Advice</h2>
+            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Not Professional Advice</h2>
             <p>
               AuraCheck is not a substitute for professional financial, medical, legal, dating, or career advice. 
               The analysis and suggestions provided are for entertainment and self-improvement guidance only. 
@@ -110,7 +110,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-white">Changes to Terms</h2>
+            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Changes to Terms</h2>
             <p>
               We reserve the right to update these terms at any time. Continued use of the service after changes 
               constitutes acceptance of the new terms. Significant changes will be communicated through the app.
@@ -118,10 +118,10 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-white">Contact & Support</h2>
+            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Contact & Support</h2>
             <p>
               For support, refund requests, or questions about these terms, contact{" "}
-              <span className="text-purple-300">{process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@auracheck.in"}</span>.
+              <span className="text-red-300">{process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@auracheck.in"}</span>.
             </p>
           </section>
         </div>

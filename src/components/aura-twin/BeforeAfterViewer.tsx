@@ -80,13 +80,13 @@ export function BeforeAfterViewer({
             if (e.key === "ArrowRight") setPos((p) => Math.min(100, p + 5));
           }}
         >
-          <span className="text-white text-xs">⇔</span>
+          <span className="text-[#1C1917] text-xs">⇔</span>
         </div>
       </div>
 
       {/* Labels */}
-      <div className="absolute top-3 left-3 rounded-md bg-black/60 px-2 py-1 text-[10px] text-white">{beforeLabel}</div>
-      <div className="absolute top-3 right-3 rounded-md bg-black/60 px-2 py-1 text-[10px] text-white">{afterLabel}</div>
+      <div className="absolute top-3 left-3 rounded-md bg-black/60 px-2 py-1 text-[10px] text-[#1C1917]">{beforeLabel}</div>
+      <div className="absolute top-3 right-3 rounded-md bg-black/60 px-2 py-1 text-[10px] text-[#1C1917]">{afterLabel}</div>
     </div>
   );
 }

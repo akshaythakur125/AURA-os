@@ -35,10 +35,10 @@ export function LiveCounter({ value, label, prefix = "", suffix = "", className 
 
   return (
     <div className={`text-center ${className}`}>
-      <div className="text-2xl font-bold text-white sm:text-3xl">
+      <div className="text-2xl font-bold text-[#1C1917] sm:text-3xl">
         {prefix}<span ref={ref}>{display.toLocaleString()}</span>{suffix}
       </div>
-      <div className="mt-1 text-xs text-gray-500">{label}</div>
+      <div className="mt-1 text-xs text-[#857b6e]">{label}</div>
     </div>
   );
 }

@@ -39,27 +39,27 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section className="py-20 sm:py-28 bg-[#0a0a12]">
+    <section className="py-20 sm:py-28 bg-[#ECE4D6]">
       <Container>
         <FadeInView>
           <div className="mb-12 text-center">
-            <h2 className="text-2xl font-bold text-white sm:text-3xl">How it works</h2>
-            <p className="mt-3 text-sm text-gray-500">Three steps to a clearer first impression.</p>
+            <h2 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">How it works</h2>
+            <p className="mt-3 text-sm text-[#857b6e]">Three steps to a clearer first impression.</p>
           </div>
         </FadeInView>
 
         <div className="grid gap-8 sm:grid-cols-3">
           {STEPS.map((step, i) => (
             <FadeInView key={step.num} delay={i * 100}>
-              <div className="relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
+              <div className="relative rounded-2xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-6">
                 <div className="mb-4 flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-500/10 text-violet-400">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/10 text-red-400">
                     {step.icon}
                   </div>
-                  <span className="text-xs font-mono text-gray-600">{step.num}</span>
+                  <span className="text-xs font-mono text-[#9c9184]">{step.num}</span>
                 </div>
-                <h3 className="mb-2 text-base font-semibold text-white">{step.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{step.desc}</p>
+                <h3 className="mb-2 text-base font-semibold text-[#1C1917]">{step.title}</h3>
+                <p className="text-sm text-[#857b6e] leading-relaxed">{step.desc}</p>
               </div>
             </FadeInView>
           ))}

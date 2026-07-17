@@ -20,11 +20,11 @@ export class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return this.props.fallback || (
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-6 text-center">
-          <p className="text-sm text-gray-400">Something went wrong rendering this section.</p>
+        <div className="rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-6 text-center">
+          <p className="text-sm text-[#6f675e]">Something went wrong rendering this section.</p>
           <button
             onClick={() => this.setState({ hasError: false })}
-            className="mt-3 text-xs text-violet-400 hover:text-violet-300"
+            className="mt-3 text-xs text-red-400 hover:text-red-300"
           >
             Try again
           </button>

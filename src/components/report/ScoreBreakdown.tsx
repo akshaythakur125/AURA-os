@@ -66,11 +66,11 @@ export function AuraGauge({ value, max = 100, label, color = "#a855f7", size = 1
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-lg font-bold text-white">{value}</span>
-          <span className="text-[9px] text-gray-500">/ {max}</span>
+          <span className="text-lg font-bold text-[#1C1917]">{value}</span>
+          <span className="text-[9px] text-[#857b6e]">/ {max}</span>
         </div>
       </div>
-      <span className="text-[10px] font-medium text-gray-400">{label}</span>
+      <span className="text-[10px] font-medium text-[#6f675e]">{label}</span>
     </div>
   );
 }
@@ -90,15 +90,15 @@ function ScoreBar({ label, value, icon }: { label: string; value: number; icon: 
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-[#6f675e]">
           {icon} {label}
         </span>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-gray-500">{rating}</span>
-          <span className="text-xs font-bold text-white">{value}</span>
+          <span className="text-[10px] text-[#857b6e]">{rating}</span>
+          <span className="text-xs font-bold text-[#1C1917]">{value}</span>
         </div>
       </div>
-      <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
+      <div className="h-1.5 overflow-hidden rounded-full bg-[#1c1917]/[0.04]">
         <div
           className={`h-full rounded-full bg-gradient-to-r ${color} transition-all duration-1200 ease-out`}
           style={{ width: `${value}%` }}
@@ -133,10 +133,10 @@ export function ScoreBreakdown({
   const overall = Math.round((lighting + clarity + composition + contrast + grooming + expression + symmetry + colorBalance) / 8);
 
   return (
-    <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
+    <div className="rounded-2xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-5">
       <div className="mb-4 text-center">
-        <h3 className="text-sm font-bold text-white">Your Score Breakdown</h3>
-        <p className="text-[10px] text-gray-500">Each area rated against profile photo best practices</p>
+        <h3 className="text-sm font-bold text-[#1C1917]">Your Score Breakdown</h3>
+        <p className="text-[10px] text-[#857b6e]">Each area rated against profile photo best practices</p>
       </div>
 
       {/* Circular gauges row */}
@@ -159,10 +159,10 @@ export function ScoreBreakdown({
       </div>
 
       {/* Overall summary */}
-      <div className="mt-4 rounded-xl bg-gradient-to-r from-purple-500/10 to-pink-500/10 p-3 text-center">
-        <div className="text-xs text-gray-400">Overall Aura Score</div>
-        <div className="text-2xl font-bold text-white">{overall}<span className="text-sm text-gray-500"> / 100</span></div>
-        <div className="text-[10px] text-gray-500">
+      <div className="mt-4 rounded-xl bg-gradient-to-r from-red-500/10 to-red-500/10 p-3 text-center">
+        <div className="text-xs text-[#6f675e]">Overall Aura Score</div>
+        <div className="text-2xl font-bold text-[#1C1917]">{overall}<span className="text-sm text-[#857b6e]"> / 100</span></div>
+        <div className="text-[10px] text-[#857b6e]">
           {overall >= 75 ? "Strong profile — minor refinements needed" :
            overall >= 55 ? "Decent foundation — 2-3 fixes will make a big difference" :
            "Multiple areas need attention — follow the roadmap below"}

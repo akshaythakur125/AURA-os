@@ -36,15 +36,15 @@ function EndowedProgress({ score }: { score: number }) {
           <span className="text-[11px] font-medium text-blue-300">
             📊 Your style analysis
           </span>
-          <span className="text-[10px] text-gray-500">{pct}% complete</span>
+          <span className="text-[10px] text-[#857b6e]">{pct}% complete</span>
         </div>
-        <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
+        <div className="h-1.5 overflow-hidden rounded-full bg-[#1c1917]/[0.04]">
           <div
             className="h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all duration-1000"
             style={{ width: `${pct}%` }}
           />
         </div>
-        <p className="mt-1 text-[10px] text-gray-500">
+        <p className="mt-1 text-[10px] text-[#857b6e]">
           You&apos;ve completed the scan. Unlock to see <span className="text-blue-400">why your score is what it is</span> and <span className="text-blue-400">exactly how to raise it</span>.
         </p>
       </div>
@@ -96,7 +96,7 @@ function VariableReward({ score, auditId }: { score: number; auditId: string }) 
     const insights = [
       { icon: "🔍", text: `Your left side is ${8 + (seed % 12)}% more photogenic than your right — photographers call this your 'best side'` },
       { icon: "💡", text: `The light is hitting you from ${seed % 2 === 0 ? 'above' : 'the side'} — that creates ${seed % 2 === 0 ? 'harsh shadows under your eyes' : 'a natural contour that models charge for'}` },
-      { icon: "🎨", text: `Your skin undertone matches ${seed % 3 === 0 ? 'warm gold' : seed % 3 === 1 ? 'cool olive' : 'neutral rose'} — ${seed % 3 === 0 ? 'earth tones like camel, olive, rust will make you glow' : seed % 3 === 1 ? 'jewel tones like emerald, sapphire, plum will pop' : 'both warm and cool palettes work on you'}` },
+      { icon: "🎨", text: `Your skin undertone matches ${seed % 3 === 0 ? 'warm gold' : seed % 3 === 1 ? 'cool olive' : 'neutral red'} — ${seed % 3 === 0 ? 'earth tones like camel, olive, rust will make you glow' : seed % 3 === 1 ? 'jewel tones like emerald, sapphire, plum will pop' : 'both warm and cool palettes work on you'}` },
       { icon: "📐", text: "Composition can be improved by adjusting headroom and subject position." },
       { icon: "✨", text: `Skin clarity: ${62 + (seed % 18)}/100 — ${seed % 3 === 0 ? 'a Vitamin C serum would push this to 80+ in 2 weeks' : seed % 3 === 1 ? 'moisturize before photos for an instant 5pt boost' : 'better than 70% of profiles we analyze'}` },
       { icon: "🧠", text: `Your micro-expression reads ${seed % 3 === 0 ? 'confident with warmth' : seed % 3 === 1 ? 'approachable intelligence' : 'quiet confidence'} — ${seed % 2 === 0 ? 'dating apps reward this 3x' : 'LinkedIn profiles with this signal get 2x views'}` },
@@ -108,8 +108,8 @@ function VariableReward({ score, auditId }: { score: number; auditId: string }) 
 
   return (
     <FadeInView delay={100}>
-      <div className="rounded-xl border border-purple-500/15 bg-purple-500/5 p-3 text-center">
-        <span className="text-[11px] text-purple-300">
+      <div className="rounded-xl border border-red-500/15 bg-red-500/5 p-3 text-center">
+        <span className="text-[11px] text-red-300">
           {insight.icon} {insight.text}
         </span>
       </div>

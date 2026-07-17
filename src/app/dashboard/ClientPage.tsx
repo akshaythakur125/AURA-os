@@ -116,12 +116,12 @@ export default function DashboardPage() {
 
       <div className="mb-10 flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">
+          <h1 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">
             {user?.displayName
               ? `Welcome back, ${user.displayName}`
               : "Your Dashboard"}
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-[#857b6e]">
             Track your improvement. Check in regularly to keep your score rising.
           </p>
         </div>
@@ -151,26 +151,26 @@ export default function DashboardPage() {
       {hasAudits && stats && (
         <div className="my-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Card>
-            <div className="text-xs text-gray-500">Total Checks</div>
-            <div className="mt-1 text-2xl font-bold text-white">
+            <div className="text-xs text-[#857b6e]">Total Checks</div>
+            <div className="mt-1 text-2xl font-bold text-[#1C1917]">
               <CountUp target={stats.totalAudits} duration={1000} />
             </div>
           </Card>
           <Card>
-            <div className="text-xs text-gray-500">Latest Score</div>
-            <div className="mt-1 text-2xl font-bold text-white">
+            <div className="text-xs text-[#857b6e]">Latest Score</div>
+            <div className="mt-1 text-2xl font-bold text-[#1C1917]">
               {stats.latestScore !== null ? <CountUp target={stats.latestScore} duration={1200} /> : "—"}
             </div>
           </Card>
           <Card>
-            <div className="text-xs text-gray-500">Best Score</div>
+            <div className="text-xs text-[#857b6e]">Best Score</div>
             <div className="mt-1 text-2xl font-bold text-emerald-400">
               {stats.bestScore !== null ? <CountUp target={stats.bestScore} duration={1200} /> : "—"}
             </div>
           </Card>
           <Card>
-            <div className="text-xs text-gray-500">Avg Score</div>
-            <div className="mt-1 text-2xl font-bold text-purple-400">
+            <div className="text-xs text-[#857b6e]">Avg Score</div>
+            <div className="mt-1 text-2xl font-bold text-red-400">
               {stats.averageFreeScore !== null ? <CountUp target={stats.averageFreeScore} duration={1200} /> : "—"}
             </div>
           </Card>
@@ -189,10 +189,10 @@ export default function DashboardPage() {
         <Card className="mb-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h3 className="text-sm font-semibold text-white">
+              <h3 className="text-sm font-semibold text-[#1C1917]">
                 Upgrade Recommendations
               </h3>
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-[#857b6e]">
                 Personalized product suggestions based on your latest audit.
               </p>
             </div>
@@ -229,8 +229,8 @@ export default function DashboardPage() {
 
         return (
           <Card className="mb-10">
-            <h3 className="mb-2 text-sm font-semibold text-white">Your Repeated Pattern</h3>
-            <p className="text-xs text-gray-300">{insight}</p>
+            <h3 className="mb-2 text-sm font-semibold text-[#1C1917]">Your Repeated Pattern</h3>
+            <p className="text-xs text-[#4a443d]">{insight}</p>
           </Card>
         );
       })()}
@@ -238,7 +238,7 @@ export default function DashboardPage() {
       {/* Audit History */}
       {hasAudits && (
         <div className="mb-10">
-          <h2 className="mb-4 text-lg font-semibold text-white">Audit History</h2>
+          <h2 className="mb-4 text-lg font-semibold text-[#1C1917]">Audit History</h2>
           <div className="space-y-4">
             {audits.map((audit) => {
               const category = getCategory(audit);
@@ -246,7 +246,7 @@ export default function DashboardPage() {
                 <Card key={audit.id} className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex min-w-0 flex-1 items-center gap-4">
                     {audit.imageDataUrl && (
-                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-white/[0.04]">
+                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-[#1c1917]/[0.08]">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={audit.imageDataUrl}
@@ -257,7 +257,7 @@ export default function DashboardPage() {
                     )}
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="truncate text-sm font-semibold text-white">
+                        <h3 className="truncate text-sm font-semibold text-[#1C1917]">
                           {auditTypeLabels[audit.auditType] || audit.auditType}
                         </h3>
                         <Badge variant={statusBadge[audit.reportStatus] || "default"}>
@@ -275,13 +275,13 @@ export default function DashboardPage() {
                           </Badge>
                         ))}
                       </div>
-                      <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+                      <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#857b6e]">
                         <span>Goal: {audit.goal}</span>
                         <span>Budget: &#8377;{audit.budgetRange.toLocaleString()}</span>
                         {audit.freeScore !== undefined && (
                           <span>
                             Score:{" "}
-                            <span className="text-purple-300">{audit.freeScore}</span>
+                            <span className="text-red-300">{audit.freeScore}</span>
                           </span>
                         )}
                         <span>{formatDate(audit.createdAt)}</span>
@@ -299,7 +299,7 @@ export default function DashboardPage() {
                     )}
                     <button
                       onClick={() => handleDeleteAudit(audit.id)}
-                      className="rounded-lg px-2 py-1.5 text-xs text-gray-500 transition-colors hover:bg-white/5 hover:text-red-400"
+                      className="rounded-lg px-2 py-1.5 text-xs text-[#857b6e] transition-colors hover:bg-[#1c1917]/[0.04] hover:text-red-400"
                     >
                       Delete
                     </button>
@@ -317,32 +317,32 @@ export default function DashboardPage() {
         <Link href="/privacy-center"><Button variant="ghost" size="sm">Privacy Center</Button></Link>
       </div>
 
-      <div className="rounded-xl border border-white/[0.04] bg-white/[0.02] p-4 text-center text-xs text-gray-600">
+      <div className="rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-4 text-center text-xs text-[#9c9184]">
         Local-only MVP: your data is stored in your browser, not uploaded to a server. Referral and challenge tracking is local — no real social network.
       </div>
 
       <div className="mt-10">
-        <h2 className="mb-4 text-lg font-semibold text-white">Profile Settings</h2>
+        <h2 className="mb-4 text-lg font-semibold text-[#1C1917]">Profile Settings</h2>
         <Card>
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs text-gray-500">Display Name</label>
+              <label className="mb-1 block text-xs text-[#857b6e]">Display Name</label>
               <input
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 placeholder="Your name"
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+                className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none"
               />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-gray-500">City</label>
+              <label className="mb-1 block text-xs text-[#857b6e]">City</label>
               <input
                 type="text"
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="Your city"
-                className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+                className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none"
               />
             </div>
           </div>

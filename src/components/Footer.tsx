@@ -41,26 +41,26 @@ const footerLinks = [
 
 export function Footer() {
   return (
-    <footer className="relative mt-auto border-t border-white/[0.04]">
+    <footer className="relative mt-auto border-t border-[#1c1917]/[0.08]">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(147,51,234,0.04),transparent_60%)]" />
       <Container className="relative py-16">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <div className="flex items-center gap-2">
-              <div className="relative flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 text-[11px] font-bold text-white shadow-[var(--shadow-glow-purple)]">
+              <div className="relative flex h-7 w-7 items-center justify-center rounded-md bg-[#E14434] text-[11px] font-bold text-white shadow-[var(--shadow-glow-red)]">
                 A
                 <div className="absolute inset-0 rounded-md bg-gradient-to-br from-white/15 to-transparent" />
               </div>
-              <span className="text-[14px] font-semibold tracking-tight text-white">AuraCheck</span>
+              <span className="text-[14px] font-semibold tracking-tight text-[#1C1917]">AuraCheck</span>
             </div>
-            <p className="mt-3 text-[13px] leading-relaxed text-gray-500">
+            <p className="mt-3 text-[13px] leading-relaxed text-[#857b6e]">
               First-impression intelligence for the modern age.
             </p>
           </div>
 
           {footerLinks.map((group) => (
             <div key={group.label}>
-              <h3 className="mb-3.5 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+              <h3 className="mb-3.5 text-[11px] font-semibold uppercase tracking-wider text-[#6f675e]">
                 {group.label}
               </h3>
               <ul className="space-y-2">
@@ -68,7 +68,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-[13px] text-gray-500 transition-colors duration-200 hover:text-purple-300"
+                      className="text-[13px] text-[#857b6e] transition-colors duration-200 hover:text-red-300"
                     >
                       {link.label}
                     </Link>
@@ -79,7 +79,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-14 border-t border-white/[0.04] pt-6 text-center text-[12px] text-gray-600">
+        <div className="mt-14 border-t border-[#1c1917]/[0.08] pt-6 text-center text-[12px] text-[#9c9184]">
           &copy; {new Date().getFullYear()} AuraCheck. For informational and
           entertainment purposes only.
         </div>

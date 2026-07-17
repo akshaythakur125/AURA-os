@@ -40,16 +40,16 @@ export function GlassCard({ icon, title, description, className = "" }: GlassCar
       ref={ref}
       onMouseMove={onMove}
       onMouseLeave={onLeave}
-      className={`glass-card group relative overflow-hidden rounded-2xl p-8 transition-[border-color] duration-300 hover:border-white/[0.1] ${className}`}
+      className={`glass-card group relative overflow-hidden rounded-2xl p-8 transition-[border-color] duration-300 hover:border-[#1c1917]/[0.12] ${className}`}
     >
       {/* Subtle gradient overlay on hover */}
-      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-rose-500/[0.04] to-blue-500/[0.04] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-br from-red-500/[0.04] to-blue-500/[0.04] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <div className="relative">
-        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-white/[0.06] text-rose-400 transition-colors duration-300 group-hover:bg-rose-500/10">
+        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#1c1917]/[0.04] text-red-400 transition-colors duration-300 group-hover:bg-red-500/10">
           {icon}
         </div>
-        <h3 className="mb-2 text-lg font-semibold text-white">{title}</h3>
-        <p className="text-sm leading-relaxed text-gray-400">{description}</p>
+        <h3 className="mb-2 text-lg font-semibold text-[#1C1917]">{title}</h3>
+        <p className="text-sm leading-relaxed text-[#6f675e]">{description}</p>
       </div>
     </div>
   );

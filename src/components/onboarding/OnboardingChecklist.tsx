@@ -40,8 +40,8 @@ export function OnboardingChecklist() {
       <Card>
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold text-white">Onboarding Complete ✓</h3>
-            <p className="mt-1 text-xs text-gray-500">You have completed all onboarding steps.</p>
+            <h3 className="text-sm font-semibold text-[#1C1917]">Onboarding Complete ✓</h3>
+            <p className="mt-1 text-xs text-[#857b6e]">You have completed all onboarding steps.</p>
           </div>
           <Badge variant="success">Done</Badge>
         </div>
@@ -52,12 +52,12 @@ export function OnboardingChecklist() {
   return (
     <Card>
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-white">Getting Started</h3>
-        <span className="text-xs text-gray-500">{progress.completed}/{progress.total}</span>
+        <h3 className="text-sm font-semibold text-[#1C1917]">Getting Started</h3>
+        <span className="text-xs text-[#857b6e]">{progress.completed}/{progress.total}</span>
       </div>
-      <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-white/5">
+      <div className="mb-3 h-1.5 overflow-hidden rounded-full bg-[#1c1917]/[0.04]">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 transition-all"
+          className="h-full rounded-full bg-gradient-to-r from-red-600 to-red-500 transition-all"
           style={{ width: `${progress.percentage}%` }}
         />
       </div>
@@ -68,7 +68,7 @@ export function OnboardingChecklist() {
             <div key={step.key} className="flex items-center gap-3">
               <div
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-                  done ? "bg-emerald-500/20 text-emerald-400" : "bg-white/5 text-gray-600"
+                  done ? "bg-emerald-500/20 text-emerald-400" : "bg-[#1c1917]/[0.04] text-[#9c9184]"
                 }`}
               >
                 {done ? (
@@ -80,9 +80,9 @@ export function OnboardingChecklist() {
                 )}
               </div>
               {done ? (
-                <span className="text-xs text-gray-500 line-through">{step.label}</span>
+                <span className="text-xs text-[#857b6e] line-through">{step.label}</span>
               ) : (
-                <Link href={step.href} className="text-xs text-purple-300 hover:text-purple-200">
+                <Link href={step.href} className="text-xs text-red-300 hover:text-red-200">
                   {step.label}
                 </Link>
               )}
@@ -92,7 +92,7 @@ export function OnboardingChecklist() {
         <div className="flex items-center gap-3">
           <div
             className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-              state.hasSeenIntro ? "bg-emerald-500/20 text-emerald-400" : "bg-white/5 text-gray-600"
+              state.hasSeenIntro ? "bg-emerald-500/20 text-emerald-400" : "bg-[#1c1917]/[0.04] text-[#9c9184]"
             }`}
           >
             {state.hasSeenIntro ? (
@@ -103,7 +103,7 @@ export function OnboardingChecklist() {
               <span className="text-[10px]">○</span>
             )}
           </div>
-          <span className={`text-xs ${state.hasSeenIntro ? "text-gray-500 line-through" : "text-gray-400"}`}>
+          <span className={`text-xs ${state.hasSeenIntro ? "text-[#857b6e] line-through" : "text-[#6f675e]"}`}>
             Seen the intro
           </span>
         </div>

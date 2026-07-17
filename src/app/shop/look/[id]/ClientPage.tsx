@@ -19,7 +19,7 @@ export function LookDetailClient({ look }: { look: Look }) {
   return (
     <Container className="py-12">
       <FadeInView>
-        <Link href="/shop" className="mb-6 inline-flex items-center gap-1 text-xs text-gray-500 hover:text-white">
+        <Link href="/shop" className="mb-6 inline-flex items-center gap-1 text-xs text-[#857b6e] hover:text-[#1C1917]">
           ← Back to shop
         </Link>
 
@@ -37,14 +37,14 @@ export function LookDetailClient({ look }: { look: Look }) {
               <Badge variant="default">{look.category}</Badge>
               <span className="text-xs text-amber-400 font-medium">{look.priceLabel}</span>
             </div>
-            <h1 className="mb-3 text-2xl font-bold text-white">{look.title}</h1>
-            <p className="mb-4 text-sm text-gray-400">{look.description}</p>
+            <h1 className="mb-3 text-2xl font-bold text-[#1C1917]">{look.title}</h1>
+            <p className="mb-4 text-sm text-[#6f675e]">{look.description}</p>
 
             {/* Why recommended */}
             {look.statusLeakTags.length > 0 && (
               <div className="mb-4 rounded-xl border border-emerald-500/15 bg-emerald-500/[0.04] p-3">
                 <p className="text-xs font-medium text-emerald-400">Addresses</p>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-[#6f675e] mt-1">
                   {look.statusLeakTags.join(", ")} presentation signals
                 </p>
               </div>
@@ -62,7 +62,7 @@ export function LookDetailClient({ look }: { look: Look }) {
 
             {/* Retailer links */}
             <div className="space-y-2">
-              <p className="text-xs text-gray-500">Search on retailers:</p>
+              <p className="text-xs text-[#857b6e]">Search on retailers:</p>
               {RETAILERS.map((r) => (
                 <a
                   key={r}
@@ -72,16 +72,16 @@ export function LookDetailClient({ look }: { look: Look }) {
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3 text-sm text-gray-300 hover:bg-white/[0.06] hover:text-white transition-colors"
+                  className="flex items-center justify-between rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] px-4 py-3 text-sm text-[#4a443d] hover:bg-[#1c1917]/[0.04] hover:text-[#1C1917] transition-colors"
                 >
                   <span>{RETAILER_NAMES[r]}</span>
-                  <span className="text-xs text-gray-600">Search →</span>
+                  <span className="text-xs text-[#9c9184]">Search →</span>
                 </a>
               ))}
             </div>
 
             {/* Disclaimer */}
-            <p className="mt-6 text-[10px] text-gray-600">
+            <p className="mt-6 text-[10px] text-[#9c9184]">
               Links open retailer search pages. Verify current price and availability on the retailer site.
               FixMyAura may earn a commission on eligible purchases.
             </p>

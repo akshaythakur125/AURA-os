@@ -120,7 +120,7 @@ function Cell({
   if (value === false) {
     return (
       <svg
-        className="mx-auto h-5 w-5 text-gray-600"
+        className="mx-auto h-5 w-5 text-[#9c9184]"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -134,31 +134,31 @@ function Cell({
       </svg>
     );
   }
-  return <span className="text-xs text-gray-400">{value}</span>;
+  return <span className="text-xs text-[#6f675e]">{value}</span>;
 }
 
 const HEADERS = [
   { label: "Free", className: "" },
-  { label: "{formatPrice(PAYMENT_PRODUCTS.aura_report.price)} Aura Report", className: "text-purple-300" },
-  { label: "{formatPrice(PAYMENT_PRODUCTS.dating_audit.price)} Dating", className: "text-pink-300" },
+  { label: "{formatPrice(PAYMENT_PRODUCTS.aura_report.price)} Aura Report", className: "text-red-300" },
+  { label: "{formatPrice(PAYMENT_PRODUCTS.dating_audit.price)} Dating", className: "text-red-300" },
   { label: "{formatPrice(PAYMENT_PRODUCTS.glowup_plan.price)} Glow-Up", className: "text-amber-300" },
 ];
 
 export function ReportComparison() {
   return (
     <Card>
-      <h3 className="mb-4 text-sm font-semibold text-white">
+      <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">
         Free vs Paid — What you get
       </h3>
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-white/[0.04]">
-              <th className="pb-3 pr-4 font-medium text-gray-500">Feature</th>
+            <tr className="border-b border-[#1c1917]/[0.08]">
+              <th className="pb-3 pr-4 font-medium text-[#857b6e]">Feature</th>
               {HEADERS.map((h) => (
                 <th
                   key={h.label}
-                  className={`pb-3 px-2 text-center font-medium ${h.className || "text-gray-500"}`}
+                  className={`pb-3 px-2 text-center font-medium ${h.className || "text-[#857b6e]"}`}
                 >
                   {h.label}
                 </th>
@@ -167,8 +167,8 @@ export function ReportComparison() {
           </thead>
           <tbody>
             {ROWS.map((row) => (
-              <tr key={row.label} className="border-b border-white/[0.04]">
-                <td className="py-3 pr-4 text-gray-300">{row.label}</td>
+              <tr key={row.label} className="border-b border-[#1c1917]/[0.08]">
+                <td className="py-3 pr-4 text-[#4a443d]">{row.label}</td>
                 <td className="py-3 px-2 text-center">
                   <Cell value={row.free} />
                 </td>

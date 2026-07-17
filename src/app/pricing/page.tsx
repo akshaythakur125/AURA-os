@@ -152,21 +152,21 @@ export default function PricingPage() {
                       Popular
                     </Badge>
                   )}
-                  <div className="mb-1 text-xs text-gray-500">{tier.bestFor}</div>
-                  <h3 className="text-lg font-bold text-white">{tier.name}</h3>
+                  <div className="mb-1 text-xs text-[#857b6e]">{tier.bestFor}</div>
+                  <h3 className="text-lg font-bold text-[#1C1917]">{tier.name}</h3>
                   <div className="mt-2 flex items-baseline gap-1">
-                    <span className={`${tier.highlighted ? "text-5xl" : "text-4xl"} font-bold text-white`}>
+                    <span className={`${tier.highlighted ? "text-5xl" : "text-4xl"} font-bold text-[#1C1917]`}>
                       &#8377;{tier.price}
                     </span>
-                    <span className="text-sm text-gray-500">one-time</span>
+                    <span className="text-sm text-[#857b6e]">one-time</span>
                   </div>
-                  <p className="mt-2 text-sm text-gray-400">{tier.description}</p>
+                  <p className="mt-2 text-sm text-[#6f675e]">{tier.description}</p>
 
                   <ul className="mt-6 flex-1 space-y-3">
                     {tier.features.map((f) => (
                       <li
                         key={f}
-                        className="flex items-start gap-3 text-sm text-gray-300"
+                        className="flex items-start gap-3 text-sm text-[#4a443d]"
                       >
                         <svg
                           className="mt-0.5 h-4 w-4 flex-shrink-0 text-emerald-400"
@@ -201,8 +201,8 @@ export default function PricingPage() {
             ))}
           </div>
 
-          <div className="mt-12 rounded-xl border border-purple-500/10 bg-purple-500/5 p-6 text-center">
-            <p className="text-sm text-gray-400">
+          <div className="mt-12 rounded-xl border border-red-500/10 bg-red-500/5 p-6 text-center">
+            <p className="text-sm text-[#6f675e]">
               All payments are processed manually via UPI. No automatic
               recurring billing.
               <br />
@@ -220,7 +220,7 @@ export default function PricingPage() {
           </div>
 
           {/* ─── Trust & Offer Notes ─── */}
-          <div className="mt-12 space-y-4 text-center text-xs text-gray-600">
+          <div className="mt-12 space-y-4 text-center text-xs text-[#9c9184]">
             <p>Early users may receive manual offer codes. If you have one, enter it on the unlock page to get a discount.</p>
             <p>Manual UPI unlock flow for MVP. No automatic payment verification.</p>
             <p>AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
@@ -229,7 +229,7 @@ export default function PricingPage() {
           </div>
 
           <div className="mt-16 text-center">
-            <h3 className="mb-4 text-lg font-semibold text-white">
+            <h3 className="mb-4 text-lg font-semibold text-[#1C1917]">
               Frequently Asked
             </h3>
             <div className="mx-auto grid max-w-2xl gap-6 text-left">
@@ -252,8 +252,8 @@ export default function PricingPage() {
                 },
               ].map((faq) => (
                 <div key={faq.q}>
-                  <h4 className="text-sm font-medium text-white">{faq.q}</h4>
-                  <p className="mt-1 text-sm text-gray-500">{faq.a}</p>
+                  <h4 className="text-sm font-medium text-[#1C1917]">{faq.q}</h4>
+                  <p className="mt-1 text-sm text-[#857b6e]">{faq.a}</p>
                 </div>
               ))}
             </div>

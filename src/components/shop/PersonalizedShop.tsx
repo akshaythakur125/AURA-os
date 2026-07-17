@@ -91,7 +91,7 @@ function ShopLinks({ look }: { look: Look }) {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="block rounded-lg px-3 py-2 text-xs text-gray-300 transition-colors hover:bg-white/[0.06] hover:text-white"
+              className="block rounded-lg px-3 py-2 text-xs text-[#4a443d] transition-colors hover:bg-[#1c1917]/[0.04] hover:text-[#1C1917]"
               onClick={() => {
                 setOpen(false);
                 trackEvent(EVENTS.SHOP_LINK_CLICKED, {
@@ -145,7 +145,7 @@ export function PersonalizedShop({
   };
 
   return (
-    <section className="border-t border-white/[0.04] py-12">
+    <section className="border-t border-[#1c1917]/[0.08] py-12">
       <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-10">
         {/* Header — stylist picks branding */}
         <FadeInView>
@@ -159,9 +159,9 @@ export function PersonalizedShop({
                 ? `Your stylist picks to fix "${leakLabels[worstLeak] || worstLeak}"`
                 : "Your personalized style picks"}
             </h2>
-            <p className="mt-3 text-sm text-gray-400">
+            <p className="mt-3 text-sm text-[#6f675e]">
               {archetype && (
-                <span className="text-purple-300">{archetype}</span>
+                <span className="text-red-300">{archetype}</span>
               )}
               {archetype && worstLeak && " · "}
               {worstLeak && (
@@ -183,7 +183,7 @@ export function PersonalizedShop({
               placeholder="Search by category, style, or need..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2.5 text-sm text-white placeholder-gray-500 outline-none focus:border-violet-500/30"
+              className="w-full rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.03] px-4 py-2.5 text-sm text-[#1C1917] placeholder-gray-500 outline-none focus:border-red-500/30"
             />
           </div>
         </FadeInView>
@@ -191,7 +191,7 @@ export function PersonalizedShop({
         {/* Budget filter */}
         <FadeInView delay={50}>
           <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
-            <span className="text-xs text-gray-500">Budget:</span>
+            <span className="text-xs text-[#857b6e]">Budget:</span>
             {[
               { label: "All", value: null },
               { label: "Under ₹500", value: 500 },
@@ -203,8 +203,8 @@ export function PersonalizedShop({
                 onClick={() => setBudgetFilter(b.value)}
                 className={`rounded-full px-3 py-1 text-xs transition-all ${
                   budgetFilter === b.value
-                    ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
-                    : "bg-white/[0.04] text-gray-400 border border-white/[0.06] hover:bg-white/[0.08]"
+                    ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                    : "bg-[#1c1917]/[0.03] text-[#6f675e] border border-[#1c1917]/10 hover:bg-[#1c1917]/[0.05]"
                 }`}
               >
                 {b.label}
@@ -226,8 +226,8 @@ export function PersonalizedShop({
                   <div key={tag} className="flex items-start gap-2">
                     <span className="mt-0.5 text-emerald-500">✓</span>
                     <div>
-                      <span className="text-xs font-medium text-white">{leakLabels[tag] || tag}: </span>
-                      <span className="text-xs text-gray-400">{
+                      <span className="text-xs font-medium text-[#1C1917]">{leakLabels[tag] || tag}: </span>
+                      <span className="text-xs text-[#6f675e]">{
                         tag === "lighting" && "Face a window at 45°. Natural side light is free and the single biggest upgrade."
                         || tag === "background" && "Stand against a plain wall or step outside. A clean background costs nothing."
                         || tag === "clarity" && "Use your phone's rear camera, clean the lens, and hold steady or use a timer."
@@ -255,14 +255,14 @@ export function PersonalizedShop({
                   <LookImage look={look} />
                   <div className="mt-3 flex-1">
                     <div className="mb-1 flex items-start justify-between gap-2">
-                      <Link href={"/shop/look/" + look.id} className="text-sm font-semibold text-white leading-tight hover:underline">
+                      <Link href={"/shop/look/" + look.id} className="text-sm font-semibold text-[#1C1917] leading-tight hover:underline">
                         {look.title}
                       </Link>
                       <span className="text-xs font-medium text-amber-400 whitespace-nowrap">
                         {look.priceLabel}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500 line-clamp-2">
+                    <p className="text-xs text-[#857b6e] line-clamp-2">
                       {look.description}
                     </p>
                     {/* Why this fixes it */}
@@ -286,7 +286,7 @@ export function PersonalizedShop({
                     <div className="flex-1"><ShopLinks look={look} /></div>
                     <button
                       onClick={() => toggleSave({ id: look.id, title: look.title, category: look.category, priceLabel: look.priceLabel })}
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] text-xs transition-colors hover:bg-white/[0.06]"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#1c1917]/10 text-xs transition-colors hover:bg-[#1c1917]/[0.04]"
                       aria-label={isSaved(look.id) ? "Remove from saved" : "Save product"}
                       title={isSaved(look.id) ? "Saved" : "Save"}
                     >
@@ -300,7 +300,7 @@ export function PersonalizedShop({
                             : prev.length < 4 ? [...prev, look.id] : prev
                         );
                       }}
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] text-xs transition-colors hover:bg-white/[0.06]"
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#1c1917]/10 text-xs transition-colors hover:bg-[#1c1917]/[0.04]"
                       aria-label={compareIds.includes(look.id) ? "Remove from compare" : "Add to compare"}
                     >
                       {compareIds.includes(look.id) ? "✓" : "⇔"}
@@ -315,27 +315,27 @@ export function PersonalizedShop({
         {/* Comparison table */}
         {compareLooks.length >= 2 && (
           <FadeInView delay={100}>
-            <div className="mb-8 overflow-x-auto rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
+            <div className="mb-8 overflow-x-auto rounded-2xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-4">
               <div className="mb-3 flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-white">Compare ({compareLooks.length})</h3>
-                <button onClick={() => setCompareIds([])} className="text-xs text-gray-500 hover:text-white">Clear</button>
+                <h3 className="text-sm font-semibold text-[#1C1917]">Compare ({compareLooks.length})</h3>
+                <button onClick={() => setCompareIds([])} className="text-xs text-[#857b6e] hover:text-[#1C1917]">Clear</button>
               </div>
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
-                    <th className="py-2 pr-3 text-left text-gray-500">Product</th>
-                    <th className="py-2 pr-3 text-left text-gray-500">Category</th>
-                    <th className="py-2 pr-3 text-left text-gray-500">Price</th>
-                    <th className="py-2 pr-3 text-left text-gray-500">Addresses</th>
+                  <tr className="border-b border-[#1c1917]/10">
+                    <th className="py-2 pr-3 text-left text-[#857b6e]">Product</th>
+                    <th className="py-2 pr-3 text-left text-[#857b6e]">Category</th>
+                    <th className="py-2 pr-3 text-left text-[#857b6e]">Price</th>
+                    <th className="py-2 pr-3 text-left text-[#857b6e]">Addresses</th>
                   </tr>
                 </thead>
                 <tbody>
                   {compareLooks.map((l) => (
                     <tr key={l.id} className="border-b border-white/[0.03]">
-                      <td className="py-2 pr-3 font-medium text-white">{l.title}</td>
-                      <td className="py-2 pr-3 text-gray-400">{l.category}</td>
+                      <td className="py-2 pr-3 font-medium text-[#1C1917]">{l.title}</td>
+                      <td className="py-2 pr-3 text-[#6f675e]">{l.category}</td>
                       <td className="py-2 pr-3 text-amber-400">{l.priceLabel}</td>
-                      <td className="py-2 pr-3 text-gray-400">{l.statusLeakTags.join(", ") || "—"}</td>
+                      <td className="py-2 pr-3 text-[#6f675e]">{l.statusLeakTags.join(", ") || "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -346,7 +346,7 @@ export function PersonalizedShop({
 
         {/* Affiliate disclosure */}
         <FadeInView delay={150}>
-          <p className="mt-6 text-center text-[10px] text-gray-600">
+          <p className="mt-6 text-center text-[10px] text-[#9c9184]">
             FixMyAura may earn a commission when you purchase through eligible links. This does not change the price you pay.
             Product links open retailer search pages — verify current price and availability on the retailer site.
           </p>

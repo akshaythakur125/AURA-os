@@ -36,10 +36,10 @@ export default function GlowupPlanPage() {
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
             <Badge variant="premium" className="mb-4">30-Day Glow-Up Plan — {formatPrice(PAYMENT_PRODUCTS.glowup_plan.price)}</Badge>
-            <h1 className="bg-gradient-to-r from-white via-amber-200 to-orange-200 bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
+            <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
               Get a 30-day plan to make your presentation cleaner and more intentional.
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-400">
+            <p className="mx-auto mt-6 max-w-2xl text-lg text-[#6f675e]">
               A practical, budget-aware roadmap for grooming, outfit basics, background, photo system, and profile consistency.
             </p>
             <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -50,7 +50,7 @@ export default function GlowupPlanPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <SectionHeading title="What the 30-day plan includes" />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -61,31 +61,31 @@ export default function GlowupPlanPage() {
               { title: "Week 4 — Integration & polish", desc: "Review progress, refine system, plan next 30 days, create content batch." },
             ].map((w) => (
               <Card key={w.title} hover>
-                <h3 className="mb-2 text-sm font-semibold text-white">{w.title}</h3>
-                <p className="text-xs leading-relaxed text-gray-400">{w.desc}</p>
+                <h3 className="mb-2 text-sm font-semibold text-[#1C1917]">{w.title}</h3>
+                <p className="text-xs leading-relaxed text-[#6f675e]">{w.desc}</p>
               </Card>
             ))}
           </div>
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <SectionHeading title="Daily mission preview" subtitle="Every day has one specific action across 5 categories." />
           <div className="grid gap-4 sm:grid-cols-5">
             {[
-              { cat: "Photo", color: "from-purple-600 to-purple-400", missions: ["Take one intentional selfie", "Find your best angle", "Check lighting at 3 times of day"] },
-              { cat: "Grooming", color: "from-pink-500 to-rose-400", missions: ["Consistent skincare AM/PM", "Eyebrow cleanup", "Lip balm habit"] },
+              { cat: "Photo", color: "from-red-600 to-red-400", missions: ["Take one intentional selfie", "Find your best angle", "Check lighting at 3 times of day"] },
+              { cat: "Grooming", color: "from-red-500 to-red-400", missions: ["Consistent skincare AM/PM", "Eyebrow cleanup", "Lip balm habit"] },
               { cat: "Outfit", color: "from-amber-500 to-orange-400", missions: ["Wear one well-fitted solid", "Create 3 outfit formulas", "Check fit in mirror"] },
               { cat: "Background", color: "from-emerald-500 to-teal-400", missions: ["Clean one photo spot", "Find a neutral wall", "Remove clutter from frame"] },
               { cat: "Mindset", color: "from-blue-500 to-cyan-400", missions: ["No scroll 30 min before photos", "Write one intentional caption", "Plan your visual goals"] },
             ].map((cat) => (
               <Card key={cat.cat}>
                 <div className={`mb-3 h-1.5 rounded-full bg-gradient-to-r ${cat.color}`} />
-                <h3 className="mb-2 text-sm font-semibold text-white">{cat.cat}</h3>
+                <h3 className="mb-2 text-sm font-semibold text-[#1C1917]">{cat.cat}</h3>
                 <ul className="space-y-1.5">
                   {cat.missions.map((m) => (
-                    <li key={m} className="flex items-start gap-2 text-xs text-gray-400">
+                    <li key={m} className="flex items-start gap-2 text-xs text-[#6f675e]">
                       <span className="mt-0.5 h-1 w-1 shrink-0 rounded-full bg-white/30" />
                       {m}
                     </li>
@@ -97,7 +97,7 @@ export default function GlowupPlanPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <div className="grid gap-10 lg:grid-cols-2">
             <div>
@@ -109,9 +109,9 @@ export default function GlowupPlanPage() {
                   { tier: "₹5,000", items: "2 outfit formulas, basic skincare, photo backdrop" },
                   { tier: "₹10,000+", items: "Wardrobe refresh, professional haircut, premium photo setup" },
                 ].map((t) => (
-                  <div key={t.tier} className="rounded-lg border border-white/[0.04] bg-white/[0.03] px-4 py-3">
+                  <div key={t.tier} className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] px-4 py-3">
                     <div className="mb-1 text-xs text-amber-400">Up to {t.tier}</div>
-                    <p className="text-xs text-gray-400">{t.items}</p>
+                    <p className="text-xs text-[#6f675e]">{t.items}</p>
                   </div>
                 ))}
               </div>
@@ -125,8 +125,8 @@ export default function GlowupPlanPage() {
                   { title: "Chasing trends instead of consistency", desc: "A consistent clean look beats an inconsistent trendy one every time." },
                 ].map((a) => (
                   <Card key={a.title}>
-                    <h4 className="mb-1 text-sm font-medium text-white">{a.title}</h4>
-                    <p className="text-xs text-gray-400">{a.desc}</p>
+                    <h4 className="mb-1 text-sm font-medium text-[#1C1917]">{a.title}</h4>
+                    <p className="text-xs text-[#6f675e]">{a.desc}</p>
                   </Card>
                 ))}
               </div>
@@ -135,19 +135,19 @@ export default function GlowupPlanPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <SectionHeading title="Sample report preview" />
           <Card className="mx-auto max-w-lg">
             <div className="mb-3 flex items-center justify-between">
               <Badge variant="premium">Sample — Glow-Up Plan</Badge>
-              <span className="text-2xl font-bold text-white">{SAMPLE_REPORTS[2].score}</span>
+              <span className="text-2xl font-bold text-[#1C1917]">{SAMPLE_REPORTS[2].score}</span>
             </div>
             <div className="mb-3 rounded-lg border border-red-500/10 bg-red-500/5 p-3">
               <div className="text-xs text-red-400">Primary bottleneck</div>
-              <div className="text-sm text-gray-300">{SAMPLE_REPORTS[2].bottleneck}</div>
+              <div className="text-sm text-[#4a443d]">{SAMPLE_REPORTS[2].bottleneck}</div>
             </div>
-            <p className="mb-4 text-sm text-gray-400">{SAMPLE_REPORTS[2].topInsight}</p>
+            <p className="mb-4 text-sm text-[#6f675e]">{SAMPLE_REPORTS[2].topInsight}</p>
           </Card>
           <div className="mt-6 mx-auto max-w-md">
             <LeadCaptureCard source="glowup-plan-page" defaultProduct="glowup_plan" />
@@ -155,7 +155,7 @@ export default function GlowupPlanPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-24">
+      <section className="border-t border-[#1c1917]/[0.08] py-24">
         <Container>
           <SectionHeading title="Free vs Paid" />
           <div className="mx-auto max-w-4xl">
@@ -164,9 +164,9 @@ export default function GlowupPlanPage() {
         </Container>
       </section>
 
-      <section className="border-t border-white/[0.04] py-12">
+      <section className="border-t border-[#1c1917]/[0.08] py-12">
         <Container>
-          <div className="mx-auto max-w-2xl rounded-xl border border-white/[0.04] bg-white/[0.02] p-6 text-center text-xs text-gray-500">
+          <div className="mx-auto max-w-2xl rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-6 text-center text-xs text-[#857b6e]">
             <p>AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
             <p className="mt-2">No guaranteed transformation — the plan gives you a system, consistency is up to you.</p>
             <p className="mt-2">Manual UPI unlock flow — payment is not automatically verified.</p>

@@ -38,10 +38,10 @@ export function ResultCapture({ audit }: Props) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <p className="text-sm font-medium text-white">Result saved</p>
-          <p className="mt-1 text-xs text-gray-400">
+          <p className="text-sm font-medium text-[#1C1917]">Result saved</p>
+          <p className="mt-1 text-xs text-[#6f675e]">
             {channel === "email" ? (
-              <>We&apos;ll send your score ({score}/100) and {heroLeak || "your biggest leak"} to <span className="text-white">{value}</span></>
+              <>We&apos;ll send your score ({score}/100) and {heroLeak || "your biggest leak"} to <span className="text-[#1C1917]">{value}</span></>
             ) : (
               <>We&apos;ll send your score ({score}/100) and {heroLeak || "your biggest leak"} to WhatsApp</>
             )}
@@ -52,16 +52,16 @@ export function ResultCapture({ audit }: Props) {
   }
 
   return (
-    <Card className="border-purple-500/20 bg-purple-500/5">
+    <Card className="border-red-500/20 bg-red-500/5">
       <div className="text-center">
-        <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/20">
-          <svg className="h-5 w-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-red-500/20">
+          <svg className="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
           </svg>
         </div>
-        <h3 className="text-sm font-semibold text-white">Don&apos;t lose this</h3>
-        <p className="mt-1 text-xs text-gray-400">
-          Save your score {score !== null && <span className="text-white">({score}/100)</span>}
+        <h3 className="text-sm font-semibold text-[#1C1917]">Don&apos;t lose this</h3>
+        <p className="mt-1 text-xs text-[#6f675e]">
+          Save your score {score !== null && <span className="text-[#1C1917]">({score}/100)</span>}
           {heroLeak && <> and &ldquo;{heroLeak}&rdquo; finding</>} so you can pick up where you left off.
         </p>
 
@@ -70,7 +70,7 @@ export function ResultCapture({ audit }: Props) {
           <button
             onClick={() => setChannel("email")}
             className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-              channel === "email" ? "bg-purple-600 text-white" : "bg-white/5 text-gray-400 hover:bg-white/10"
+              channel === "email" ? "bg-red-600 text-[#1C1917]" : "bg-[#1c1917]/[0.04] text-[#6f675e] hover:bg-[#1c1917]/[0.06]"
             }`}
           >
             Email
@@ -78,7 +78,7 @@ export function ResultCapture({ audit }: Props) {
           <button
             onClick={() => setChannel("whatsapp")}
             className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-              channel === "whatsapp" ? "bg-emerald-600 text-white" : "bg-white/5 text-gray-400 hover:bg-white/10"
+              channel === "whatsapp" ? "bg-emerald-600 text-[#1C1917]" : "bg-[#1c1917]/[0.04] text-[#6f675e] hover:bg-[#1c1917]/[0.06]"
             }`}
           >
             WhatsApp
@@ -92,7 +92,7 @@ export function ResultCapture({ audit }: Props) {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder={channel === "email" ? "your@email.com" : "+91 98765 43210"}
-            className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-purple-500/50 focus:outline-none"
+            className="flex-1 rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none"
             onKeyDown={(e) => {
               if (e.key === "Enter") handleSubmit();
             }}
@@ -102,7 +102,7 @@ export function ResultCapture({ audit }: Props) {
           </Button>
         </div>
 
-        <p className="mt-2 text-[10px] text-gray-600">
+        <p className="mt-2 text-[10px] text-[#9c9184]">
           We&apos;ll send your result once — no spam, no marketing.
         </p>
       </div>

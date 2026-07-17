@@ -125,7 +125,7 @@ export function ShopCategoryImage({ category, title, className = "" }: Props) {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
       <div className="absolute bottom-3 left-3">
-        <span className="rounded-lg bg-black/50 px-2.5 py-1 text-[10px] font-medium text-white/90 backdrop-blur-sm">
+        <span className="rounded-lg bg-black/50 px-2.5 py-1 text-[10px] font-medium text-[#1c1917]/90 backdrop-blur-sm">
           {title}
         </span>
       </div>

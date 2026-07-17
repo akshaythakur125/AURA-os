@@ -41,7 +41,7 @@ export function ScoreTrend({ scores, className = "" }: Props) {
 
   if (!pathData) {
     return (
-      <div className={`flex h-[120px] items-center justify-center text-xs text-gray-600 ${className}`}>
+      <div className={`flex h-[120px] items-center justify-center text-xs text-[#9c9184] ${className}`}>
         Need 2+ audits to show trend
       </div>
     );
@@ -56,9 +56,9 @@ export function ScoreTrend({ scores, className = "" }: Props) {
     <div className={className}>
       <div className="flex items-center justify-between mb-2">
         <div>
-          <div className="text-xs text-gray-500">Score Trend</div>
+          <div className="text-xs text-[#857b6e]">Score Trend</div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-white">{last.score}</span>
+            <span className="text-2xl font-bold text-[#1C1917]">{last.score}</span>
             {delta !== 0 && (
               <span className={`text-xs font-medium ${improved ? "text-emerald-400" : "text-red-400"}`}>
                 {improved ? "+" : ""}{delta} from first
@@ -67,7 +67,7 @@ export function ScoreTrend({ scores, className = "" }: Props) {
           </div>
         </div>
         <div className="text-right">
-          <div className="text-[10px] text-gray-600">{pathData.points.length} checks</div>
+          <div className="text-[10px] text-[#9c9184]">{pathData.points.length} checks</div>
         </div>
       </div>
       <svg
