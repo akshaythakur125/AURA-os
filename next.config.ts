@@ -21,7 +21,10 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https: images.unsplash.com",
       "font-src 'self'",
-      "connect-src 'self'",
+      // blob: lets the WebGL/glTF loader read the hero model's own bundled
+      // textures (three.js fetches embedded resources via same-origin blob
+      // URLs it creates itself). Still same-origin only — no external hosts.
+      "connect-src 'self' blob:",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",

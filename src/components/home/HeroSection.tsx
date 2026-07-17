@@ -1,18 +1,12 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
-import { AuraBackground } from "@/components/hero/AuraBackground";
+import { HeroModel } from "@/components/hero/HeroModel";
 import type { AuraDimension } from "./AuraCore";
-
-const AuraCore = dynamic(() => import("./AuraCore").then((m) => m.AuraCore), {
-  ssr: false,
-  loading: () => <div className="w-[320px] h-[320px] sm:w-[380px] sm:h-[380px] animate-pulse rounded-full bg-white/5" />,
-});
 
 const SAMPLE_DIMENSIONS: AuraDimension[] = [
   { id: "lighting", label: "Lighting", score: 72, color: "#a78bfa" },
@@ -29,10 +23,6 @@ export function HeroSection() {
     <section className="relative min-h-[90vh] flex items-center bg-[#0a0a12] overflow-hidden">
       {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_20%,rgba(124,58,237,0.08),transparent_50%),radial-gradient(ellipse_at_70%_80%,rgba(59,130,246,0.05),transparent_50%)]" />
-
-      {/* Real rendered WebGL depth — falls back to the gradient above on
-          reduced-motion or no WebGL support */}
-      <AuraBackground />
 
       <Container className="relative z-10 py-20 sm:py-28">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
@@ -84,10 +74,10 @@ export function HeroSection() {
             </FadeInView>
           </div>
 
-          {/* Aura Core */}
+          {/* Hero 3D object — modelled camera on desktop, AuraCore fallback */}
           <div className="order-1 lg:order-2 flex justify-center">
             <FadeInView delay={200}>
-              <ErrorBoundary fallback={<div className="w-[320px] h-[320px] rounded-full bg-white/5 flex items-center justify-center text-xs text-gray-500">3D view unavailable</div>}><AuraCore dimensions={SAMPLE_DIMENSIONS} interactive /></ErrorBoundary>
+              <ErrorBoundary fallback={<div className="w-[320px] h-[320px] rounded-full bg-white/5 flex items-center justify-center text-xs text-gray-500">3D view unavailable</div>}><HeroModel dimensions={SAMPLE_DIMENSIONS} /></ErrorBoundary>
             </FadeInView>
           </div>
         </div>
