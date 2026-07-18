@@ -254,23 +254,28 @@ function Rig({ drive, ambient }: { drive: React.MutableRefObject<number>; ambien
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
     if (ambient) {
-      // high, distant drift looking out over a hazy skyline — a soft backdrop
-      // that stays well behind content on every page
-      const targetX = cursor.current.x * 0.8 + Math.sin(t * 0.09) * 0.4;
-      const targetY = 17 - cursor.current.y * 0.4 + Math.sin(t * 0.13) * 0.2;
-      camera.position.x += (targetX - camera.position.x) * 0.02;
-      camera.position.y += (targetY - camera.position.y) * 0.02;
+      // one continuous flight over the hazy skyline: scroll banks the camera
+      // left/right and lifts/dips it, so moving between sections feels like
+      // weaving deeper through the city. Stays high + distant for legibility.
+      const d = drive.current;
+      const bank = Math.sin(d * Math.PI * 3);
+      const targetX = bank * 6 + cursor.current.x * 0.6 + Math.sin(t * 0.09) * 0.4;
+      const targetY = 15 + Math.sin(d * Math.PI * 2) * 4 - cursor.current.y * 0.4 + Math.sin(t * 0.13) * 0.2;
+      camera.position.x += (targetX - camera.position.x) * 0.03;
+      camera.position.y += (targetY - camera.position.y) * 0.03;
       camera.position.z = 30;
-      camera.lookAt(cursor.current.x * 1.2, 13, -60);
+      camera.lookAt(bank * 8 + cursor.current.x * 1.2, 12 + Math.sin(d * Math.PI * 2) * 2, -60);
       return;
     }
-    // low, slightly banking dolly down the avenue
-    const targetX = cursor.current.x * 1.6 + Math.sin(t * 0.18) * 0.8;
-    const targetY = 2.2 - cursor.current.y * 0.8 + Math.sin(t * 0.24) * 0.25 + drive.current * 1.5;
+    // low banking dolly that dives deeper down the avenue as you scroll:
+    // the camera pushes forward, climbs, and banks into the street
+    const d = drive.current;
+    const targetX = cursor.current.x * 1.6 + Math.sin(t * 0.18) * 0.8 + Math.sin(d * Math.PI) * 2.6;
+    const targetY = 2.2 - cursor.current.y * 0.8 + Math.sin(t * 0.24) * 0.25 + d * 3.4;
     camera.position.x += (targetX - camera.position.x) * 0.03;
     camera.position.y += (targetY - camera.position.y) * 0.03;
-    camera.position.z = 9;
-    camera.lookAt(cursor.current.x * 2, 3 + drive.current * 2, -40);
+    camera.position.z = 9 - d * 5;
+    camera.lookAt(cursor.current.x * 2 + Math.sin(d * Math.PI) * 3, 3 + d * 4, -40);
   });
   return null;
 }

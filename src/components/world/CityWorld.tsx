@@ -15,7 +15,9 @@ export default function CityWorld() {
 
   useEffect(() => {
     const onScroll = () => {
-      const max = Math.max(1, window.innerHeight * 2);
+      // progress across the WHOLE page — scrolling is one continuous flight
+      // deeper into the city, banking between sections
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       drive.current = Math.min(1, window.scrollY / max);
     };
     onScroll();
