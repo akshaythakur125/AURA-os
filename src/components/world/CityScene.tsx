@@ -139,6 +139,105 @@ function City({ drive, ambient }: { drive: React.MutableRefObject<number>; ambie
   );
 }
 
+// Blinking red aircraft-warning beacons on the tallest rooftops. They stream
+// with the city at the same speed so they feel bolted to the skyline.
+function Beacons({ drive, ambient }: { drive: React.MutableRefObject<number>; ambient: boolean }) {
+  const ref = useRef<THREE.InstancedMesh>(null);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const offset = useRef(0);
+  const beacons = useMemo(() => {
+    let seed = 424242;
+    const rand = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+    return Array.from({ length: 30 }, () => ({
+      x: (rand() > 0.5 ? 1 : -1) * (5 + rand() * 28),
+      y: 22 + rand() * 22, // sit above the rooftops, against the sky
+      z: -rand() * 220,
+      phase: rand() * 6.28,
+      freq: 1.6 + rand() * 2.8,
+    }));
+  }, []);
+
+  useFrame((state, delta) => {
+    const dt = Math.min(delta, 0.05);
+    offset.current += (ambient ? 2.4 + drive.current * 10 : 6 + drive.current * 34) * dt;
+    const t = state.clock.getElapsedTime();
+    const im = ref.current;
+    if (!im) return;
+    for (let i = 0; i < beacons.length; i++) {
+      const b = beacons[i];
+      let z = (b.z + offset.current) % 220;
+      if (z > 8) z -= 220;
+      const on = Math.sin(t * b.freq + b.phase) > 0.15 ? 1 : 0;
+      dummy.position.set(b.x, b.y, z);
+      dummy.scale.setScalar(0.1 + on * 0.72);
+      dummy.updateMatrix();
+      im.setMatrixAt(i, dummy.matrix);
+    }
+    im.instanceMatrix.needsUpdate = true;
+  });
+
+  return (
+    <instancedMesh ref={ref} args={[undefined, undefined, beacons.length]}>
+      <sphereGeometry args={[0.5, 12, 12]} />
+      <meshBasicMaterial color="#ff6a48" toneMapped={false} />
+    </instancedMesh>
+  );
+}
+
+// Streaking car lights down the avenue — warm headlights approaching, red
+// tail-lights receding. Elongated + bright so bloom smears them into trails.
+function Cars({ drive }: { drive: React.MutableRefObject<number> }) {
+  const ref = useRef<THREE.InstancedMesh>(null);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const cars = useMemo(() => {
+    let seed = 909090;
+    const rand = () => ((seed = (seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+    return Array.from({ length: 44 }, () => {
+      const toward = rand() > 0.5;
+      return {
+        x: (toward ? 1 : -1) * (1.2 + rand() * 1.8),
+        z: -rand() * 130,
+        vz: (toward ? 1 : -1) * (11 + rand() * 16),
+        len: 1.3 + rand() * 2.4,
+        toward,
+      };
+    });
+  }, []);
+
+  useEffect(() => {
+    const im = ref.current;
+    if (!im) return;
+    const head = new THREE.Color("#fff0cf");
+    const tail = new THREE.Color("#ff2a1e");
+    cars.forEach((c, i) => im.setColorAt(i, c.toward ? head : tail));
+    if (im.instanceColor) im.instanceColor.needsUpdate = true;
+  }, [cars]);
+
+  useFrame((_, delta) => {
+    const dt = Math.min(delta, 0.05);
+    const im = ref.current;
+    if (!im) return;
+    for (let i = 0; i < cars.length; i++) {
+      const c = cars[i];
+      c.z += c.vz * dt * (1 + drive.current * 1.6);
+      if (c.z > 12) c.z -= 132;
+      if (c.z < -120) c.z += 132;
+      dummy.position.set(c.x, -1.6, c.z);
+      dummy.scale.set(0.16, 0.11, c.len);
+      dummy.updateMatrix();
+      im.setMatrixAt(i, dummy.matrix);
+    }
+    im.instanceMatrix.needsUpdate = true;
+  });
+
+  return (
+    <instancedMesh ref={ref} args={[undefined, undefined, cars.length]}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshBasicMaterial toneMapped={false} />
+    </instancedMesh>
+  );
+}
+
 function Rig({ drive, ambient }: { drive: React.MutableRefObject<number>; ambient: boolean }) {
   const { camera } = useThree();
   const cursor = useRef({ x: 0, y: 0 });
@@ -203,6 +302,8 @@ export default function CityScene({
         <meshStandardMaterial color="#1a1512" roughness={1} metalness={0} />
       </mesh>
       <City drive={drive} ambient={ambient} />
+      <Beacons drive={drive} ambient={ambient} />
+      {!ambient && <Cars drive={drive} />}
       <Rig drive={drive} ambient={ambient} />
       <EffectComposer enableNormalPass={false}>
         <Bloom intensity={ambient ? 0.55 : 1.15} luminanceThreshold={0.42} luminanceSmoothing={0.85} mipmapBlur radius={0.7} />
