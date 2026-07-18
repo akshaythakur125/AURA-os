@@ -72,7 +72,10 @@ export async function compressImageToDataUrl(
   file: File,
   options: CompressOptions = {}
 ): Promise<CompressResult> {
-  const { maxWidth = 1600, maxHeight = 1600, quality = 0.85 } = options;
+  // Keep the stored data URL small enough for localStorage (base64 of a 1600px
+  // photo can be ~1MB and overflow the ~5MB quota). 1200px @ 0.72 is ~200KB and
+  // still ample for the presentation analysis.
+  const { maxWidth = 1200, maxHeight = 1200, quality = 0.72 } = options;
 
   if (!file || file.size === 0) throw new Error("IMAGE_FILE_MISSING");
 

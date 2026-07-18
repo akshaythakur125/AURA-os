@@ -13,12 +13,15 @@ export function getItem<T>(key: string, fallback: T): T {
   }
 }
 
-export function setItem<T>(key: string, value: T): void {
-  if (!isBrowser()) return;
+/** Returns true if the write succeeded, false on quota/other failure. */
+export function setItem<T>(key: string, value: T): boolean {
+  if (!isBrowser()) return false;
   try {
     localStorage.setItem(key, JSON.stringify(value));
+    return true;
   } catch {
     console.warn(`Failed to write localStorage key "${key}"`);
+    return false;
   }
 }
 

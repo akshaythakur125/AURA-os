@@ -8,8 +8,26 @@ function getAll(): Audit[] {
   return getItem<Audit[]>(STORAGE_KEYS.AUDITS, []);
 }
 
-function persist(audits: Audit[]): void {
-  setItem(STORAGE_KEYS.AUDITS, audits);
+/**
+ * Persists audits, surviving a full localStorage. Images (base64 data URLs) are
+ * by far the largest thing we store, so if the write fails on quota we evict
+ * old audits' images oldest-first and retry — keeping the most recent image
+ * (the one the user just uploaded) as long as possible. Returns whether the
+ * write ultimately succeeded.
+ */
+function persist(audits: Audit[]): boolean {
+  if (setItem(STORAGE_KEYS.AUDITS, audits)) return true;
+
+  const order = audits
+    .map((a, i) => ({ i, t: new Date(a.createdAt).getTime(), hasImg: !!a.imageDataUrl }))
+    .filter((x) => x.hasImg)
+    .sort((a, b) => a.t - b.t); // oldest image first
+
+  for (const { i } of order) {
+    audits[i] = { ...audits[i], imageDataUrl: undefined };
+    if (setItem(STORAGE_KEYS.AUDITS, audits)) return true;
+  }
+  return false;
 }
 
 export function getAudits(): Audit[] {

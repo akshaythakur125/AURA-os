@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { GlowOrb } from "@/components/ui/GlowOrb";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { GoalTiltCard } from "@/components/audit/GoalTiltCard";
-import { createAudit, updateAudit } from "@/lib/storage/auditStore";
+import { createAudit, updateAudit, getAuditById, deleteAudit } from "@/lib/storage/auditStore";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import {
   validateImageFile,
@@ -220,13 +220,23 @@ export default function NewAuditPage() {
         deepInput,
       });
 
+      // Verify the image actually persisted — localStorage can be full, in
+      // which case the write is dropped and the report would have no image.
+      const saved = getAuditById(audit.id);
+      if (!saved || !saved.imageDataUrl) {
+        deleteAudit(audit.id);
+        throw new Error("STORAGE_FULL");
+      }
+
       // Stage 5: Redirect
       stage = "redirecting";
       router.push(`/audit/${audit.id}`);
     } catch (err) {
       console.error("[AuraCheck submission failed]", { stage, error: err instanceof Error ? err.message : String(err) });
       const errMsg = err instanceof Error ? err.message : String(err);
-      if (stage === "compressing-image" || errMsg.includes("IMAGE") || errMsg.includes("CANVAS")) {
+      if (errMsg.includes("STORAGE_FULL")) {
+        setErrors(["Your browser storage is full, so we couldn't save your photo. Open 'Your Data' from the footer to clear old checks, then try again."]);
+      } else if (stage === "compressing-image" || errMsg.includes("IMAGE") || errMsg.includes("CANVAS")) {
         setErrors(["We could not read this image. Upload the original JPEG, PNG, or WebP file. (" + stage + ")"]);
       } else if (stage === "saving-audit") {
         setErrors(["The analysis could not be saved. Please try again. (" + stage + ")"]);
