@@ -4,13 +4,13 @@ import { Container } from "@/components/ui/Container";
 import { FadeInView } from "@/components/ui/FadeInView";
 
 const DIMENSIONS = [
-  { name: "Lighting", icon: "💡", desc: "How light falls on your face — even, directional, or harsh.", issue: "Flat overhead lighting removes dimension and reads as low-effort.", fix: "Face a window at 45°. Natural side light is the single biggest upgrade." },
-  { name: "Clarity", icon: "🔍", desc: "Sharpness, focus, and image resolution.", issue: "Motion blur or soft focus makes you look like an afterthought.", fix: "Use the rear camera, clean the lens, hold steady or use a timer." },
-  { name: "Composition", icon: "📐", desc: "Framing, headroom, and subject placement.", issue: "Cut off at the shoulders or too much headroom looks accidental.", fix: "Center yourself, eyes at the top-third line, chest-up framing." },
-  { name: "Background", icon: "🏠", desc: "What's behind you and what it signals.", issue: "Cluttered rooms, messy desks, or busy streets distract from you.", fix: "Stand in front of a plain wall, open doorway, or clean outdoor space." },
-  { name: "Colour Harmony", icon: "🎨", desc: "How your outfit colours interact with your skin tone.", issue: "Washed-out or clashing colours reduce visual impact.", fix: "Wear colours that contrast your skin — dark on light, light on dark." },
-  { name: "Style", icon: "👔", desc: "Clothing choices and grooming signals.", issue: "Wrinkled, ill-fitting, or overly casual clothes lower perceived effort.", fix: "Solid colours, well-fitted basics, and clean grooming go a long way." },
-  { name: "Consistency", icon: "📊", desc: "How well your overall presentation holds together.", issue: "Mixing formal top with casual background sends mixed signals.", fix: "Align outfit, background, and expression to one clear message." },
+  { name: "Lighting", icon: "💡", tag: "soft light hits different" },
+  { name: "Clarity", icon: "🔍", tag: "sharp, not blurry" },
+  { name: "Framing", icon: "📐", tag: "framed, not cropped" },
+  { name: "Background", icon: "🏠", tag: "clean beats cluttered" },
+  { name: "Colour", icon: "🎨", tag: "colours that pop" },
+  { name: "Style", icon: "👕", tag: "fit over labels" },
+  { name: "Vibe", icon: "✨", tag: "one clear energy" },
 ];
 
 export function AuditDimensions() {
@@ -18,34 +18,30 @@ export function AuditDimensions() {
     <section className="py-20 sm:py-28 bg-[#F2ECE1]/55">
       <Container>
         <FadeInView>
-          <div className="mb-12 text-center">
-            <h2 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">What the audit examines</h2>
-            <p className="mt-3 text-sm text-[#857b6e]">Seven dimensions that shape first impressions.</p>
+          <div className="mb-10 text-center">
+            <h2 className="text-2xl font-bold text-[#1C1917] sm:text-4xl">
+              7 signals. <span className="text-[#E14434]">2 minutes.</span>
+            </h2>
+            <p className="mt-3 text-sm text-[#857b6e]">Everything we scan in your photo — no fluff.</p>
           </div>
         </FadeInView>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {DIMENSIONS.map((d, i) => (
-            <FadeInView key={d.name} delay={i * 60}>
-              <div className="rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-5">
-                <div className="mb-3 flex items-center gap-2">
-                  <span className="text-lg">{d.icon}</span>
-                  <h3 className="text-sm font-semibold text-[#1C1917]">{d.name}</h3>
-                </div>
-                <p className="mb-3 text-xs text-[#857b6e]">{d.desc}</p>
-                <div className="space-y-2 text-xs">
-                  <div>
-                    <span className="text-red-400 font-medium">Common issue: </span>
-                    <span className="text-[#6f675e]">{d.issue}</span>
-                  </div>
-                  <div>
-                    <span className="text-emerald-400 font-medium">Quick fix: </span>
-                    <span className="text-[#6f675e]">{d.fix}</span>
-                  </div>
-                </div>
+            <FadeInView key={d.name} delay={i * 50}>
+              <div className="group flex h-full flex-col items-center justify-center gap-2 rounded-2xl border border-[#1c1917]/10 bg-[#fbf8f2] px-4 py-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-[#E14434]/40 hover:shadow-[0_12px_28px_-12px_rgba(28,25,23,0.18)]">
+              <span className="text-4xl transition-transform duration-300 group-hover:scale-110">{d.icon}</span>
+                <span className="text-sm font-bold text-[#1C1917]">{d.name}</span>
+                <span className="text-[11px] leading-tight text-[#857b6e]">{d.tag}</span>
               </div>
             </FadeInView>
           ))}
+          <FadeInView delay={DIMENSIONS.length * 50}>
+            <div className="flex h-full flex-col items-center justify-center gap-1 rounded-2xl bg-[#E14434] px-4 py-6 text-center text-white transition-transform duration-300 hover:-translate-y-1">
+              <span className="text-2xl font-bold leading-none">100</span>
+              <span className="text-[11px] font-medium uppercase tracking-wide opacity-90">your score</span>
+            </div>
+          </FadeInView>
         </div>
       </Container>
     </section>
