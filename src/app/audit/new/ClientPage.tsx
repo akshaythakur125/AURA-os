@@ -294,7 +294,7 @@ export default function NewAuditPage() {
               <div className="animate-slide-in">
                 <div className="mb-8 text-center">
                   <div className="mb-5 flex justify-center">
-                    <Scene3DAccent size={150} />
+                    <Scene3DAccent size={150} shape="cap" />
                   </div>
                   <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-3xl font-bold text-transparent">
                     What&apos;s your goal?

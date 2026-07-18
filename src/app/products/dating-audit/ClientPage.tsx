@@ -38,7 +38,7 @@ export default function DatingAuditPage() {
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-6 flex justify-center">
-              <Scene3DAccent size={190} />
+              <Scene3DAccent size={190} shape="phone" />
             </div>
             <Badge variant="premium" className="mb-4">Dating / Profile Audit — {formatPrice(PAYMENT_PRODUCTS.dating_audit.price)}</Badge>
             <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">

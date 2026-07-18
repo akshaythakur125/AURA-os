@@ -17,7 +17,7 @@ const GenZScene = dynamic(() => import("@/components/hero/GenZScene"), {
   loading: () => null,
 });
 
-type GenZShape = "sunglasses" | "headphones" | "boba";
+type GenZShape = "sunglasses" | "headphones" | "boba" | "phone" | "gamepad" | "cap";
 
 // Named 3D models bundled in /public/hero-assets. Each tuned for its shape.
 const MODELS: Record<string, { url: string; spin: number; fill: number }> = {

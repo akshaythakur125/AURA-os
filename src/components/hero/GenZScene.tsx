@@ -2,7 +2,7 @@
 
 import { Suspense, useRef, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Environment, Lightformer, Float, ContactShadows } from "@react-three/drei";
+import { Environment, Lightformer, Float, ContactShadows, RoundedBox } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 
@@ -101,7 +101,111 @@ function BubbleTea() {
   );
 }
 
-const SHAPES = { sunglasses: Sunglasses, headphones: Headphones, boba: BubbleTea };
+const CREAM = { color: "#f3ede2", roughness: 0.35, metalness: 0.15, emissive: "#f3ede2", emissiveIntensity: 0.12 } as const;
+
+function Heart({ position }: { position: [number, number, number] }) {
+  return (
+    <group position={position} scale={0.42}>
+      {[-0.18, 0.18].map((x) => (
+        <mesh key={x} position={[x, 0.12, 0]}>
+          <sphereGeometry args={[0.28, 20, 20]} />
+          <meshStandardMaterial {...CREAM} />
+        </mesh>
+      ))}
+      <mesh position={[0, -0.12, 0]} rotation={[0, 0, Math.PI / 4]}>
+        <boxGeometry args={[0.4, 0.4, 0.16]} />
+        <meshStandardMaterial {...CREAM} />
+      </mesh>
+    </group>
+  );
+}
+
+function Phone() {
+  return (
+    <group rotation={[0.12, -0.18, 0.05]} scale={1.05}>
+      {/* body */}
+      <RoundedBox args={[1.15, 2.15, 0.16]} radius={0.16} smoothness={4}>
+        <meshStandardMaterial {...INK} />
+      </RoundedBox>
+      {/* glowing screen */}
+      <RoundedBox args={[1.0, 1.9, 0.02]} radius={0.11} smoothness={4} position={[0, 0.02, 0.09]}>
+        <meshStandardMaterial color="#E14434" roughness={0.2} metalness={0.3} emissive="#E14434" emissiveIntensity={0.4} />
+      </RoundedBox>
+      {/* heart on screen */}
+      <Heart position={[0, 0.05, 0.12]} />
+      {/* front camera dot */}
+      <mesh position={[0, 0.9, 0.12]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.05, 0.05, 0.02, 20]} />
+        <meshStandardMaterial color="#0f0d0b" roughness={0.2} metalness={0.6} />
+      </mesh>
+    </group>
+  );
+}
+
+function Gamepad() {
+  return (
+    <group rotation={[0.38, 0, 0]} scale={1.05}>
+      {/* body */}
+      <RoundedBox args={[1.95, 0.95, 0.5]} radius={0.3} smoothness={4}>
+        <meshStandardMaterial {...INK} />
+      </RoundedBox>
+      {/* grips */}
+      {[-0.78, 0.78].map((x) => (
+        <mesh key={x} position={[x, -0.42, 0]} rotation={[0, 0, x > 0 ? -0.55 : 0.55]}>
+          <capsuleGeometry args={[0.26, 0.5, 8, 16]} />
+          <meshStandardMaterial {...INK} />
+        </mesh>
+      ))}
+      {/* d-pad cross (left) */}
+      <mesh position={[-0.52, 0.05, 0.27]}>
+        <boxGeometry args={[0.42, 0.14, 0.08]} />
+        <meshStandardMaterial {...CREAM} />
+      </mesh>
+      <mesh position={[-0.52, 0.05, 0.27]}>
+        <boxGeometry args={[0.14, 0.42, 0.08]} />
+        <meshStandardMaterial {...CREAM} />
+      </mesh>
+      {/* action buttons (right) */}
+      {([[0.52, 0.28], [0.75, 0.05], [0.29, 0.05], [0.52, -0.18]] as [number, number][]).map((p, i) => (
+        <mesh key={i} position={[p[0], p[1], 0.27]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.09, 0.09, 0.07, 20]} />
+          <meshStandardMaterial {...VERM} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+const BILL = { color: "#3a332d", roughness: 0.32, metalness: 0.7 } as const;
+
+function Cap() {
+  return (
+    <group rotation={[0.42, -0.3, 0]} scale={1.25}>
+      {/* crown (flattened hemisphere) */}
+      <mesh position={[0, -0.05, 0]} scale={[1, 0.82, 1]}>
+        <sphereGeometry args={[0.72, 32, 24, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        <meshStandardMaterial {...INK} side={THREE.DoubleSide} />
+      </mesh>
+      {/* top button */}
+      <mesh position={[0, 0.56, 0]}>
+        <sphereGeometry args={[0.08, 16, 16]} />
+        <meshStandardMaterial {...VERM} />
+      </mesh>
+      {/* bill (protruding front semicircle) */}
+      <mesh position={[0, -0.14, 0.5]} rotation={[-0.12, 0, 0]}>
+        <cylinderGeometry args={[0.9, 0.9, 0.07, 40, 1, false, 0, Math.PI]} />
+        <meshStandardMaterial {...BILL} side={THREE.DoubleSide} />
+      </mesh>
+      {/* front logo */}
+      <mesh position={[0, 0.14, 0.68]} rotation={[0.15, 0, 0]}>
+        <circleGeometry args={[0.11, 20]} />
+        <meshStandardMaterial {...VERM} />
+      </mesh>
+    </group>
+  );
+}
+
+const SHAPES = { sunglasses: Sunglasses, headphones: Headphones, boba: BubbleTea, phone: Phone, gamepad: Gamepad, cap: Cap };
 
 function Spinner({ shape }: { shape: keyof typeof SHAPES }) {
   const g = useRef<THREE.Group>(null);
