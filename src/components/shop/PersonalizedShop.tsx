@@ -58,7 +58,7 @@ function getLeakFixText(look: Look, leakTags: string[]): string | null {
 }
 
 function LookImage({ look }: { look: Look }) {
-  return <ShopCategoryImage category={look.category} title={look.title} />;
+  return <ShopCategoryImage category={look.category} title={look.title} keywords={look.keywords} />;
 }
 
 function ShopLinks({ look }: { look: Look }) {

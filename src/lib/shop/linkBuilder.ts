@@ -58,48 +58,6 @@ function buildSearchQuery(spec: LookSpec, retailer: Retailer): string {
 }
 
 /**
- * Category slug mapping for Myntra's URL structure.
- * Myntra uses /{category-slug}?q={query} instead of /search?q={query}
- */
-const MYNTRA_CATEGORY_SLUGS: Record<string, string> = {
-  tshirt: "men-tshirts",
-  "t-shirt": "men-tshirts",
-  tshirts: "men-tshirts",
-  shirt: "men-shirts",
-  shirts: "men-shirts",
-  jeans: "men-jeans",
-  trousers: "men-trousers",
-  pants: "men-casual-trousers",
-  shorts: "men-shorts",
-  jacket: "men-jackets",
-  jackets: "men-jackets",
-  hoodie: "men-hoodies",
-  hoodies: "men-hoodies",
-  sweatshirt: "men-sweatshirts",
-  sweatshirts: "men-sweatshirts",
-  sneakers: "men-sneakers",
-  shoes: "men-casual-shoes",
-  "casual shoes": "men-casual-shoes",
-  "formal shoes": "men-formal-shoes",
-  sandals: "men-flip-flops",
-  watch: "watches-for-men",
-  watches: "watches-for-men",
-  sunglasses: "sunglasses-for-men",
-  backpack: "backpacks-for-men",
-  bags: "bags-for-men",
-  perfume: "perfumes-for-men",
-  fragrances: "fragrances-for-men",
-  "tshirts-women": "women-tshirts",
-  "t-shirt-women": "women-tshirts",
-  dresses: "women-dresses",
-  tops: "women-tops",
-  kurtas: "women-kurtas",
-  "heels": "women-heels",
-  "flats": "women-flats",
-  "earrings": "women-earrings",
-};
-
-/**
  * Builds a retailer-specific search URL from a look spec.
  */
 export function buildRetailerUrl(spec: LookSpec, retailer: Retailer): string {
@@ -113,13 +71,13 @@ export function buildRetailerUrl(spec: LookSpec, retailer: Retailer): string {
       return `https://www.flipkart.com/search?q=${encodeURIComponent(query)}`;
 
     case "myntra": {
-      // Myntra uses category-based URLs for better relevance
-      const categoryKey = spec.category.toLowerCase().replace(/s$/, "");
-      const slug =
-        MYNTRA_CATEGORY_SLUGS[categoryKey] ||
-        MYNTRA_CATEGORY_SLUGS[spec.category.toLowerCase()] ||
-        `men-${spec.category.toLowerCase()}s`;
-      return `https://www.myntra.com/${slug}?q=${encodeURIComponent(query.replace(/\s*\+?\s*(men|women)\s*/i, "").trim())}`;
+      // Myntra treats the path as a search term and `rawQuery` drives the
+      // results — gender-correct and never a broken category slug. The query
+      // already carries gender + keywords + category (e.g. "women floral midi
+      // dress"), so results match the actual product.
+      const readable = query.replace(/\+/g, " ").trim();
+      const path = readable.replace(/\s+/g, "-").toLowerCase();
+      return `https://www.myntra.com/${encodeURIComponent(path)}?rawQuery=${encodeURIComponent(readable)}`;
     }
 
     case "ajio":

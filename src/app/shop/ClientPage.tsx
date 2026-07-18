@@ -302,7 +302,7 @@ export default function ShopPage() {
               {visibleLooks.map((look, i) => (
                 <FadeInView key={look.id} delay={Math.min(i * 50, 400)}>
                   <Card hover className="flex flex-col h-full">
-                    <ShopCategoryImage category={look.category} title={look.title} />
+                    <ShopCategoryImage category={look.category} title={look.title} keywords={look.keywords} />
                     <div className="mt-3 flex-1">
                       <div className="mb-1 flex items-start justify-between gap-2">
                         <h3 className="text-sm font-semibold text-[#1C1917] leading-tight">

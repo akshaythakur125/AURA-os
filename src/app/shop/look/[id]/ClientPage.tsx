@@ -27,7 +27,7 @@ export function LookDetailClient({ look }: { look: Look }) {
           {/* Image */}
           <div>
             <Card className="overflow-hidden">
-              <ShopCategoryImage category={look.category} title={look.title} />
+              <ShopCategoryImage category={look.category} title={look.title} keywords={look.keywords} />
             </Card>
           </div>
 
