@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
 import { HeroModel } from "@/components/hero/HeroModel";
+import { CityHero } from "@/components/world/CityHero";
 import type { AuraDimension } from "./AuraCore";
 
 const SAMPLE_DIMENSIONS: AuraDimension[] = [
@@ -21,8 +22,10 @@ const SAMPLE_DIMENSIONS: AuraDimension[] = [
 export function HeroSection() {
   return (
     <section className="relative min-h-[90vh] flex items-center bg-[#F2ECE1]/60 overflow-hidden">
+      {/* Cinematic 3D city flying past behind the hero */}
+      <CityHero />
       {/* Warm paper grain + a faint darkroom vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_75%_35%,rgba(225,68,52,0.06),transparent_55%),radial-gradient(ellipse_at_15%_85%,rgba(28,25,23,0.05),transparent_50%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_75%_35%,rgba(225,68,52,0.06),transparent_55%),radial-gradient(ellipse_at_15%_85%,rgba(28,25,23,0.05),transparent_50%)]" />
 
       <Container className="relative z-10 py-20 sm:py-28">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
