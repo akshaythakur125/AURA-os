@@ -31,7 +31,7 @@ const CardInner = forwardRef<HTMLDivElement, CardProps>(
 );
 CardInner.displayName = "CardInner";
 
-export function Card({ children, className, hover = false, tilt = false, onClick }: CardProps) {
+export function Card({ children, className, hover = false, tilt = true, onClick }: CardProps) {
   const tiltRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number>(0);
 
@@ -70,8 +70,9 @@ export function Card({ children, className, hover = false, tilt = false, onClick
         onMouseLeave={handleMouseLeave}
         onClick={onClick}
         className={cn(
-          "glass-card rounded-2xl p-6 cursor-pointer transition-all",
-          "hover:border-[#1c1917]/10"
+          "glass-card rounded-2xl p-6 transition-all hover:border-[#1c1917]/10",
+          onClick && "cursor-pointer",
+          className
         )}
         style={{
           transformStyle: "preserve-3d",
