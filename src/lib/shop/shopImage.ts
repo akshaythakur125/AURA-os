@@ -19,12 +19,16 @@
  * sourced and content-verified per type.
  */
 
+import type { LookCategory } from "./catalogTypes";
+
 export type TaggedPhoto = { url: string; alt: string; tags: string[] };
 
 const U = (id: string) => `https://images.unsplash.com/${id}?w=400&q=80`;
 
-// Photo pools per LookCategory. Order only matters as a tie-breaker fallback.
-export const CATEGORY_PHOTOS: Record<string, TaggedPhoto[]> = {
+// Photo pools per LookCategory. Typed as a total Record so adding a new
+// LookCategory without a photo pool is a compile error — every product
+// category is guaranteed to have accurate imagery.
+export const CATEGORY_PHOTOS: Record<LookCategory, TaggedPhoto[]> = {
   tshirt: [
     { url: U("photo-1521572163474-6864f9cf17ab"), alt: "White cotton t-shirt", tags: ["white", "tee", "crew", "crewneck", "plain", "basic", "slim", "fitted", "cotton"] },
     { url: U("photo-1583743814966-8936f5b7be1a"), alt: "Graphic / striped tee", tags: ["graphic", "print", "oversized", "street", "breton", "stripe", "striped", "navy"] },
@@ -127,10 +131,33 @@ export function hashString(str: string): number {
   return Math.abs(hash);
 }
 
+/**
+ * Garment-TYPE tags — the word that decides *which* garment a photo shows.
+ * These dominate colour/fit descriptors (black, slim, white, oversized…) so a
+ * "Black Slim Chino" always resolves to chinos, never to whatever tailored
+ * trouser happens to share the word "slim". Colour/fit only break ties within
+ * a garment type (e.g. black cocktail dress vs. floral summer dress).
+ */
+const TYPE_TAGS = new Set([
+  // tops
+  "polo", "pique", "henley", "cargo", "bodysuit", "bodycon", "crop", "croptop", "breton",
+  // shirts
+  "oxford", "buttondown", "button-down", "campcollar", "camp", "overshirt", "flannel", "linen", "poplin",
+  // denim / trousers
+  "denim", "mom", "momfit", "chino", "chinos", "jogger", "joggers", "athleisure", "sweatpants", "wide-leg", "bermuda",
+  // outerwear
+  "blazer", "biker", "moto", "trucker", "bomber", "hoodie", "sweatshirt",
+  // footwear
+  "platform", "running", "high-top", "hightop", "chelsea", "boot", "boots", "loafer", "loafers", "brogue", "derby",
+  // accessories / other
+  "smart", "analog", "aviator", "wayfarer", "round", "pilot", "rucksack",
+  "kurta", "kurti", "saree", "ringlight", "lens", "camera", "cardholder", "necklace", "crossbody",
+]);
+
 function scorePhoto(photo: TaggedPhoto, text: string): number {
   let score = 0;
   for (const tag of photo.tags) {
-    if (text.includes(tag)) score += tag.length >= 5 ? 2 : 1;
+    if (text.includes(tag)) score += TYPE_TAGS.has(tag) ? 10 : 1;
   }
   return score;
 }
@@ -140,7 +167,7 @@ function scorePhoto(photo: TaggedPhoto, text: string): number {
  * always yield the same image.
  */
 export function resolveShopImage(
-  category: string,
+  category: LookCategory,
   title: string,
   keywords: string[] = [],
 ): TaggedPhoto {
