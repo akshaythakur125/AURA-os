@@ -17,7 +17,7 @@ import * as THREE from "three";
  */
 
 const HAZE = "#e7dcc8"; // warm bone haze the towers fade into
-const Iance = 240; // building count
+const Iance = 480; // building count
 
 // Procedural window texture: a dark facade speckled with lit windows in
 // vermilion / warm amber / cream. Shared by every tower as an emissive map.
@@ -238,6 +238,79 @@ function Cars({ drive }: { drive: React.MutableRefObject<number> }) {
   );
 }
 
+// Slow aircraft / blimps drifting across the sky with a blinking nav light.
+function Flyer({ y, z, speed, startX, blink }: { y: number; z: number; speed: number; startX: number; blink: number }) {
+  const g = useRef<THREE.Group>(null);
+  const light = useRef<THREE.Mesh>(null);
+  useFrame((state, delta) => {
+    const el = g.current;
+    if (!el) return;
+    el.position.x += speed * Math.min(delta, 0.05);
+    if (el.position.x > 72) el.position.x = -72;
+    if (el.position.x < -72) el.position.x = 72;
+    if (light.current) {
+      const on = Math.sin(state.clock.getElapsedTime() * blink) > 0 ? 1 : 0.12;
+      light.current.scale.setScalar(0.12 + on * 0.28);
+    }
+  });
+  return (
+    <group ref={g} position={[startX, y, z]}>
+      <mesh rotation={[0, 0, Math.PI / 2]}>
+        <capsuleGeometry args={[0.55, 3, 6, 14]} />
+        <meshStandardMaterial color="#1a1512" roughness={0.55} metalness={0.6} />
+      </mesh>
+      <mesh ref={light} position={[speed > 0 ? -2.1 : 2.1, -0.1, 0]}>
+        <sphereGeometry args={[0.3, 10, 10]} />
+        <meshBasicMaterial color="#ff3b2a" toneMapped={false} />
+      </mesh>
+    </group>
+  );
+}
+
+function Flyers() {
+  return (
+    <>
+      <Flyer y={30} z={-55} speed={2.4} startX={-40} blink={5} />
+      <Flyer y={22} z={-40} speed={-1.7} startX={35} blink={3.5} />
+      <Flyer y={38} z={-70} speed={1.4} startX={5} blink={6} />
+    </>
+  );
+}
+
+// Sweeping searchlight beams anchored to distant rooftops.
+function Searchlight({ x, y, z, phase, color }: { x: number; y: number; z: number; phase: number; color: string }) {
+  const g = useRef<THREE.Group>(null);
+  useFrame((state) => {
+    if (g.current) g.current.rotation.z = Math.sin(state.clock.getElapsedTime() * 0.25 + phase) * 0.7;
+  });
+  return (
+    <group ref={g} position={[x, y, z]}>
+      <mesh position={[0, 7, 0]}>
+        <coneGeometry args={[3.6, 16, 24, 1, true]} />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={0.13}
+          side={THREE.DoubleSide}
+          toneMapped={false}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </mesh>
+    </group>
+  );
+}
+
+function Searchlights() {
+  return (
+    <>
+      <Searchlight x={-16} y={6} z={-60} phase={0} color="#ffd9a8" />
+      <Searchlight x={20} y={4} z={-75} phase={2} color="#E14434" />
+      <Searchlight x={2} y={8} z={-95} phase={4} color="#ffb066" />
+    </>
+  );
+}
+
 function Rig({ drive, ambient }: { drive: React.MutableRefObject<number>; ambient: boolean }) {
   const { camera } = useThree();
   const cursor = useRef({ x: 0, y: 0 });
@@ -312,6 +385,8 @@ export default function CityScene({
       <City drive={drive} ambient={ambient} />
       <Beacons drive={drive} ambient={ambient} />
       {!ambient && <Cars drive={drive} />}
+      {!ambient && <Flyers />}
+      {!ambient && <Searchlights />}
       <Rig drive={drive} ambient={ambient} />
       <EffectComposer enableNormalPass={false}>
         <Bloom intensity={ambient ? 0.55 : 1.15} luminanceThreshold={0.42} luminanceSmoothing={0.85} mipmapBlur radius={0.7} />
