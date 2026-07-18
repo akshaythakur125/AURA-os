@@ -12,6 +12,12 @@ const ModelScene = dynamic(() => import("@/components/hero/ModelScene"), {
   ssr: false,
   loading: () => null,
 });
+const GenZScene = dynamic(() => import("@/components/hero/GenZScene"), {
+  ssr: false,
+  loading: () => null,
+});
+
+type GenZShape = "sunglasses" | "headphones" | "boba";
 
 // Named 3D models bundled in /public/hero-assets. Each tuned for its shape.
 const MODELS: Record<string, { url: string; spin: number; fill: number }> = {
@@ -25,8 +31,10 @@ interface Scene3DAccentProps {
   /** square box size in px (desktop) */
   size?: number;
   className?: string;
-  /** optional named model; omit for the procedural camera-lens */
+  /** optional named glTF model */
   model?: keyof typeof MODELS;
+  /** optional procedural GenZ object (sunglasses / headphones / boba) */
+  shape?: GenZShape;
 }
 
 /**
@@ -35,7 +43,7 @@ interface Scene3DAccentProps {
  * reduced-motion / no-WebGL / narrow screens it falls back to a flat CSS ring
  * so the slot is never empty.
  */
-export function Scene3DAccent({ size = 220, className = "", model }: Scene3DAccentProps) {
+export function Scene3DAccent({ size = 220, className = "", model, shape }: Scene3DAccentProps) {
   const webgl = useWebGLSupport();
   const [reduced, setReduced] = useState(false);
   const [narrow, setNarrow] = useState(false);
@@ -61,7 +69,9 @@ export function Scene3DAccent({ size = 220, className = "", model }: Scene3DAcce
   return (
     <div className={`relative ${className}`} style={{ width: size, height: size }} aria-hidden="true">
       {show3D ? (
-        cfg ? (
+        shape ? (
+          <GenZScene shape={shape} dense={!narrow} />
+        ) : cfg ? (
           <ModelScene url={cfg.url} spin={cfg.spin} fill={cfg.fill} dense={!narrow} />
         ) : (
           <LensScene dense={!narrow} />

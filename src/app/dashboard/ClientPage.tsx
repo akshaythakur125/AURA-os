@@ -125,7 +125,7 @@ export default function DashboardPage() {
       <div className="mb-10 flex items-start justify-between gap-4">
         <div>
           <div className="mb-3">
-            <Scene3DAccent size={88} />
+            <Scene3DAccent size={100} shape="headphones" />
           </div>
           <h1 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">
             {user?.displayName

@@ -181,7 +181,7 @@ export default function ShopPage() {
         {/* Hero */}
         <div className="mb-10 relative">
           <div className="mb-4">
-            <Scene3DAccent size={96} />
+            <Scene3DAccent size={110} shape="sunglasses" />
           </div>
           <h1 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">
             Upgrade Your Visual Signal
