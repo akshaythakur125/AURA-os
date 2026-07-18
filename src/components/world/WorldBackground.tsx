@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useWebGLSupport } from "@/hooks/useWebGLSupport";
 
 const SceneWorld = dynamic(() => import("@/components/world/SceneWorld"), {
@@ -17,6 +18,7 @@ const SceneWorld = dynamic(() => import("@/components/world/SceneWorld"), {
  */
 export function WorldBackground() {
   const webgl = useWebGLSupport();
+  const pathname = usePathname();
   const [reduced, setReduced] = useState(false);
   const [narrow, setNarrow] = useState(false);
 
@@ -35,7 +37,11 @@ export function WorldBackground() {
     };
   }, []);
 
-  if (reduced || narrow || webgl !== true) return null;
+  // The audit flow does heavy canvas getImageData analysis — keep the GPU free
+  // there so readbacks don't stall. Skip the world on those pages.
+  const isHeavyFlow = pathname?.startsWith("/audit");
+
+  if (reduced || narrow || webgl !== true || isHeavyFlow) return null;
 
   return (
     <div

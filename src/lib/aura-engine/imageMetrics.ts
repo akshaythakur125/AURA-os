@@ -672,7 +672,10 @@ export function analyzeImageDataUrl(
         canvas.width = w;
         canvas.height = h;
 
-        const ctx = canvas.getContext("2d");
+        // willReadFrequently keeps the canvas CPU-backed — the analysis does
+        // many getImageData readbacks, which otherwise stall badly on the GPU
+        // (worse when other WebGL canvases are active).
+        const ctx = canvas.getContext("2d", { willReadFrequently: true });
         if (!ctx) {
           clearTimeout(timeout);
         resolve(fallbackMetrics(img.width, img.height));
