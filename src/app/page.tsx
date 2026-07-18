@@ -4,6 +4,7 @@ import { HowItWorks } from "@/components/home/HowItWorks";
 import { AuditDimensions } from "@/components/home/AuditDimensions";
 import { PrivacyMethodology } from "@/components/home/PrivacyMethodology";
 import { FinalCTA } from "@/components/home/FinalCTA";
+import { DistrictLabel } from "@/components/world/DistrictLabel";
 
 export const metadata: Metadata = {
   title: "AuraCheck — See Your Real First Impression",
@@ -52,6 +53,7 @@ export default function HomePage() {
       <AuditDimensions />
       <PrivacyMethodology />
       <FinalCTA />
+      <DistrictLabel />
     </>
   );
 }
