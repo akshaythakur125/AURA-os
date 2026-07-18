@@ -5,16 +5,17 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useWebGLSupport } from "@/hooks/useWebGLSupport";
 
-const SceneWorld = dynamic(() => import("@/components/world/SceneWorld"), {
+const CityWorld = dynamic(() => import("@/components/world/CityWorld"), {
   ssr: false,
   loading: () => null,
 });
 
 /**
- * Site-wide 3D "world" — a fixed field of floating photographic objects that
- * parallaxes with scroll, sitting behind all content. Desktop + WebGL +
- * motion gated; otherwise renders nothing (the paper background stands alone).
- * pointer-events are off so it never intercepts clicks.
+ * Site-wide 3D "world" — an ambient dusk city skyline that drifts with scroll,
+ * sitting behind all content so the whole site feels like it lives inside the
+ * 3D city. Desktop + WebGL + motion gated; otherwise renders nothing (the paper
+ * background stands alone). pointer-events are off so it never intercepts
+ * clicks. Skipped on the audit flow, which needs the GPU for canvas readbacks.
  */
 export function WorldBackground() {
   const webgl = useWebGLSupport();
@@ -46,10 +47,10 @@ export function WorldBackground() {
   return (
     <div
       className="pointer-events-none fixed inset-0 -z-10"
-      style={{ opacity: 0.55 }}
+      style={{ opacity: 0.42 }}
       aria-hidden="true"
     >
-      <SceneWorld />
+      <CityWorld />
     </div>
   );
 }

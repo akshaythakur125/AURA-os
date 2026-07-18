@@ -79,7 +79,7 @@ function makeTowers(): Tower[] {
   return towers;
 }
 
-function City({ drive }: { drive: React.MutableRefObject<number> }) {
+function City({ drive, ambient }: { drive: React.MutableRefObject<number>; ambient: boolean }) {
   const mesh = useRef<THREE.InstancedMesh>(null);
   const glow = useRef<THREE.InstancedMesh>(null);
   const towers = useMemo(makeTowers, []);
@@ -90,8 +90,8 @@ function City({ drive }: { drive: React.MutableRefObject<number> }) {
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
-    // base cinematic drift + scroll-driven acceleration
-    const speed = 6 + drive.current * 34;
+    // base cinematic drift + scroll-driven acceleration (calmer when ambient)
+    const speed = ambient ? 2.4 + drive.current * 10 : 6 + drive.current * 34;
     offset.current += speed * dt;
 
     const im = mesh.current;
@@ -139,7 +139,7 @@ function City({ drive }: { drive: React.MutableRefObject<number> }) {
   );
 }
 
-function Rig({ drive }: { drive: React.MutableRefObject<number> }) {
+function Rig({ drive, ambient }: { drive: React.MutableRefObject<number>; ambient: boolean }) {
   const { camera } = useThree();
   const cursor = useRef({ x: 0, y: 0 });
 
@@ -154,6 +154,17 @@ function Rig({ drive }: { drive: React.MutableRefObject<number> }) {
 
   useFrame((state) => {
     const t = state.clock.getElapsedTime();
+    if (ambient) {
+      // high, distant drift looking out over a hazy skyline — a soft backdrop
+      // that stays well behind content on every page
+      const targetX = cursor.current.x * 0.8 + Math.sin(t * 0.09) * 0.4;
+      const targetY = 17 - cursor.current.y * 0.4 + Math.sin(t * 0.13) * 0.2;
+      camera.position.x += (targetX - camera.position.x) * 0.02;
+      camera.position.y += (targetY - camera.position.y) * 0.02;
+      camera.position.z = 30;
+      camera.lookAt(cursor.current.x * 1.2, 13, -60);
+      return;
+    }
     // low, slightly banking dolly down the avenue
     const targetX = cursor.current.x * 1.6 + Math.sin(t * 0.18) * 0.8;
     const targetY = 2.2 - cursor.current.y * 0.8 + Math.sin(t * 0.24) * 0.25 + drive.current * 1.5;
@@ -165,15 +176,21 @@ function Rig({ drive }: { drive: React.MutableRefObject<number> }) {
   return null;
 }
 
-export default function CityScene({ drive }: { drive: React.MutableRefObject<number> }) {
+export default function CityScene({
+  drive,
+  ambient = false,
+}: {
+  drive: React.MutableRefObject<number>;
+  ambient?: boolean;
+}) {
   return (
     <Canvas
-      camera={{ position: [0, 2.2, 9], fov: 60, near: 0.1, far: 300 }}
+      camera={{ position: [0, ambient ? 17 : 2.2, ambient ? 30 : 9], fov: ambient ? 50 : 60, near: 0.1, far: 300 }}
       dpr={[1, 2]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       style={{ position: "absolute", inset: 0 }}
       onCreated={({ scene }) => {
-        scene.fog = new THREE.Fog(HAZE, 26, 150);
+        scene.fog = new THREE.Fog(HAZE, ambient ? 16 : 26, ambient ? 96 : 150);
       }}
     >
       {/* warm dusk key + cool fill */}
@@ -185,11 +202,11 @@ export default function CityScene({ drive }: { drive: React.MutableRefObject<num
         <planeGeometry args={[400, 400]} />
         <meshStandardMaterial color="#1a1512" roughness={1} metalness={0} />
       </mesh>
-      <City drive={drive} />
-      <Rig drive={drive} />
+      <City drive={drive} ambient={ambient} />
+      <Rig drive={drive} ambient={ambient} />
       <EffectComposer enableNormalPass={false}>
-        <Bloom intensity={1.15} luminanceThreshold={0.35} luminanceSmoothing={0.85} mipmapBlur radius={0.75} />
-        <Vignette eskil={false} offset={0.28} darkness={0.72} />
+        <Bloom intensity={ambient ? 0.55 : 1.15} luminanceThreshold={0.42} luminanceSmoothing={0.85} mipmapBlur radius={0.7} />
+        <Vignette eskil={false} offset={ambient ? 0.4 : 0.28} darkness={ambient ? 0.5 : 0.72} />
       </EffectComposer>
     </Canvas>
   );
