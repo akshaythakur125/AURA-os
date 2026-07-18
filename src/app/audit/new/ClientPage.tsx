@@ -143,9 +143,16 @@ export default function NewAuditPage() {
       else if (res > 1000000) { score = 75; label = 'Good resolution'; color = 'text-emerald-400'; }
       else if (res < 300000) { score = 25; label = 'Low resolution — results may be less accurate'; color = 'text-red-400'; }
       else { score = 50; label = 'Acceptable resolution'; color = 'text-amber-400'; }
-      if (dims.width < 300 || dims.height < 300) { score = 15; label = 'Image too small — minimum 300x300'; color = 'text-red-400'; }
+      if (dims.width < 300 || dims.height < 300) {
+        score = 15; label = 'Image too small — minimum 300x300'; color = 'text-red-400';
+        // Block progression: too-small images can't produce a meaningful
+        // analysis, so treat this as an error, not just a soft warning.
+        setImageError(`Image too small (${dims.width}×${dims.height}px). Please upload a photo at least 300×300px.`);
+      }
       setQualityPreview({ score, label, color });
-    }).catch(() => {});
+    }).catch(() => {
+      setImageError("We couldn't read this image. Try a different JPEG, PNG, or WebP file.");
+    });
     trackEvent(EVENTS.QUIZ_PHOTO_UPLOADED, { fileType: f.type, fileSize: f.size });
   }
 
