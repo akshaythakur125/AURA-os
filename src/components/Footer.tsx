@@ -82,6 +82,9 @@ export function Footer() {
         <div className="mt-14 border-t border-[#1c1917]/[0.08] pt-6 text-center text-[12px] text-[#9c9184]">
           &copy; {new Date().getFullYear()} AuraCheck. For informational and
           entertainment purposes only.
+          <span className="mt-1 block text-[10px] text-[#b0a696]">
+            3D: &ldquo;Fox&rdquo; by tomkranis (CC BY 4.0). Camera, fish &amp; boombox models CC0.
+          </span>
         </div>
       </Container>
     </footer>

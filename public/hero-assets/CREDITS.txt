@@ -1,0 +1,7 @@
+3D models (bundled, compressed):
+- antique-camera.glb — "AntiqueCamera" by UX3D — CC0 1.0 (public domain)
+- fish.glb — "BarramundiFish" — CC0 1.0 (public domain)
+- boombox.glb — "BoomBox" — CC0 1.0 (public domain)
+- fox.glb — "Fox" by PixelMannen (model, CC0) & tomkranis / @AsoboStudio (rig+animation, CC BY 4.0)
+  Attribution: "Fox" model by tomkranis, licensed CC BY 4.0.
+Source: Khronos glTF-Sample-Assets.

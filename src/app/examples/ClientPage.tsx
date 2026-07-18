@@ -23,7 +23,7 @@ export default function ExamplesPage() {
         <Container className="relative">
           <div className="mx-auto max-w-3xl text-center">
             <div className="mb-6 flex justify-center">
-              <Scene3DAccent size={200} />
+              <Scene3DAccent size={220} model="fox" />
             </div>
             <h1 className="bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-4xl font-bold text-transparent sm:text-5xl">
               See what AuraCheck actually gives you.

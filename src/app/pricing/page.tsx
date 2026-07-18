@@ -128,7 +128,7 @@ export default function PricingPage() {
         <Container className="relative">
           <FadeInView>
             <div className="mb-6 flex justify-center">
-              <Scene3DAccent size={190} />
+              <Scene3DAccent size={200} model="fish" />
             </div>
             <SectionHeading
               title="Simple pricing, real results"

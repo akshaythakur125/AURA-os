@@ -8,19 +8,34 @@ const LensScene = dynamic(() => import("@/components/hero/LensScene"), {
   ssr: false,
   loading: () => null,
 });
+const ModelScene = dynamic(() => import("@/components/hero/ModelScene"), {
+  ssr: false,
+  loading: () => null,
+});
+
+// Named 3D models bundled in /public/hero-assets. Each tuned for its shape.
+const MODELS: Record<string, { url: string; spin: number; fill: number }> = {
+  camera: { url: "/hero-assets/antique-camera.glb", spin: 0.0035, fill: 3.1 },
+  fish: { url: "/hero-assets/fish.glb", spin: 0.005, fill: 4.2 },
+  boombox: { url: "/hero-assets/boombox.glb", spin: 0.006, fill: 3.4 },
+  fox: { url: "/hero-assets/fox.glb", spin: 0.004, fill: 4.0 },
+};
 
 interface Scene3DAccentProps {
   /** square box size in px (desktop) */
   size?: number;
   className?: string;
+  /** optional named model; omit for the procedural camera-lens */
+  model?: keyof typeof MODELS;
 }
 
 /**
- * Reusable 3D accent (procedural camera-lens) for page headers. Renders the
- * WebGL lens on a capable desktop; under reduced-motion / no-WebGL / narrow
- * screens it falls back to a flat CSS lens ring so the slot is never empty.
+ * Reusable 3D accent for page headers. Renders a real modelled glTF object (if
+ * `model` is given) or the procedural camera-lens, on a capable desktop; under
+ * reduced-motion / no-WebGL / narrow screens it falls back to a flat CSS ring
+ * so the slot is never empty.
  */
-export function Scene3DAccent({ size = 220, className = "" }: Scene3DAccentProps) {
+export function Scene3DAccent({ size = 220, className = "", model }: Scene3DAccentProps) {
   const webgl = useWebGLSupport();
   const [reduced, setReduced] = useState(false);
   const [narrow, setNarrow] = useState(false);
@@ -41,11 +56,16 @@ export function Scene3DAccent({ size = 220, className = "" }: Scene3DAccentProps
   }, []);
 
   const show3D = !reduced && webgl === true && !narrow;
+  const cfg = model ? MODELS[model] : null;
 
   return (
     <div className={`relative ${className}`} style={{ width: size, height: size }} aria-hidden="true">
       {show3D ? (
-        <LensScene dense={!narrow} />
+        cfg ? (
+          <ModelScene url={cfg.url} spin={cfg.spin} fill={cfg.fill} dense={!narrow} />
+        ) : (
+          <LensScene dense={!narrow} />
+        )
       ) : (
         // Flat fallback: concentric ink rings with a vermilion accent
         <div className="absolute inset-0 flex items-center justify-center">
