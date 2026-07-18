@@ -287,10 +287,12 @@ export default function AuditDetailPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  const [audit, rawSetAudit] = useState<Audit | null | undefined>(() => {
-    if (typeof window === "undefined") return undefined;
-    return getAuditById(id) ?? null;
-  });
+  // Start undefined on both server and client so the first render matches
+  // (avoids a hydration mismatch); load from localStorage after mount.
+  const [audit, rawSetAudit] = useState<Audit | null | undefined>(undefined);
+  useEffect(() => {
+    rawSetAudit(getAuditById(id) ?? null);
+  }, [id]);
   const [generating, setGenerating] = useState(false);
   const [reportReady, setReportReady] = useState(false);
   const [error, setError] = useState<string | null>(null);

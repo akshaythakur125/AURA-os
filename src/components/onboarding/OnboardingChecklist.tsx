@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -16,8 +16,12 @@ const STEPS: { key: keyof OnboardingState; label: string; href: string }[] = [
 ];
 
 export function OnboardingChecklist() {
-  const [state] = useState<OnboardingState | null>(() => {
-    if (typeof window === "undefined") return null;
+  // Load after mount so server and client render the same first frame (null),
+  // avoiding a hydration mismatch.
+  const [state, setState] = useState<OnboardingState | null>(null);
+  const [progress, setProgress] = useState({ completed: 0, total: 5, percentage: 0 });
+
+  useEffect(() => {
     const audits = getAudits();
     const hasAudit = audits.length > 0;
     const hasScore = audits.some((a) => a.freeScore !== undefined || a.fullScore !== undefined);
@@ -27,12 +31,9 @@ export function OnboardingChecklist() {
     if (Object.keys(updates).length > 0) {
       updateOnboardingState(updates);
     }
-    return getOnboardingState();
-  });
-  const [progress] = useState(() => {
-    if (typeof window === "undefined") return { completed: 0, total: 5, percentage: 0 };
-    return getOnboardingProgress();
-  });
+    setState(getOnboardingState());
+    setProgress(getOnboardingProgress());
+  }, []);
 
   if (!state) return null;
   if (progress.percentage >= 100) {

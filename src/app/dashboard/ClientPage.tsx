@@ -60,15 +60,22 @@ function loadState() {
 }
 
 export default function DashboardPage() {
-  const initial = loadState();
-  const [audits, setAudits] = useState<Audit[]>(initial.audits);
-  const [stats, setStats] = useState<AuditStats | null>(initial.stats);
-  const [user, setUser] = useState<LocalUser | null>(initial.user);
-  const [displayName, setDisplayName] = useState(initial.user?.displayName || "");
-  const [city, setCity] = useState(initial.user?.city || "");
+  // Start empty on server and client-initial render (avoids hydration
+  // mismatch), then hydrate from localStorage after mount.
+  const [audits, setAudits] = useState<Audit[]>([]);
+  const [stats, setStats] = useState<AuditStats | null>(null);
+  const [user, setUser] = useState<LocalUser | null>(null);
+  const [displayName, setDisplayName] = useState("");
+  const [city, setCity] = useState("");
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
+    const s = loadState();
+    setAudits(s.audits);
+    setStats(s.stats);
+    setUser(s.user);
+    setDisplayName(s.user?.displayName || "");
+    setCity(s.user?.city || "");
     trackEvent(EVENTS.DASHBOARD_VIEWED);
   }, []);
 
