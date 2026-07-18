@@ -2,7 +2,6 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import { useWebGLSupport } from "@/hooks/useWebGLSupport";
 
 const CityWorld = dynamic(() => import("@/components/world/CityWorld"), {
@@ -15,11 +14,10 @@ const CityWorld = dynamic(() => import("@/components/world/CityWorld"), {
  * sitting behind all content so the whole site feels like it lives inside the
  * 3D city. Desktop + WebGL + motion gated; otherwise renders nothing (the paper
  * background stands alone). pointer-events are off so it never intercepts
- * clicks. Skipped on the audit flow, which needs the GPU for canvas readbacks.
+ * clicks. Shown on the audit flow too — analysis runs on a CPU-backed canvas.
  */
 export function WorldBackground() {
   const webgl = useWebGLSupport();
-  const pathname = usePathname();
   const [reduced, setReduced] = useState(false);
   const [narrow, setNarrow] = useState(false);
 
@@ -38,12 +36,10 @@ export function WorldBackground() {
     };
   }, []);
 
-  // The audit flow does heavy canvas getImageData analysis — keep the GPU free
-  // there so readbacks don't stall. Skip the world on those pages.
-  const isHeavyFlow = pathname?.startsWith("/audit");
-
-  // Show on mobile too (GenZ is mobile-first); render lighter there.
-  if (reduced || webgl !== true || isHeavyFlow) return null;
+  // Shown everywhere now, including the audit flow — the photo analysis uses a
+  // CPU-backed canvas (willReadFrequently), so the city's WebGL no longer
+  // stalls its readbacks. Mobile gets a lighter render.
+  if (reduced || webgl !== true) return null;
 
   return (
     <div
