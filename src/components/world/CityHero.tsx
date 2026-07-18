@@ -42,12 +42,13 @@ export function CityHero() {
     };
   }, []);
 
-  const show3D = !reduced && webgl === true && !narrow;
+  // Show on mobile too (GenZ is mobile-first) — just render lighter there.
+  const show3D = !reduced && webgl === true;
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
       {show3D ? (
-        <CityScene drive={drive} />
+        <CityScene drive={drive} lite={narrow} />
       ) : (
         // Static skyline fallback — layered ink silhouettes on a warm dusk sky
         <div className="absolute inset-0 bg-[linear-gradient(180deg,#f3e7d2_0%,#ecdcc2_45%,#e2cdb0_100%)]">

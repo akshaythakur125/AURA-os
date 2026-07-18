@@ -10,7 +10,7 @@ import CityScene from "@/components/world/CityScene";
  * and bottom fades) so text stays readable on top. Gating + opacity live in
  * WorldBackground.
  */
-export default function CityWorld() {
+export default function CityWorld({ lite = false }: { lite?: boolean }) {
   const drive = useRef(0);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function CityWorld() {
 
   return (
     <div className="absolute inset-0">
-      <CityScene drive={drive} ambient />
+      <CityScene drive={drive} ambient lite={lite} />
       {/* keep page content readable: soft overall veil, a brighter centre where
           content sits, and top & bottom fades to bone */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(242,236,225,0.72)_0%,rgba(242,236,225,0.5)_38%,rgba(242,236,225,0.28)_70%,rgba(242,236,225,0.2)_100%)]" />

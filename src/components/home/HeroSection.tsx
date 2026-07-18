@@ -10,13 +10,13 @@ import { CityHero } from "@/components/world/CityHero";
 import type { AuraDimension } from "./AuraCore";
 
 const SAMPLE_DIMENSIONS: AuraDimension[] = [
-  { id: "lighting", label: "Lighting", score: 72, color: "#a78bfa" },
-  { id: "clarity", label: "Clarity", score: 85, color: "#60a5fa" },
-  { id: "composition", label: "Composition", score: 64, color: "#34d399" },
-  { id: "background", label: "Background", score: 58, color: "#fbbf24" },
-  { id: "colour", label: "Colour Harmony", score: 78, color: "#f472b6" },
-  { id: "style", label: "Style", score: 70, color: "#c084fc" },
-  { id: "consistency", label: "Consistency", score: 66, color: "#fb923c" },
+  { id: "lighting", label: "Lighting", score: 72, color: "#E14434" },
+  { id: "clarity", label: "Clarity", score: 85, color: "#E9A23B" },
+  { id: "composition", label: "Composition", score: 64, color: "#C0341F" },
+  { id: "background", label: "Background", score: 58, color: "#B27A4B" },
+  { id: "colour", label: "Colour Harmony", score: 78, color: "#D9663C" },
+  { id: "style", label: "Style", score: 70, color: "#8A8175" },
+  { id: "consistency", label: "Consistency", score: 66, color: "#E14434" },
 ];
 
 export function HeroSection() {

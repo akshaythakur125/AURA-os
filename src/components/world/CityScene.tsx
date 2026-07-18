@@ -283,14 +283,17 @@ function Rig({ drive, ambient }: { drive: React.MutableRefObject<number>; ambien
 export default function CityScene({
   drive,
   ambient = false,
+  lite = false,
 }: {
   drive: React.MutableRefObject<number>;
   ambient?: boolean;
+  /** lower-cost render for mobile/low-power (caps pixel ratio) */
+  lite?: boolean;
 }) {
   return (
     <Canvas
       camera={{ position: [0, ambient ? 17 : 2.2, ambient ? 30 : 9], fov: ambient ? 50 : 60, near: 0.1, far: 300 }}
-      dpr={[1, 2]}
+      dpr={lite ? [1, 1.35] : [1, 2]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       style={{ position: "absolute", inset: 0 }}
       onCreated={({ scene }) => {

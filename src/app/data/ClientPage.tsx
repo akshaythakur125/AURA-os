@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -24,6 +24,12 @@ function formatDate(iso: string): string {
 
 export default function DataPage() {
   const { toast } = useToast();
+  // Gate rendering until mounted so the server HTML (null) and the first client
+  // render (null) match — the storage summaries below read localStorage, which
+  // only exists on the client, so rendering them on the first pass triggers a
+  // hydration mismatch (React #418).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const [, setRefreshKey] = useState(0);
   const [confirmTarget, setConfirmTarget] = useState<ClearTarget | null>(null);
   const [importPreview, setImportPreview] = useState<ExportedData | null>(null);
@@ -114,9 +120,8 @@ export default function DataPage() {
   }
 
   const totalItems = dataTypes.reduce((s, d) => s + d.count, 0);
-  const isServer = typeof window === "undefined";
 
-  if (isServer) return null;
+  if (!mounted) return null;
 
   return (
     <Container className="py-12">

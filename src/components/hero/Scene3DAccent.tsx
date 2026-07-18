@@ -63,7 +63,9 @@ export function Scene3DAccent({ size = 220, className = "", model, shape }: Scen
     };
   }, []);
 
-  const show3D = !reduced && webgl === true && !narrow;
+  // Render on mobile too (GenZ is mobile-first); `dense={!narrow}` already
+  // lowers the pixel ratio there for performance.
+  const show3D = !reduced && webgl === true;
   const cfg = model ? MODELS[model] : null;
 
   return (

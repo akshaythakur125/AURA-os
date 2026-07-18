@@ -42,7 +42,8 @@ export function WorldBackground() {
   // there so readbacks don't stall. Skip the world on those pages.
   const isHeavyFlow = pathname?.startsWith("/audit");
 
-  if (reduced || narrow || webgl !== true || isHeavyFlow) return null;
+  // Show on mobile too (GenZ is mobile-first); render lighter there.
+  if (reduced || webgl !== true || isHeavyFlow) return null;
 
   return (
     <div
@@ -50,7 +51,7 @@ export function WorldBackground() {
       style={{ opacity: 0.42 }}
       aria-hidden="true"
     >
-      <CityWorld />
+      <CityWorld lite={narrow} />
     </div>
   );
 }

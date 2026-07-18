@@ -24,10 +24,10 @@ function scoreToRadius(score: number, base: number, range: number): number {
 }
 
 function getScoreColor(score: number): string {
-  if (score >= 80) return "#22c55e";
-  if (score >= 60) return "#a78bfa";
-  if (score >= 40) return "#f59e0b";
-  return "#ef4444";
+  if (score >= 80) return "#E14434";
+  if (score >= 60) return "#D9663C";
+  if (score >= 40) return "#E9A23B";
+  return "#8A8175";
 }
 
 export function AuraCore({
@@ -107,7 +107,7 @@ export function AuraCore({
           height: size * 0.8,
           left: center - size * 0.4,
           top: center - size * 0.4,
-          background: `radial-gradient(circle, ${dimensions[0]?.color || "#a78bfa"}40, transparent)`,
+          background: `radial-gradient(circle, ${dimensions[0]?.color || "#E14434"}40, transparent)`,
           opacity: hovered ? 0.35 : 0.15,
         }}
       />
@@ -126,7 +126,7 @@ export function AuraCore({
             height: compact ? 30 : 50,
             left: center - (compact ? 15 : 25),
             top: center - (compact ? 15 : 25),
-            background: "radial-gradient(circle at 35% 35%, #c4b5fd, #7c3aed, #4c1d95)",
+            background: "radial-gradient(circle at 35% 35%, #ef6a4f, #E14434, #1c1917)",
             boxShadow: `0 0 ${compact ? 20 : 40}px rgba(225, 68, 52,0.4), inset 0 -2px 6px rgba(0,0,0,0.3)`,
           }}
         />
