@@ -90,10 +90,10 @@ function ArchetypeCard({ personalization }: { personalization: PersonalizationRe
   const colors = colorMap[personalization.archetype] || colorMap["Clean Basic"];
   return (
     <Card>
-      <h3 className="mb-4 text-sm font-semibold text-white">Your Status Archetype</h3>
-      <div className={`mb-4 rounded-xl border p-4 ${colors}`}>
-        <div className="text-lg font-bold text-white">{personalization.archetype}</div>
-        <p className="mt-2 text-xs text-gray-300">{personalization.archetypeExplanation}</p>
+      <h3 className="mb-4 bg-gradient-to-r from-white via-violet-100 to-violet-200 bg-clip-text text-base font-bold text-transparent">Your Status Archetype</h3>
+      <div className={`mb-4 rounded-2xl border p-5 ${colors}`}>
+        <div className="text-2xl font-extrabold text-white">{personalization.archetype}</div>
+        <p className="mt-2 text-[13px] leading-relaxed text-gray-300">{personalization.archetypeExplanation}</p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-lg border border-white/[0.04] bg-white/[0.03] p-3">
@@ -137,7 +137,7 @@ function SignalMismatchCard({ mismatches }: { mismatches: SignalMismatch[] }) {
 function GoalStrategyCard({ strategy }: { strategy: GoalStrategy }) {
   return (
     <Card>
-      <h3 className="mb-4 text-sm font-semibold text-white">Goal Strategy</h3>
+      <h3 className="mb-4 bg-gradient-to-r from-white via-violet-100 to-violet-200 bg-clip-text text-base font-bold text-transparent">Goal Strategy</h3>
       <div className="space-y-4">
         <div>
           <div className="mb-1 text-xs text-purple-400">{strategy.goal}</div>
@@ -563,7 +563,7 @@ export default function AuditDetailPage() {
           <Card className="mb-6">
             <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
               <div>
-                <h1 className="text-xl font-bold text-white">
+                <h1 className="bg-gradient-to-r from-white via-violet-100 to-violet-200 bg-clip-text text-2xl font-bold text-transparent">
                   {auditTypeLabels[audit.auditType] || audit.auditType}
                 </h1>
                 <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
@@ -591,11 +591,11 @@ export default function AuditDetailPage() {
               <div className="mb-6 grid grid-cols-2 gap-3 rounded-xl border border-white/[0.04] bg-white/[0.03] p-4 sm:grid-cols-4">
                 <div>
                   <div className="text-xs text-gray-500">Width</div>
-                  <div className="text-sm text-white">{audit.imageMeta.width || "ΓÇö"} px</div>
+                  <div className="text-sm text-white">{audit.imageMeta.width || "—"} px</div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-500">Height</div>
-                  <div className="text-sm text-white">{audit.imageMeta.height || "ΓÇö"} px</div>
+                  <div className="text-sm text-white">{audit.imageMeta.height || "—"} px</div>
                 </div>
                 <div>
                   <div className="text-xs text-gray-500">Original Size</div>
@@ -604,7 +604,7 @@ export default function AuditDetailPage() {
                 <div>
                   <div className="text-xs text-gray-500">Compressed</div>
                   <div className="text-sm text-white">
-                    {audit.imageMeta.compressedSize ? formatBytes(audit.imageMeta.compressedSize) : "ΓÇö"}
+                    {audit.imageMeta.compressedSize ? formatBytes(audit.imageMeta.compressedSize) : "—"}
                   </div>
                 </div>
               </div>
@@ -688,7 +688,7 @@ export default function AuditDetailPage() {
 {/* Free Result + Locked Teaser */}
           {!displayFull && displayResult && (
             <>
-              {/* ΓöÇΓöÇΓöÇ HERO: The Leak ΓöÇΓöÇΓöÇ */}
+              {/* ─── HERO: The Leak ─── */}
               {(() => {
                 const sortedLeaks = [...(displayResult.statusLeaks ?? [])].sort(
                   (a, b) => (a.severity === "high" ? 0 : a.severity === "medium" ? 1 : 2) - (b.severity === "high" ? 0 : b.severity === "medium" ? 1 : 2)
@@ -720,14 +720,14 @@ export default function AuditDetailPage() {
                           </div>
                           {otherLeaks.length > 0 && (
                             <p className="mt-4 text-center text-xs text-gray-500">
-                              +{otherLeaks.length} more {otherLeaks.length === 1 ? "leak" : "leaks"} found ΓÇö see below
+                              +{otherLeaks.length} more {otherLeaks.length === 1 ? "leak" : "leaks"} found — see below
                             </p>
                           )}
                         </div>
                       </FadeInView>
                     )}
 
-                    {/* ΓöÇΓöÇΓöÇ Score Card ΓöÇΓöÇΓöÇ */}
+                    {/* ─── Score Card ─── */}
                     <FadeInView delay={100}>
                       <Card className="relative mb-6 overflow-hidden text-center" data-score-card>
                         <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-purple-600/10 blur-3xl" />
@@ -912,7 +912,7 @@ export default function AuditDetailPage() {
                       </Card>
                     </FadeInView>
 
-                    {/* ΓöÇΓöÇΓöÇ Remaining Leaks (Blurred Previews) ΓöÇΓöÇΓöÇ */}
+                    {/* ─── Remaining Leaks (Blurred Previews) ─── */}
                     {otherLeaks.length > 0 && (
                       <FadeInView delay={150}>
                         <div className="mb-6">
@@ -931,7 +931,7 @@ export default function AuditDetailPage() {
                                     {leak.severity}
                                   </Badge>
                                 </div>
-                                {/* Blurred content ΓÇö visible shape, unreadable text */}
+                                {/* Blurred content — visible shape, unreadable text */}
                                 <div className="mt-2 blur-sm cursor-pointer" onClick={() => { setPaywallTrigger("Status leak details"); setPaywallOpen(true); }}>
                                   <p className="text-xs text-gray-400">{leak.description}</p>
                                   <p className="mt-1 text-xs text-gray-500">
@@ -1068,7 +1068,7 @@ export default function AuditDetailPage() {
                 </FadeInView>
               )}
 
-              {/* ΓöÇΓöÇΓöÇ Dating Profile Report Display ΓöÇΓöÇΓöÇ */}
+              {/* ─── Dating Profile Report Display ─── */}
               {audit.datingProfileReport && (
                 <FadeInView>
                   <Card className="mb-6">
@@ -1133,7 +1133,7 @@ export default function AuditDetailPage() {
                 </FadeInView>
               )}
 
-              {/* ΓöÇΓöÇΓöÇ Glow-Up Plan Display ΓöÇΓöÇΓöÇ */}
+              {/* ─── Glow-Up Plan Display ─── */}
               {audit.glowupPlan && (
                 <FadeInView>
                 <Card className="mb-6">
