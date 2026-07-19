@@ -6,23 +6,23 @@ import { FadeInView } from "@/components/ui/FadeInView";
 const ITEMS = [
   {
     q: "What is analysed?",
-    a: "Visual presentation signals: lighting quality, image sharpness, composition framing, background complexity, colour balance, clothing style, and overall visual consistency.",
+    a: "Lighting, sharpness, composition, background, colour, style, and consistency.",
   },
   {
     q: "Where does processing happen?",
-    a: "Entirely in your browser. Your photo is never uploaded to our servers for the free analysis. All measurements run locally using JavaScript and Canvas.",
+    a: "In your browser. On the free scan, your photo never touches our servers.",
   },
   {
     q: "What can this system infer?",
-    a: "Technical image qualities — brightness, contrast, sharpness, colour distribution, and spatial composition. It cannot read emotions, judge personality, or make subjective beauty assessments.",
+    a: "Technical image qualities only. It can't read emotions, personality, or looks.",
   },
   {
     q: "How does scoring work?",
-    a: "Each dimension is scored 0–100 against evidence-based guidelines for effective profile photography. Scores reflect technical image qualities, not personal worth.",
+    a: "Each signal is scored 0–100 against proven photo guidelines — not personal worth.",
   },
   {
     q: "Is my photo stored?",
-    a: "No. Free scans are processed in-memory and never leave your device. If you choose to save results, metadata (not the image) is stored in your browser's local storage.",
+    a: "No. Free scans stay in memory. Saved results keep metadata only — never the image.",
   },
 ];
 
@@ -33,7 +33,7 @@ export function PrivacyMethodology() {
         <FadeInView>
           <div className="mb-12 text-center">
             <h2 className="text-2xl font-bold text-white sm:text-3xl">Privacy & methodology</h2>
-            <p className="mt-3 text-sm text-gray-500">What we measure, how we measure it, and what we do with your data.</p>
+            <p className="mt-3 text-sm text-gray-500">What we measure — and what happens to your photo.</p>
           </div>
         </FadeInView>
 

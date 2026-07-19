@@ -4,13 +4,13 @@ import { Container } from "@/components/ui/Container";
 import { FadeInView } from "@/components/ui/FadeInView";
 
 const DIMENSIONS = [
-  { name: "Lighting", icon: "💡", desc: "How light falls on your face — even, directional, or harsh.", issue: "Flat overhead lighting removes dimension and reads as low-effort.", fix: "Face a window at 45°. Natural side light is the single biggest upgrade." },
-  { name: "Clarity", icon: "🔍", desc: "Sharpness, focus, and image resolution.", issue: "Motion blur or soft focus makes you look like an afterthought.", fix: "Use the rear camera, clean the lens, hold steady or use a timer." },
-  { name: "Composition", icon: "📐", desc: "Framing, headroom, and subject placement.", issue: "Cut off at the shoulders or too much headroom looks accidental.", fix: "Center yourself, eyes at the top-third line, chest-up framing." },
-  { name: "Background", icon: "🏠", desc: "What's behind you and what it signals.", issue: "Cluttered rooms, messy desks, or busy streets distract from you.", fix: "Stand in front of a plain wall, open doorway, or clean outdoor space." },
-  { name: "Colour Harmony", icon: "🎨", desc: "How your outfit colours interact with your skin tone.", issue: "Washed-out or clashing colours reduce visual impact.", fix: "Wear colours that contrast your skin — dark on light, light on dark." },
-  { name: "Style", icon: "👔", desc: "Clothing choices and grooming signals.", issue: "Wrinkled, ill-fitting, or overly casual clothes lower perceived effort.", fix: "Solid colours, well-fitted basics, and clean grooming go a long way." },
-  { name: "Consistency", icon: "📊", desc: "How well your overall presentation holds together.", issue: "Mixing formal top with casual background sends mixed signals.", fix: "Align outfit, background, and expression to one clear message." },
+  { name: "Lighting", icon: "💡", issue: "Flat overhead light reads as low-effort.", fix: "Face a window at 45°." },
+  { name: "Clarity", icon: "🔍", issue: "Blur makes you an afterthought.", fix: "Rear camera, clean lens, hold steady." },
+  { name: "Composition", icon: "📐", issue: "Odd cropping looks accidental.", fix: "Chest-up, eyes on the top third." },
+  { name: "Background", icon: "🏠", issue: "Clutter distracts from you.", fix: "Plain wall or clean outdoor space." },
+  { name: "Colour Harmony", icon: "🎨", issue: "Clashing colours kill impact.", fix: "Contrast your skin — dark on light." },
+  { name: "Style", icon: "👔", issue: "Ill-fitting clothes lower effort.", fix: "Fitted, solid colours, clean grooming." },
+  { name: "Consistency", icon: "📊", issue: "Mixed signals confuse.", fix: "One clear message, head to toe." },
 ];
 
 export function AuditDimensions() {
@@ -32,14 +32,13 @@ export function AuditDimensions() {
                   <span className="text-lg">{d.icon}</span>
                   <h3 className="text-sm font-semibold text-white">{d.name}</h3>
                 </div>
-                <p className="mb-3 text-xs text-gray-500">{d.desc}</p>
                 <div className="space-y-2 text-xs">
                   <div>
-                    <span className="text-red-400 font-medium">Common issue: </span>
+                    <span className="text-red-400 font-medium">Leak: </span>
                     <span className="text-gray-400">{d.issue}</span>
                   </div>
                   <div>
-                    <span className="text-emerald-400 font-medium">Quick fix: </span>
+                    <span className="text-emerald-400 font-medium">Fix: </span>
                     <span className="text-gray-400">{d.fix}</span>
                   </div>
                 </div>

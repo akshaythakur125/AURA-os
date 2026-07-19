@@ -46,7 +46,7 @@ export function HeroSection() {
 
             <FadeInView delay={200}>
               <p className="mt-6 max-w-xl text-base text-gray-400 sm:text-lg leading-relaxed">
-                Upload one photo and receive a structured assessment of lighting, composition, background, colour, styling, and overall presentation — with clear actions to improve it.
+                Upload one photo. Get your Aura Score and the exact fixes — in seconds.
               </p>
             </FadeInView>
 
@@ -67,9 +67,9 @@ export function HeroSection() {
 
             <FadeInView delay={400}>
               <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-gray-500">
-                <span>Private browser-based analysis</span>
-                <span>No account required for the first scan</span>
-                <span>Clear scoring with actionable recommendations</span>
+                <span>Private, in-browser</span>
+                <span>No account needed</span>
+                <span>Actionable fixes</span>
               </div>
             </FadeInView>
           </div>
