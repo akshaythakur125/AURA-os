@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import type { GroomingResult } from "@/lib/aura-engine/engines/groomingEngine";
 
@@ -72,15 +73,21 @@ function Bar({ label, score, tip }: { label: string; score: number; tip: string 
 }
 
 function PlaceRow({ p }: { p: NearbyPlace }) {
+  const [imgOk, setImgOk] = useState(true);
   const photoUrl = p.photoReference ? `/api/places/photo?name=${encodeURIComponent(p.photoReference)}` : null;
+  const showPhoto = !!photoUrl && imgOk;
   return (
     <div className="flex gap-3 rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-2.5 transition-colors hover:border-[#E14434]/30">
-      {/* Photo */}
-      {photoUrl ? (
+      {/* Photo — only when one is actually available (no placeholder) */}
+      {showPhoto && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={photoUrl} alt="" loading="lazy" className="h-16 w-16 shrink-0 rounded-lg object-cover" />
-      ) : (
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-[#1c1917]/[0.05] text-xl">💈</div>
+        <img
+          src={photoUrl!}
+          alt=""
+          loading="lazy"
+          onError={() => setImgOk(false)}
+          className="h-16 w-16 shrink-0 rounded-lg object-cover"
+        />
       )}
       {/* Info */}
       <div className="min-w-0 flex-1">
