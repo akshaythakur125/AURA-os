@@ -18,6 +18,8 @@ import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport
 import { FullReport } from "@/components/report/FullReport";
 import { LockedSection } from "@/components/report/LockedSection";
 import { GroomingLocalCard } from "@/components/report/GroomingLocalCard";
+import { YourColorsCard } from "@/components/report/YourColorsCard";
+import { CapsuleWardrobeCard } from "@/components/report/CapsuleWardrobeCard";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
@@ -1128,6 +1130,36 @@ export default function AuditDetailPage() {
                       places={nearbyPlaces}
                       city={userLocation?.city}
                       locationKnown={userLocation != null}
+                    />
+                  </LockedSection>
+                </div>
+              )}
+
+              {/* ─── Your Colors — paid perk ─── */}
+              {displayResult?.imageMetrics?.colorPalette && (
+                <div className="mb-6">
+                  <LockedSection locked={!isUnlocked} label="Your Colors" unlockHref={unlockHref}>
+                    <YourColorsCard
+                      palette={displayResult.imageMetrics.colorPalette}
+                      undertone={displayResult.imageMetrics.undertone}
+                    />
+                  </LockedSection>
+                </div>
+              )}
+
+              {/* ─── Capsule Wardrobe — paid perk ─── */}
+              {personalization != null && displayResult != null && (
+                <div className="mb-6">
+                  <LockedSection locked={!isUnlocked} label="Your Capsule Wardrobe" unlockHref={unlockHref}>
+                    <CapsuleWardrobeCard
+                      archetype={personalization.archetype}
+                      looks={getPersonalizedLooks({
+                        styleArchetypes: [personalization.archetype === "Corporate Sharp" ? "professional" : personalization.archetype === "Creator Vibe" ? "creator" : personalization.archetype === "College Casual" ? "college" : personalization.archetype === "Premium Minimalist" ? "premium" : personalization.archetype === "Urban Aspirational" ? "confident" : personalization.archetype === "Loud Flex" ? "bold" : personalization.archetype === "Soft Luxury" ? "understated" : "clean"],
+                        statusLeakTags: (displayResult.statusLeaks ?? []).map((l) => l.category as any).filter(Boolean),
+                        goalTags: audit!.goal ? [audit!.goal as any] : undefined,
+                        budgetMax: audit!.budgetRange as any,
+                        limit: 40,
+                      })}
                     />
                   </LockedSection>
                 </div>
