@@ -306,6 +306,28 @@ export default function AuditDetailPage() {
   const [result, setResult] = useState<FreeAuraResult | null>(null);
   const [fullContent, setFullContent] = useState<FullAuraReportContent | null>(null);
   const [reportTab, setReportTab] = useState<"report" | "looks" | "tools">("report");
+  // Deep-link (?tab=looks) + remember the last-viewed tab. Client-only so the
+  // initial server/client render matches (default "report"), then we restore.
+  useEffect(() => {
+    try {
+      const fromUrl = new URLSearchParams(window.location.search).get("tab");
+      const fromStore = sessionStorage.getItem("auracheck:reportTab");
+      const val = [fromUrl, fromStore].find((v) => v === "report" || v === "looks" || v === "tools");
+      if (val) {
+        setReportTab(val as "report" | "looks" | "tools");
+        sessionStorage.setItem("auracheck:reportTab", val); // persist deep-links too
+      }
+    } catch { /* no-op */ }
+  }, []);
+  const selectTab = (id: "report" | "looks" | "tools") => {
+    setReportTab(id);
+    try {
+      sessionStorage.setItem("auracheck:reportTab", id);
+      const url = new URL(window.location.href);
+      url.searchParams.set("tab", id);
+      window.history.replaceState({}, "", url.toString());
+    } catch { /* no-op */ }
+  };
   const [confirmAction, setConfirmAction] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ city: string; lat: number; lng: number } | null>(null);
   const [nearbyPlaces, setNearbyPlaces] = useState<{
@@ -750,7 +772,7 @@ export default function AuditDetailPage() {
                 ] as const).map((t) => (
                   <button
                     key={t.id}
-                    onClick={() => setReportTab(t.id)}
+                    onClick={() => selectTab(t.id)}
                     className={`shrink-0 rounded-xl px-4 py-2 text-xs font-semibold transition-colors ${reportTab === t.id ? "bg-[#1c1917] text-white" : "text-[#6f675e] hover:bg-[#1c1917]/[0.05]"}`}
                   >
                     {t.label}
