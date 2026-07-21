@@ -792,8 +792,11 @@ export function analyzeImageDataUrl(
         const qualityResult = isCartoon ? { qualityScore: 0, issues: ["no_face"], canProceed: false, message: "This looks like an illustration or cartoon. AuraCheck works best with real photos of real people." } : runQualityGate({
           width: img.width,
           height: img.height,
-          avgBrightness: brightness,
-          brightnessStdDev: stdDev(stats.brightnessValues, brightness),
+          // Gate thresholds are on a 0–255 scale — pass the raw mean/stdDev,
+          // not the 0–100 rescaled `brightness` (which made normal photos read
+          // as "too dark" and made overexposure impossible to detect).
+          avgBrightness: avgBrightness,
+          brightnessStdDev: contrastVal,
           faceDetected: faceZone.density > 0.01,
           faceAreaPct: Math.round(faceZone.density * 100),
           canvasContext: ctx,

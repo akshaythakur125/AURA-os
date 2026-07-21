@@ -249,23 +249,40 @@ export function runQualityGate(params: {
     effectiveFaceWidth = Math.round(params.faceBox.width);
     effectiveFaceHeight = Math.round(params.faceBox.height);
 
-    // If face region is blurry (regardless of global sharpness)
-    if (faceRegionSharpness < 15) {
+    // Face-region sharpness is measured on a 256px analysis canvas, so edge
+    // density reads low even for perfectly sharp phone photos. Only a genuinely
+    // destroyed face region should count as severe blur; the tier above it is a
+    // soft warning, not a block.
+    if (faceRegionSharpness < 6) {
       issues.push("severe_blur");
       qualityScore -= 30;
-    } else if (faceRegionSharpness < 25 && params.brightnessStdDev > 30) {
-      issues.push("severe_blur");
-      qualityScore -= 25;
+    } else if (faceRegionSharpness < 12) {
+      issues.push("blurry");
+      qualityScore -= 12;
     }
   }
 
   qualityScore = clamp(qualityScore, 0, 100);
 
-  // Determine if analysis can proceed
-  const critical = issues.filter((i) =>
-    ["too_small", "no_face", "blurry", "severe_blur", "screenshot_detected", "multiple_faces", "face_too_small", "overexposed", "too_dark"].includes(i)
-  );
-  const canProceed = critical.length === 0 && qualityScore >= 30;
+  // Determine if analysis can proceed.
+  //
+  // Only genuinely unanalyzable photos are blocked. A soft, dim, or slightly
+  // off phone photo still gets a (lower-confidence) score instead of a dead
+  // end — the blur/brightness nuance lives in qualityScore, not in a hard
+  // block. This is decided from the raw measurements rather than the issue
+  // strings, so mild and severe versions of the same issue can't be conflated.
+  const fatal =
+    !params.faceDetected ||                                   // it's a face analysis
+    params.width < 300 || params.height < 300 ||              // too few pixels to assess
+    screenshotLikelihood > 0.85 ||                            // clearly a screenshot, not a photo
+    params.avgBrightness < 25 ||                              // near-black, no recoverable detail
+    params.avgBrightness > 240 ||                             // blown out, no recoverable detail
+    (params.faceDetected && params.faceAreaPct < 1) ||        // face is a tiny speck in the frame
+    params.brightnessStdDev < 8;                              // globally flat — no signal at all
+  // Note: face-region sharpness (measured on a 256px canvas) is too noisy to
+  // hard-block on — a soft-but-fine portrait can read low. It still lowers
+  // qualityScore, so genuinely destroyed photos fall under the floor below.
+  const canProceed = !fatal && qualityScore >= 20;
 
   // Generate message
   let message: string;
