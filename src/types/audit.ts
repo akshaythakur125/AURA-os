@@ -302,6 +302,12 @@ export interface SalonSuggestion {
   area: string;
 }
 
+export interface ActionPlanDay {
+  day: number;
+  focus: string;
+  tasks: string[];
+}
+
 export interface FullAuraReportContent {
   fullScore: number;
   category: string;
@@ -323,6 +329,7 @@ export interface FullAuraReportContent {
   goalSpecificAdvice: GoalSpecificAdvice;
   finalVerdict: string;
   observations: Observation[];
+  actionPlan?: ActionPlanDay[];
   improvementScore?: {
     currentScore: number;
     potentialScore: number;

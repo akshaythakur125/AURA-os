@@ -296,41 +296,136 @@ function generatePriorityMap(
   };
 }
 
-function generateTieredBudgetPlan(_budget: number): TieredBudgetPlan {
-  void _budget;
+/**
+ * Budget plan built from THIS photo's weakest signals — every rupee is pointed
+ * at a measured gap, ordered so money follows impact. No generic lists.
+ */
+function generateTieredBudgetPlan(metrics: ImageSignalMetrics, goal: string): TieredBudgetPlan {
+  const lightingWeak = metrics.lightingScore < 60;
+  const faceDark = metrics.faceDetected && metrics.faceBrightness < 45;
+  const blurry = metrics.sharpness < 55;
+  const busyBg = metrics.backgroundComplexityEstimate > 55;
+  const groomingWeak = metrics.hairRegion.neatnessScore < 55 || metrics.skinRegion.evenness < 50;
+  const outfitWeak = metrics.clothingRegion.styleSignal === "varied" || metrics.clothingRegion.contrastWithSkin < 15;
+  const dull = metrics.imageDullness > 50 || metrics.contrast < 30;
+
+  const immediateFree: string[] = [];
+  if (faceDark) immediateFree.push(`Reshoot facing a window — your face reads ${metrics.faceBrightness}% brightness vs ${metrics.backgroundBrightness}% background; flipping that is your single biggest free gain`);
+  else if (lightingWeak) immediateFree.push(`Reshoot with side window light at 45° — lighting scored ${metrics.lightingScore}/100 and is your top measured gap`);
+  if (blurry) immediateFree.push(`Wipe the lens + tap-to-focus on your face — sharpness scored ${metrics.sharpness}/100; lean on a wall or prop the phone to kill shake`);
+  if (busyBg) immediateFree.push(`Move 3–4 ft in front of a plain wall — background complexity is ${metrics.backgroundComplexityEstimate}/100 and it's stealing attention from you`);
+  if (outfitWeak) immediateFree.push(metrics.clothingRegion.contrastWithSkin < 15 ? "Swap to a top that contrasts your skin tone — right now you and your shirt blend into one shape" : "Swap the patterned top for one solid colour — your outfit is splitting the viewer's focus");
+  if (groomingWeak) immediateFree.push("15-minute grooming pass before the reshoot: comb/settle hair, moisturise, tidy brows — costs nothing, shows immediately");
+  if (dull) immediateFree.push(`In your phone editor: +15% contrast, +10% warmth — the image reads flat (dullness ${metrics.imageDullness}/100)`);
+  if (immediateFree.length < 3) immediateFree.push("Retake at golden hour (hour after sunrise / before sunset) — warm directional light upgrades every metric at once");
+
+  const under2000: string[] = [];
+  if (lightingWeak || faceDark) under2000.push("Clip-on ring light or ₹600–900 desk LED at eye level — directly fixes your measured lighting gap, reusable for every future photo");
+  if (blurry) under2000.push("Phone tripod (₹300–600) — eliminates the hand-shake behind your soft focus and lets you use the sharper rear camera");
+  if (groomingWeak) under2000.push("Fresh haircut (₹200–500) + basic brow/skin tidy-up — your grooming signals scored below average and this is the cheapest visible fix");
+  under2000.push(goal === "office" ? "One well-fitted solid shirt in white or light blue (₹700–1,200) — the professional baseline that photographs cleanly" : "One well-fitted solid tee/top in navy, white, or black (₹400–800) — solid colours photograph cleaner than anything patterned");
+
+  const under5000: string[] = [];
+  under5000.push(...under2000.slice(0, 2));
+  if (groomingWeak) under5000.push("Full grooming session (₹800–1,500): cut, brows, basic facial — resets every below-par grooming signal in one go");
+  under5000.push(outfitWeak ? "Two-piece photo outfit: solid top + one layering piece like an overshirt (₹1,500–2,500) — layers add depth without pattern noise" : "A layering piece — overshirt or light jacket (₹1,200–2,000) — instantly makes a basic outfit look styled");
+  if (busyBg) under5000.push("Plain backdrop solution: 5ft neutral curtain or paper roll (₹500–900) — a controlled background you can reuse for every shot");
+
+  const under10000: string[] = [];
+  under10000.push("Everything in the ₹5,000 tier — it covers your measured gaps first");
+  under10000.push(goal === "dating" || goal === "instagram" ? "Complete photo outfit — top, bottom, clean shoes (₹3,000–5,000), coordinated in 2–3 solid tones" : "Complete outfit set in coordinated neutrals (₹3,000–5,000) — top, bottom, shoes that all photograph well");
+  under10000.push("One quality accessory — minimal watch or clean frames (₹1,500–3,000). One statement piece, not five");
+  under10000.push("A 1-hour shoot with a friend who can operate your phone + your new light — 100 frames beats 5 selfies every time");
+
+  const under25000: string[] = [];
+  under25000.push("Professional photoshoot (₹5,000–10,000) — after fixing lighting/grooming/outfit above, a pro session multiplies everything");
+  under25000.push("Capsule wardrobe: 3–5 coordinated outfits (₹8,000–12,000) so every future photo has a working look");
+  under25000.push(groomingWeak ? "3-month grooming programme — skin routine + monthly cuts (₹3,000–6,000): compounds every future photo" : "Premium grooming kit + routine (₹2,000–4,000) to keep your strongest signals strong");
+  under25000.push(goal === "instagram" || goal === "content" ? "Content kit: phone gimbal + LED panel (₹6,000–10,000) for consistent feed quality" : "Keep ₹5,000 in reserve — retest your score after the fixes; spend the rest only on what's still weakest");
+
   return {
-    immediateFree: [
-      "Retake photo in natural window light",
-      "Clean camera lens before shooting",
-      "Use a plain wall or simple background",
-      "Wear a solid neutral-colored top",
-      "Use vertical framing with subject centered",
-    ],
-    under2000: [
-      "Basic grooming — haircut, clean nails, brows",
-      "Solid-color shirt or t-shirt in neutral tones",
-      "Simple phone tripod for steady shots",
-      "Basic grooming kit",
-    ],
-    under5000: [
-      "Overshirt or lightweight jacket",
-      "Grooming basics — skincare, hair products",
-      "Simple watch or minimal accessory",
-      "Full grooming — haircut, skincare, styling",
-    ],
-    under10000: [
-      "Complete outfit set — top, bottom, shoes",
-      "Upgraded watch or accessory",
-      "Room background refresh — curtains, clean wall setup",
-      "Professional photo session with a friend or local photographer",
-    ],
-    under25000: [
-      "Small wardrobe capsule — 3-5 coordinated outfits",
-      "Professional photoshoot for profile photos",
-      "Premium grooming — skincare, hair products, styling",
-      "Fitness or grooming program (3-month commitment)",
-    ],
+    immediateFree: immediateFree.slice(0, 5),
+    under2000: under2000.slice(0, 4),
+    under5000: under5000.slice(0, 4),
+    under10000: under10000.slice(0, 4),
+    under25000: under25000.slice(0, 4),
   };
+}
+
+/**
+ * 7-day action plan — turns the leaks into a concrete schedule. Day order
+ * follows measured impact: prep → groom → outfit → reshoot → edit → verify →
+ * deploy. Every task cites the user's own numbers so it reads as *their* plan.
+ */
+function generateActionPlan(
+  metrics: ImageSignalMetrics,
+  leaks: FullStatusLeak[],
+  goal: string,
+  potentialScore: number,
+): { day: number; focus: string; tasks: string[] }[] {
+  const topLeaks = [...leaks].sort((a, b) => b.impactScore - a.impactScore);
+  const lightingWeak = metrics.lightingScore < 65;
+  const groomingWeak = metrics.hairRegion.neatnessScore < 55 || metrics.skinRegion.evenness < 50;
+  const outfitWeak = metrics.clothingRegion.styleSignal === "varied" || metrics.clothingRegion.contrastWithSkin < 15;
+
+  const day1: string[] = [];
+  if (lightingWeak) {
+    day1.push(metrics.lightingDirection === "top" ? "Find your light: stand facing a window at eye level — your current shot is lit from above, which shadows your eyes" : `Find your light: face a window at 45° and check one side of your face is brighter than the other (your lighting scored ${metrics.lightingScore}/100)`);
+    day1.push("Test 3 spots in your home at different times; pick the one where your face looks brightest on the front camera");
+  } else {
+    day1.push("Your lighting already works — lock in the spot and time of day you used, you'll reshoot there");
+  }
+  day1.push(metrics.backgroundComplexityEstimate > 55 ? `Clear your background: pick a plain wall and stand 3–4 ft in front of it (yours measured ${metrics.backgroundComplexityEstimate}/100 complexity)` : "Confirm your background: plain, darker than your face, nothing competing");
+
+  const day2: string[] = groomingWeak
+    ? [
+        "Grooming pass: haircut or tidy-up, brows, moisturise tonight and tomorrow morning",
+        metrics.hairRegion.neatnessScore < 55 ? "Hair is pulling focus in the current shot — comb through with a small amount of product before any photo" : "Skin evenness is the gap — hydrate and use the window light to even it out",
+      ]
+    : ["Grooming maintenance: quick tidy-up so the reshoot captures you at 100%", "Lip balm + moisturiser the night before — small, visible difference on camera"];
+
+  const day3: string[] = outfitWeak
+    ? [
+        metrics.clothingRegion.contrastWithSkin < 15 ? "Pick a top that contrasts your skin tone — lay 3 options against your arm and photograph them; keep the one that separates most" : "Pick ONE solid-colour top (navy/white/black) — your current outfit's mixed signals are splitting attention",
+        "Iron it. Wrinkles read as carelessness at thumbnail size",
+      ]
+    : ["Your outfit signal is solid — prep the same style top, ironed and ready", "Optional: add one layer (overshirt/jacket) for depth"];
+
+  const reshootChecklist = topLeaks.slice(0, 3).map((l) => `${l.title} → ${l.fix.split(".")[0]}.`);
+  const day4: string[] = [
+    "Reshoot day. Rear camera, lens wiped, tap-to-focus on your face",
+    ...reshootChecklist,
+    "Take 30+ frames: straight-on, slight angle, chin slightly forward. Pick later, not in the moment",
+  ];
+
+  const day5: string[] = [
+    metrics.imageDullness > 50 ? `Edit pass: +15% contrast, +10% warmth, slight saturation lift — your original read flat (${metrics.imageDullness}/100 dullness)` : "Edit pass: minor contrast and warmth only — your colour balance is already natural, don't over-process",
+    "Hard rule: if an edit is noticeable, it's too much. Natural beats filtered for trust",
+  ];
+
+  const day6: string[] = [
+    `Run the best frame through AuraCheck again — your measured ceiling is ~${potentialScore}/100 if the top leaks are fixed`,
+    "Compare the breakdown: every dimension that was red should have moved. If one didn't, that's your next reshoot note",
+  ];
+
+  const deploy: Record<string, string[]> = {
+    dating: ["Set the new shot as your primary profile photo", "Order the rest: one full-body, one hobby/context, one social — no group shot first"],
+    instagram: ["Post the new shot; pin it if score jumped", "Apply the same light + background recipe to your next 3 posts — consistency is the algorithm's love language"],
+    office: ["Update LinkedIn/work avatars everywhere at once — inconsistent avatars read as neglect", "Keep the frame chest-up, slight smile, plain background"],
+    college: ["Update your main profiles with the new shot", "Save your light/background recipe in notes — repeat it monthly"],
+    glowup: ["Update every profile that still shows the old photo", "Book a 30-day recheck: same light, same spot — track the score trend, not one-offs"],
+  };
+  const day7 = deploy[goal] || deploy.glowup;
+
+  return [
+    { day: 1, focus: "Light & location", tasks: day1 },
+    { day: 2, focus: "Grooming", tasks: day2 },
+    { day: 3, focus: "Outfit", tasks: day3 },
+    { day: 4, focus: "The reshoot", tasks: day4 },
+    { day: 5, focus: "The edit", tasks: day5 },
+    { day: 6, focus: "Verify the jump", tasks: day6 },
+    { day: 7, focus: "Deploy it", tasks: day7 },
+  ];
 }
 
 function generatePhotoGuidance(metrics: ImageSignalMetrics, goal: string): PhotoGuidance {
@@ -707,8 +802,11 @@ export async function generateFullAuraReport(
     throw new Error("No image data available to generate full report.");
   }
 
-  // ponytail: quality gate — reject unusable images before scoring
-  if (metrics.qualityGate && !metrics.qualityGate.canProceed) {
+  // Quality gate: only hard-fail when the image never produced a scoreable
+  // free result. If the free analysis already scored this photo, generate the
+  // full report anyway — its whole job is telling the user how to fix these
+  // exact quality problems, and paid unlocks must never dead-end here.
+  if (metrics.qualityGate && !metrics.qualityGate.canProceed && !audit.fullReport?.freeResult) {
     throw new Error(metrics.qualityGate.message || "Image quality too low for analysis.");
   }
 
@@ -776,7 +874,7 @@ export async function generateFullAuraReport(
   const detailedVerdict = oneLineFromFree;
 
   const priorityMap = generatePriorityMap(metrics, audit.goal);
-  const budgetPlan = generateTieredBudgetPlan(audit.budgetRange);
+  const budgetPlan = generateTieredBudgetPlan(metrics, audit.goal);
   const photoGuidance = generatePhotoGuidance(metrics, audit.goal);
   const goalAdvice = generateGoalAdvice(audit.goal, metrics);
   const finalVerdict = generateFinalVerdict(score, category, metrics);
@@ -784,6 +882,7 @@ export async function generateFullAuraReport(
 
   const improvementScore = calculateImprovementScore(metrics, score, statusLeaks);
   const beforeAfter = getBeforeAfter(metrics, score, improvementScore.potentialScore);
+  const actionPlan = generateActionPlan(metrics, statusLeaks, audit.goal, improvementScore.potentialScore);
 
   return {
     fullScore: score,
@@ -806,6 +905,7 @@ export async function generateFullAuraReport(
     goalSpecificAdvice: goalAdvice,
     finalVerdict,
     observations,
+    actionPlan,
     improvementScore,
     beforeAfter,
     generatedAt: new Date().toISOString(),

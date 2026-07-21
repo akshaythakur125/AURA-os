@@ -14,6 +14,8 @@ import { CountUp } from "@/components/ui/CountUp";
 import { getAuditById, updateAudit, deleteAudit, createAudit } from "@/lib/storage/auditStore";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
+import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
+import { FullReport } from "@/components/report/FullReport";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
 import { ReferralShare } from "@/components/referral/ReferralShare";
@@ -297,7 +299,7 @@ export default function AuditDetailPage() {
   const [reportReady, setReportReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<FreeAuraResult | null>(null);
-  const [fullContent] = useState<FullAuraReportContent | null>(null);
+  const [fullContent, setFullContent] = useState<FullAuraReportContent | null>(null);
   const [confirmAction, setConfirmAction] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ city: string; lat: number; lng: number } | null>(null);
   const [nearbyPlaces, setNearbyPlaces] = useState<{ salons: { name: string; type: string; area: string; rating: number; mapUrl: string }[]; photographers: { name: string; type: string; area: string; rating: number; mapUrl: string }[]; gyms: { name: string; type: string; area: string; rating: number; mapUrl: string }[] }>({ salons: [], photographers: [], gyms: [] });
@@ -410,7 +412,12 @@ export default function AuditDetailPage() {
       handleGenerate();
     }
   }, [canGenerate]);
-  const hasResult = audit?.reportStatus === "free_generated" && audit?.fullReport?.freeResult;
+  // Unlocked audits keep their free result — without this, a paid report page
+  // rendered nothing at all after reload (displayResult was null for
+  // reportStatus "unlocked", hiding the entire analysis body).
+  const hasResult =
+    (audit?.reportStatus === "free_generated" || audit?.reportStatus === "unlocked") &&
+    audit?.fullReport?.freeResult;
   const displayResult = result || (hasResult ? (audit!.fullReport!.freeResult as FreeAuraResult) : null);
   const [serverVerified, setServerVerified] = useState<boolean | null>(null);
   const isUnlocked = audit?.reportStatus === "unlocked" && audit?.fullReport?.fullContent && serverVerified !== false;
@@ -454,6 +461,28 @@ export default function AuditDetailPage() {
       trackEvent(EVENTS.PAYWALL_VIEWED, { auditId: id, score: displayResult.auraScore });
     }
   }, [displayResult, isUnlocked, id]);
+
+  // Self-heal the paid report: if this audit is unlocked but its full content is
+  // missing (legacy unlock, storage eviction) or predates the action plan,
+  // regenerate it client-side so paying users always get the complete report.
+  useEffect(() => {
+    if (!audit || audit.reportStatus !== "unlocked" || !audit.imageDataUrl) return;
+    const existing = audit.fullReport?.fullContent as FullAuraReportContent | undefined;
+    if (existing && existing.actionPlan && existing.actionPlan.length > 0) return;
+    let cancelled = false;
+    generateFullAuraReport(audit)
+      .then((fresh) => {
+        if (cancelled) return;
+        setFullContent(fresh);
+        updateAudit(audit.id, {
+          fullReport: audit.fullReport
+            ? { ...audit.fullReport, isPremium: true, fullContent: fresh }
+            : { id: `${audit.id}-report`, auditId: audit.id, score: { overall: fresh.fullScore, categories: { visual: fresh.visualBreakdown.lighting, presentation: fresh.visualBreakdown.clarity, signals: fresh.visualBreakdown.colorSignal, cohesion: fresh.visualBreakdown.overallConsistency } }, leaks: [], suggestions: [], summary: fresh.detailedVerdict, createdAt: fresh.generatedAt, isPremium: true, fullContent: fresh },
+        });
+      })
+      .catch((e) => { console.warn("[AuraCheck] full report self-heal failed:", e instanceof Error ? e.message : e); });
+    return () => { cancelled = true; };
+  }, [audit]);
   // Geolocation for nearby services
   useEffect(() => {
     if (!navigator.geolocation) return;
@@ -688,7 +717,11 @@ export default function AuditDetailPage() {
           {/* Full Paid Report */}
 {/* ponytail: old full report section hidden — verified new premium section works */}
 {/* Free Result + Locked Teaser */}
-          {!displayFull && displayResult && (
+          {/* The report body renders for free AND unlocked audits — unlocked
+              users get the free sections plus the FullReport below. (This was
+              previously gated on !displayFull, which hid the entire analysis
+              the moment paid content existed.) */}
+          {displayResult && (
             <>
               {/* ΓöÇΓöÇΓöÇ HERO: The Leak ΓöÇΓöÇΓöÇ */}
               {(() => {
@@ -900,6 +933,14 @@ export default function AuditDetailPage() {
                       </FadeInView>
                     </>
 
+                    )}
+
+                    {/* ─── The full paid report — verdict, 7-day plan, expert
+                        observations, playbook, goal strategy, money map ─── */}
+                    {audit?.reportStatus === "unlocked" && serverVerified !== false && displayFull && (
+                      <div className="mb-6">
+                        <FullReport content={displayFull} />
+                      </div>
                     )}
                     <FadeInView delay={100}>
                       <Card className="mb-6">
