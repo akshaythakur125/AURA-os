@@ -11,6 +11,8 @@ import { GlowOrb } from "@/components/ui/GlowOrb";
 import { ShopCategoryImage } from "@/components/shop/ShopCategoryImage";
 import { getAllLooks } from "@/lib/shop/catalog";
 import { STYLE_COLLECTIONS, getCollectionLooks } from "@/lib/shop/styleCollections";
+import { rotateLooks, getRotationEpoch, hoursUntilNextRotation, ROTATION_HOURS } from "@/lib/shop/rotation";
+import { formatLookPrice } from "@/lib/shop/pricing";
 import { buildRetailerUrl, type Retailer } from "@/lib/shop/linkBuilder";
 import { hasAnyUnlock } from "@/lib/storage/unlockStore";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
@@ -173,7 +175,16 @@ export default function ShopPage() {
   const [collection, setCollection] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(INITIAL_BATCH);
 
-  const allLooks = useMemo(() => getAllLooks(), []);
+  // 72-hour rotation: the whole catalog re-orders every 72h, deterministically
+  // seeded by the current window so it's stable within the window (no hydration
+  // drift) and visibly fresh across windows.
+  const rotationEpoch = useMemo(() => getRotationEpoch(), []);
+  const allLooks = useMemo(() => rotateLooks(getAllLooks(), rotationEpoch), [rotationEpoch]);
+
+  // Countdown is client-only (depends on wall-clock minutes) — render after
+  // mount to avoid a server/client hydration mismatch.
+  const [hoursLeft, setHoursLeft] = useState<number | null>(null);
+  useEffect(() => { setHoursLeft(hoursUntilNextRotation()); }, []);
 
   // Precompute each collection's size so the rail can show real counts.
   const collectionCounts = useMemo(() => {
@@ -225,6 +236,23 @@ export default function ShopPage() {
           <p className="mt-1 text-xs text-[#9c9184]">
             {allLooks.length} looks · {STYLE_COLLECTIONS.length} style collections · Real retailer links
           </p>
+
+          {/* 72-hour freshness — real, deterministic rotation */}
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#E14434]/20 bg-[#E14434]/[0.06] px-3.5 py-1.5">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#E14434] opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#E14434]" />
+            </span>
+            <span className="text-[11px] font-medium text-[#B23A25]">
+              Fresh rotation every {ROTATION_HOURS}h
+              {hoursLeft !== null && (
+                <span className="text-[#9c9184]">
+                  {" · "}
+                  next drop in {hoursLeft >= 24 ? `${Math.floor(hoursLeft / 24)}d ${hoursLeft % 24}h` : `${hoursLeft}h`}
+                </span>
+              )}
+            </span>
+          </div>
         </div>
 
         {/* Style collections rail — browse by aesthetic */}
@@ -378,7 +406,7 @@ export default function ShopPage() {
                           </h3>
                         </Link>
                         <span className="text-xs font-medium text-amber-400 whitespace-nowrap">
-                          {look.priceLabel}
+                          {formatLookPrice(look.price)}
                         </span>
                       </div>
                       <p className="text-xs text-[#857b6e] line-clamp-2">

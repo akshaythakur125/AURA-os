@@ -9,6 +9,7 @@ import { Container } from "@/components/ui/Container";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { ShopCategoryImage } from "@/components/shop/ShopCategoryImage";
 import { buildRetailerUrl, type Retailer } from "@/lib/shop/linkBuilder";
+import { formatLookPrice } from "@/lib/shop/pricing";
 import { hasAnyUnlock } from "@/lib/storage/unlockStore";
 import type { Look } from "@/lib/shop/catalogTypes";
 
@@ -41,7 +42,7 @@ export function LookDetailClient({ look }: { look: Look }) {
           <div>
             <div className="mb-2 flex items-center gap-2">
               <Badge variant="default">{look.category}</Badge>
-              <span className="text-xs text-amber-400 font-medium">{look.priceLabel}</span>
+              <span className="text-xs text-amber-400 font-medium">{formatLookPrice(look.price)}</span>
             </div>
             <h1 className="mb-3 text-2xl font-bold text-[#1C1917]">{look.title}</h1>
             <p className="mb-4 text-sm text-[#6f675e]">{look.description}</p>
