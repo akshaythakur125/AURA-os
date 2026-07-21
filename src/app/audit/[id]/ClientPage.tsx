@@ -305,6 +305,7 @@ export default function AuditDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<FreeAuraResult | null>(null);
   const [fullContent, setFullContent] = useState<FullAuraReportContent | null>(null);
+  const [reportTab, setReportTab] = useState<"report" | "looks" | "tools">("report");
   const [confirmAction, setConfirmAction] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ city: string; lat: number; lng: number } | null>(null);
   const [nearbyPlaces, setNearbyPlaces] = useState<{
@@ -740,6 +741,25 @@ export default function AuditDetailPage() {
               the moment paid content existed.) */}
           {displayResult && (
             <>
+              {/* ─── Report tab bar — keeps the report curated, not endless ─── */}
+              <div className="no-print sticky top-16 z-20 mb-6 flex gap-1 overflow-x-auto rounded-2xl border border-[#1c1917]/[0.08] bg-[#F2ECE1]/85 p-1 backdrop-blur-md [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {([
+                  { id: "report", label: "Your Report" },
+                  { id: "looks", label: "Looks & Grooming" },
+                  { id: "tools", label: "Pro Tools" },
+                ] as const).map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setReportTab(t.id)}
+                    className={`shrink-0 rounded-xl px-4 py-2 text-xs font-semibold transition-colors ${reportTab === t.id ? "bg-[#1c1917] text-white" : "text-[#6f675e] hover:bg-[#1c1917]/[0.05]"}`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
+              {reportTab === "report" && (
+              <>
               {/* ΓöÇΓöÇΓöÇ HERO: The Leak ΓöÇΓöÇΓöÇ */}
               {(() => {
                 const sortedLeaks = [...(displayResult.statusLeaks ?? [])].sort(
@@ -1103,7 +1123,11 @@ export default function AuditDetailPage() {
                   <Link href="/challenges"><Button size="sm" variant="outline">View Challenges</Button></Link>
                 </div>
               </Card>
+              </>
+              )}
 
+              {reportTab === "looks" && (
+              <>
               {/* ─── Shop For Looks — 1 free pick, rest paywalled ─── */}
               {/* Renders whenever a personalization profile exists — even when the
                   photo was quality-gated (auraScore null). The archetype, leaks, goal
@@ -1170,6 +1194,25 @@ export default function AuditDetailPage() {
                   </LockedSection>
                 </div>
               )}
+              </>
+              )}
+
+              {reportTab === "tools" && (
+              <>
+              {/* ─── Pro Tools — quick links ─── */}
+              <div className="mb-6 grid gap-3 sm:grid-cols-3">
+                {[
+                  { href: "/best-photo", emoji: "🏆", title: "Best-Photo Picker", desc: "Rank your photos per platform" },
+                  { href: "/retake-coach", emoji: "🎥", title: "Retake Coach", desc: "Live camera guidance" },
+                  { href: "/platform-packs", emoji: "📐", title: "Platform Packs", desc: "One photo, every format" },
+                ].map((t) => (
+                  <Link key={t.href} href={t.href} className="group rounded-2xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-4 transition-all hover:-translate-y-0.5 hover:border-[#E14434]/30">
+                    <div className="text-2xl transition-transform group-hover:scale-110">{t.emoji}</div>
+                    <p className="mt-1.5 text-sm font-semibold text-[#1C1917]">{t.title}</p>
+                    <p className="text-xs text-[#857b6e]">{t.desc}</p>
+                  </Link>
+                ))}
+              </div>
 
               {/* ─── Keepsake PDF — paid perk ─── */}
               {isUnlocked && (
@@ -1182,6 +1225,8 @@ export default function AuditDetailPage() {
                     <Button onClick={() => window.print()}>Save as PDF</Button>
                   </Card>
                 </div>
+              )}
+              </>
               )}
 
               {/* ─── Conversion CTA ─── */}
