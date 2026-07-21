@@ -716,13 +716,19 @@ h2 {
 /* ─── Print ─── */
 
 @media print {
-  header, footer, nav, button, .no-print {
+  header, footer, nav, button, canvas, .no-print {
     display: none !important;
   }
   body {
     background: #ffffff !important;
     color: #111111 !important;
   }
+  /* Keep cards intact across page breaks and drop screen-only depth */
+  section, article, [class*="rounded-2xl"], [class*="rounded-xl"] {
+    break-inside: avoid;
+    box-shadow: none !important;
+  }
+  img { max-width: 100% !important; }
   .aurora-mesh, .aurora-mesh-third, .aurora-mesh::before, .aurora-mesh::after {
     display: none !important;
   }

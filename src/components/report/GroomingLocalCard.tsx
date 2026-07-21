@@ -15,7 +15,10 @@ interface Props {
   grooming?: Partial<GroomingResult>;
   /** Fallback hair-neatness (0-100) from imageMetrics when grooming is absent. */
   hairNeatnessFallback?: number;
-  places: { salons: NearbyPlace[]; photographers: NearbyPlace[]; gyms: NearbyPlace[] };
+  places: {
+    salons: NearbyPlace[]; photographers: NearbyPlace[]; gyms: NearbyPlace[];
+    opticians?: NearbyPlace[]; tailors?: NearbyPlace[]; skinClinics?: NearbyPlace[];
+  };
   city?: string;
   /** True once we've requested geolocation (so we can distinguish "denied" from "loading"). */
   locationKnown: boolean;
@@ -104,7 +107,9 @@ export function GroomingLocalCard({ grooming, hairNeatnessFallback, places, city
   const skin = grooming?.skinClarity ?? 55;
   const beard = grooming?.facialHair ?? 60;
 
-  const totalPlaces = places.salons.length + places.photographers.length + places.gyms.length;
+  const totalPlaces =
+    places.salons.length + places.photographers.length + places.gyms.length +
+    (places.opticians?.length ?? 0) + (places.tailors?.length ?? 0) + (places.skinClinics?.length ?? 0);
 
   return (
     <div className="rounded-2xl border border-[#1c1917]/[0.08] bg-gradient-to-b from-[#1c1917]/[0.03] to-transparent p-5 sm:p-6">
@@ -134,6 +139,25 @@ export function GroomingLocalCard({ grooming, hairNeatnessFallback, places, city
         <Bar label="Facial hair" score={beard} tip={facialHairComment(beard)} />
       </div>
 
+      {/* Grooming cadence — a keep-it-up routine synced to your scores */}
+      <div className="mb-5">
+        <p className="mb-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#857b6e]">🗓️ Your grooming cadence</p>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {[
+            { icon: "💇", label: "Haircut", every: hair < 55 ? "Every 2–3 wks" : "Every 4–5 wks" },
+            { icon: "🧴", label: "Skincare", every: "AM + PM daily" },
+            { icon: "✂️", label: "Beard/shave", every: beard < 60 ? "Every 2–3 days" : "Every 4–5 days" },
+            { icon: "🪒", label: "Brows/edges", every: "Every 2 wks" },
+          ].map((c) => (
+            <div key={c.label} className="rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-2.5 text-center">
+              <div className="text-lg">{c.icon}</div>
+              <p className="text-[11px] font-medium text-[#1C1917]">{c.label}</p>
+              <p className="text-[10px] text-[#857b6e]">{c.every}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Nearby pros */}
       <div>
         <p className="mb-3 text-sm font-semibold text-[#1C1917]">
@@ -143,6 +167,9 @@ export function GroomingLocalCard({ grooming, hairNeatnessFallback, places, city
         {totalPlaces > 0 ? (
           <div className="space-y-4">
             <PlaceGroup emoji="💈" title="Salons & Grooming" places={places.salons} />
+            <PlaceGroup emoji="👓" title="Opticians & Eyewear" places={places.opticians ?? []} />
+            <PlaceGroup emoji="✂️" title="Tailors & Alterations" places={places.tailors ?? []} />
+            <PlaceGroup emoji="🧴" title="Skin & Derm Clinics" places={places.skinClinics ?? []} />
             <PlaceGroup emoji="📸" title="Photographers" places={places.photographers} />
             <PlaceGroup emoji="🏋️" title="Gyms & Fitness" places={places.gyms} />
           </div>

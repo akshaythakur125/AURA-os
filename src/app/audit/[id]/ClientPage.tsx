@@ -17,7 +17,7 @@ import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
 import { FullReport } from "@/components/report/FullReport";
 import { LockedSection } from "@/components/report/LockedSection";
-import { GroomingLocalCard } from "@/components/report/GroomingLocalCard";
+import { GroomingLocalCard, type NearbyPlace } from "@/components/report/GroomingLocalCard";
 import { YourColorsCard } from "@/components/report/YourColorsCard";
 import { CapsuleWardrobeCard } from "@/components/report/CapsuleWardrobeCard";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
@@ -307,7 +307,10 @@ export default function AuditDetailPage() {
   const [fullContent, setFullContent] = useState<FullAuraReportContent | null>(null);
   const [confirmAction, setConfirmAction] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ city: string; lat: number; lng: number } | null>(null);
-  const [nearbyPlaces, setNearbyPlaces] = useState<{ salons: { name: string; type: string; area: string; rating: number; mapUrl: string }[]; photographers: { name: string; type: string; area: string; rating: number; mapUrl: string }[]; gyms: { name: string; type: string; area: string; rating: number; mapUrl: string }[] }>({ salons: [], photographers: [], gyms: [] });
+  const [nearbyPlaces, setNearbyPlaces] = useState<{
+    salons: NearbyPlace[]; photographers: NearbyPlace[]; gyms: NearbyPlace[];
+    opticians: NearbyPlace[]; tailors: NearbyPlace[]; skinClinics: NearbyPlace[];
+  }>({ salons: [], photographers: [], gyms: [], opticians: [], tailors: [], skinClinics: [] });
   const [celebMatches, setCelebMatches] = useState<MatchResult[]>([]);
 
   function handlePrint() {
@@ -532,8 +535,11 @@ export default function AuditDetailPage() {
       fetchPlaces("salon"),
       fetchPlaces("photographer"),
       fetchPlaces("gym"),
-    ]).then(([salons, photographers, gyms]) => {
-      setNearbyPlaces({ salons, photographers, gyms });
+      fetchPlaces("optician"),
+      fetchPlaces("tailor"),
+      fetchPlaces("skin clinic dermatologist"),
+    ]).then(([salons, photographers, gyms, opticians, tailors, skinClinics]) => {
+      setNearbyPlaces({ salons, photographers, gyms, opticians, tailors, skinClinics });
     });
   }, [userLocation]);
 
@@ -1162,6 +1168,19 @@ export default function AuditDetailPage() {
                       })}
                     />
                   </LockedSection>
+                </div>
+              )}
+
+              {/* ─── Keepsake PDF — paid perk ─── */}
+              {isUnlocked && (
+                <div className="mb-6 no-print">
+                  <Card className="flex flex-col items-center gap-3 text-center sm:flex-row sm:justify-between sm:text-left">
+                    <div>
+                      <h4 className="text-sm font-semibold text-[#1C1917]">📄 Keep a copy of your report</h4>
+                      <p className="text-xs text-[#6f675e]">Save the full report as a PDF to revisit or share later.</p>
+                    </div>
+                    <Button onClick={() => window.print()}>Save as PDF</Button>
+                  </Card>
                 </div>
               )}
 

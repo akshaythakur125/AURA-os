@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/Badge";
 import { GlowOrb } from "@/components/ui/GlowOrb";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getAudits } from "@/lib/storage/auditStore";
+import { AuraTrend } from "@/components/progress/AuraTrend";
 import { getProgressComparisons, createProgressComparison, deleteProgressComparison } from "@/lib/storage/progressStore";
 import { compareAudits } from "@/lib/progress/compareAudits";
 import { trackEvent } from "@/lib/storage/analyticsStore";
@@ -23,18 +24,18 @@ function formatDate(iso: string): string {
 }
 
 export default function ProgressPage() {
-  const [comparisons, setComparisons] = useState<ProgressComparison[]>(() => {
-    if (typeof window === "undefined") return [];
-    return getProgressComparisons();
-  });
+  // Load localStorage-derived data after mount so the server and first client
+  // render match (both empty), avoiding a hydration mismatch.
+  const [comparisons, setComparisons] = useState<ProgressComparison[]>([]);
+  const [audits, setAudits] = useState<ReturnType<typeof getAudits>>([]);
   const [beforeId, setBeforeId] = useState("");
   const [afterId, setAfterId] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const audits = useMemo(() => {
-    if (typeof window === "undefined") return [];
-    return getAudits().filter((a) => a.freeScore !== undefined || a.fullScore !== undefined);
+  useEffect(() => {
+    setComparisons(getProgressComparisons());
+    setAudits(getAudits().filter((a) => a.freeScore !== undefined || a.fullScore !== undefined));
   }, []);
 
   const alreadyCompared = useMemo(() => {
@@ -100,6 +101,10 @@ export default function ProgressPage() {
         <GlowOrb color="rgba(16, 185, 129, 0.08)" size={250} className="top-[8%] right-[10%]" delay={0} />
         <GlowOrb color="rgba(225, 68, 52, 0.06)" size={200} className="bottom-[20%] left-[8%]" delay={400} />
       <SectionHeading title="Track Your Improvement" subtitle="Compare two audits and see your progress over time." />
+
+      <div className="mb-8">
+        <AuraTrend />
+      </div>
 
       {stats && (
         <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">

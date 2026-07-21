@@ -18,6 +18,7 @@ const productLinks = [
   { href: "/products/glowup-plan", label: "Glow-Up Plan" },
   { href: "/retake-coach", label: "Retake Coach" },
   { href: "/best-photo", label: "Best-Photo Picker" },
+  { href: "/platform-packs", label: "Platform Packs" },
 ];
 
 export function Header() {
