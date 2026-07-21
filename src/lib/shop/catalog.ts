@@ -35,6 +35,21 @@ export function getHeroLooks(): Look[] {
   return HERO_LOOKS;
 }
 
+// Singleton id→look index so detail-page lookups are O(1) and deterministic
+// (server and client resolve the same look object for a given id).
+let _byIdCache: Map<string, Look> | null = null;
+
+/**
+ * Resolves a single look by its stable catalog id.
+ * Returns undefined if no look with that id exists.
+ */
+export function getLookById(id: string): Look | undefined {
+  if (!_byIdCache) {
+    _byIdCache = new Map(getAllLooks().map((look) => [look.id, look]));
+  }
+  return _byIdCache.get(id);
+}
+
 /**
  * Returns total look count with hero/generated breakdown.
  */

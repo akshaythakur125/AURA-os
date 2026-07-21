@@ -10,6 +10,7 @@ import { FadeInView } from "@/components/ui/FadeInView";
 import { GlowOrb } from "@/components/ui/GlowOrb";
 import { ShopCategoryImage } from "@/components/shop/ShopCategoryImage";
 import { getAllLooks } from "@/lib/shop/catalog";
+import { STYLE_COLLECTIONS, getCollectionLooks } from "@/lib/shop/styleCollections";
 import { buildRetailerUrl, type Retailer } from "@/lib/shop/linkBuilder";
 import { hasAnyUnlock } from "@/lib/storage/unlockStore";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
@@ -169,12 +170,21 @@ export default function ShopPage() {
   const [goal, setGoal] = useState<GoalTag | null>(null);
   const [style, setStyle] = useState<StyleIntent | null>(null);
   const [gender, setGender] = useState<"men" | "women" | "unisex" | null>(null);
+  const [collection, setCollection] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(INITIAL_BATCH);
 
   const allLooks = useMemo(() => getAllLooks(), []);
 
+  // Precompute each collection's size so the rail can show real counts.
+  const collectionCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const c of STYLE_COLLECTIONS) counts[c.id] = getCollectionLooks(c.id, allLooks).length;
+    return counts;
+  }, [allLooks]);
+
   const filtered = useMemo(() => {
-    return allLooks.filter((look) => {
+    const base = collection ? getCollectionLooks(collection, allLooks) : allLooks;
+    return base.filter((look) => {
       if (category && look.category !== category) return false;
       if (budget && look.price > budget) return false;
       if (goal && !look.goalTags.includes(goal)) return false;
@@ -182,14 +192,14 @@ export default function ShopPage() {
       if (gender && look.gender !== gender && look.gender !== "unisex") return false;
       return true;
     });
-  }, [allLooks, category, budget, goal, style, gender]);
+  }, [allLooks, collection, category, budget, goal, style, gender]);
 
   // Reset to first batch when filters change
   useEffect(() => {
     setVisibleCount(INITIAL_BATCH);
-  }, [category, budget, goal, style, gender]);
+  }, [collection, category, budget, goal, style, gender]);
 
-  const hasFilters = category || budget || goal || style || gender;
+  const hasFilters = category || budget || goal || style || gender || collection;
   const visibleLooks = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
 
@@ -213,8 +223,35 @@ export default function ShopPage() {
             wasting money.
           </p>
           <p className="mt-1 text-xs text-[#9c9184]">
-            {allLooks.length} looks · Real retailer search links · Prices verified
+            {allLooks.length} looks · {STYLE_COLLECTIONS.length} style collections · Real retailer links
           </p>
+        </div>
+
+        {/* Style collections rail — browse by aesthetic */}
+        <div className="mb-8">
+          <p className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-[#857b6e]">Shop by aesthetic</p>
+          <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {STYLE_COLLECTIONS.map((c) => {
+              const active = collection === c.id;
+              return (
+                <button
+                  key={c.id}
+                  onClick={() => setCollection(active ? null : c.id)}
+                  className={`group shrink-0 rounded-2xl border px-4 py-3 text-left transition-all duration-300 ${
+                    active
+                      ? "border-[#E14434]/50 bg-[#E14434]/[0.08] shadow-[0_8px_24px_-8px_rgba(225,68,52,0.4)]"
+                      : "border-[#1c1917]/10 bg-[#1c1917]/[0.02] hover:border-[#1c1917]/20 hover:-translate-y-0.5"
+                  }`}
+                  style={{ minWidth: 150 }}
+                >
+                  <div className="mb-1 text-2xl transition-transform duration-300 group-hover:scale-110">{c.emoji}</div>
+                  <div className={`text-sm font-semibold ${active ? "text-[#B23A25]" : "text-[#1C1917]"}`}>{c.name}</div>
+                  <div className="text-[11px] text-[#9c9184]">{c.tagline}</div>
+                  <div className="mt-1 text-[10px] font-medium text-[#857b6e]">{collectionCounts[c.id] ?? 0} looks</div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Filters */}
@@ -294,7 +331,7 @@ export default function ShopPage() {
             {hasFilters && (
               <div className="flex items-end">
                 <button
-                  onClick={() => { setCategory(null); setBudget(null); setGoal(null); setStyle(null); setGender(null); }}
+                  onClick={() => { setCategory(null); setBudget(null); setGoal(null); setStyle(null); setGender(null); setCollection(null); }}
                   className="rounded-lg border border-[#1c1917]/10 px-4 py-2 text-xs text-[#6f675e] transition-colors hover:border-[#1c1917]/20 hover:text-[#1C1917]"
                 >
                   Clear all filters
@@ -324,12 +361,22 @@ export default function ShopPage() {
               {visibleLooks.map((look, i) => (
                 <FadeInView key={look.id} delay={Math.min(i * 50, 400)}>
                   <Card hover className="flex flex-col h-full">
-                    <ShopCategoryImage category={look.category} title={look.title} keywords={look.keywords} />
+                    <Link
+                      href={`/shop/look/${look.id}`}
+                      className="group block overflow-hidden rounded-xl"
+                      aria-label={`View ${look.title}`}
+                    >
+                      <div className="transition-transform duration-500 ease-out group-hover:scale-[1.04]">
+                        <ShopCategoryImage category={look.category} title={look.title} keywords={look.keywords} />
+                      </div>
+                    </Link>
                     <div className="mt-3 flex-1">
                       <div className="mb-1 flex items-start justify-between gap-2">
-                        <h3 className="text-sm font-semibold text-[#1C1917] leading-tight">
-                          {look.title}
-                        </h3>
+                        <Link href={`/shop/look/${look.id}`} className="min-w-0">
+                          <h3 className="text-sm font-semibold text-[#1C1917] leading-tight transition-colors hover:text-[#B23A25]">
+                            {look.title}
+                          </h3>
+                        </Link>
                         <span className="text-xs font-medium text-amber-400 whitespace-nowrap">
                           {look.priceLabel}
                         </span>
@@ -350,8 +397,14 @@ export default function ShopPage() {
                         )}
                       </div>
                     </div>
-                    <div className="mt-3">
+                    <div className="mt-3 space-y-2">
                       <ShopLinks look={look} />
+                      <Link
+                        href={`/shop/look/${look.id}`}
+                        className="block text-center text-[11px] font-medium text-[#857b6e] transition-colors hover:text-[#B23A25]"
+                      >
+                        View details →
+                      </Link>
                     </div>
                   </Card>
                 </FadeInView>
