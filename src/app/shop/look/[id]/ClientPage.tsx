@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -8,6 +9,7 @@ import { Container } from "@/components/ui/Container";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { ShopCategoryImage } from "@/components/shop/ShopCategoryImage";
 import { buildRetailerUrl, type Retailer } from "@/lib/shop/linkBuilder";
+import { hasAnyUnlock } from "@/lib/storage/unlockStore";
 import type { Look } from "@/lib/shop/catalogTypes";
 
 const RETAILERS: Retailer[] = ["amazon", "flipkart", "myntra", "ajio", "nykaa"];
@@ -16,6 +18,10 @@ const RETAILER_NAMES: Record<Retailer, string> = {
 };
 
 export function LookDetailClient({ look }: { look: Look }) {
+  // Retailer links are a paid perk; free users see a blurred glimpse.
+  // null until mounted (avoids hydration mismatch), then real state.
+  const [paid, setPaid] = useState<boolean | null>(null);
+  useEffect(() => { try { setPaid(hasAnyUnlock()); } catch { setPaid(false); } }, []);
   return (
     <Container className="py-12">
       <FadeInView>
@@ -60,25 +66,53 @@ export function LookDetailClient({ look }: { look: Look }) {
               ))}
             </div>
 
-            {/* Retailer links */}
-            <div className="space-y-2">
-              <p className="text-xs text-[#857b6e]">Search on retailers:</p>
-              {RETAILERS.map((r) => (
-                <a
-                  key={r}
-                  href={buildRetailerUrl(
-                    { category: look.category, keywords: look.keywords, gender: look.gender },
-                    r
-                  )}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] px-4 py-3 text-sm text-[#4a443d] hover:bg-[#1c1917]/[0.04] hover:text-[#1C1917] transition-colors"
-                >
-                  <span>{RETAILER_NAMES[r]}</span>
-                  <span className="text-xs text-[#9c9184]">Search →</span>
-                </a>
-              ))}
-            </div>
+            {/* Retailer links — paid perk, blurred glimpse for free users */}
+            {paid ? (
+              <div className="space-y-2">
+                <p className="text-xs text-[#857b6e]">Search on retailers:</p>
+                {RETAILERS.map((r) => (
+                  <a
+                    key={r}
+                    href={buildRetailerUrl(
+                      { category: look.category, keywords: look.keywords, gender: look.gender },
+                      r
+                    )}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] px-4 py-3 text-sm text-[#4a443d] hover:bg-[#1c1917]/[0.04] hover:text-[#1C1917] transition-colors"
+                  >
+                    <span>{RETAILER_NAMES[r]}</span>
+                    <span className="text-xs text-[#9c9184]">Search →</span>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="relative">
+                <div className="pointer-events-none select-none space-y-2 blur-[6px]" aria-hidden="true">
+                  <p className="text-xs text-[#857b6e]">Search on retailers:</p>
+                  {RETAILERS.slice(0, 3).map((r) => (
+                    <div key={r} className="flex items-center justify-between rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] px-4 py-3 text-sm text-[#4a443d]">
+                      <span>{RETAILER_NAMES[r]}</span>
+                      <span className="text-xs text-[#9c9184]">Search →</span>
+                    </div>
+                  ))}
+                </div>
+                {paid === false && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div
+                      className="rounded-2xl border border-[#E14434]/25 bg-[#F7F1E6]/95 px-5 py-4 text-center shadow-[0_10px_30px_rgba(28,25,23,0.18)] backdrop-blur-md"
+                      style={{ transform: "perspective(700px) rotateX(5deg)", transformStyle: "preserve-3d" }}
+                    >
+                      <p className="text-sm font-semibold text-[#1C1917]">🔒 Direct shop links</p>
+                      <p className="mx-auto mt-1 max-w-[220px] text-[11px] text-[#857b6e]">Part of the Full Report — unlock once, shop every look.</p>
+                      <Link href="/pricing">
+                        <Button size="sm" className="mt-2 text-xs">Unlock to Shop</Button>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Disclaimer */}
             <p className="mt-6 text-[10px] text-[#9c9184]">

@@ -21,6 +21,11 @@ export function getUnlockByAuditId(auditId: string): UnlockRecord | undefined {
   return getAll().find((r) => r.auditId === auditId);
 }
 
+/** True if this browser has ever unlocked any paid product (any audit). */
+export function hasAnyUnlock(): boolean {
+  return getAll().length > 0;
+}
+
 export function createUnlockRecord(input: UnlockRecordInput): UnlockRecord {
   const now = new Date().toISOString();
   const record: UnlockRecord = {

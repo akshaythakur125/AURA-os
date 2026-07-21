@@ -16,6 +16,8 @@ import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
 import { FullReport } from "@/components/report/FullReport";
+import { LockedSection } from "@/components/report/LockedSection";
+import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
 import { ReferralShare } from "@/components/referral/ReferralShare";
@@ -421,6 +423,7 @@ export default function AuditDetailPage() {
   const displayResult = result || (hasResult ? (audit!.fullReport!.freeResult as FreeAuraResult) : null);
   const [serverVerified, setServerVerified] = useState<boolean | null>(null);
   const isUnlocked = audit?.reportStatus === "unlocked" && audit?.fullReport?.fullContent && serverVerified !== false;
+  const unlockHref = `/unlock?auditId=${id}&product=aura_report`;
   const [paywallOpen, setPaywallOpen] = useState(false);
   const [paywallTrigger, setPaywallTrigger] = useState("");
   const displayFull = fullContent || (isUnlocked ? (audit!.fullReport!.fullContent as FullAuraReportContent) : null);
@@ -474,11 +477,14 @@ export default function AuditDetailPage() {
       .then((fresh) => {
         if (cancelled) return;
         setFullContent(fresh);
-        updateAudit(audit.id, {
+        const updated = updateAudit(audit.id, {
           fullReport: audit.fullReport
             ? { ...audit.fullReport, isPremium: true, fullContent: fresh }
             : { id: `${audit.id}-report`, auditId: audit.id, score: { overall: fresh.fullScore, categories: { visual: fresh.visualBreakdown.lighting, presentation: fresh.visualBreakdown.clarity, signals: fresh.visualBreakdown.colorSignal, cohesion: fresh.visualBreakdown.overallConsistency } }, leaks: [], suggestions: [], summary: fresh.detailedVerdict, createdAt: fresh.generatedAt, isPremium: true, fullContent: fresh },
         });
+        // refresh state so isUnlocked (which reads fullReport.fullContent)
+        // flips immediately and the locked sections open without a reload
+        if (updated) rawSetAudit(updated);
       })
       .catch((e) => { console.warn("[AuraCheck] full report self-heal failed:", e instanceof Error ? e.message : e); });
     return () => { cancelled = true; };
@@ -942,6 +948,7 @@ export default function AuditDetailPage() {
                         <FullReport content={displayFull} />
                       </div>
                     )}
+                    <LockedSection locked={!isUnlocked} label="Strongest Signals" unlockHref={unlockHref}>
                     <FadeInView delay={100}>
                       <Card className="mb-6">
                         <h3 className="mb-3 text-sm font-semibold text-[#1C1917]">
@@ -954,6 +961,7 @@ export default function AuditDetailPage() {
                         </div>
                       </Card>
                     </FadeInView>
+                    </LockedSection>
 
                     {/* ΓöÇΓöÇΓöÇ Remaining Leaks (Blurred Previews) ΓöÇΓöÇΓöÇ */}
                     {otherLeaks.length > 0 && (
@@ -994,6 +1002,7 @@ export default function AuditDetailPage() {
                       </FadeInView>
                     )}
 
+                    <LockedSection locked={!isUnlocked} label="Quick Fixes" unlockHref={unlockHref}>
                     <FadeInView delay={200}>
                       <Card className="mb-6">
                         <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">
@@ -1014,7 +1023,9 @@ export default function AuditDetailPage() {
                         </div>
                       </Card>
                     </FadeInView>
+                    </LockedSection>
 
+                    <LockedSection locked={!isUnlocked} label="Budget Upgrade Plan" unlockHref={unlockHref}>
                     <FadeInView delay={250}>
                       <Card className="mb-6">
                         <h3 className="mb-1 text-sm font-semibold text-[#1C1917]">
@@ -1036,7 +1047,9 @@ export default function AuditDetailPage() {
                       </p>
                     </Card>
                     </FadeInView>
+                    </LockedSection>
 
+                    <LockedSection locked={!isUnlocked} label="Improvement Roadmap" unlockHref={unlockHref}>
                     <FadeInView delay={280}>
                       <ImprovementRoadmap
                         metrics={{
@@ -1050,7 +1063,9 @@ export default function AuditDetailPage() {
                         }}
                       />
                     </FadeInView>
+                    </LockedSection>
 
+                    <LockedSection locked={!isUnlocked} label="Full Score Breakdown" unlockHref={unlockHref}>
                     <ScoreBreakdown
                         lighting={displayResult.imageMetrics.lightingScore}
                         clarity={displayResult.imageMetrics.clarityScore}
@@ -1061,6 +1076,7 @@ export default function AuditDetailPage() {
                         symmetry={displayResult.imageMetrics.symmetryScore || 50}
                         colorBalance={displayResult.imageMetrics.saturation}
                       />
+                    </LockedSection>
                   </>
                 );
               })()}
@@ -1077,8 +1093,9 @@ export default function AuditDetailPage() {
                 </div>
               </Card>
 
-              {/* ─── Shop For Looks ─── */}
+              {/* ─── Shop For Looks — paid perk, blurred glimpse for free ─── */}
               {personalization != null && displayResult != null && typeof displayResult.auraScore === "number" && (
+                <LockedSection locked={!isUnlocked} label="Personalized Shop Picks" unlockHref={unlockHref}>
                 <PersonalizedShop
                   looks={getPersonalizedLooks({
                     styleArchetypes: [personalization.archetype === "Corporate Sharp" ? "professional" : personalization.archetype === "Creator Vibe" ? "creator" : personalization.archetype === "College Casual" ? "college" : personalization.archetype === "Premium Minimalist" ? "premium" : personalization.archetype === "Urban Aspirational" ? "confident" : personalization.archetype === "Loud Flex" ? "bold" : personalization.archetype === "Soft Luxury" ? "understated" : "clean"],
@@ -1090,12 +1107,16 @@ export default function AuditDetailPage() {
                   archetype={personalization.archetype}
                   leakTags={displayResult.statusLeaks.map((l) => l.category)}
                 />
+                </LockedSection>
               )}
 
               {/* ─── Conversion CTA ─── */}
               {!isUnlocked && displayResult && (
                 <FadeInView delay={450}>
                   <div className="mb-6 rounded-2xl border border-red-500/20 bg-gradient-to-b from-red-500/[0.06] to-transparent p-6 text-center">
+                    <div className="mb-2 flex justify-center">
+                      <Scene3DAccent size={90} shape="sunglasses" />
+                    </div>
                     <p className="mb-2 text-sm text-[#4a443d]">
                       Your score is <span className="font-bold text-[#1C1917]">{displayResult.auraScore}</span>.
                       Small corrections to your top issues can make a meaningful difference.
@@ -1256,8 +1277,9 @@ export default function AuditDetailPage() {
                 <ResultCapture audit={audit!} />
               </div>
 
-              {/* Personalized shopping looks (free result) */}
+              {/* Personalized shopping looks — paid perk, blurred glimpse for free */}
               {personalization && displayResult && (
+                <LockedSection locked={!isUnlocked} label="Personalized Shop Picks" unlockHref={unlockHref}>
                 <PersonalizedShop
                   looks={getPersonalizedLooks({
                     styleArchetypes: [personalization.archetype === "Corporate Sharp" ? "professional" : personalization.archetype === "Creator Vibe" ? "creator" : personalization.archetype === "College Casual" ? "college" : personalization.archetype === "Premium Minimalist" ? "premium" : personalization.archetype === "Urban Aspirational" ? "confident" : personalization.archetype === "Loud Flex" ? "bold" : personalization.archetype === "Soft Luxury" ? "understated" : "clean"],
@@ -1269,6 +1291,7 @@ export default function AuditDetailPage() {
                   archetype={personalization.archetype}
                   leakTags={displayResult.statusLeaks.map((l) => l.category)}
                 />
+                </LockedSection>
               )}
 
               <div className="space-y-2 text-center text-xs text-[#9c9184]">
