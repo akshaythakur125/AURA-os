@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 
 const navLinks = [
+  { href: "/best-photo", label: "Best Photo" },
   { href: "/examples", label: "Examples" },
   { href: "/shop", label: "Shop" },
   { href: "/dashboard", label: "Dashboard" },
@@ -15,6 +16,8 @@ const productLinks = [
   { href: "/products/aura-report", label: "Aura Report" },
   { href: "/products/dating-audit", label: "Dating Audit" },
   { href: "/products/glowup-plan", label: "Glow-Up Plan" },
+  { href: "/retake-coach", label: "Retake Coach" },
+  { href: "/best-photo", label: "Best-Photo Picker" },
 ];
 
 export function Header() {
