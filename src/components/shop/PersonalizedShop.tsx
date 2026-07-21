@@ -9,6 +9,7 @@ import { FadeInView } from "@/components/ui/FadeInView";
 import type { Look } from "@/lib/shop/catalogTypes";
 import type { StatusLeakTag } from "@/types/product";
 import { buildRetailerUrl, type Retailer } from "@/lib/shop/linkBuilder";
+import { formatLookPrice } from "@/lib/shop/pricing";
 import { ShopCategoryImage } from "./ShopCategoryImage";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { rankLooks, searchLooks } from "@/lib/shop/ranking";
@@ -20,6 +21,12 @@ interface PersonalizedShopProps {
   archetype?: string;
   leakTags?: string[];
   gender?: "men" | "women" | "unisex";
+  /** Free users: show `freeCount` picks fully, lock the rest behind the paywall. */
+  locked?: boolean;
+  /** How many picks a free user gets to see fully. Default 1. */
+  freeCount?: number;
+  /** Where the unlock CTA points. */
+  unlockHref?: string;
 }
 
 const RETAILER_LABELS: Record<Retailer, string> = {
@@ -113,6 +120,9 @@ export function PersonalizedShop({
   looks,
   archetype,
   leakTags,
+  locked = false,
+  freeCount = 1,
+  unlockHref = "/pricing",
 }: PersonalizedShopProps) {
   const [showAll, setShowAll] = useState(false);
   const [budgetFilter, setBudgetFilter] = useState<number | null>(null);
@@ -123,7 +133,10 @@ export function PersonalizedShop({
   // ponytail: deterministic ranking + search
   const ranked = rankLooks(looks, { leakTags, goalTags: [], maxBudget: budgetFilter || undefined });
   const searched = searchQuery ? searchLooks(ranked, searchQuery) : ranked;
-  const visibleLooks = showAll ? searched : searched.slice(0, 12);
+  // Free users get `freeCount` fully-usable picks; the rest are teased blurred.
+  const visibleLooks = locked ? searched.slice(0, freeCount) : (showAll ? searched : searched.slice(0, 12));
+  const lockedPreview = locked ? searched.slice(freeCount, freeCount + 3) : [];
+  const lockedRemaining = Math.max(0, looks.length - freeCount);
   const compareLooks = looks.filter((l) => compareIds.includes(l.id));
 
   const worstLeak = leakTags && leakTags.length > 0 ? leakTags[0] : null;
@@ -175,43 +188,57 @@ export function PersonalizedShop({
           </div>
         </FadeInView>
 
-        {/* Search */}
-        <FadeInView delay={30}>
-          <div className="mb-4 max-w-md mx-auto">
-            <input
-              type="text"
-              placeholder="Search by category, style, or need..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.03] px-4 py-2.5 text-sm text-[#1C1917] placeholder-gray-500 outline-none focus:border-red-500/30"
-            />
-          </div>
-        </FadeInView>
+        {/* Free-pick note (locked/free users only) */}
+        {locked && lockedRemaining > 0 && (
+          <FadeInView delay={20}>
+            <p className="mb-6 text-center text-xs text-[#857b6e]">
+              Here&apos;s <span className="font-semibold text-[#B23A25]">1 free pick</span> from your
+              personalized set — <span className="font-medium text-[#1C1917]">{lockedRemaining} more</span> are
+              in the full report.
+            </p>
+          </FadeInView>
+        )}
 
-        {/* Budget filter */}
-        <FadeInView delay={50}>
-          <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
-            <span className="text-xs text-[#857b6e]">Budget:</span>
-            {[
-              { label: "All", value: null },
-              { label: "Under ₹500", value: 500 },
-              { label: "Under ₹1000", value: 1000 },
-              { label: "Under ₹2000", value: 2000 },
-            ].map((b) => (
-              <button
-                key={b.label}
-                onClick={() => setBudgetFilter(b.value)}
-                className={`rounded-full px-3 py-1 text-xs transition-all ${
-                  budgetFilter === b.value
-                    ? "bg-red-500/20 text-red-300 border border-red-500/30"
-                    : "bg-[#1c1917]/[0.03] text-[#6f675e] border border-[#1c1917]/10 hover:bg-[#1c1917]/[0.05]"
-                }`}
-              >
-                {b.label}
-              </button>
-            ))}
-          </div>
-        </FadeInView>
+        {/* Search + budget — full (paid) experience only */}
+        {!locked && (
+          <>
+            <FadeInView delay={30}>
+              <div className="mb-4 max-w-md mx-auto">
+                <input
+                  type="text"
+                  placeholder="Search by category, style, or need..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.03] px-4 py-2.5 text-sm text-[#1C1917] placeholder-gray-500 outline-none focus:border-red-500/30"
+                />
+              </div>
+            </FadeInView>
+
+            <FadeInView delay={50}>
+              <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
+                <span className="text-xs text-[#857b6e]">Budget:</span>
+                {[
+                  { label: "All", value: null },
+                  { label: "Under ₹500", value: 500 },
+                  { label: "Under ₹1000", value: 1000 },
+                  { label: "Under ₹2000", value: 2000 },
+                ].map((b) => (
+                  <button
+                    key={b.label}
+                    onClick={() => setBudgetFilter(b.value)}
+                    className={`rounded-full px-3 py-1 text-xs transition-all ${
+                      budgetFilter === b.value
+                        ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                        : "bg-[#1c1917]/[0.03] text-[#6f675e] border border-[#1c1917]/10 hover:bg-[#1c1917]/[0.05]"
+                    }`}
+                  >
+                    {b.label}
+                  </button>
+                ))}
+              </div>
+            </FadeInView>
+          </>
+        )}
 
         {/* Free fixes — always first, no purchase needed */}
         {leakTags && leakTags.length > 0 && (
@@ -259,7 +286,7 @@ export function PersonalizedShop({
                         {look.title}
                       </Link>
                       <span className="text-xs font-medium text-amber-400 whitespace-nowrap">
-                        {look.priceLabel}
+                        {formatLookPrice(look.price)}
                       </span>
                     </div>
                     <p className="text-xs text-[#857b6e] line-clamp-2">
@@ -312,8 +339,46 @@ export function PersonalizedShop({
           })}
         </div>
 
+        {/* Locked teaser — the rest of the picks, blurred behind the paywall */}
+        {locked && lockedRemaining > 0 && (
+          <FadeInView delay={80}>
+            <div className="relative mt-8">
+              {/* Blurred preview of the next few picks */}
+              <div className="pointer-events-none select-none grid gap-4 blur-[6px] sm:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
+                {(lockedPreview.length > 0 ? lockedPreview : searched.slice(0, 3)).map((look) => (
+                  <Card key={look.id} className="flex flex-col">
+                    <LookImage look={look} />
+                    <div className="mt-3">
+                      <div className="mb-1 flex items-start justify-between gap-2">
+                        <span className="text-sm font-semibold text-[#1C1917] leading-tight">{look.title}</span>
+                        <span className="text-xs font-medium text-amber-400 whitespace-nowrap">{formatLookPrice(look.price)}</span>
+                      </div>
+                      <p className="text-xs text-[#857b6e] line-clamp-2">{look.description}</p>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+              {/* 3D unlock card */}
+              <div className="absolute inset-0 flex items-center justify-center p-4">
+                <div
+                  className="max-w-sm rounded-2xl border border-[#E14434]/25 bg-[#F7F1E6]/95 px-6 py-6 text-center shadow-[0_18px_50px_rgba(28,25,23,0.22)] backdrop-blur-md"
+                  style={{ transform: "perspective(800px) rotateX(6deg)", transformStyle: "preserve-3d" }}
+                >
+                  <p className="text-base font-semibold text-[#1C1917]">🔒 {lockedRemaining} more personalized picks</p>
+                  <p className="mx-auto mt-1.5 max-w-[260px] text-xs text-[#857b6e]">
+                    Every pick matched to your leaks, with direct buy links across Amazon, Flipkart, Myntra &amp; Ajio.
+                  </p>
+                  <Link href={unlockHref}>
+                    <Button size="sm" className="mt-3 text-xs">Unlock all {looks.length} picks</Button>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </FadeInView>
+        )}
+
         {/* Comparison table */}
-        {compareLooks.length >= 2 && (
+        {!locked && compareLooks.length >= 2 && (
           <FadeInView delay={100}>
             <div className="mb-8 overflow-x-auto rounded-2xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-4">
               <div className="mb-3 flex items-center justify-between">
@@ -334,7 +399,7 @@ export function PersonalizedShop({
                     <tr key={l.id} className="border-b border-white/[0.03]">
                       <td className="py-2 pr-3 font-medium text-[#1C1917]">{l.title}</td>
                       <td className="py-2 pr-3 text-[#6f675e]">{l.category}</td>
-                      <td className="py-2 pr-3 text-amber-400">{l.priceLabel}</td>
+                      <td className="py-2 pr-3 text-amber-400">{formatLookPrice(l.price)}</td>
                       <td className="py-2 pr-3 text-[#6f675e]">{l.statusLeakTags.join(", ") || "—"}</td>
                     </tr>
                   ))}
@@ -353,7 +418,7 @@ export function PersonalizedShop({
         </FadeInView>
 
         {/* Show more */}
-        {looks.length > 12 && !showAll && (
+        {!locked && looks.length > 12 && !showAll && (
           <FadeInView delay={200}>
             <div className="mt-8 text-center">
               <Button

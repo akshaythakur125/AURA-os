@@ -1093,21 +1093,26 @@ export default function AuditDetailPage() {
                 </div>
               </Card>
 
-              {/* ─── Shop For Looks — paid perk, blurred glimpse for free ─── */}
-              {personalization != null && displayResult != null && typeof displayResult.auraScore === "number" && (
-                <LockedSection locked={!isUnlocked} label="Personalized Shop Picks" unlockHref={unlockHref}>
+              {/* ─── Shop For Looks — 1 free pick, rest paywalled ─── */}
+              {/* Renders whenever a personalization profile exists — even when the
+                  photo was quality-gated (auraScore null). The archetype, leaks, goal
+                  and budget still drive accurate picks, so a shopper is never left
+                  without suggestions just because their photo scored low. */}
+              {personalization != null && displayResult != null && (
                 <PersonalizedShop
                   looks={getPersonalizedLooks({
                     styleArchetypes: [personalization.archetype === "Corporate Sharp" ? "professional" : personalization.archetype === "Creator Vibe" ? "creator" : personalization.archetype === "College Casual" ? "college" : personalization.archetype === "Premium Minimalist" ? "premium" : personalization.archetype === "Urban Aspirational" ? "confident" : personalization.archetype === "Loud Flex" ? "bold" : personalization.archetype === "Soft Luxury" ? "understated" : "clean"],
-                    statusLeakTags: displayResult.statusLeaks.map((l) => l.category as any).filter(Boolean),
+                    statusLeakTags: (displayResult.statusLeaks ?? []).map((l) => l.category as any).filter(Boolean),
                     goalTags: audit!.goal ? [audit!.goal as any] : undefined,
                     budgetMax: audit!.budgetRange as any,
                   })}
-                  userScore={displayResult.auraScore}
+                  userScore={displayResult.auraScore ?? undefined}
                   archetype={personalization.archetype}
-                  leakTags={displayResult.statusLeaks.map((l) => l.category)}
+                  leakTags={(displayResult.statusLeaks ?? []).map((l) => l.category)}
+                  locked={!isUnlocked}
+                  freeCount={1}
+                  unlockHref={unlockHref}
                 />
-                </LockedSection>
               )}
 
               {/* ─── Conversion CTA ─── */}
@@ -1277,22 +1282,7 @@ export default function AuditDetailPage() {
                 <ResultCapture audit={audit!} />
               </div>
 
-              {/* Personalized shopping looks — paid perk, blurred glimpse for free */}
-              {personalization && displayResult && (
-                <LockedSection locked={!isUnlocked} label="Personalized Shop Picks" unlockHref={unlockHref}>
-                <PersonalizedShop
-                  looks={getPersonalizedLooks({
-                    styleArchetypes: [personalization.archetype === "Corporate Sharp" ? "professional" : personalization.archetype === "Creator Vibe" ? "creator" : personalization.archetype === "College Casual" ? "college" : personalization.archetype === "Premium Minimalist" ? "premium" : personalization.archetype === "Urban Aspirational" ? "confident" : personalization.archetype === "Loud Flex" ? "bold" : personalization.archetype === "Soft Luxury" ? "understated" : "clean"],
-                    statusLeakTags: displayResult.statusLeaks.map((l) => l.category as any).filter(Boolean),
-                    goalTags: audit!.goal ? [audit!.goal as any] : undefined,
-                    budgetMax: audit!.budgetRange as any,
-                  })}
-                  userScore={displayResult.auraScore}
-                  archetype={personalization.archetype}
-                  leakTags={displayResult.statusLeaks.map((l) => l.category)}
-                />
-                </LockedSection>
-              )}
+              {/* (Personalized shop picks render once, higher up in the report.) */}
 
               <div className="space-y-2 text-center text-xs text-[#9c9184]">
                 <p>
