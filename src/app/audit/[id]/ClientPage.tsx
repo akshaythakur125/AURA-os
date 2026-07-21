@@ -1192,7 +1192,7 @@ export default function AuditDetailPage() {
               {displayResult != null && (
                 <div className="mb-6">
                   <LockedSection locked={!isUnlocked} label="Face-Shape Studio" unlockHref={unlockHref}>
-                    <FaceShapeCard />
+                    <FaceShapeCard imageDataUrl={audit?.imageDataUrl} />
                   </LockedSection>
                 </div>
               )}

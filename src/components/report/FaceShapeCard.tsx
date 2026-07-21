@@ -70,9 +70,29 @@ function Pills({ items }: { items: string[] }) {
   );
 }
 
-export function FaceShapeCard({ initial = "oval" }: { initial?: Shape }) {
+export function FaceShapeCard({ initial = "oval", imageDataUrl }: { initial?: Shape; imageDataUrl?: string }) {
   const [shape, setShape] = useState<Shape>(initial);
+  const [scanState, setScanState] = useState<"idle" | "scanning" | "done" | "no-face" | "error">("idle");
+  const [detected, setDetected] = useState<{ shape: Shape; confidence: number } | null>(null);
   const r = RECS[shape];
+
+  // Lazy-load the face model only when the user asks — the photo never leaves
+  // the device; only the model downloads (once).
+  const runScan = async () => {
+    if (!imageDataUrl) return;
+    setScanState("scanning");
+    try {
+      const { scanFace, loadImage } = await import("@/lib/face/faceScan");
+      const img = await loadImage(imageDataUrl);
+      const res = await scanFace(img);
+      if (!res) { setScanState("no-face"); return; }
+      setShape(res.shape);
+      setDetected({ shape: res.shape, confidence: res.confidence });
+      setScanState("done");
+    } catch {
+      setScanState("error");
+    }
+  };
 
   return (
     <div className="rounded-2xl border border-[#1c1917]/[0.08] bg-gradient-to-b from-[#1c1917]/[0.03] to-transparent p-5 sm:p-6">
@@ -86,6 +106,33 @@ export function FaceShapeCard({ initial = "oval" }: { initial?: Shape }) {
           </p>
         </div>
       </div>
+
+      {/* Scan my face — lazy, in-browser, private */}
+      {imageDataUrl && (
+        <div className="mb-4">
+          {scanState === "done" && detected ? (
+            <div className="flex items-center justify-between gap-2 rounded-xl border border-emerald-500/25 bg-emerald-500/[0.06] px-3.5 py-2.5">
+              <p className="text-xs text-emerald-700">
+                ✨ Scanned: <span className="font-semibold capitalize">{detected.shape}</span>
+                <span className="text-emerald-600/80"> · {Math.round(detected.confidence * 100)}% match</span>
+                <span className="text-[#857b6e]"> — adjust below if it&apos;s not quite right</span>
+              </p>
+              <button onClick={runScan} className="shrink-0 text-[11px] text-[#857b6e] underline hover:text-[#1C1917]">Re-scan</button>
+            </div>
+          ) : (
+            <button
+              onClick={runScan}
+              disabled={scanState === "scanning"}
+              className="w-full rounded-xl bg-gradient-to-r from-[#E14434] to-[#c0341f] px-4 py-2.5 text-xs font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:opacity-60 disabled:hover:translate-y-0"
+            >
+              {scanState === "scanning" ? "Scanning your face… (one-time model load)" : "✨ Scan my face to auto-detect"}
+            </button>
+          )}
+          {scanState === "no-face" && <p className="mt-1.5 text-[11px] text-[#857b6e]">Couldn&apos;t find a clear face — pick your shape manually below.</p>}
+          {scanState === "error" && <p className="mt-1.5 text-[11px] text-[#857b6e]">Scan unavailable right now — pick your shape manually below.</p>}
+          <p className="mt-1.5 text-[10px] text-[#9c9184]">Runs in your browser — your photo never leaves your device.</p>
+        </div>
+      )}
 
       {/* Shape selector */}
       <div className="mb-5 grid grid-cols-3 gap-2 sm:grid-cols-6">
