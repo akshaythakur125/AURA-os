@@ -20,6 +20,7 @@ import { LockedSection } from "@/components/report/LockedSection";
 import { GroomingLocalCard, type NearbyPlace } from "@/components/report/GroomingLocalCard";
 import { YourColorsCard } from "@/components/report/YourColorsCard";
 import { CapsuleWardrobeCard } from "@/components/report/CapsuleWardrobeCard";
+import { FaceShapeCard } from "@/components/report/FaceShapeCard";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
@@ -1187,6 +1188,15 @@ export default function AuditDetailPage() {
                 </div>
               )}
 
+              {/* ─── Face-Shape Studio — paid perk ─── */}
+              {displayResult != null && (
+                <div className="mb-6">
+                  <LockedSection locked={!isUnlocked} label="Face-Shape Studio" unlockHref={unlockHref}>
+                    <FaceShapeCard />
+                  </LockedSection>
+                </div>
+              )}
+
               {/* ─── Your Colors — paid perk ─── */}
               {displayResult?.imageMetrics?.colorPalette && (
                 <div className="mb-6">
@@ -1227,6 +1237,7 @@ export default function AuditDetailPage() {
                   { href: "/best-photo", emoji: "🏆", title: "Best-Photo Picker", desc: "Rank your photos per platform" },
                   { href: "/retake-coach", emoji: "🎥", title: "Retake Coach", desc: "Live camera guidance" },
                   { href: "/platform-packs", emoji: "📐", title: "Platform Packs", desc: "One photo, every format" },
+                  { href: "/dating-pack", emoji: "💘", title: "Dating Profile Teardown", desc: "Rank, order & caption your profile" },
                 ].map((t) => (
                   <Link key={t.href} href={t.href} className="group rounded-2xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-4 transition-all hover:-translate-y-0.5 hover:border-[#E14434]/30">
                     <div className="text-2xl transition-transform group-hover:scale-110">{t.emoji}</div>

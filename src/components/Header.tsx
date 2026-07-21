@@ -19,6 +19,7 @@ const productLinks = [
   { href: "/retake-coach", label: "Retake Coach" },
   { href: "/best-photo", label: "Best-Photo Picker" },
   { href: "/platform-packs", label: "Platform Packs" },
+  { href: "/dating-pack", label: "Dating Profile Teardown" },
 ];
 
 export function Header() {

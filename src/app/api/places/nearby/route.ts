@@ -11,6 +11,10 @@ interface PlaceResult {
   totalRatings: number;
   photoReference: string | null;
   mapUrl: string;
+  openNow: boolean | null;
+  priceLevel: number | null;
+  phone: string | null;
+  website: string | null;
 }
 
 const TYPE_MAP: Record<string, string> = {
@@ -63,7 +67,7 @@ export async function GET(request: Request) {
         headers: {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": API_KEY,
-          "X-Goog-FieldMask": "places.displayName,places.types,places.formattedAddress,places.rating,places.userRatingCount,places.photos,places.id",
+          "X-Goog-FieldMask": "places.displayName,places.types,places.formattedAddress,places.rating,places.userRatingCount,places.photos,places.id,places.currentOpeningHours.openNow,places.priceLevel,places.nationalPhoneNumber,places.websiteUri",
         },
         body: JSON.stringify(body),
       });
@@ -93,7 +97,7 @@ export async function GET(request: Request) {
         headers: {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": API_KEY,
-          "X-Goog-FieldMask": "places.displayName,places.types,places.formattedAddress,places.rating,places.userRatingCount,places.photos,places.id",
+          "X-Goog-FieldMask": "places.displayName,places.types,places.formattedAddress,places.rating,places.userRatingCount,places.photos,places.id,places.currentOpeningHours.openNow,places.priceLevel,places.nationalPhoneNumber,places.websiteUri",
         },
         body: JSON.stringify(body),
       });
@@ -110,6 +114,13 @@ export async function GET(request: Request) {
       const types = (p.types as string[]) || [];
       const photos = p.photos as Array<{ name: string }> | undefined;
       const displayName = p.displayName as { text: string } | undefined;
+      const opening = p.currentOpeningHours as { openNow?: boolean } | undefined;
+      // Places API (New) price level is an enum string; map to 0–4.
+      const priceEnum = p.priceLevel as string | undefined;
+      const priceMap: Record<string, number> = {
+        PRICE_LEVEL_FREE: 0, PRICE_LEVEL_INEXPENSIVE: 1, PRICE_LEVEL_MODERATE: 2,
+        PRICE_LEVEL_EXPENSIVE: 3, PRICE_LEVEL_VERY_EXPENSIVE: 4,
+      };
       return {
         name: displayName?.text || "Unknown",
         type: types.includes("hair_care") ? "Hair care"
@@ -125,6 +136,10 @@ export async function GET(request: Request) {
         totalRatings: (p.userRatingCount as number) || 0,
         photoReference: photos?.[0]?.name || null,
         mapUrl: `https://www.google.com/maps/place/?q=place_id:${p.id}`,
+        openNow: opening?.openNow ?? null,
+        priceLevel: priceEnum != null && priceEnum in priceMap ? priceMap[priceEnum] : null,
+        phone: (p.nationalPhoneNumber as string) || null,
+        website: (p.websiteUri as string) || null,
       };
     });
 

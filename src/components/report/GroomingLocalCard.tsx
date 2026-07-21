@@ -9,6 +9,11 @@ export interface NearbyPlace {
   area: string;
   rating: number;
   mapUrl: string;
+  photoReference?: string | null;
+  openNow?: boolean | null;
+  priceLevel?: number | null;
+  phone?: string | null;
+  website?: string | null;
 }
 
 interface Props {
@@ -67,22 +72,45 @@ function Bar({ label, score, tip }: { label: string; score: number; tip: string 
 }
 
 function PlaceRow({ p }: { p: NearbyPlace }) {
+  const photoUrl = p.photoReference ? `/api/places/photo?name=${encodeURIComponent(p.photoReference)}` : null;
   return (
-    <a
-      href={p.mapUrl}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex items-center justify-between gap-3 rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] px-3.5 py-2.5 transition-colors hover:border-[#E14434]/30 hover:bg-[#1c1917]/[0.04]"
-    >
-      <div className="min-w-0">
+    <div className="flex gap-3 rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-2.5 transition-colors hover:border-[#E14434]/30">
+      {/* Photo */}
+      {photoUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={photoUrl} alt="" loading="lazy" className="h-16 w-16 shrink-0 rounded-lg object-cover" />
+      ) : (
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg bg-[#1c1917]/[0.05] text-xl">💈</div>
+      )}
+      {/* Info */}
+      <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-[#1C1917]">{p.name}</p>
-        <p className="truncate text-[11px] text-[#9c9184]">{p.area}</p>
+        <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px]">
+          {p.rating > 0 && <span className="font-medium text-amber-500">★ {p.rating.toFixed(1)}</span>}
+          {typeof p.priceLevel === "number" && p.priceLevel > 0 && (
+            <span className="text-[#857b6e]">{"₹".repeat(p.priceLevel)}</span>
+          )}
+          {p.openNow === true && <span className="font-medium text-emerald-600">Open now</span>}
+          {p.openNow === false && <span className="text-[#9c9184]">Closed</span>}
+        </div>
+        <p className="mt-0.5 truncate text-[11px] text-[#9c9184]">{p.area}</p>
+        <div className="mt-1.5 flex gap-1.5">
+          {p.phone && (
+            <a href={`tel:${p.phone}`} className="rounded-lg border border-[#1c1917]/12 px-2.5 py-1 text-[11px] font-medium text-[#4a443d] transition-colors hover:border-[#E14434]/40 hover:text-[#1C1917]">
+              📞 Call
+            </a>
+          )}
+          <a href={p.mapUrl} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-[#1c1917]/12 px-2.5 py-1 text-[11px] font-medium text-[#4a443d] transition-colors hover:border-[#E14434]/40 hover:text-[#1C1917]">
+            🧭 Directions
+          </a>
+          {p.website && (
+            <a href={p.website} target="_blank" rel="noopener noreferrer" className="rounded-lg border border-[#1c1917]/12 px-2.5 py-1 text-[11px] font-medium text-[#4a443d] transition-colors hover:border-[#E14434]/40 hover:text-[#1C1917]">
+              🌐 Site
+            </a>
+          )}
+        </div>
       </div>
-      <div className="shrink-0 text-right">
-        {p.rating > 0 && <p className="text-xs font-medium text-amber-500">★ {p.rating.toFixed(1)}</p>}
-        <p className="text-[10px] text-[#857b6e]">Open in Maps →</p>
-      </div>
-    </a>
+    </div>
   );
 }
 
