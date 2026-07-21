@@ -205,7 +205,67 @@ function Cap() {
   );
 }
 
-const SHAPES = { sunglasses: Sunglasses, headphones: Headphones, boba: BubbleTea, phone: Phone, gamepad: Gamepad, cap: Cap };
+const PLASTER = { color: "#e9e0d1", roughness: 0.5, metalness: 0.12 } as const;
+
+/**
+ * Style Icon — an editorial mannequin bust with a sculpted hairstyle and a
+ * vermilion shade accent. Reads as a fashion "style icon" and ties the 3D
+ * language to the grooming/style theme, without depicting a real person.
+ */
+function StyleIcon() {
+  return (
+    <group rotation={[0.04, -0.16, 0]} position={[0, -0.05, 0]} scale={1.02}>
+      {/* shoulders / bust (ink) */}
+      <mesh position={[0, -1.12, 0]} scale={[1.05, 0.72, 0.72]}>
+        <sphereGeometry args={[1.0, 32, 24, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        <meshStandardMaterial {...INK} side={THREE.DoubleSide} />
+      </mesh>
+      {/* collar accent (vermilion neckline) */}
+      <mesh position={[0, -0.6, 0.06]} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[0.34, 0.055, 16, 40]} />
+        <meshStandardMaterial {...VERM} />
+      </mesh>
+      {/* neck (plaster) */}
+      <mesh position={[0, -0.34, 0]}>
+        <cylinderGeometry args={[0.23, 0.3, 0.52, 32]} />
+        <meshStandardMaterial {...PLASTER} />
+      </mesh>
+      {/* head — egg form */}
+      <mesh position={[0, 0.34, 0]} scale={[0.82, 1, 0.9]}>
+        <sphereGeometry args={[0.6, 40, 40]} />
+        <meshStandardMaterial {...PLASTER} />
+      </mesh>
+      {/* jaw / chin taper */}
+      <mesh position={[0, 0.0, 0.03]} scale={[0.58, 0.5, 0.58]}>
+        <sphereGeometry args={[0.55, 32, 32]} />
+        <meshStandardMaterial {...PLASTER} />
+      </mesh>
+      {/* hair cap (ink shell over crown + back) */}
+      <mesh position={[0, 0.48, -0.06]} scale={[0.98, 1.06, 1.02]}>
+        <sphereGeometry args={[0.62, 40, 32, 0, Math.PI * 2, 0, Math.PI * 0.6]} />
+        <meshStandardMaterial {...INK} side={THREE.DoubleSide} />
+      </mesh>
+      {/* swept-over fringe (ink) */}
+      <mesh position={[0.28, 0.52, 0.26]} rotation={[0.25, 0.35, -0.55]} scale={[0.52, 0.34, 0.42]}>
+        <sphereGeometry args={[0.6, 24, 24]} />
+        <meshStandardMaterial {...INK} />
+      </mesh>
+      {/* signature shades (vermilion bar + lenses) */}
+      <mesh position={[0, 0.38, 0.5]} rotation={[0.08, 0, 0]}>
+        <boxGeometry args={[0.74, 0.06, 0.05]} />
+        <meshStandardMaterial {...VERM} />
+      </mesh>
+      {[-0.2, 0.2].map((x) => (
+        <mesh key={x} position={[x, 0.34, 0.52]} rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[0.15, 0.15, 0.04, 24]} />
+          <meshStandardMaterial color="#2a2622" roughness={0.15} metalness={0.7} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+const SHAPES = { sunglasses: Sunglasses, headphones: Headphones, boba: BubbleTea, phone: Phone, gamepad: Gamepad, cap: Cap, model: StyleIcon };
 
 function Spinner({ shape }: { shape: keyof typeof SHAPES }) {
   const g = useRef<THREE.Group>(null);

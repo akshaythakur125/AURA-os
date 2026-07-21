@@ -17,6 +17,7 @@ import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
 import { FullReport } from "@/components/report/FullReport";
 import { LockedSection } from "@/components/report/LockedSection";
+import { GroomingLocalCard } from "@/components/report/GroomingLocalCard";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
@@ -506,7 +507,9 @@ export default function AuditDetailPage() {
           : lat > 26.8 && lat < 27.0 && lng > 80.8 && lng < 81.1 ? "Lucknow"
           : lat > 26.9 && lat < 27.2 && lng > 75.7 && lng < 76.0 ? "Jaipur"
           : null;
-        if (city) setUserLocation({ city, lat, lng });
+        // Show nearby services for everyone, not just the 10 mapped cities —
+        // the Places lookup works from raw lat/lng anywhere.
+        setUserLocation({ city: city || "your area", lat, lng });
       },
       () => {},
       { timeout: 5000, maximumAge: 300000 }
@@ -524,7 +527,7 @@ export default function AuditDetailPage() {
       } catch { return []; }
     };
     Promise.all([
-      fetchPlaces("beauty_salon"),
+      fetchPlaces("salon"),
       fetchPlaces("photographer"),
       fetchPlaces("gym"),
     ]).then(([salons, photographers, gyms]) => {
@@ -1113,6 +1116,21 @@ export default function AuditDetailPage() {
                   freeCount={1}
                   unlockHref={unlockHref}
                 />
+              )}
+
+              {/* ─── Grooming, Hair & Local Pros — paid perk ─── */}
+              {displayResult != null && (
+                <div className="mb-6">
+                  <LockedSection locked={!isUnlocked} label="Grooming, Hair & Nearby Salons" unlockHref={unlockHref}>
+                    <GroomingLocalCard
+                      grooming={displayResult.imageMetrics?.groomingResult}
+                      hairNeatnessFallback={displayResult.imageMetrics?.hairRegion?.neatnessScore}
+                      places={nearbyPlaces}
+                      city={userLocation?.city}
+                      locationKnown={userLocation != null}
+                    />
+                  </LockedSection>
+                </div>
               )}
 
               {/* ─── Conversion CTA ─── */}
