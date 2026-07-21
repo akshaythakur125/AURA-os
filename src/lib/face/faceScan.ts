@@ -84,20 +84,23 @@ function dist(a: Pt, b: Pt, w: number, h: number): number {
 }
 
 function classify(ratios: FaceScanResult["ratios"]): { shape: FaceShape; confidence: number } {
-  const { lengthToWidth: LW, jawToCheek: JC, foreheadToCheek: FC, foreheadToJaw: FJ } = ratios;
+  // The reference "width" is the widest face-contour span (cheek landmarks),
+  // which is always the widest point — so we classify by LENGTH-to-width and the
+  // forehead↔jaw relationship rather than by cheekbone prominence. Diamond isn't
+  // auto-detected (unreliable from one 2D photo); it stays available manually.
+  const { lengthToWidth: LW, jawToCheek: JC, foreheadToJaw: FJ } = ratios;
 
-  // 1. Clearly long → oblong.
-  if (LW >= 1.5) return { shape: "oblong", confidence: clamp01((LW - 1.5) / 0.3 + 0.55) };
-  // 2. Forehead notably wider than a narrow jaw → heart.
-  if (FJ >= 1.14 && JC <= 0.86) return { shape: "heart", confidence: clamp01((FJ - 1.14) / 0.18 + 0.5) };
-  // 3. Cheekbones clearly widest — forehead AND jaw both narrow → diamond.
-  if (FC <= 0.86 && JC <= 0.86) return { shape: "diamond", confidence: clamp01((0.86 - Math.max(FC, JC)) / 0.1 + 0.5) };
-  // 4. Short-ish face with a strong, near-cheek-wide jaw → square.
-  if (LW < 1.32 && JC >= 0.9) return { shape: "square", confidence: clamp01((JC - 0.9) / 0.1 + 0.45) };
-  // 5. Short face with a softer jaw → round.
-  if (LW < 1.26 && JC < 0.9) return { shape: "round", confidence: clamp01((1.26 - LW) / 0.16 + 0.4) };
-  // 6. Balanced, slightly longer than wide → oval (the versatile default).
-  return { shape: "oval", confidence: clamp01(0.5 + (0.2 - Math.abs(LW - 1.4)) * 0.5) };
+  // 1. Clearly longer than wide → oblong.
+  if (LW >= 1.5) return { shape: "oblong", confidence: clamp01((LW - 1.5) / 0.35 + 0.55) };
+  // 2. Short and wide → round vs square by jaw strength.
+  if (LW <= 1.18) {
+    if (JC >= 0.82) return { shape: "square", confidence: clamp01((JC - 0.82) / 0.12 + 0.5) };
+    return { shape: "round", confidence: clamp01((1.18 - LW) / 0.14 + 0.45) };
+  }
+  // 3. Medium length, forehead clearly wider than a tapering jaw → heart.
+  if (FJ >= 1.08) return { shape: "heart", confidence: clamp01((FJ - 1.08) / 0.14 + 0.45) };
+  // 4. Balanced proportions → oval (the most common, most versatile shape).
+  return { shape: "oval", confidence: clamp01(0.55 + (0.18 - Math.abs(LW - 1.35)) * 0.6) };
 }
 
 function clamp01(v: number): number {
