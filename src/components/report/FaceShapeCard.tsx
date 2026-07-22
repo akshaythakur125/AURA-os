@@ -70,10 +70,36 @@ function Pills({ items }: { items: string[] }) {
   );
 }
 
+// Turn the reliable scan signals (expression + pose) into first-impression tips.
+function photoTips(
+  exp: { smile: number; eyesOpen: number; genuineSmile: boolean },
+  pose: { rollDeg: number; turned: number }
+): { ok: boolean; text: string }[] {
+  const tips: { ok: boolean; text: string }[] = [];
+  if (exp.smile >= 30) tips.push({ ok: true, text: exp.genuineSmile ? "Warm, genuine smile — your eyes are engaged" : "Nice smile — reads friendly and open" });
+  else if (exp.smile >= 10) tips.push({ ok: false, text: "A slightly bigger smile would lift your approachability" });
+  else tips.push({ ok: false, text: "You read a touch serious — a subtle smile makes a warmer first impression" });
+
+  if (exp.eyesOpen < 55) tips.push({ ok: false, text: "Your eyes look half-closed — worth a reshoot" });
+  else tips.push({ ok: true, text: "Eyes open and engaged" });
+
+  const ar = Math.abs(pose.rollDeg);
+  if (ar >= 10) tips.push({ ok: false, text: `Head is tilted ~${ar}° — straighten up for a confident, put-together look` });
+  else tips.push({ ok: true, text: "Head is nicely level" });
+
+  const at = Math.abs(pose.turned);
+  if (at >= 0.6) tips.push({ ok: false, text: "Mostly a side profile — a 3/4 angle shows more of your face" });
+  else if (at >= 0.2) tips.push({ ok: true, text: "Flattering 3/4 angle" });
+  else tips.push({ ok: true, text: "Solid straight-on framing" });
+
+  return tips;
+}
+
 export function FaceShapeCard({ initial = "oval", imageDataUrl }: { initial?: Shape; imageDataUrl?: string }) {
   const [shape, setShape] = useState<Shape>(initial);
   const [scanState, setScanState] = useState<"idle" | "scanning" | "done" | "no-face" | "error">("idle");
   const [detected, setDetected] = useState<{ shape: Shape; confidence: number } | null>(null);
+  const [read, setRead] = useState<{ ok: boolean; text: string }[] | null>(null);
   const r = RECS[shape];
 
   // Lazy-load the face model only when the user asks — the photo never leaves
@@ -88,6 +114,7 @@ export function FaceShapeCard({ initial = "oval", imageDataUrl }: { initial?: Sh
       if (!res) { setScanState("no-face"); return; }
       setShape(res.shape);
       setDetected({ shape: res.shape, confidence: res.confidence });
+      setRead(photoTips(res.expression, res.pose));
       setScanState("done");
     } catch {
       setScanState("error");
@@ -131,6 +158,23 @@ export function FaceShapeCard({ initial = "oval", imageDataUrl }: { initial?: Sh
           {scanState === "no-face" && <p className="mt-1.5 text-[11px] text-[#857b6e]">Couldn&apos;t find a clear face — pick your shape manually below.</p>}
           {scanState === "error" && <p className="mt-1.5 text-[11px] text-[#857b6e]">Scan unavailable right now — pick your shape manually below.</p>}
           <p className="mt-1.5 text-[10px] text-[#9c9184]">Runs in your browser — your photo never leaves your device.</p>
+
+          {/* Photo read — reliable expression + pose coaching from the scan */}
+          {scanState === "done" && read && read.length > 0 && (
+            <div className="mt-3 rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-3.5">
+              <p className="mb-2 text-xs font-semibold text-[#1C1917]">📸 Your photo read</p>
+              <div className="space-y-1.5">
+                {read.map((tip, i) => (
+                  <div key={i} className="flex items-start gap-2">
+                    <span className={`mt-px flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] ${tip.ok ? "bg-emerald-500 text-white" : "bg-[#E14434]/15 text-[#E14434]"}`}>
+                      {tip.ok ? "✓" : "!"}
+                    </span>
+                    <span className="text-[11px] leading-relaxed text-[#4a443d]">{tip.text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

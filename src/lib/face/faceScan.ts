@@ -6,8 +6,11 @@
  * only the model downloads (once, lazily, when the user asks for a scan).
  *
  * From the landmarks we derive face geometry (forehead / cheekbone / jaw widths
- * and face length) to classify face shape, and expose blendshapes + region
- * anchors that the grooming layer uses for more precise, personal tips.
+ * and face length) to classify face shape, plus two RELIABLE first-impression
+ * signals: expression (from the model's trained blendshapes — smile, eye
+ * engagement, blink) and head pose (roll / turn / chin from landmark geometry).
+ * We deliberately do NOT grade skin/beard from pixels — that's noisy and needs a
+ * trained model — so the scan only surfaces what it can measure well.
  */
 
 import type { FaceLandmarker as FaceLandmarkerType } from "@mediapipe/tasks-vision";
@@ -25,7 +28,11 @@ export interface FaceScanResult {
   };
   /** Selected blendshape scores (0-1), e.g. smile, eye openness — for tips. */
   blendshapes: Record<string, number>;
-  /** Normalized landmark anchors used by the grooming layer. */
+  /** Expression read from the model's trained blendshapes (reliable). */
+  expression: { smile: number; eyesOpen: number; genuineSmile: boolean };
+  /** Head pose from landmark geometry (reliable): tilt + turn. */
+  pose: { rollDeg: number; turned: number };
+  /** Normalized landmark anchors. */
   anchors: {
     // normalized [0,1] points on the image
     chin: [number, number];
@@ -73,6 +80,8 @@ const IDX = {
   leftForehead: 54,
   rightForehead: 284,
   noseTip: 1,
+  leftEye: 33,
+  rightEye: 263,
 };
 
 type Pt = { x: number; y: number; z?: number };
@@ -137,12 +146,27 @@ export async function scanFace(img: HTMLImageElement): Promise<FaceScanResult | 
     if (c.categoryName) blendshapes[c.categoryName] = c.score;
   }
 
+  // Expression — from the model's trained blendshapes (reliable).
+  const bs = blendshapes;
+  const smile = clamp01(((bs.mouthSmileLeft || 0) + (bs.mouthSmileRight || 0)) / 2) * 100;
+  const eyesOpen = (1 - Math.min(1, ((bs.eyeBlinkLeft || 0) + (bs.eyeBlinkRight || 0)) / 2)) * 100;
+  const genuineSmile = smile >= 25 && ((bs.eyeSquintLeft || 0) + (bs.eyeSquintRight || 0)) / 2 > 0.18;
+
+  // Head pose — from landmark geometry (reliable).
+  const lEye = P(IDX.leftEye), rEye = P(IDX.rightEye), nose = P(IDX.noseTip);
+  const rollDeg = (Math.atan2((rEye.y - lEye.y) * h, (rEye.x - lEye.x) * w) * 180) / Math.PI;
+  const midEyeX = (lEye.x + rEye.x) / 2;
+  const eyeDist = Math.abs(rEye.x - lEye.x) || 1e-4;
+  const turned = (nose.x - midEyeX) / eyeDist;
+
   const anchor = (i: number): [number, number] => [P(i).x, P(i).y];
   return {
     shape,
     confidence,
     ratios,
     blendshapes,
+    expression: { smile: Math.round(smile), eyesOpen: Math.round(eyesOpen), genuineSmile },
+    pose: { rollDeg: Math.round(rollDeg), turned: Math.round(turned * 100) / 100 },
     anchors: {
       chin: anchor(IDX.chin),
       forehead: anchor(IDX.topForehead),
