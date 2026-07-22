@@ -1,0 +1,7 @@
+# Train on a GPU box (free Google Colab works). Python 3.10–3.11.
+tensorflow==2.15.0
+pandas==2.2.2
+numpy==1.26.4
+scikit-learn==1.4.2
+# Export to a browser model (run in its own step; pins an older TF internally):
+# pip install tensorflowjs==4.17.0
