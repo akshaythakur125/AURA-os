@@ -12,7 +12,6 @@ function pickArchetype(
 ): { archetype: StatusArchetype; explanation: string; priority: string; focus: string } {
   const d = audit.deepInput;
   const goal = audit.goal;
-  const budget = audit.budgetRange;
   const style = d?.styleIntent;
   const signals = d?.currentSignals || [];
   const concern = d?.biggestConcern;
@@ -52,11 +51,11 @@ function pickArchetype(
     };
   }
 
-  // College Casual
+  // College Casual — driven by goal/context, NOT budget (a small shopping
+  // budget shouldn't decide someone's presentation archetype).
   if (
     goal === "college" ||
-    d?.occasionContext === "college_daily" ||
-    (budget <= 2000 && !premiumStyle && !boldStyle)
+    d?.occasionContext === "college_daily"
   ) {
     return {
       archetype: "College Casual",
