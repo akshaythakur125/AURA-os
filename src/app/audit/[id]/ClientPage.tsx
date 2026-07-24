@@ -688,9 +688,9 @@ export default function AuditDetailPage() {
                 <div className="mt-1 text-sm font-medium capitalize text-[#1C1917]">{audit.goal}</div>
               </div>
               <div className="rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-4">
-                <div className="text-xs text-[#857b6e]">Budget Range</div>
+                <div className="text-xs text-[#857b6e]">Shopping Budget</div>
                 <div className="mt-1 text-sm font-medium text-amber-400">
-                  &#8377;{audit.budgetRange.toLocaleString()}
+                  Up to &#8377;{audit.budgetRange.toLocaleString()}
                 </div>
               </div>
               <div className="rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-4">

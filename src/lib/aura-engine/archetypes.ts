@@ -46,9 +46,9 @@ function pickArchetype(
     return {
       archetype: "Low-Clarity Potential",
       explanation:
-        "The image quality signals suggest room for improvement in lighting and clarity. Once these basics are addressed, your natural presentation style will become much clearer.",
-      priority: "Improve lighting and clarity first — these are the cheapest and highest-impact fixes.",
-      focus: "Lighting, clarity, framing",
+        "Right now the photo quality is holding you back — the lighting and sharpness need work. Fix those basics and your real style comes through instantly.",
+      priority: "Sort your lighting and get a sharper shot first — cheapest fixes, biggest jump.",
+      focus: "Lighting, sharpness, framing",
     };
   }
 
@@ -61,9 +61,9 @@ function pickArchetype(
     return {
       archetype: "College Casual",
       explanation:
-        "Your presentation reads as relaxed and everyday, which is appropriate for college contexts. Small improvements in grooming and intentional framing can elevate your signal without losing authenticity.",
-      priority: "Improve grooming basics and choose intentional outfits — even small upgrades increase perceived effort.",
-      focus: "Grooming, outfit fit, background simplicity",
+        "You read relaxed and everyday — which fits campus. A little grooming and a cleaner frame instantly make you look more put-together, without losing the chill.",
+      priority: "Tidy your grooming and pick an outfit on purpose — small upgrades, real difference.",
+      focus: "Grooming, outfit fit, clean backgrounds",
     };
   }
 
@@ -76,9 +76,9 @@ function pickArchetype(
     return {
       archetype: "Corporate Sharp",
       explanation:
-        "Your presentation signals professionalism and intentionality. To strengthen this, focus on clean backgrounds, solid neutral colors, and consistent framing across all profile photos.",
-      priority: "Refine background control and lighting consistency for a polished professional look.",
-      focus: "Background simplicity, lighting consistency, neutral tones",
+        "You come across sharp and put-together. To level it up, keep backgrounds clean, stick to solid neutral colours, and frame every shot the same way.",
+      priority: "Clean up your background and keep your lighting consistent for a polished look.",
+      focus: "Clean backgrounds, steady lighting, neutral colours",
     };
   }
 
@@ -90,14 +90,14 @@ function pickArchetype(
   ) {
     const qualityNote =
       decentClarity && decentLight
-        ? "Your image quality supports content creation well. Focus on maintaining a consistent visual theme across posts."
-        : "Improving lighting and sharpness will significantly boost your content quality and feed cohesion.";
+        ? "Your photo quality already works for content — now keep the same look across every post."
+        : "Better lighting and sharper shots will instantly lift your content and make your feed feel cohesive.";
     return {
       archetype: "Creator Vibe",
       explanation:
-        "Your presentation signals a content-aware, visually intentional style. " + qualityNote,
-      priority: "Build a consistent color palette and photo style across your feed.",
-      focus: "Visual consistency, lighting, color palette",
+        "You've got a content-aware, visual eye. " + qualityNote,
+      priority: "Lock in a colour palette and photo style, then keep it consistent across your feed.",
+      focus: "Consistent look, lighting, colour palette",
     };
   }
 
@@ -111,9 +111,9 @@ function pickArchetype(
     return {
       archetype: "Premium Minimalist",
       explanation:
-        "Your presentation reads as intentionally minimal and premium. The controlled background and balanced colors support a high-quality visual signal. The key is maintaining this consistency across all touchpoints.",
-      priority: "Sustain the clean aesthetic and ensure every photo reflects the same quality standard.",
-      focus: "Consistency, controlled palette, intentional framing",
+        "Clean, minimal, premium — that's your read. The simple background and balanced colours look high-quality. The trick now is keeping that same standard everywhere.",
+      priority: "Keep it clean and make sure every photo hits the same quality bar.",
+      focus: "Consistency, tight colour palette, intentional framing",
     };
   }
 
@@ -127,9 +127,9 @@ function pickArchetype(
     return {
       archetype: "Soft Luxury",
       explanation:
-        "Your presentation leans toward understated quality. The controlled environment and balanced approach suggest a preference for substance over flash. This signals confidence without trying too hard.",
-      priority: "Refine grooming and accessory choices to match the understated premium tone.",
-      focus: "Grooming, quality-over-quantity accessories, intentional backgrounds",
+        "Your vibe is quiet and clean — substance over flash. You're not trying too hard, and it reads as confident. Keep it minimal and let the details do the talking.",
+      priority: "Tidy your grooming and add one or two nice pieces — quality over quantity.",
+      focus: "Grooming, a couple of nice pieces, clean backgrounds",
     };
   }
 
@@ -142,9 +142,9 @@ function pickArchetype(
     return {
       archetype: "Loud Flex",
       explanation:
-        "Your presentation includes multiple visible status signals. While each item may be premium individually, the combined effect can feel overwhelming. The most impactful upgrade is editing — reducing visual noise so each signal lands clearly.",
-      priority: "Reduce competing elements. Let one or two items stand out instead of everything at once.",
-      focus: "Visual editing, reducing clutter, intentional minimalism",
+        "There's a lot going on in your frame — several flex pieces at once. Each might be nice, but together they compete. The biggest upgrade is cutting it down so one or two things actually land.",
+      priority: "Cut the clutter. Let one or two pieces stand out instead of everything at once.",
+      focus: "Cutting clutter, one hero piece, cleaner frame",
     };
   }
 
@@ -156,9 +156,9 @@ function pickArchetype(
     return {
       archetype: "Mismatched Flex",
       explanation:
-        "There is a gap between the status items in your frame and the overall presentation quality. Premium items surrounded by weak lighting or a cluttered background create a signal mismatch. Fixing the background and lighting will make the items look intentional.",
-      priority: "Fix the background and lighting before adding more items to the frame.",
-      focus: "Background cleanup, lighting improvement, reducing visible items",
+        "Nice pieces, but the lighting and background aren't matching their level. Premium stuff in a dim or messy shot looks accidental. Fix the setting and it'll finally look intentional.",
+      priority: "Fix your background and lighting before adding anything else to the frame.",
+      focus: "Cleaner background, better lighting, fewer items",
     };
   }
 
@@ -171,9 +171,9 @@ function pickArchetype(
     return {
       archetype: "Try-Hard Signal",
       explanation:
-        "The presentation may be trying to signal premium value, but too many elements compete for attention. The strongest signal comes from confidence in simplicity — reducing visible effort actually increases perceived status.",
-      priority: "Remove 2-3 elements from the frame. Let quality speak over quantity.",
-      focus: "Minimalism, intentional choices, reducing visible effort",
+        "The photo's trying to say 'premium', but too much is competing for attention. Confidence looks like simplicity — less visible effort actually reads as more.",
+      priority: "Take 2–3 things out of the frame. Let quality speak, not quantity.",
+      focus: "Keep it simple, intentional picks, less effort on show",
     };
   }
 
@@ -186,9 +186,9 @@ function pickArchetype(
     return {
       archetype: "Urban Aspirational",
       explanation:
-        "Your presentation fits the urban aspirational style — socially aware, visually engaged, and contextually modern. The signal is positive but can be strengthened by improving one or two key areas like background control or lighting consistency.",
-      priority: "Choose one area (background or lighting) and improve it — this alone lifts the overall signal.",
-      focus: "Background control, lighting, authentic context",
+        "You've got that modern, social, in-the-mix look. It already works — dialing in one thing, like a cleaner background or steadier lighting, makes it hit harder.",
+      priority: "Pick one thing — background or lighting — and fix it. That alone lifts the whole shot.",
+      focus: "Cleaner background, lighting, real settings",
     };
   }
 
@@ -196,8 +196,8 @@ function pickArchetype(
   return {
     archetype: "Clean Basic",
     explanation:
-      "Your presentation reads as straightforward and unpretentious. This is a solid foundation. The fastest upgrade comes from improving lighting and framing — these are free changes that immediately elevate how intentional you look.",
-    priority: "Improve lighting and framing first. These free changes create the most visible upgrade.",
+      "Simple and no-nonsense — a solid base to build on. The fastest glow-up is better lighting and framing, and both are free.",
+    priority: "Fix your lighting and framing first — free changes that instantly make you look more intentional.",
     focus: "Lighting, framing, basic grooming",
   };
 }

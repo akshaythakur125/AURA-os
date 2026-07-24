@@ -105,6 +105,7 @@ export default function NewAuditPage() {
   const [styleIntent, setStyleIntent] = useState<StyleIntent | null>(null);
   const [biggestConcern, setBiggestConcern] = useState<BiggestConcern | null>(null);
   const [gender, setGender] = useState<"men" | "women" | "unisex" | null>(null);
+  const [budget, setBudget] = useState<BudgetAmount>(5000);
   const [wantsBrutalFeedback, setWantsBrutalFeedback] = useState(false);
   const [notes, setNotes] = useState("");
   const [safetyError, setSafetyError] = useState<string | null>(null);
@@ -200,7 +201,7 @@ export default function NewAuditPage() {
         height: compressed.height,
         compressedSize,
       };
-      const audit = createAudit({ auditType: "photo" as AuditType, goal, budgetRange: 5000 as BudgetAmount });
+      const audit = createAudit({ auditType: "photo" as AuditType, goal, budgetRange: budget });
       trackEvent(EVENTS.QUIZ_COMPLETED, { goal, auditId: audit.id });
 
       // Stage 4: Save audit
@@ -431,6 +432,24 @@ export default function NewAuditPage() {
                     ] as const).map((g) => (
                       <PillButton key={g.id} selected={gender === g.id} onClick={() => setGender(g.id)}>
                         {g.label}
+                      </PillButton>
+                    ))}
+                  </div>
+                </Card>
+
+                {/* Budget for upgrade picks — drives what we recommend */}
+                <Card className="mb-4 p-4">
+                  <h3 className="mb-1 text-sm font-semibold text-[#1C1917]">Budget for upgrades?</h3>
+                  <p className="mb-3 text-xs text-[#857b6e]">We only suggest things you can actually afford.</p>
+                  <div className="flex flex-wrap gap-2">
+                    {([
+                      { v: 2000, label: "Under ₹2K" },
+                      { v: 5000, label: "₹2K–5K" },
+                      { v: 10000, label: "₹5K–10K" },
+                      { v: 25000, label: "₹10K+" },
+                    ] as const).map((b) => (
+                      <PillButton key={b.v} selected={budget === b.v} onClick={() => setBudget(b.v as BudgetAmount)}>
+                        {b.label}
                       </PillButton>
                     ))}
                   </div>
