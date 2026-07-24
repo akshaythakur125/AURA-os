@@ -19,10 +19,10 @@ const FEATURES = [
   { icon: "🗺️", text: "Personalized improvement roadmap — step by step" },
   { icon: "💰", text: "Budget upgrade plan — what to buy and where" },
   { icon: "📍", text: "Nearby salons, gyms, and studios" },
-  { icon: "🎨", text: "Color palette recommendations for your skin tone" },
+  { icon: "🎨", text: "Colour palette matched to your look" },
   { icon: "📈", text: "Before vs after improvement preview" },
   { icon: "🎴", text: "Shareable score card — download & share on Instagram" },
-  { icon: "🛍️", text: "Personalized product picks — styled for your skin & budget" },
+  { icon: "🛍️", text: "Personalized product picks — styled for your look & budget" },
 ];
 
 export function PaywallPopup({ open, onClose, auditId, trigger }: PaywallPopupProps) {
@@ -51,7 +51,7 @@ export function PaywallPopup({ open, onClose, auditId, trigger }: PaywallPopupPr
             </div>
             <h2 className="text-xl font-bold text-[#1C1917]">Unlock Your Full Report</h2>
             {trigger && (
-              <p className="mt-1 text-xs text-[#857b6e]">You tried to view: {trigger}</p>
+              <p className="mt-1 text-xs text-[#857b6e]">{trigger} is inside — plus everything below</p>
             )}
           </div>
 
@@ -74,7 +74,7 @@ export function PaywallPopup({ open, onClose, auditId, trigger }: PaywallPopupPr
           {/* CTA */}
           <Link href={`/unlock?auditId=${auditId}&product=aura_report`} className="block">
             <Button size="lg" className="w-full text-base font-bold">
-              Unlock Now
+              Unlock Now — {formatPrice(PAYMENT_PRODUCTS.aura_report.price)}
             </Button>
           </Link>
 

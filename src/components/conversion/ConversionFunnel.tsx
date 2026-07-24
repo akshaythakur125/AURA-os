@@ -33,22 +33,19 @@ export function ConversionFunnel({
           <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-red-500/10 blur-3xl" />
 
           <Badge variant="danger" className="mb-3">
-            ⚠️ Your Score Reveals Something
+            ⚠️ {photoIssueCount} fixable issue{photoIssueCount !== 1 ? "s" : ""} found
           </Badge>
 
           <p className="mb-3 text-sm text-[#4a443d]">
-            Your score is{" "}
-            <span className="font-bold text-[#1C1917]">{score}/100</span>. We found{" "}
-            <span className="font-bold text-red-400">
-              {photoIssueCount} photo-quality issue{photoIssueCount !== 1 ? "s" : ""}
-            </span>{" "}
-            pulling your impression down.
+            You scored{" "}
+            <span className="font-bold text-[#1C1917]">{score}/100</span>.{" "}
+            {photoIssueCount !== 1
+              ? "Those issues are quietly costing you attention — and every one is fixable."
+              : "That issue is quietly costing you attention — and it's fixable."}
           </p>
 
-
-
           <p className="mb-4 text-xs text-[#6f675e]">
-            The #1 issue:{" "}
+            Biggest one right now:{" "}
             <span className="font-medium text-[#1C1917]">{topLeakTitle}</span>
           </p>
 
@@ -63,27 +60,18 @@ export function ConversionFunnel({
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-red-400/30 bg-red-500/20 px-3 py-1">
             <span className="text-xs">🚀</span>
             <span className="text-xs font-semibold text-red-200">
-              Small corrections make a meaningful difference
+              Most fixes are free once you know them
             </span>
           </div>
 
           <h3 className="mb-2 text-lg font-bold text-[#1C1917]">
-            Unlock Your Full Aura Report
+            See exactly how to fix it — and how far this photo can go
           </h3>
           <p className="mx-auto mb-5 max-w-sm text-sm text-[#6f675e]">
-            Get your complete analysis with personalized fixes, budget plans, and
-            celebrity style matches.
+            Every issue with the exact fix, a step-by-step roadmap, your colour
+            palette and capsule wardrobe, celebrity style matches, and shoppable
+            picks in your budget.
           </p>
-
-          {/* Identity-based transformation hooks */}
-          <div className="mx-auto mb-5 max-w-sm space-y-2">
-            <p className="text-sm text-[#4a443d]">
-              Small corrections to your top issues can make a significant difference to how your photo is perceived.
-            </p>
-            <p className="text-[11px] text-[#857b6e]">
-              Your report includes a personalized roadmap, celebrity style matches, and exact products to buy — all under ₹100.
-            </p>
-          </div>
 
           {/* The button */}
           <Link
@@ -96,8 +84,9 @@ export function ConversionFunnel({
           </Link>
 
           {/* Price anchoring */}
-          <p className="mt-3 text-[11px] text-[#857b6e]">
-            One-time payment. But the confidence from knowing your profile works? That pays for itself.
+          <p className="mx-auto mt-3 max-w-sm text-[11px] text-[#857b6e]">
+            ₹25, one-time — less than a coffee, and it&apos;s yours forever. One
+            photo that actually lands is worth far more.
           </p>
 
           {/* Trust badges */}

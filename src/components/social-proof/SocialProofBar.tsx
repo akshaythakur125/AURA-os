@@ -11,7 +11,11 @@ interface Props {
 export function SocialProofBar({ variant = "inline", className = "" }: Props) {
   const data = useSocialProof();
 
-  if (data.loading || data.totalChecks === 0) return null;
+  // Below a credible threshold, weak social proof ("1 checks completed") hurts
+  // more than it helps — and reads ungrammatically. Show nothing until the
+  // number is genuinely persuasive (never fabricate it). Raising this floor
+  // also guarantees the counts shown are always plural.
+  if (data.loading || data.totalChecks < 25) return null;
 
   if (variant === "hero") {
     return (
