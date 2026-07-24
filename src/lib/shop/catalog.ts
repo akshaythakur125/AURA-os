@@ -142,9 +142,10 @@ export interface PersonalizationParams {
 export function getPersonalizedLooks(params: PersonalizationParams): Look[] {
   const allLooks = getAllLooks();
 
-  // Filter by gender if specified
+  // Filter by gender when the user chose menswear or womenswear (always keep
+  // unisex items). "unisex" here means "show me both", so we don't filter.
   let filtered = allLooks;
-  if (params.gender) {
+  if (params.gender === "men" || params.gender === "women") {
     filtered = allLooks.filter(
       (look) => look.gender === params.gender || look.gender === "unisex"
     );

@@ -1163,10 +1163,12 @@ export default function AuditDetailPage() {
                     statusLeakTags: (displayResult.statusLeaks ?? []).map((l) => l.category as any).filter(Boolean),
                     goalTags: audit!.goal ? [audit!.goal as any] : undefined,
                     budgetMax: audit!.budgetRange as any,
+                    gender: audit!.gender,
                   })}
                   userScore={displayResult.auraScore ?? undefined}
                   archetype={personalization.archetype}
                   leakTags={(displayResult.statusLeaks ?? []).map((l) => l.category)}
+                  gender={audit!.gender}
                   locked={!isUnlocked}
                   freeCount={1}
                   unlockHref={unlockHref}
@@ -1220,6 +1222,7 @@ export default function AuditDetailPage() {
                         statusLeakTags: (displayResult.statusLeaks ?? []).map((l) => l.category as any).filter(Boolean),
                         goalTags: audit!.goal ? [audit!.goal as any] : undefined,
                         budgetMax: audit!.budgetRange as any,
+                        gender: audit!.gender,
                         limit: 40,
                       })}
                     />

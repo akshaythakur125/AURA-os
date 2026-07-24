@@ -104,6 +104,7 @@ export default function NewAuditPage() {
 
   const [styleIntent, setStyleIntent] = useState<StyleIntent | null>(null);
   const [biggestConcern, setBiggestConcern] = useState<BiggestConcern | null>(null);
+  const [gender, setGender] = useState<"men" | "women" | "unisex" | null>(null);
   const [wantsBrutalFeedback, setWantsBrutalFeedback] = useState(false);
   const [notes, setNotes] = useState("");
   const [safetyError, setSafetyError] = useState<string | null>(null);
@@ -217,6 +218,7 @@ export default function NewAuditPage() {
       updateAudit(audit.id, {
         imageDataUrl: compressed.dataUrl,
         imageMeta,
+        gender: gender || "unisex",
         deepInput,
       });
 
@@ -416,6 +418,23 @@ export default function NewAuditPage() {
                     Optional tweaks, then we analyze.
                   </p>
                 </div>
+
+                {/* Who to shop for — keeps product picks relevant */}
+                <Card className="mb-4 p-4">
+                  <h3 className="mb-1 text-sm font-semibold text-[#1C1917]">Who should we shop for?</h3>
+                  <p className="mb-3 text-xs text-[#857b6e]">So your outfit &amp; grooming picks actually fit you.</p>
+                  <div className="flex flex-wrap gap-2">
+                    {([
+                      { id: "men", label: "Menswear" },
+                      { id: "women", label: "Womenswear" },
+                      { id: "unisex", label: "Show me both" },
+                    ] as const).map((g) => (
+                      <PillButton key={g.id} selected={gender === g.id} onClick={() => setGender(g.id)}>
+                        {g.label}
+                      </PillButton>
+                    ))}
+                  </div>
+                </Card>
 
                 {/* Quick personalization */}
                 <Card className="mb-4 p-4">

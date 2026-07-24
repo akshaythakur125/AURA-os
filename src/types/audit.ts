@@ -42,6 +42,8 @@ export interface Audit {
   fullReport?: AuraReport;
   reportStatus: AuraReportStatus;
   unlockStatus: UnlockStatus;
+  /** Who we shop for — keeps product picks relevant. Optional; defaults to unisex. */
+  gender?: "men" | "women" | "unisex";
   deepInput?: DeepAuditInput;
   personalization?: PersonalizationResult;
   profileTexts?: ProfileTexts;

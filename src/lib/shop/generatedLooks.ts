@@ -407,16 +407,22 @@ function generateLooksFromTemplate(
   const looks: Look[] = [];
   let id = startIndex;
 
+  const titleCase = (s: string) => s.replace(/\b\w/g, (c) => c.toUpperCase());
+  const singular = template.category.replace(/s$/, "");
+
   for (const color of template.colors) {
     for (const fit of template.fits.length > 0 ? template.fits : [""]) {
       for (const style of template.styles) {
         const keywords = [color, fit, style].filter(Boolean);
-        const title = `${color.charAt(0).toUpperCase() + color.slice(1)} ${fit ? fit.charAt(0).toUpperCase() + fit.slice(1) + " " : ""}${style.charAt(0).toUpperCase() + style.slice(1)}`;
+        // Clean product name: colour + style + category noun (drop the noisy
+        // "regular" fit), e.g. "Black Pointed Toe Flats", "Black Ballet Flats".
+        const title = titleCase(`${color} ${style} ${template.category}`).replace(/\s+/g, " ").trim();
 
         looks.push({
           id: `gen-${template.gender}-${id.toString().padStart(4, "0")}`,
           title,
-          description: `${keywords.join(", ")} ${template.category}. Auto-matched from style taxonomy.`,
+          // Natural, human description — no internal taxonomy jargon.
+          description: `${titleCase(style)} ${singular} in ${color}. Clean, camera-ready, and easy to style.`,
           category: template.category,
           price: template.basePrice,
           priceLabel: template.priceLabel,
