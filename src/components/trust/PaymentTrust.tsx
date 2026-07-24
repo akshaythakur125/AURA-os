@@ -1,5 +1,4 @@
 "use client";
-import { PAYMENT_PRODUCTS, formatPrice } from "@/config/pricing";
 
 import { useMemo } from "react";
 import { getSocialProof } from "@/lib/social-proof/getSocialProof";
@@ -43,30 +42,27 @@ export function PaymentTrust({ variant = "results" }: Props) {
         </p>
       </div>
 
-      {/* Testimonial-style trust signals */}
+      {/* What the report actually catches — illustrative, not fabricated reviews */}
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-3">
-          <div className="flex items-center gap-1 text-amber-400">
-            {[...Array(5)].map((_, i) => (
-              <svg key={i} className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            ))}
+        <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-3.5">
+          <div className="mb-2 inline-flex items-center rounded-full border border-red-400/20 bg-red-500/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-red-300">
+            Lighting
           </div>
-          <p className="mt-2 text-[11px] text-[#6f675e]">
-            &ldquo;Spot-on. The lighting leak was exactly what I needed to fix.&rdquo;
+          <p className="text-[11px] leading-relaxed text-[#6f675e]">
+            Overhead light flattens your face and quietly ages you — and you almost never
+            catch it in your own photos. The report flags it and hands you the exact swap
+            (window light, 45° to your face) that makes a shot read intentional instead of
+            accidental.
           </p>
         </div>
-        <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-3">
-          <div className="flex items-center gap-1 text-amber-400">
-            {[...Array(5)].map((_, i) => (
-              <svg key={i} className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            ))}
+        <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-3.5">
+          <div className="mb-2 inline-flex items-center rounded-full border border-red-400/20 bg-red-500/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-red-300">
+            Background
           </div>
-          <p className="mt-2 text-[11px] text-[#6f675e]">
-            &ldquo;Worth {formatPrice(PAYMENT_PRODUCTS.aura_report.price)} just for the background tips. Saved me thousands.&rdquo;
+          <p className="text-[11px] leading-relaxed text-[#6f675e]">
+            A cluttered background steals attention off you — even when your outfit is on point.
+            Clearing what&apos;s behind you is usually the single highest-leverage free fix, and
+            the report tells you exactly what to move, so you spend zero rupees to look sharper.
           </p>
         </div>
       </div>

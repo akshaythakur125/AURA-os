@@ -5,19 +5,19 @@
 // stock photos or specific names/scores as if they were real customers.
 const EXAMPLE_FINDINGS = [
   {
-    quote: "A lighting fix like switching from overhead fluorescent to window light is a common first move — it alone can meaningfully shift a score.",
+    quote: "Overhead light is the silent killer — it flattens your face, drops shadows under your eyes, and makes a good shot look 'off' without you knowing why. Swapping to soft window light at a 45° angle is often the single biggest free glow-up, and it's usually the first thing the report flags.",
     context: "Lighting leak",
-    scoreDelta: "improved",
+    scoreDelta: "biggest free win",
   },
   {
-    quote: "Background clutter quietly undercuts even a strong outfit. Cleaning up what's visible behind you is often the highest-leverage free fix.",
+    quote: "A messy background quietly pulls the eye off you — a stray bottle, a cluttered shelf, a busy wall. Even a killer outfit loses its impact when there's noise behind you. Clearing or simplifying what's visible is one of the highest-leverage free fixes, and it upgrades every photo you take in that spot.",
     context: "Background leak",
-    scoreDelta: "improved",
+    scoreDelta: "highest-leverage fix",
   },
   {
-    quote: "Color consistency across an Instagram grid is a signal people notice without being able to name it. Matching tones tends to read as more intentional.",
-    context: "Color signal leak",
-    scoreDelta: "improved",
+    quote: "Colour consistency across a grid is something people feel but can't name — a feed where the tones agree reads as curated and intentional, while random colour jumps read as accidental. Locking a small palette and repeating it is what separates a profile that looks planned from one that looks thrown together.",
+    context: "Colour signal leak",
+    scoreDelta: "reads more intentional",
   },
 ];
 
@@ -33,7 +33,7 @@ export function Testimonials() {
             {f.quote}
           </p>
           <div className="text-xs font-bold text-emerald-400">{f.scoreDelta}</div>
-          <div className="text-[9px] text-[#9c9184]">typical score impact</div>
+          <div className="text-[9px] text-[#9c9184]">the takeaway</div>
         </div>
       ))}
     </div>
