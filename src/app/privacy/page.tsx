@@ -68,11 +68,11 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Manual Payment Disclaimer</h2>
+            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Payments</h2>
             <p>
-              Premium report unlocks are handled via manual UPI transfer. AuraCheck does not automatically 
-              verify payments. No payment card or bank information is collected or stored by the app.
-              Payment is processed entirely through your UPI app outside of AuraCheck.
+              Premium report unlocks are processed securely by Razorpay (UPI, card, or netbanking).
+              AuraCheck does not collect or store your card or bank details — payment is handled entirely
+              by Razorpay&apos;s PCI-compliant checkout, and your report unlocks instantly once payment is confirmed.
             </p>
           </section>
 

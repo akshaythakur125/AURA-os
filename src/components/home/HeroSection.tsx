@@ -49,7 +49,7 @@ export function HeroSection() {
 
             <FadeInView delay={200}>
               <p className="mt-6 max-w-xl text-base text-[#6F675E] sm:text-lg leading-relaxed">
-                Upload one photo and receive a structured assessment of lighting, composition, background, colour, styling, and overall presentation — with clear actions to improve it.
+                Upload one photo and get a clear read on your first impression — lighting, styling, background, colour, the works — plus the exact fixes that make you look intentional, not accidental. Free, in under a minute.
               </p>
             </FadeInView>
 

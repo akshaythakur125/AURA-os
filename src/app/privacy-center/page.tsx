@@ -34,8 +34,8 @@ const sections = [
     content: "Your image is processed entirely in your browser using native JavaScript and canvas APIs. Pixel data is read from the canvas to estimate lighting, clarity, contrast, saturation, and composition scores. No image data leaves your device. No external AI or cloud service is used in this MVP.",
   },
   {
-    title: "Local-only manual payment",
-    content: "Premium reports are unlocked via manual UPI transfer. AuraCheck does not automatically verify payments. You must contact the owner to receive an unlock code after sending payment. No payment information is stored or transmitted through any external payment gateway.",
+    title: "Secure payments",
+    content: "Premium reports are unlocked via Razorpay (UPI, card, or netbanking). Payment is handled entirely by Razorpay's PCI-compliant checkout — AuraCheck never sees or stores your card or bank details — and your report unlocks instantly once payment is confirmed.",
   },
   {
     title: "How to delete your data",
@@ -93,7 +93,7 @@ export default function PrivacyCenterPage() {
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
-              No automatic payment verification
+              Card &amp; bank details never touch our servers
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />

@@ -29,11 +29,11 @@ export default function SuccessPage() {
           </svg>
         </div>
         <h1 className="mb-2 text-2xl font-bold text-[#1C1917]">
-          Request Submitted
+          Payment Received
         </h1>
         <p className="mb-6 text-sm text-[#6f675e]">
-          Your unlock request has been received. You will receive your unlock
-          code via email within 24 hours after payment verification.
+          Your full report has been unlocked. Open it from your dashboard to
+          dive into your complete breakdown, roadmap, and picks.
         </p>
         <Link href="/dashboard">
           <Button variant="secondary">Back to Dashboard</Button>

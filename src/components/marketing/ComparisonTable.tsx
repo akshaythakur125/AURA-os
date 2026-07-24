@@ -1,6 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/Card";
+import { PAYMENT_PRODUCTS, formatPrice } from "@/config/pricing";
 
 interface ComparisonRow {
   label: string;
@@ -45,9 +46,9 @@ function Cell({ value }: { value: boolean | string }) {
 
 const HEADERS = [
   { label: "Free", className: "" },
-  { label: "{formatPrice(PAYMENT_PRODUCTS.aura_report.price)} Aura Report", className: "text-red-300" },
-  { label: "{formatPrice(PAYMENT_PRODUCTS.dating_audit.price)} Dating", className: "text-red-300" },
-  { label: "{formatPrice(PAYMENT_PRODUCTS.glowup_plan.price)} Glow-Up", className: "text-amber-300" },
+  { label: `${formatPrice(PAYMENT_PRODUCTS.aura_report.price)} Aura Report`, className: "text-red-300" },
+  { label: `${formatPrice(PAYMENT_PRODUCTS.dating_audit.price)} Dating`, className: "text-red-300" },
+  { label: `${formatPrice(PAYMENT_PRODUCTS.glowup_plan.price)} Glow-Up`, className: "text-amber-300" },
 ];
 
 export function ComparisonTable() {

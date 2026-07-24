@@ -64,15 +64,15 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Paid Services & Manual Payment</h2>
+            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Paid Services & Payment</h2>
             <p>
-              Premium reports and modules are unlocked via manual UPI transfer. Key terms:
+              Premium reports and modules are one-time purchases. Key terms:
             </p>
             <ul className="mt-2 list-inside list-disc space-y-1 text-[#6f675e]">
-              <li>Payment is processed through your UPI app outside of AuraCheck — the app does not process payments</li>
-              <li>Unlock codes are provided manually after payment confirmation by the owner</li>
+              <li>Payments are processed securely by Razorpay (UPI, card, or netbanking); AuraCheck does not store your card or bank details</li>
+              <li>Your report unlocks instantly once payment is confirmed</li>
+              <li>One-time payments only — no subscriptions or recurring billing</li>
               <li>Refunds are handled on a case-by-case basis. Contact support with your order details</li>
-              <li>AuraCheck does not automatically verify payment — it relies on manual confirmation</li>
               <li>Prices and product availability may change without notice</li>
             </ul>
           </section>
