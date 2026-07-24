@@ -45,8 +45,8 @@ function pickArchetype(
     return {
       archetype: "Low-Clarity Potential",
       explanation:
-        "Right now the photo quality is holding you back — the lighting and sharpness need work. Fix those basics and your real style comes through instantly.",
-      priority: "Sort your lighting and get a sharper shot first — cheapest fixes, biggest jump.",
+        "Real talk — the photo quality is what's holding you back rn. Lighting's off and it's a bit blurry. Fix that and your actual vibe finally shows up.",
+      priority: "Sort the lighting and get a sharp shot first. Cheapest fix, biggest aura jump.",
       focus: "Lighting, sharpness, framing",
     };
   }
@@ -60,8 +60,8 @@ function pickArchetype(
     return {
       archetype: "College Casual",
       explanation:
-        "You read relaxed and everyday — which fits campus. A little grooming and a cleaner frame instantly make you look more put-together, without losing the chill.",
-      priority: "Tidy your grooming and pick an outfit on purpose — small upgrades, real difference.",
+        "You give relaxed, everyday energy — which totally works for campus. A little grooming and a cleaner frame and you instantly look more put-together, no cap.",
+      priority: "Tidy the grooming, pick the fit on purpose. Small moves, real difference.",
       focus: "Grooming, outfit fit, clean backgrounds",
     };
   }
@@ -75,8 +75,8 @@ function pickArchetype(
     return {
       archetype: "Corporate Sharp",
       explanation:
-        "You come across sharp and put-together. To level it up, keep backgrounds clean, stick to solid neutral colours, and frame every shot the same way.",
-      priority: "Clean up your background and keep your lighting consistent for a polished look.",
+        "You already read sharp and put-together. Keep the background clean, stick to solid neutral colours, and frame it the same way every time — that's a lock.",
+      priority: "Clean background + consistent lighting = polished. That's the move.",
       focus: "Clean backgrounds, steady lighting, neutral colours",
     };
   }
@@ -89,13 +89,13 @@ function pickArchetype(
   ) {
     const qualityNote =
       decentClarity && decentLight
-        ? "Your photo quality already works for content — now keep the same look across every post."
-        : "Better lighting and sharper shots will instantly lift your content and make your feed feel cohesive.";
+        ? "Your photo quality's already there — now keep the exact same look every post so the feed's cohesive."
+        : "Better lighting and sharper shots and your content instantly levels up — feed starts looking curated.";
     return {
       archetype: "Creator Vibe",
       explanation:
-        "You've got a content-aware, visual eye. " + qualityNote,
-      priority: "Lock in a colour palette and photo style, then keep it consistent across your feed.",
+        "You've got that content-creator eye. " + qualityNote,
+      priority: "Lock a colour palette and photo style, then run it back every post.",
       focus: "Consistent look, lighting, colour palette",
     };
   }
@@ -110,8 +110,8 @@ function pickArchetype(
     return {
       archetype: "Premium Minimalist",
       explanation:
-        "Clean, minimal, premium — that's your read. The simple background and balanced colours look high-quality. The trick now is keeping that same standard everywhere.",
-      priority: "Keep it clean and make sure every photo hits the same quality bar.",
+        "Clean, minimal, kinda expensive-looking — that's the read. Simple background, balanced colours, high quality. Just keep that same energy everywhere.",
+      priority: "Keep it clean and make every photo hit the same bar.",
       focus: "Consistency, tight colour palette, intentional framing",
     };
   }
@@ -126,8 +126,8 @@ function pickArchetype(
     return {
       archetype: "Soft Luxury",
       explanation:
-        "Your vibe is quiet and clean — substance over flash. You're not trying too hard, and it reads as confident. Keep it minimal and let the details do the talking.",
-      priority: "Tidy your grooming and add one or two nice pieces — quality over quantity.",
+        "Your vibe is quiet luxury — substance over flash. You're not trying too hard and it reads as confident. Keep it minimal and let the little details do the talking.",
+      priority: "Fix up the grooming, add one or two nice pieces. Quality over quantity, always.",
       focus: "Grooming, a couple of nice pieces, clean backgrounds",
     };
   }
@@ -141,8 +141,8 @@ function pickArchetype(
     return {
       archetype: "Loud Flex",
       explanation:
-        "There's a lot going on in your frame — several flex pieces at once. Each might be nice, but together they compete. The biggest upgrade is cutting it down so one or two things actually land.",
-      priority: "Cut the clutter. Let one or two pieces stand out instead of everything at once.",
+        "There's a LOT going on in the frame — like five flexes at once. Each might be nice but together they're fighting for attention. Cut it down so one or two things actually hit.",
+      priority: "Kill the clutter. Let one or two pieces be the main character, not all of them.",
       focus: "Cutting clutter, one hero piece, cleaner frame",
     };
   }
@@ -155,8 +155,8 @@ function pickArchetype(
     return {
       archetype: "Mismatched Flex",
       explanation:
-        "Nice pieces, but the lighting and background aren't matching their level. Premium stuff in a dim or messy shot looks accidental. Fix the setting and it'll finally look intentional.",
-      priority: "Fix your background and lighting before adding anything else to the frame.",
+        "Nice pieces, but the lighting and background aren't matching the energy. Premium stuff in a dim, messy shot just looks accidental. Fix the setting and it finally looks intentional.",
+      priority: "Fix the background and lighting before adding anything else to the frame.",
       focus: "Cleaner background, better lighting, fewer items",
     };
   }
@@ -170,8 +170,8 @@ function pickArchetype(
     return {
       archetype: "Try-Hard Signal",
       explanation:
-        "The photo's trying to say 'premium', but too much is competing for attention. Confidence looks like simplicity — less visible effort actually reads as more.",
-      priority: "Take 2–3 things out of the frame. Let quality speak, not quantity.",
+        "The photo's trying to scream 'premium', but too much is competing. Confidence is simplicity — less effort on show actually reads as more aura.",
+      priority: "Take 2-3 things out the frame. Let quality talk, not quantity.",
       focus: "Keep it simple, intentional picks, less effort on show",
     };
   }
@@ -185,8 +185,8 @@ function pickArchetype(
     return {
       archetype: "Urban Aspirational",
       explanation:
-        "You've got that modern, social, in-the-mix look. It already works — dialing in one thing, like a cleaner background or steadier lighting, makes it hit harder.",
-      priority: "Pick one thing — background or lighting — and fix it. That alone lifts the whole shot.",
+        "You've got that modern, in-the-mix, main-character energy. It already works — dial in one thing, like a cleaner background or steadier light, and it hits way harder.",
+      priority: "Pick one thing — background or lighting — and fix it. That alone carries the whole shot.",
       focus: "Cleaner background, lighting, real settings",
     };
   }
@@ -195,8 +195,8 @@ function pickArchetype(
   return {
     archetype: "Clean Basic",
     explanation:
-      "Simple and no-nonsense — a solid base to build on. The fastest glow-up is better lighting and framing, and both are free.",
-    priority: "Fix your lighting and framing first — free changes that instantly make you look more intentional.",
+      "Simple, no-nonsense — a solid base to build on. Fastest glow-up? Better lighting and framing, and both are free.",
+    priority: "Lighting and framing first. Free changes that instantly make you look like you meant it.",
     focus: "Lighting, framing, basic grooming",
   };
 }
