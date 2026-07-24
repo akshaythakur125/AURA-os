@@ -12,6 +12,7 @@ export const STORAGE_KEYS = {
   CHALLENGE_ENTRIES: "auracheck:v1:challenge_entries",
   PROGRESS_COMPARISONS: "auracheck:v1:progress_comparisons",
   ONBOARDING: "auracheck:v1:onboarding",
+  FEEDBACK: "auracheck:v1:feedback",
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

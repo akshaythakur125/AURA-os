@@ -17,6 +17,7 @@ import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
 import { FullReport } from "@/components/report/FullReport";
 import { LockedSection } from "@/components/report/LockedSection";
+import { FeedbackPrompt } from "@/components/report/FeedbackPrompt";
 import { GroomingLocalCard, type NearbyPlace } from "@/components/report/GroomingLocalCard";
 import { YourColorsCard } from "@/components/report/YourColorsCard";
 import { CapsuleWardrobeCard } from "@/components/report/CapsuleWardrobeCard";
@@ -1262,7 +1263,15 @@ export default function AuditDetailPage() {
                   </Card>
                 </div>
               )}
+
               </>
+              )}
+
+              {/* ─── Real-review capture — paid users, any tab ─── */}
+              {isUnlocked && (
+                <div className="no-print">
+                  <FeedbackPrompt auditId={audit.id} productType="aura_report" />
+                </div>
               )}
 
               {/* ─── Conversion CTA ─── */}
