@@ -34,12 +34,14 @@ export const OFFERS: OfferCode[] = [
     isActive: true,
   },
   {
+    // Founder/testing code — kept in config for reference but INACTIVE in
+    // production so a discoverable word can't hand out 100%-off unlocks.
     code: "FOUNDER",
     description: "100% off for founder / testing only",
     discountType: "percent",
     discountValue: 100,
     applicableProducts: ["aura_report", "dating_audit", "glowup_plan"],
-    isActive: true,
+    isActive: false,
   },
 ];
 

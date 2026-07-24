@@ -461,8 +461,8 @@ function UnlockForm() {
                 <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
                   <div className="text-xs text-[#857b6e]">Amount</div>
                   <div className="mt-1 flex items-center justify-between">
-                    <span className="text-lg font-bold text-amber-400">{productPriceLabel}</span>
-                    <button onClick={() => handleCopy(productPriceLabel, "amount")} className="text-xs text-[#857b6e] hover:text-red-300">
+                    <span className="text-lg font-bold text-amber-400">{finalPriceLabel}</span>
+                    <button onClick={() => handleCopy(String(finalPrice), "amount")} className="text-xs text-[#857b6e] hover:text-red-300">
                       {copied === "amount" ? "Copied!" : "Copy"}
                     </button>
                   </div>
