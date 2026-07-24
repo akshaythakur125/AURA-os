@@ -163,7 +163,7 @@ export default function DatingAuditPage() {
         <Container>
           <div className="mx-auto max-w-2xl rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-6 text-center text-xs text-[#857b6e]">
             <p>AuraCheck analyzes presentation signals, not attractiveness. No guaranteed matches or dating outcomes.</p>
-            <p className="mt-2">Manual UPI unlock flow — payment is not automatically verified. Contact support if you have issues.</p>
+            <p className="mt-2">Secure one-time payment via Razorpay — your report unlocks instantly. No subscription.</p>
           </div>
         </Container>
       </section>

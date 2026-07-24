@@ -59,7 +59,7 @@ export default function GlowupPlanPage() {
           <SectionHeading title="What the 30-day plan includes" />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { title: "Week 1 — Foundation", desc: "Photo audit, grooming basics, color palette for your skin tone, lighting setup." },
+              { title: "Week 1 — Foundation", desc: "Photo audit, grooming basics, your colour palette, lighting setup." },
               { title: "Week 2 — Style awareness", desc: "Outfit formulas, fit adjustments, background cleanup, accessory signals." },
               { title: "Week 3 — Expression & context", desc: "Photo system, profile coherence, visual storytelling across platforms." },
               { title: "Week 4 — Integration & polish", desc: "Review progress, refine system, plan next 30 days, create content batch." },
@@ -173,7 +173,7 @@ export default function GlowupPlanPage() {
           <div className="mx-auto max-w-2xl rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-6 text-center text-xs text-[#857b6e]">
             <p>AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
             <p className="mt-2">No guaranteed transformation — the plan gives you a system, consistency is up to you.</p>
-            <p className="mt-2">Manual UPI unlock flow — payment is not automatically verified.</p>
+            <p className="mt-2">Secure one-time payment via Razorpay — unlocks instantly. No subscription.</p>
           </div>
         </Container>
       </section>
