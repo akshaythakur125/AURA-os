@@ -56,7 +56,7 @@ const sections = [
 ];
 
 export default function PrivacyCenterPage() {
-  const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@auracheck.in";
+  const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL;
 
   return (
     <Container className="py-16">
@@ -120,9 +120,11 @@ export default function PrivacyCenterPage() {
           </Link>
         </div>
 
-        <p className="mt-8 text-center text-xs text-[#9c9184]">
-          Questions about privacy? Contact {supportEmail}
-        </p>
+        {supportEmail && (
+          <p className="mt-8 text-center text-xs text-[#9c9184]">
+            Questions about privacy? Contact {supportEmail}
+          </p>
+        )}
       </div>
     </Container>
   );

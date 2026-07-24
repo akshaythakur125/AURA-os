@@ -96,10 +96,17 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Contact</h2>
-            <p>
-              For privacy concerns or data requests, reach out to{" "}
-              <span className="text-red-300">{process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@auracheck.in"}</span>.
-            </p>
+            {process.env.NEXT_PUBLIC_SUPPORT_EMAIL ? (
+              <p>
+                For privacy concerns or data requests, reach out to{" "}
+                <span className="text-red-300">{process.env.NEXT_PUBLIC_SUPPORT_EMAIL}</span>.
+              </p>
+            ) : (
+              <p>
+                Your data lives only in your browser. To export or permanently delete it, use the{" "}
+                <a href="/privacy-center" className="text-red-300 underline">Privacy Center</a>.
+              </p>
+            )}
           </section>
         </div>
 

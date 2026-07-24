@@ -119,10 +119,17 @@ export default function TermsPage() {
 
           <section>
             <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Contact & Support</h2>
-            <p>
-              For support, refund requests, or questions about these terms, contact{" "}
-              <span className="text-red-300">{process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@auracheck.in"}</span>.
-            </p>
+            {process.env.NEXT_PUBLIC_SUPPORT_EMAIL ? (
+              <p>
+                For support, refund requests, or questions about these terms, contact{" "}
+                <span className="text-red-300">{process.env.NEXT_PUBLIC_SUPPORT_EMAIL}</span>.
+              </p>
+            ) : (
+              <p>
+                For support, refund requests, or questions about these terms, reach us through the{" "}
+                <a href="/help" className="text-red-300 underline">Help &amp; Support</a> page.
+              </p>
+            )}
           </section>
         </div>
 

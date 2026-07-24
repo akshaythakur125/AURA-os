@@ -31,11 +31,11 @@ function getUpiId(): string {
   return "your-upi-id@upi";
 }
 
-function getSupportEmail(): string {
+function getSupportEmail(): string | null {
   if (typeof process !== "undefined" && process.env && (process.env as Record<string, string | undefined>).NEXT_PUBLIC_SUPPORT_EMAIL) {
     return (process.env as Record<string, string | undefined>).NEXT_PUBLIC_SUPPORT_EMAIL as string;
   }
-  return "support@auracheck.app";
+  return null;
 }
 
 function getOwnerWhatsApp(): string | null {
@@ -645,7 +645,7 @@ function UnlockForm() {
         <div className="space-y-2 text-center text-xs text-[#9c9184]">
           <p>Payments are processed securely by Razorpay (UPI, card, or netbanking). Your report unlocks automatically the moment payment is confirmed — no waiting for a code.</p>
           <p>Your audit stays stored locally in this browser. Your photo and report are never uploaded to a server.</p>
-          <p>For support or code issues, contact: <a href={`mailto:${supportEmail}`} className="text-red-300 hover:underline">{supportEmail}</a></p>
+          {supportEmail && <p>For support or code issues, contact: <a href={`mailto:${supportEmail}`} className="text-red-300 hover:underline">{supportEmail}</a></p>}
           <p>AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
         </div>
       </div>

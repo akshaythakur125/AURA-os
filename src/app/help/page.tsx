@@ -65,7 +65,7 @@ const faqs = [
 ];
 
 export default function HelpPage() {
-  const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@auracheck.in";
+  const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL;
   const whatsapp = process.env.NEXT_PUBLIC_OWNER_WHATSAPP;
 
   return (
@@ -100,10 +100,12 @@ export default function HelpPage() {
         <Card className="mt-10 text-center">
           <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Still need help?</h2>
           <p className="mb-4 text-sm text-[#6f675e]">
-            Reach out to us directly.
+            {supportEmail || whatsapp ? "Reach out to us directly." : "Browse the FAQs above, or manage your data from the Privacy Center."}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a href={`mailto:${supportEmail}`} className="text-sm text-red-400 hover:text-red-300 underline">{supportEmail}</a>
+            {supportEmail && (
+              <a href={`mailto:${supportEmail}`} className="text-sm text-red-400 hover:text-red-300 underline">{supportEmail}</a>
+            )}
             {whatsapp && (
               <a
                 href={`https://wa.me/${whatsapp.replace(/[^0-9]/g, "")}`}

@@ -7,7 +7,7 @@ export const config = {
     url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   },
   support: {
-    email: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@auracheck.in",
+    email: process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "",
   },
   payments: {
     upiId: process.env.NEXT_PUBLIC_MANUAL_UPI_ID || "",
