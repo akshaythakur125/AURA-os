@@ -394,28 +394,6 @@ function UnlockForm() {
           <PaymentTrust variant="unlock" />
         </div>
 
-        {/* Stage progress indicator */}
-        <div className="mb-6 flex items-center justify-center gap-2 text-xs">
-          {["request", "submit", "unlock"].map((s, i) => {
-            const stageNames = ["request", "submit", "unlock"];
-            const mapped: string = stage;
-            const activeStage = mapped === "summary" ? "submit" : mapped === "done" ? "unlock" : mapped;
-            const currentIdx = stageNames.indexOf(activeStage);
-            const isDone = i < currentIdx;
-            const isActive = i === currentIdx;
-            return (
-              <div key={s} className="flex items-center gap-2">
-                <div className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-medium ${isDone ? "bg-emerald-500/30 text-emerald-300" : isActive ? "bg-red-600 text-[#1C1917]" : "bg-[#1c1917]/[0.04] text-[#9c9184]"}`}>
-                  {isDone ? "✓" : i + 1}
-                </div>
-                <span className={`${isActive ? "text-[#1C1917]" : isDone ? "text-emerald-400" : "text-[#9c9184]"}`}>
-                  {s === "request" ? "Pay" : s === "submit" ? "Submit" : "Unlock"}
-                </span>
-                {i < 2 && <div className={`mx-1 h-px w-6 ${isDone || (isActive && i === 0) ? "bg-emerald-500/40" : "bg-[#1c1917]/[0.04]"}`} />}
-              </div>
-            );
-          })}
-        </div>
 
         {/* ─── STAGE 1: Payment Request ─── */}
         {stage === "request" && (
@@ -445,79 +423,16 @@ function UnlockForm() {
               </p>
             </Card>
 
+
+            {/* Razorpay Checkout — primary (and only) payment method */}
             <Card className="mb-6">
-              <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Step 1: Pay via UPI</h3>
-              <div className="rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-4">
-                <p className="mb-2 text-xs text-[#857b6e]">Send <span className="text-amber-400">{finalPriceLabel}</span> to:</p>
-                <div className="flex items-center justify-between gap-2">
-                  <p className="font-mono text-lg text-red-300">{upiId}</p>
-                  <button onClick={() => handleCopy(upiId, "upi")} className="shrink-0 rounded-lg border border-[#1c1917]/10 px-2.5 py-1 text-xs text-[#6f675e] hover:border-red-500/30 hover:text-red-300">
-                    {copied === "upi" ? "Copied!" : "Copy"}
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
-                  <div className="text-xs text-[#857b6e]">Amount</div>
-                  <div className="mt-1 flex items-center justify-between">
-                    <span className="text-lg font-bold text-amber-400">{finalPriceLabel}</span>
-                    <button onClick={() => handleCopy(String(finalPrice), "amount")} className="text-xs text-[#857b6e] hover:text-red-300">
-                      {copied === "amount" ? "Copied!" : "Copy"}
-                    </button>
-                  </div>
-                </div>
-                <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
-                  <div className="text-xs text-[#857b6e]">Audit ID</div>
-                  <div className="mt-1 flex items-center justify-between">
-                    <span className="text-sm text-[#1C1917] truncate">{auditId.slice(0, 12)}...</span>
-                    <button onClick={() => handleCopy(auditId, "audit")} className="text-xs text-[#857b6e] hover:text-red-300">
-                      {copied === "audit" ? "Copied!" : "Copy"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4 flex flex-wrap gap-3">
-                <a href={buildUpiDeepLink()} target="_blank" rel="noopener noreferrer">
-                  <Button size="sm">Open UPI App</Button>
-                </a>
-                <Button variant="secondary" size="sm" onClick={() => handleCopy(buildPaymentNote(), "note")}>
-                  {copied === "note" ? "Copied!" : "Copy Payment Note"}
-                </Button>
-              </div>
-
-              <div className="mt-4 rounded-xl border border-dashed border-[#1c1917]/10 bg-[#1c1917]/[0.02] p-4 text-center">
-                <p className="text-xs text-[#857b6e]">QR code can be added later. For now, copy UPI ID or use the UPI app button above.</p>
-              </div>
-            </Card>
-
-            <Card className="mb-6">
-              <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Step 2: After Payment</h3>
-              <p className="text-sm text-[#6f675e]">After you have sent the payment, click below to submit your payment details and request an unlock code.</p>
-            </Card>
-
-            <div className="flex justify-center">
-              <Button size="lg" onClick={() => setStage("submit")}>
-                I Have Paid — Submit Details
-              </Button>
-            </div>
-
-            <div className="mt-4 rounded-xl border border-amber-500/10 bg-amber-500/5 p-4 text-center text-xs text-[#6f675e]">
-              <p className="mb-1 font-medium text-amber-300">Manual MVP Payment Flow</p>
-              <p>AuraCheck does not automatically verify UPI payments yet. After payment, send your payment summary to the owner/admin and enter the unlock code you receive.</p>
-            </div>
-
-            {/* Razorpay Checkout */}
-            <div className="mt-6">
-              <div className="mb-3 flex items-center gap-3">
-                <div className="h-px flex-1 bg-[#1c1917]/[0.06]" />
-                <span className="text-xs text-[#857b6e]">or pay instantly</span>
-                <div className="h-px flex-1 bg-[#1c1917]/[0.06]" />
-              </div>
+              <h3 className="mb-2 text-sm font-semibold text-[#1C1917]">Pay securely to unlock</h3>
+              <p className="mb-4 text-xs text-[#6f675e]">
+                One-time payment of <span className="text-amber-400">{finalPriceLabel}</span> via UPI, card, or netbanking. Your report unlocks instantly after payment — no waiting.
+              </p>
               <Button
                 size="lg"
-                className="w-full bg-[#072654] hover:bg-[#0a3370] text-[#1C1917]"
+                className="w-full bg-[#072654] hover:bg-[#0a3370] text-white"
                 onClick={async () => {
                   try {
                     setError(null);
@@ -602,6 +517,14 @@ function UnlockForm() {
               >
                 Pay ₹{finalPrice} with Razorpay
               </Button>
+              {error && <p className="mt-3 rounded-lg bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
+            </Card>
+
+            {/* Discreet unlock-code entry — lets the owner comp people with an admin code */}
+            <div className="mt-5 text-center">
+              <button onClick={() => setStage("unlock")} className="text-xs text-[#9c9184] underline-offset-2 hover:text-[#6f675e] hover:underline">
+                Have an unlock code?
+              </button>
             </div>
           </>
         )}
@@ -720,8 +643,8 @@ function UnlockForm() {
 
         {/* Copy + trust */}
         <div className="space-y-2 text-center text-xs text-[#9c9184]">
-          <p>Manual MVP payment flow: AuraCheck does not automatically verify UPI payments yet. After payment, send your payment summary to the owner/admin and enter the unlock code you receive.</p>
-          <p>Your audit remains stored locally in this browser. No image or report is uploaded to a server in this MVP.</p>
+          <p>Payments are processed securely by Razorpay (UPI, card, or netbanking). Your report unlocks automatically the moment payment is confirmed — no waiting for a code.</p>
+          <p>Your audit stays stored locally in this browser. Your photo and report are never uploaded to a server.</p>
           <p>For support or code issues, contact: <a href={`mailto:${supportEmail}`} className="text-red-300 hover:underline">{supportEmail}</a></p>
           <p>AuraCheck analyzes presentation signals, not human worth. Scores are guidance, not objective truth.</p>
         </div>
