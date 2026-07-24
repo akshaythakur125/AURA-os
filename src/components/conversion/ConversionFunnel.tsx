@@ -78,8 +78,7 @@ export function ConversionFunnel({
           {/* Identity-based transformation hooks */}
           <div className="mx-auto mb-5 max-w-sm space-y-2">
             <p className="text-sm text-[#4a443d]">
-              Small corrections to your top issues can make a meaningful difference.
-              Small corrections can make a significant difference to how your photo is perceived.
+              Small corrections to your top issues can make a significant difference to how your photo is perceived.
             </p>
             <p className="text-[11px] text-[#857b6e]">
               Your report includes a personalized roadmap, celebrity style matches, and exact products to buy — all under ₹100.
