@@ -8,8 +8,16 @@ import { getBudgetUpgradePlan } from "./budgetPlans";
 
 function generateStatusLeaks(score: number, metrics: import("@/types/audit").ImageSignalMetrics): StatusLeak[] {
   const leaks: StatusLeak[] = [];
+  const r = (n: number) => Math.round(n);
 
   if (metrics.lightingScore < 55) {
+    // Prefer the tangible face-vs-background reading when the face is darker.
+    const faceB = r(metrics.faceBrightness);
+    const bgB = r(metrics.backgroundBrightness);
+    const evidence =
+      metrics.faceDetected && bgB > 0 && faceB < bgB - 8
+        ? `Your face reads ${r(((bgB - faceB) / bgB) * 100)}% darker than your background`
+        : `Lighting scored ${r(metrics.lightingScore)}/100 — well-lit photos land 70+`;
     leaks.push({
       id: createLocalId(),
       severity: metrics.lightingScore < 40 ? "high" : "medium",
@@ -18,6 +26,7 @@ function generateStatusLeaks(score: number, metrics: import("@/types/audit").Ima
       description: "Dark or harsh lighting makes you look less approachable and hides your best features.",
       fix: "Stand near a window during the day. Face the light, not away from it.",
       impactScore: Math.round((55 - metrics.lightingScore) * 1.2),
+      evidence,
     });
   }
 
@@ -30,6 +39,7 @@ function generateStatusLeaks(score: number, metrics: import("@/types/audit").Ima
       description: "A blurry photo reduces visual clarity. Sharpening or retaking can significantly improve how you are perceived.",
       fix: "Use the rear camera, clean the lens, and hold steady.",
       impactScore: Math.round((55 - metrics.sharpness) * 1.2),
+      evidence: `Sharpness scored ${r(metrics.sharpness)}/100 — crisp photos hit 70+`,
     });
   }
 
@@ -42,10 +52,12 @@ function generateStatusLeaks(score: number, metrics: import("@/types/audit").Ima
       description: "A messy or cluttered background pulls attention away from you.",
       fix: "Find a clean wall or simple background. Step away from clutter.",
       impactScore: Math.round((metrics.backgroundComplexityEstimate - 65) * 1.5),
+      evidence: `Background busyness ${r(metrics.backgroundComplexityEstimate)}/100 — clean shots stay under 40`,
     });
   }
 
   if (metrics.compositionScore < 55) {
+    const off = r(Math.abs((metrics.subjectCenterX ?? 0.5) - 0.5) * 200);
     leaks.push({
       id: createLocalId(),
       severity: metrics.compositionScore < 40 ? "high" : "medium",
@@ -54,6 +66,9 @@ function generateStatusLeaks(score: number, metrics: import("@/types/audit").Ima
       description: "The photo is cropped awkwardly. It doesn't look intentional or profile-ready.",
       fix: "Center yourself in the frame with a little space above your head.",
       impactScore: Math.round((55 - metrics.compositionScore) * 1.2),
+      evidence: off > 12
+        ? `You sit ${off}% off-centre in the frame`
+        : `Framing scored ${r(metrics.compositionScore)}/100`,
     });
   }
 
@@ -67,6 +82,7 @@ function generateStatusLeaks(score: number, metrics: import("@/types/audit").Ima
       description: "The colors in your photo are either too dull or too oversaturated.",
       fix: "Use natural light and skip heavy filters.",
       impactScore: Math.round(satDiff * 0.6),
+      evidence: `Colour saturation ${r(metrics.saturation)}/100 — natural sits around 45 (${metrics.saturation > 45 ? "yours is over-saturated" : "yours is a bit flat"})`,
     });
   }
 
@@ -79,6 +95,7 @@ function generateStatusLeaks(score: number, metrics: import("@/types/audit").Ima
       description: "The image resolution may not display well on larger screens or profiles.",
       fix: "Upload a higher-resolution image captured with the rear camera in good light.",
       impactScore: Math.round((50 - metrics.resolutionScore) * 0.6),
+      evidence: `${metrics.width}×${metrics.height}px — a little low for crisp detail on big screens`,
     });
   }
 

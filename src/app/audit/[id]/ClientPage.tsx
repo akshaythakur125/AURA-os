@@ -806,6 +806,11 @@ export default function AuditDetailPage() {
                             <h2 className="mb-3 bg-gradient-to-r from-[#1c1917] via-[#E14434] to-[#c0341f] bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
                               {heroLeak.title}
                             </h2>
+                            {heroLeak.evidence && (
+                              <div className="mx-auto mb-3 inline-flex items-center gap-1.5 rounded-full border border-[#E14434]/25 bg-[#E14434]/[0.06] px-3 py-1 text-xs font-medium text-[#B23A25]">
+                                <span>📊</span> Measured on your photo: {heroLeak.evidence}
+                              </div>
+                            )}
                             <p className="mx-auto mb-4 max-w-md text-sm text-[#4a443d]">
                               {heroLeak.description}
                             </p>
@@ -1037,6 +1042,9 @@ export default function AuditDetailPage() {
                                     {leak.severity}
                                   </Badge>
                                 </div>
+                                {leak.evidence && (
+                                  <p className="mt-1 text-[11px] font-medium text-[#B23A25]">📊 {leak.evidence}</p>
+                                )}
                                 {/* Blurred content ΓÇö visible shape, unreadable text */}
                                 <div className="mt-2 blur-sm cursor-pointer" onClick={() => { setPaywallTrigger("Status leak details"); setPaywallOpen(true); }}>
                                   <p className="text-xs text-[#6f675e]">{leak.description}</p>

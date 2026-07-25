@@ -79,6 +79,8 @@ export interface StatusLeak {
   description: string;
   fix: string;
   impactScore: number;
+  /** Concrete measured evidence from this exact photo, e.g. "Sharpness 38/100". */
+  evidence?: string;
 }
 
 export interface UpgradeSuggestion {
