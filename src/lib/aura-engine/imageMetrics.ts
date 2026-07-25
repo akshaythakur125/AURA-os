@@ -67,21 +67,16 @@ function median(values: number[]): number {
 // ─── New: Face zone detection via skin-tone heuristic ───
 
 function isSkinTone(r: number, g: number, b: number): boolean {
-  // HSV-based skin detection in RGB space
-  const rn = r / 255;
-  const gn = g / 255;
-  const bn = b / 255;
-  const max = Math.max(rn, gn, bn);
-  const min = Math.min(rn, gn, bn);
-
-  if (max - min < 0.05) return false; // too grey
-  if (max < 0.15 || max > 0.95) return false; // too dark or too bright
-
-  // Skin tone ranges (empirically tuned for diverse skin tones)
-  return r > 60 && g > 40 && b > 20 &&
-    r > g && r > b &&
-    Math.abs(r - g) > 15 &&
-    r - b > 15;
+  // YCbCr skin-cluster detection. The old RGB rule (r>g>b, r−b>15) quietly
+  // MISSED deeper skin tones — so darker-skinned users' faces often went
+  // undetected and the analysis silently fell back to the centre of the frame.
+  // The Cb/Cr skin cluster is largely luminance-independent, so it holds from
+  // light to deep tones. See Hsu et al. 2002.
+  const y = 0.299 * r + 0.587 * g + 0.114 * b;
+  if (y < 30 || y > 250) return false; // pure shadow / blown-out highlight only
+  const cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
+  const cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
+  return cb >= 77 && cb <= 130 && cr >= 132 && cr <= 178;
 }
 
 function detectFaceZone(
