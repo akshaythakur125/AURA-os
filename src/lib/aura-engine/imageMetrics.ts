@@ -120,6 +120,65 @@ function detectFaceZone(
   };
 }
 
+type FaceZone = { centerX: number; centerY: number; density: number; skinBrightness: number };
+
+// Accurate face location from the MediaPipe face model (works across every skin
+// tone, off-centre, and full-body — unlike the skin-colour centroid). Loaded
+// lazily and time-boxed so it can never hang or bloat non-analysis bundles.
+async function detectFaceBoxViaMediaPipe(
+  img: HTMLImageElement
+): Promise<{ x0: number; y0: number; x1: number; y1: number } | null> {
+  try {
+    const { scanFace } = await import("@/lib/face/faceScan");
+    const res = await Promise.race([
+      scanFace(img),
+      new Promise<null>((r) => setTimeout(() => r(null), 4000)),
+    ]);
+    if (!res) return null;
+    const a = res.anchors;
+    const xs = [a.leftCheek[0], a.rightCheek[0], a.forehead[0], a.chin[0], a.noseTip[0]];
+    const ys = [a.forehead[1], a.chin[1], a.leftCheek[1], a.rightCheek[1], a.noseTip[1]];
+    let x0 = Math.min(...xs), x1 = Math.max(...xs);
+    let y0 = Math.min(...ys), y1 = Math.max(...ys);
+    // Contour anchors sit just inside the face — pad to include hairline/jaw.
+    const padX = (x1 - x0) * 0.12, padY = (y1 - y0) * 0.15;
+    x0 = Math.max(0, x0 - padX); x1 = Math.min(1, x1 + padX);
+    y0 = Math.max(0, y0 - padY); y1 = Math.min(1, y1 + padY);
+    if (x1 - x0 < 0.02 || y1 - y0 < 0.02) return null;
+    return { x0, y0, x1, y1 };
+  } catch {
+    return null;
+  }
+}
+
+// Build the face zone from an accurate normalized box: centre, area fraction,
+// and true skin brightness (sampled from skin pixels inside the box).
+function faceZoneFromBox(
+  data: Uint8ClampedArray,
+  width: number,
+  height: number,
+  box: { x0: number; y0: number; x1: number; y1: number }
+): FaceZone {
+  const px0 = Math.floor(box.x0 * width), px1 = Math.ceil(box.x1 * width);
+  const py0 = Math.floor(box.y0 * height), py1 = Math.ceil(box.y1 * height);
+  let skinSum = 0, skinCount = 0, allSum = 0, allCount = 0;
+  for (let y = py0; y < py1; y += 2) {
+    for (let x = px0; x < px1; x += 2) {
+      const i = (y * width + x) * 4;
+      const lum = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+      allSum += lum; allCount++;
+      if (isSkinTone(data[i], data[i + 1], data[i + 2])) { skinSum += lum; skinCount++; }
+    }
+  }
+  const boxAreaFrac = ((px1 - px0) * (py1 - py0)) / (width * height);
+  return {
+    centerX: (px0 + px1) / 2,
+    centerY: (py0 + py1) / 2,
+    density: Math.max(0.02, Math.min(0.9, boxAreaFrac)),
+    skinBrightness: skinCount > 20 ? skinSum / skinCount : allCount > 0 ? allSum / allCount : 128,
+  };
+}
+
 // ─── New: Lighting direction analysis ───
 
 function analyzeLightingDirection(
@@ -658,7 +717,7 @@ export function analyzeImageDataUrl(
       resolve(fallbackMetrics(0, 0));
     };
 
-    img.onload = () => {
+    img.onload = async () => {
       try {
         const canvas = document.createElement("canvas");
         const scale = Math.min(ANALYSIS_WIDTH / img.width, 1);
@@ -703,8 +762,14 @@ export function analyzeImageDataUrl(
             100
         );
 
-        // ─── New: Face zone detection ───
-        const faceZone = detectFaceZone(imageData.data, w, h);
+        // ─── Face zone: prefer the MediaPipe face model (accurate for every
+        // skin tone / off-centre / full-body); fall back to the skin-tone
+        // heuristic if the model is unavailable or finds no face. ───
+        let faceZone: FaceZone = detectFaceZone(imageData.data, w, h);
+        try {
+          const box = await detectFaceBoxViaMediaPipe(img);
+          if (box) faceZone = faceZoneFromBox(imageData.data, w, h, box);
+        } catch { /* keep heuristic fallback */ }
 
         // ─── New: Lighting direction ───
         const lightingAnalysis = analyzeLightingDirection(ctx, w, h);
