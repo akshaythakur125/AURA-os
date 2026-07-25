@@ -125,9 +125,15 @@ type FaceZone = { centerX: number; centerY: number; density: number; skinBrightn
 // Accurate face location from the MediaPipe face model (works across every skin
 // tone, off-centre, and full-body — unlike the skin-colour centroid). Loaded
 // lazily and time-boxed so it can never hang or bloat non-analysis bundles.
+type FaceAnchors = {
+  chin: [number, number]; forehead: [number, number];
+  leftCheek: [number, number]; rightCheek: [number, number];
+  noseTip: [number, number]; leftEye: [number, number]; rightEye: [number, number];
+};
+
 async function detectFaceBoxViaMediaPipe(
   img: HTMLImageElement
-): Promise<{ x0: number; y0: number; x1: number; y1: number } | null> {
+): Promise<{ x0: number; y0: number; x1: number; y1: number; anchors: FaceAnchors } | null> {
   try {
     const { scanFace } = await import("@/lib/face/faceScan");
     const res = await Promise.race([
@@ -145,7 +151,7 @@ async function detectFaceBoxViaMediaPipe(
     x0 = Math.max(0, x0 - padX); x1 = Math.min(1, x1 + padX);
     y0 = Math.max(0, y0 - padY); y1 = Math.min(1, y1 + padY);
     if (x1 - x0 < 0.02 || y1 - y0 < 0.02) return null;
-    return { x0, y0, x1, y1 };
+    return { x0, y0, x1, y1, anchors: a as FaceAnchors };
   } catch {
     return null;
   }
@@ -766,9 +772,10 @@ export function analyzeImageDataUrl(
         // skin tone / off-centre / full-body); fall back to the skin-tone
         // heuristic if the model is unavailable or finds no face. ───
         let faceZone: FaceZone = detectFaceZone(imageData.data, w, h);
+        let faceAnchors: FaceAnchors | null = null;
         try {
           const box = await detectFaceBoxViaMediaPipe(img);
-          if (box) faceZone = faceZoneFromBox(imageData.data, w, h, box);
+          if (box) { faceZone = faceZoneFromBox(imageData.data, w, h, box); faceAnchors = box.anchors; }
         } catch { /* keep heuristic fallback */ }
 
         // ─── New: Lighting direction ───
@@ -848,6 +855,19 @@ export function analyzeImageDataUrl(
         const isCartoon = skinPixelRatio < 0.02 && faceZone.density < 0.005;
 
         const undertoneResult = detectUndertone(skinR, skinG, skinB);
+
+        // ─── Fine-grained skin read (landmark-anchored; only when we have a
+        // real face from MediaPipe, so the regions are actually on skin) ───
+        let skinDetail: import("./skinDetail").SkinDetail | null = null;
+        if (faceAnchors) {
+          try {
+            const { analyzeSkinDetail } = await import("./skinDetail");
+            skinDetail = analyzeSkinDetail(imageData.data, w, h, faceAnchors, isSkinTone, {
+              sharpness,
+              faceAreaPct: Math.round(faceZone.density * 100),
+            });
+          } catch { /* optional enrichment — never break the report */ }
+        }
 
         const qualityResult = isCartoon ? { qualityScore: 0, issues: ["no_face"], canProceed: false, message: "This looks like an illustration or cartoon. AuraCheck works best with real photos of real people." } : runQualityGate({
           width: img.width,
@@ -930,6 +950,7 @@ export function analyzeImageDataUrl(
           detectedStyle: { detectedStyle: styleResult.detectedStyle, confidence: styleResult.confidence, reasoning: styleResult.reasoning, upgradePath: styleResult.upgradePath },
           // ponytail: color palette uses default occasion, goal-specific wiring in report generation
           colorPalette: getColorPalette(undertoneResult.undertone, undertoneResult.skinDepth, "default"),
+          skinDetail,
           visionAnalysis: null, // ponytail: populated async by analyzeVision()
         });
       } catch {

@@ -20,6 +20,7 @@ import { LockedSection } from "@/components/report/LockedSection";
 import { FeedbackPrompt } from "@/components/report/FeedbackPrompt";
 import { GroomingLocalCard, type NearbyPlace } from "@/components/report/GroomingLocalCard";
 import { YourColorsCard } from "@/components/report/YourColorsCard";
+import { SkinDetailCard } from "@/components/report/SkinDetailCard";
 import { CapsuleWardrobeCard } from "@/components/report/CapsuleWardrobeCard";
 import { FaceShapeCard } from "@/components/report/FaceShapeCard";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
@@ -1182,6 +1183,15 @@ export default function AuditDetailPage() {
                   freeCount={1}
                   unlockHref={unlockHref}
                 />
+              )}
+
+              {/* ─── Skin, close up — paid perk ─── */}
+              {displayResult?.imageMetrics?.skinDetail != null && (
+                <div className="mb-6">
+                  <LockedSection locked={!isUnlocked} label="Skin, Close Up" unlockHref={unlockHref}>
+                    <SkinDetailCard skin={displayResult.imageMetrics.skinDetail} />
+                  </LockedSection>
+                </div>
               )}
 
               {/* ─── Grooming, Hair & Local Pros — paid perk ─── */}

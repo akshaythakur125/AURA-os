@@ -40,6 +40,8 @@ export interface FaceScanResult {
     leftCheek: [number, number];
     rightCheek: [number, number];
     noseTip: [number, number];
+    leftEye: [number, number];
+    rightEye: [number, number];
   };
 }
 
@@ -173,6 +175,8 @@ export async function scanFace(img: HTMLImageElement): Promise<FaceScanResult | 
       leftCheek: anchor(IDX.leftCheek),
       rightCheek: anchor(IDX.rightCheek),
       noseTip: anchor(IDX.noseTip),
+      leftEye: anchor(IDX.leftEye),
+      rightEye: anchor(IDX.rightEye),
     },
   };
 }

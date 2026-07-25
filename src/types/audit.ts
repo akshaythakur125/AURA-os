@@ -206,6 +206,17 @@ export interface ImageSignalMetrics {
     avoid: string[];
     reasoning: string;
   };
+  /** Fine-grained, landmark-anchored skin read (null when no face was found). */
+  skinDetail?: {
+    clarity: number;
+    evenness: number;
+    shine: number;
+    underEye: number;
+    texture: number;
+    notes: string[];
+    topFix: string;
+    lowConfidence: boolean;
+  } | null;
 }
 
 export interface FreeAuraResult {
