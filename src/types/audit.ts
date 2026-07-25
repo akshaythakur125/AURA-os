@@ -217,6 +217,19 @@ export interface ImageSignalMetrics {
     topFix: string;
     lowConfidence: boolean;
   } | null;
+  /** Expression, eye contact, head pose + hair read (null when no face found). */
+  presenceDetail?: {
+    smile: number;
+    genuineSmile: boolean;
+    eyesOpen: number;
+    eyeContact: boolean;
+    tiltDeg: number;
+    turned: number;
+    hairNeatness: number | null;
+    strengths: string[];
+    coaching: string[];
+    topFix: string;
+  } | null;
 }
 
 export interface FreeAuraResult {

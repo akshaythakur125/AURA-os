@@ -32,6 +32,8 @@ export interface FaceScanResult {
   expression: { smile: number; eyesOpen: number; genuineSmile: boolean };
   /** Head pose from landmark geometry (reliable): tilt + turn. */
   pose: { rollDeg: number; turned: number };
+  /** Gaze from the model's eye-look blendshapes (0-100 each direction). */
+  gaze: { lookIn: number; lookOut: number; lookUp: number; lookDown: number; atCamera: boolean };
   /** Normalized landmark anchors. */
   anchors: {
     // normalized [0,1] points on the image
@@ -161,6 +163,15 @@ export async function scanFace(img: HTMLImageElement): Promise<FaceScanResult | 
   const eyeDist = Math.abs(rEye.x - lEye.x) || 1e-4;
   const turned = (nose.x - midEyeX) / eyeDist;
 
+  // Gaze — MediaPipe's trained eyeLook* blendshapes (reliable, unlike guessing
+  // pupil position from landmarks). "At camera" = no strong look in any axis.
+  const g = (a: string, b: string) => Math.round((((bs[a] || 0) + (bs[b] || 0)) / 2) * 100);
+  const lookIn = g("eyeLookInLeft", "eyeLookInRight");
+  const lookOut = g("eyeLookOutLeft", "eyeLookOutRight");
+  const lookUp = g("eyeLookUpLeft", "eyeLookUpRight");
+  const lookDown = g("eyeLookDownLeft", "eyeLookDownRight");
+  const atCamera = Math.max(lookIn, lookOut, lookUp, lookDown) < 32;
+
   const anchor = (i: number): [number, number] => [P(i).x, P(i).y];
   return {
     shape,
@@ -169,6 +180,7 @@ export async function scanFace(img: HTMLImageElement): Promise<FaceScanResult | 
     blendshapes,
     expression: { smile: Math.round(smile), eyesOpen: Math.round(eyesOpen), genuineSmile },
     pose: { rollDeg: Math.round(rollDeg), turned: Math.round(turned * 100) / 100 },
+    gaze: { lookIn, lookOut, lookUp, lookDown, atCamera },
     anchors: {
       chin: anchor(IDX.chin),
       forehead: anchor(IDX.topForehead),

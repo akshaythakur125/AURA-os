@@ -21,6 +21,7 @@ import { FeedbackPrompt } from "@/components/report/FeedbackPrompt";
 import { GroomingLocalCard, type NearbyPlace } from "@/components/report/GroomingLocalCard";
 import { YourColorsCard } from "@/components/report/YourColorsCard";
 import { SkinDetailCard } from "@/components/report/SkinDetailCard";
+import { PresenceCard } from "@/components/report/PresenceCard";
 import { CapsuleWardrobeCard } from "@/components/report/CapsuleWardrobeCard";
 import { FaceShapeCard } from "@/components/report/FaceShapeCard";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
@@ -1183,6 +1184,15 @@ export default function AuditDetailPage() {
                   freeCount={1}
                   unlockHref={unlockHref}
                 />
+              )}
+
+              {/* ─── How you're showing up — paid perk ─── */}
+              {displayResult?.imageMetrics?.presenceDetail != null && (
+                <div className="mb-6">
+                  <LockedSection locked={!isUnlocked} label="How You're Showing Up" unlockHref={unlockHref}>
+                    <PresenceCard presence={displayResult.imageMetrics.presenceDetail} />
+                  </LockedSection>
+                </div>
               )}
 
               {/* ─── Skin, close up — paid perk ─── */}

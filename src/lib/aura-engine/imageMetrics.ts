@@ -131,9 +131,15 @@ type FaceAnchors = {
   noseTip: [number, number]; leftEye: [number, number]; rightEye: [number, number];
 };
 
+type FaceRead = {
+  expression: { smile: number; eyesOpen: number; genuineSmile: boolean };
+  pose: { rollDeg: number; turned: number };
+  gaze: { lookIn: number; lookOut: number; lookUp: number; lookDown: number; atCamera: boolean };
+};
+
 async function detectFaceBoxViaMediaPipe(
   img: HTMLImageElement
-): Promise<{ x0: number; y0: number; x1: number; y1: number; anchors: FaceAnchors } | null> {
+): Promise<{ x0: number; y0: number; x1: number; y1: number; anchors: FaceAnchors; read: FaceRead } | null> {
   try {
     const { scanFace } = await import("@/lib/face/faceScan");
     const res = await Promise.race([
@@ -151,7 +157,11 @@ async function detectFaceBoxViaMediaPipe(
     x0 = Math.max(0, x0 - padX); x1 = Math.min(1, x1 + padX);
     y0 = Math.max(0, y0 - padY); y1 = Math.min(1, y1 + padY);
     if (x1 - x0 < 0.02 || y1 - y0 < 0.02) return null;
-    return { x0, y0, x1, y1, anchors: a as FaceAnchors };
+    return {
+      x0, y0, x1, y1,
+      anchors: a as FaceAnchors,
+      read: { expression: res.expression, pose: res.pose, gaze: res.gaze },
+    };
   } catch {
     return null;
   }
@@ -773,9 +783,10 @@ export function analyzeImageDataUrl(
         // heuristic if the model is unavailable or finds no face. ───
         let faceZone: FaceZone = detectFaceZone(imageData.data, w, h);
         let faceAnchors: FaceAnchors | null = null;
+        let faceRead: FaceRead | null = null;
         try {
           const box = await detectFaceBoxViaMediaPipe(img);
-          if (box) { faceZone = faceZoneFromBox(imageData.data, w, h, box); faceAnchors = box.anchors; }
+          if (box) { faceZone = faceZoneFromBox(imageData.data, w, h, box); faceAnchors = box.anchors; faceRead = box.read; }
         } catch { /* keep heuristic fallback */ }
 
         // ─── New: Lighting direction ───
@@ -869,6 +880,15 @@ export function analyzeImageDataUrl(
           } catch { /* optional enrichment — never break the report */ }
         }
 
+        // ─── Presence: expression, eye contact, head pose + hair neatness ───
+        let presenceDetail: import("./presenceDetail").PresenceDetail | null = null;
+        if (faceRead) {
+          try {
+            const { analyzePresence } = await import("./presenceDetail");
+            presenceDetail = analyzePresence(faceRead, regionData.hairRegion?.neatnessScore ?? null);
+          } catch { /* optional enrichment */ }
+        }
+
         const qualityResult = isCartoon ? { qualityScore: 0, issues: ["no_face"], canProceed: false, message: "This looks like an illustration or cartoon. AuraCheck works best with real photos of real people." } : runQualityGate({
           width: img.width,
           height: img.height,
@@ -951,6 +971,7 @@ export function analyzeImageDataUrl(
           // ponytail: color palette uses default occasion, goal-specific wiring in report generation
           colorPalette: getColorPalette(undertoneResult.undertone, undertoneResult.skinDepth, "default"),
           skinDetail,
+          presenceDetail,
           visionAnalysis: null, // ponytail: populated async by analyzeVision()
         });
       } catch {
