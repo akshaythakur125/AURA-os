@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { HeroSection } from "@/components/home/HeroSection";
+import { PostOrNotBand } from "@/components/home/PostOrNotBand";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { AuditDimensions } from "@/components/home/AuditDimensions";
 import { PrivacyMethodology } from "@/components/home/PrivacyMethodology";
@@ -49,6 +50,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
+      <PostOrNotBand />
       <HowItWorks />
       <AuditDimensions />
       <PrivacyMethodology />

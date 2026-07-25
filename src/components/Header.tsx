@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { useState } from "react";
 
 const navLinks = [
+  { href: "/post-or-not", label: "Post or Not?" },
   { href: "/best-photo", label: "Best Photo" },
   { href: "/examples", label: "Examples" },
   { href: "/shop", label: "Shop" },
