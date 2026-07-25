@@ -12,6 +12,7 @@ import { compressImageToDataUrl } from "@/lib/image/processImage";
 import { createAudit, updateAudit } from "@/lib/storage/auditStore";
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
 import { renderPostVerdictCard, type PostVerdict } from "@/lib/share/renderPostVerdictCard";
+import { toneLine, TONE_META, type Tone } from "@/lib/aura-engine/toneLines";
 import { trackEvent } from "@/lib/storage/analyticsStore";
 import type { AuditType, AuditGoal, BudgetAmount } from "@/types/audit";
 
@@ -46,18 +47,19 @@ export default function PostOrNotPage() {
   const [result, setResult] = useState<Verdict | null>(null);
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
   const [includeImage, setIncludeImage] = useState(false);
+  const [tone, setTone] = useState<Tone>("straight");
   const [cardUrl, setCardUrl] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const blobRef = useRef<Blob | null>(null);
 
-  const buildCard = useCallback(async (v: Verdict, imgUrl: string, withImage: boolean) => {
+  const buildCard = useCallback(async (v: Verdict, imgUrl: string, withImage: boolean, line: string) => {
     try {
       const canvas = await renderPostVerdictCard({
         verdict: v.verdict,
         score: v.score,
-        oneLiner: v.oneLiner,
+        oneLiner: line,
         evidence: v.evidence,
         fix: v.fix,
         imageDataUrl: imgUrl,
@@ -110,7 +112,8 @@ export default function PostOrNotPage() {
       setImageDataUrl(compressed.dataUrl);
       setResult(v);
       setStage("result");
-      void buildCard(v, compressed.dataUrl, false);
+      setTone("straight");
+      void buildCard(v, compressed.dataUrl, false, v.oneLiner);
       trackEvent({ eventName: "post_or_not_verdict", auditId: audit.id, metadata: { score: String(v.score), verdict: v.verdict } });
     } catch {
       setError("Something went wrong reading that image. Upload an original JPEG or PNG and try again.");
@@ -129,11 +132,19 @@ export default function PostOrNotPage() {
     if (f) handleFile(f);
   }
 
+  const currentLine = result ? toneLine(tone, result.verdict, result.oneLiner, result.score) : "";
+
   function toggleImage() {
     if (!result || !imageDataUrl) return;
     const next = !includeImage;
     setIncludeImage(next);
-    void buildCard(result, imageDataUrl, next);
+    void buildCard(result, imageDataUrl, next, currentLine);
+  }
+  function setToneAndRebuild(t: Tone) {
+    if (!result || !imageDataUrl) return;
+    setTone(t);
+    void buildCard(result, imageDataUrl, includeImage, toneLine(t, result.verdict, result.oneLiner, result.score));
+    trackEvent({ eventName: "post_or_not_tone", auditId: result.auditId, metadata: { tone: t } });
   }
 
   async function shareCard() {
@@ -266,7 +277,18 @@ export default function PostOrNotPage() {
                   <div className="mx-auto mt-3 h-2 max-w-xs overflow-hidden rounded-full bg-[#1c1917]/[0.06]">
                     <div className="h-full rounded-full bg-gradient-to-r from-[#E14434] to-[#f59e0b] transition-all duration-1000" style={{ width: `${result.score}%` }} />
                   </div>
-                  <p className="mx-auto mt-4 max-w-sm text-sm text-[#4a443d]">{result.oneLiner}</p>
+                  <p className="mx-auto mt-4 max-w-sm text-sm text-[#4a443d]">{currentLine}</p>
+                  <div className="mt-4 inline-flex items-center gap-1 rounded-full border border-[#1c1917]/10 bg-[#1c1917]/[0.03] p-1">
+                    {(Object.keys(TONE_META) as Tone[]).map((tk) => (
+                      <button
+                        key={tk}
+                        onClick={() => setToneAndRebuild(tk)}
+                        className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${tone === tk ? "bg-[#1c1917] text-white" : "text-[#6f675e] hover:bg-[#1c1917]/[0.05]"}`}
+                      >
+                        {TONE_META[tk].emoji} {TONE_META[tk].label}
+                      </button>
+                    ))}
+                  </div>
                 </Card>
               </FadeInView>
 

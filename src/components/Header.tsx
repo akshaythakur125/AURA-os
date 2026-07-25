@@ -14,6 +14,12 @@ const navLinks = [
 ];
 
 const productLinks = [
+  { href: "/post-or-not", label: "Post or Not?" },
+  { href: "/which-one", label: "Which One?" },
+  { href: "/fit-check", label: "Fit Check" },
+  { href: "/group-check", label: "Group Check" },
+  { href: "/packs", label: "Ready-For-It Packs" },
+  { href: "/streak", label: "Aura Streak" },
   { href: "/products/aura-report", label: "Aura Report" },
   { href: "/products/dating-audit", label: "Dating Audit" },
   { href: "/products/glowup-plan", label: "Glow-Up Plan" },
