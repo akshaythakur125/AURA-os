@@ -18,6 +18,7 @@ import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport
 import { FullReport } from "@/components/report/FullReport";
 import { UnlockedValueHeader } from "@/components/report/UnlockedValueHeader";
 import { GlowupShareCard } from "@/components/report/GlowupShareCard";
+import { ReshootCelebration } from "@/components/report/ReshootCelebration";
 import { LockedSection } from "@/components/report/LockedSection";
 import { FeedbackPrompt } from "@/components/report/FeedbackPrompt";
 import { GroomingLocalCard, type NearbyPlace } from "@/components/report/GroomingLocalCard";
@@ -833,6 +834,8 @@ export default function AuditDetailPage() {
                     )}
 
                     {/* ΓöÇΓöÇΓöÇ Score Card ΓöÇΓöÇΓöÇ */}
+                    <ReshootCelebration audit={audit!} />
+
                     <FadeInView delay={100}>
                       <Card className="relative mb-6 overflow-hidden text-center" data-score-card>
                         <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-red-600/10 blur-3xl" />
