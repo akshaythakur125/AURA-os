@@ -1,5 +1,6 @@
 import { getServerProductPrice, getServerProductName } from "@/lib/payments/serverUnlock";
 import { findOfferByCode } from "@/config/offers";
+import { recordPendingOrder } from "@/lib/billing/orders";
 import type { ProductType } from "@/types/payment";
 
 export const dynamic = "force-dynamic";
@@ -70,6 +71,23 @@ export async function POST(request: Request) {
 
     const receipt = `aura_${auditId.slice(0, 16)}_${pt.slice(0, 4)}`.slice(0, 40);
     const order = await createRazorpayOrder(finalAmount, receipt);
+
+    // Record a pending order in the sales ledger (paise). Best-effort — a ledger
+    // failure must never block checkout, so we swallow errors and continue.
+    try {
+      await recordPendingOrder({
+        auditId,
+        productType: pt,
+        productName,
+        originalAmount: originalAmount * 100,
+        discountAmount: discountAmount * 100,
+        finalAmount: finalAmount * 100,
+        discountCode: appliedOffer || null,
+        razorpayOrderId: order.id,
+      });
+    } catch {
+      // ledger unavailable — sale is still tracked in Razorpay
+    }
 
     return Response.json({
       orderId: order.id,

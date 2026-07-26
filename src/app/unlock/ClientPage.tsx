@@ -487,6 +487,10 @@ function UnlockForm() {
                         createUnlockRecord({ auditId, productType: defaultProduct, unlockCode: response.razorpay_payment_id });
                         const updates: Record<string, unknown> = {};
                         updates.unlockedProducts = [...(audit?.unlockedProducts || []), defaultProduct];
+                        // Persist the Razorpay ids so the report can re-verify the
+                        // payment against Razorpay on every load (hardens the paywall).
+                        updates.razorpayOrderId = response.razorpay_order_id;
+                        updates.razorpayPaymentId = response.razorpay_payment_id;
                         if (defaultProduct === "aura_report") {
                           const fullContent = await generateFullAuraReport(audit!);
                           updates.fullScore = fullContent.fullScore;

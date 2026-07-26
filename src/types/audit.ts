@@ -50,6 +50,11 @@ export interface Audit {
   datingProfileReport?: DatingProfileReport;
   glowupPlan?: GlowupPlan;
   unlockedProducts?: import("./payment").ProductType[];
+  /** Razorpay identifiers from a completed purchase — let the report re-verify
+   *  the payment server-side on load, so a hand-edited localStorage unlock with
+   *  a bogus order id gets re-locked. Absent for admin-code comps. */
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
   visionResults?: {
     scores: { lighting: number; background: number; outfit: number; grooming: number; expression: number; overall: number };
     observations: Array<{ category: string; severity: string; title: string; detail: string; suggestion: string; confidence: number }>;
