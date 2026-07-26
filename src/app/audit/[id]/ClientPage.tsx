@@ -16,6 +16,7 @@ import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
 import { FullReport } from "@/components/report/FullReport";
+import { UnlockedValueHeader } from "@/components/report/UnlockedValueHeader";
 import { LockedSection } from "@/components/report/LockedSection";
 import { FeedbackPrompt } from "@/components/report/FeedbackPrompt";
 import { GroomingLocalCard, type NearbyPlace } from "@/components/report/GroomingLocalCard";
@@ -1007,6 +1008,7 @@ export default function AuditDetailPage() {
                         observations, playbook, goal strategy, money map ─── */}
                     {audit?.reportStatus === "unlocked" && serverVerified !== false && displayFull && (
                       <div className="mb-6">
+                        <UnlockedValueHeader content={displayFull} />
                         <FullReport content={displayFull} />
                       </div>
                     )}
