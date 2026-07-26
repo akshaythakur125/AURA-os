@@ -4,20 +4,8 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { FadeInView } from "@/components/ui/FadeInView";
-import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
-import { HeroModel } from "@/components/hero/HeroModel";
+import { HeroReportMockup } from "@/components/hero/HeroReportMockup";
 import { CityHero } from "@/components/world/CityHero";
-import type { AuraDimension } from "./AuraCore";
-
-const SAMPLE_DIMENSIONS: AuraDimension[] = [
-  { id: "lighting", label: "Lighting", score: 72, color: "#E14434" },
-  { id: "clarity", label: "Clarity", score: 85, color: "#E9A23B" },
-  { id: "composition", label: "Composition", score: 64, color: "#C0341F" },
-  { id: "background", label: "Background", score: 58, color: "#B27A4B" },
-  { id: "colour", label: "Colour Harmony", score: 78, color: "#D9663C" },
-  { id: "style", label: "Style", score: 70, color: "#8A8175" },
-  { id: "consistency", label: "Consistency", score: 66, color: "#E14434" },
-];
 
 export function HeroSection() {
   return (
@@ -75,10 +63,10 @@ export function HeroSection() {
             </FadeInView>
           </div>
 
-          {/* Hero 3D object — modelled camera on desktop, AuraCore fallback */}
+          {/* Hero focal — a faithful screenshot of the real Aura report */}
           <div className="order-1 lg:order-2 flex justify-center">
             <FadeInView delay={200}>
-              <ErrorBoundary fallback={<div className="w-[320px] h-[320px] rounded-full bg-[#1c1917]/5 flex items-center justify-center text-xs text-[#8B8175]">3D view unavailable</div>}><HeroModel dimensions={SAMPLE_DIMENSIONS} /></ErrorBoundary>
+              <HeroReportMockup />
             </FadeInView>
           </div>
         </div>
