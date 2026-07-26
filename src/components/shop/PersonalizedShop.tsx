@@ -1,14 +1,14 @@
 "use client";
 import Link from "next/link";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { FadeInView } from "@/components/ui/FadeInView";
 import type { Look } from "@/lib/shop/catalogTypes";
 import type { StatusLeakTag } from "@/types/product";
-import { buildRetailerUrl, type Retailer } from "@/lib/shop/linkBuilder";
+import { buildRetailerUrl, buildPrimaryShopLink, type Retailer } from "@/lib/shop/linkBuilder";
 import { formatLookPrice } from "@/lib/shop/pricing";
 import { ShopCategoryImage } from "./ShopCategoryImage";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
@@ -133,6 +133,22 @@ export function PersonalizedShop({
   // ponytail: deterministic ranking + search
   const ranked = rankLooks(looks, { leakTags, goalTags: [], maxBudget: budgetFilter || undefined });
   const searched = searchQuery ? searchLooks(ranked, searchQuery) : ranked;
+
+  // Decisive "buy list": the single cheapest personality-matched pick for each
+  // of the most relevant categories. Precise (one item per real need),
+  // cheapest-first, and on-brand via the already archetype-curated `looks` set.
+  const buyList = useMemo(() => {
+    const pool = ranked.filter((l) => l.price > 0);
+    const cheapestByCat = new Map<string, Look>();
+    const order: string[] = [];
+    for (const l of pool) {
+      const cur = cheapestByCat.get(l.category);
+      if (!cur) { cheapestByCat.set(l.category, l); order.push(l.category); }
+      else if (l.price < cur.price) cheapestByCat.set(l.category, l);
+    }
+    const list = order.map((c) => cheapestByCat.get(c)!);
+    return locked ? list.slice(0, Math.max(1, freeCount)) : list.slice(0, 4);
+  }, [ranked, locked, freeCount]);
   // Free users get `freeCount` fully-usable picks; the rest are teased blurred.
   const visibleLooks = locked ? searched.slice(0, freeCount) : (showAll ? searched : searched.slice(0, 12));
   const lockedPreview = locked ? searched.slice(freeCount, freeCount + 3) : [];
@@ -268,6 +284,57 @@ export function PersonalizedShop({
                   </div>
                 ))}
               </div>
+            </div>
+          </FadeInView>
+        )}
+
+        {/* Your buy list — decisive, cheapest-first, personality-matched */}
+        {buyList.length > 0 && (
+          <FadeInView delay={40}>
+            <div className="mb-8 rounded-2xl border border-[#E14434]/20 bg-gradient-to-br from-[#E14434]/[0.07] to-transparent p-5">
+              <div className="mb-1 flex items-center gap-2">
+                <span className="text-sm">🎯</span>
+                <h3 className="text-sm font-semibold text-[#1C1917]">
+                  Your buy list{archetype ? ` — ${archetype} vibe` : ""}
+                </h3>
+              </div>
+              <p className="mb-4 text-xs text-[#857b6e]">
+                The cheapest pick for each thing you actually need. Buy these, skip the rest.
+              </p>
+              <ol className="space-y-2.5">
+                {(() => { const usedLeak = new Set<string>(); return buyList.map((look, i) => {
+                  let why = `On-brand for your ${archetype || "look"}`;
+                  if (leakTags) {
+                    for (const tag of look.statusLeakTags) {
+                      if (leakTags.includes(tag) && !usedLeak.has(tag)) { usedLeak.add(tag); why = LEAK_FIX_COPY[tag as StatusLeakTag] || why; break; }
+                    }
+                  }
+                  return (
+                    <li key={look.id} className="flex items-center gap-3 rounded-xl border border-[#1c1917]/[0.07] bg-[#fbf8f2]/70 p-3">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#E14434] text-xs font-bold text-white">{i + 1}</span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <Link href={"/shop/look/" + look.id} className="truncate text-sm font-semibold text-[#1C1917] hover:underline">{look.title}</Link>
+                          <span className="shrink-0 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">{formatLookPrice(look.price)}</span>
+                        </div>
+                        <p className="mt-0.5 truncate text-[11px] text-[#6f675e]">{why}</p>
+                      </div>
+                      <a
+                        href={buildPrimaryShopLink({ category: look.category, keywords: look.keywords, gender: look.gender })}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => trackEvent(EVENTS.SHOP_LINK_CLICKED, { retailer: "amazon", lookCategory: look.category })}
+                        className="shrink-0 rounded-lg bg-[#1C1917] px-3 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+                      >
+                        Shop →
+                      </a>
+                    </li>
+                  );
+                }); })()}
+              </ol>
+              {locked && lockedRemaining > 0 && (
+                <p className="mt-3 text-center text-[11px] text-[#857b6e]">Your full buy list unlocks with the report.</p>
+              )}
             </div>
           </FadeInView>
         )}
