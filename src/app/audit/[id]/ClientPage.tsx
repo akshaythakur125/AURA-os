@@ -17,6 +17,7 @@ import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
 import { FullReport } from "@/components/report/FullReport";
 import { UnlockedValueHeader } from "@/components/report/UnlockedValueHeader";
+import { GlowupShareCard } from "@/components/report/GlowupShareCard";
 import { LockedSection } from "@/components/report/LockedSection";
 import { FeedbackPrompt } from "@/components/report/FeedbackPrompt";
 import { GroomingLocalCard, type NearbyPlace } from "@/components/report/GroomingLocalCard";
@@ -1009,6 +1010,7 @@ export default function AuditDetailPage() {
                     {audit?.reportStatus === "unlocked" && serverVerified !== false && displayFull && (
                       <div className="mb-6">
                         <UnlockedValueHeader content={displayFull} />
+                        <GlowupShareCard content={displayFull} auditId={id} />
                         <FullReport content={displayFull} />
                       </div>
                     )}
