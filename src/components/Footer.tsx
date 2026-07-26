@@ -54,7 +54,7 @@ export function Footer() {
               <span className="text-[14px] font-semibold tracking-tight text-[#1C1917]">AuraCheck</span>
             </div>
             <p className="mt-3 text-[13px] leading-relaxed text-[#857b6e]">
-              First-impression intelligence for the modern age.
+              See what your pic actually says — before anyone else does.
             </p>
           </div>
 

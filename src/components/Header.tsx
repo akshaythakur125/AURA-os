@@ -87,7 +87,7 @@ export function Header() {
 
             <div className="ml-2">
               <Link href="/audit/new">
-                <Button variant="solid" size="sm">Start Aura Check</Button>
+                <Button variant="solid" size="sm">Get My Score</Button>
               </Link>
             </div>
           </nav>
@@ -137,7 +137,7 @@ export function Header() {
               </div>
               <Link href="/audit/new" onClick={() => setMobileOpen(false)} className="mt-2">
                 <Button variant="solid" className="w-full" size="sm">
-                  Start Aura Check
+                  Get My Score
                 </Button>
               </Link>
             </nav>
