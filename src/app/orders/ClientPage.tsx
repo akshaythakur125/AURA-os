@@ -5,30 +5,34 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { FadeInView } from "@/components/ui/FadeInView";
-import { getOrders, type Order } from "@/lib/billing/orders";
-import { PAYMENT_PRODUCTS, formatPrice } from "@/config/pricing";
+import { getOrders } from "@/lib/storage/orderStore";
+import type { ManualOrder, ManualOrderStatus } from "@/types/order";
 
-const STATUS_COLORS: Record<string, string> = {
-  paid: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
-  pending: "text-amber-400 bg-amber-500/10 border-amber-500/20",
-  failed: "text-red-400 bg-red-500/10 border-red-500/20",
-  refunded: "text-[#6f675e] bg-gray-500/10 border-gray-500/20",
-  created: "text-[#6f675e] bg-gray-500/10 border-gray-500/20",
+// Orders live in this browser's local storage (the app is account-free), so
+// this page shows the purchases made on this device.
+const STATUS_META: Record<ManualOrderStatus, { label: string; className: string }> = {
+  unlocked: { label: "Unlocked", className: "text-emerald-600 bg-emerald-500/10 border-emerald-500/20" },
+  payment_submitted: { label: "Submitted", className: "text-amber-600 bg-amber-500/10 border-amber-500/20" },
+  code_sent: { label: "Code sent", className: "text-amber-600 bg-amber-500/10 border-amber-500/20" },
+  payment_pending: { label: "Pending", className: "text-[#6f675e] bg-[#1c1917]/[0.05] border-[#1c1917]/10" },
+  draft: { label: "Draft", className: "text-[#6f675e] bg-[#1c1917]/[0.05] border-[#1c1917]/10" },
+  cancelled: { label: "Cancelled", className: "text-red-500 bg-red-500/10 border-red-500/20" },
 };
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<ManualOrder[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getOrders(20).then((o) => { setOrders(o); setLoading(false); });
+    setOrders(getOrders());
+    setLoading(false);
   }, []);
 
   return (
     <Container className="py-12">
       <FadeInView>
         <h1 className="mb-2 text-2xl font-bold text-[#1C1917]">Order History</h1>
-        <p className="mb-8 text-sm text-[#857b6e]">Your purchases and payment history.</p>
+        <p className="mb-8 text-sm text-[#857b6e]">Your purchases on this device. Orders are stored locally, not in an account.</p>
       </FadeInView>
 
       {loading && (
@@ -51,32 +55,29 @@ export default function OrdersPage() {
       {!loading && orders.length > 0 && (
         <div className="space-y-3">
           {orders.map((order) => {
-            const product = PAYMENT_PRODUCTS[order.productId as keyof typeof PAYMENT_PRODUCTS];
+            const meta = STATUS_META[order.status] || STATUS_META.payment_pending;
+            const amount = order.finalAmount ?? order.amount;
+            const ref = order.generatedUnlockCode || order.upiTransactionRef;
             return (
               <FadeInView key={order.id}>
                 <Card className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-4">
                   <div>
-                    <p className="text-sm font-medium text-[#1C1917]">
-                      {product?.name || order.productId}
-                    </p>
+                    <p className="text-sm font-medium text-[#1C1917]">{order.productName}</p>
                     <p className="mt-1 text-xs text-[#857b6e]">
                       {new Date(order.createdAt).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
                       })}
-                      {" · "}
-                      {order.providerOrderId?.slice(0, 12) || "—"}
+                      {ref ? ` · ${ref.slice(0, 14)}` : ""}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-medium ${STATUS_COLORS[order.status] || STATUS_COLORS.created}`}>
-                      {order.status}
+                    <span className={`rounded-full border px-2.5 py-0.5 text-[10px] font-medium ${meta.className}`}>
+                      {meta.label}
                     </span>
-                    <span className="text-sm font-medium text-amber-400">
-                      {formatPrice(order.totalAmount)}
-                    </span>
-                    {order.status === "paid" && (
+                    <span className="text-sm font-medium text-amber-500">₹{amount}</span>
+                    {order.status === "unlocked" && (
                       <Link
                         href={`/audit/${order.auditId}`}
                         className="text-xs text-red-400 hover:text-red-300"

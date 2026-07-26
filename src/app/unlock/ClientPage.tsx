@@ -485,6 +485,26 @@ function UnlockForm() {
                         }
                         // Unlock report
                         createUnlockRecord({ auditId, productType: defaultProduct, unlockCode: response.razorpay_payment_id });
+                        // Record the purchase in this browser's order history so it
+                        // shows on /orders (Razorpay checkout skips the manual flow).
+                        try {
+                          const localOrder = createOrder({
+                            auditId,
+                            productType: defaultProduct,
+                            customerName: customerName.trim() || undefined,
+                            customerContact: customerContact.trim() || undefined,
+                            offerCode: offerResult?.isValid ? offerResult.code : undefined,
+                            originalAmount: productPrice,
+                            discountAmount: offerResult?.isValid ? offerResult.discountAmount : 0,
+                            finalAmount: finalPrice,
+                          });
+                          updateOrder(localOrder.id, {
+                            status: "unlocked",
+                            generatedUnlockCode: response.razorpay_payment_id,
+                            upiTransactionRef: response.razorpay_order_id,
+                            unlockedAt: new Date().toISOString(),
+                          });
+                        } catch {}
                         const updates: Record<string, unknown> = {};
                         updates.unlockedProducts = [...(audit?.unlockedProducts || []), defaultProduct];
                         // Persist the Razorpay ids so the report can re-verify the
