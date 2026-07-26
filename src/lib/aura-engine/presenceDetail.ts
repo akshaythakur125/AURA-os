@@ -23,6 +23,8 @@ export interface PresenceDetail {
   turned: number;
   /** 0–100 hair neatness (higher = neater), null when unavailable. */
   hairNeatness: number | null;
+  /** Detected accessories (trained model, precision-first). */
+  accessories: { glasses: boolean; hat: boolean; necktie: boolean } | null;
   /** Positive things worth keeping. */
   strengths: string[];
   /** Specific, actionable coaching. */
@@ -37,7 +39,8 @@ export function analyzePresence(
     pose: { rollDeg: number; turned: number };
     gaze: { lookIn: number; lookOut: number; lookUp: number; lookDown: number; atCamera: boolean };
   },
-  hairNeatness?: number | null
+  hairNeatness?: number | null,
+  accessories?: { glasses: boolean; hat: boolean; necktie: boolean } | null
 ): PresenceDetail {
   const { smile, eyesOpen, genuineSmile } = read.expression;
   const tiltDeg = read.pose.rollDeg;
@@ -81,6 +84,14 @@ export function analyzePresence(
     else coaching.push(`Hair reads unkempt or frizzy here (${hair}/100) — this is one of the quickest visible wins.`);
   }
 
+  // ── Accessories (only ever mentioned when the model is confident) ──
+  const acc = accessories ?? null;
+  if (acc) {
+    if (acc.hat) coaching.push("You're wearing a hat — great for casual shots, but it shadows your eyes. For dating or LinkedIn, try one without it.");
+    if (acc.glasses) strengths.push("Glasses are part of your look — keep them clean and angle slightly to avoid lens glare.");
+    if (acc.necktie) strengths.push("Formal tie detected — this reads well for LinkedIn, interviews and placement photos.");
+  }
+
   // ── Prioritised single fix ──
   let topFix: string;
   if (eyesOpen < 55) topFix = "Reshoot with your eyes fully open — take a burst and pick the best frame.";
@@ -92,7 +103,7 @@ export function analyzePresence(
 
   return {
     smile, genuineSmile, eyesOpen, eyeContact,
-    tiltDeg, turned, hairNeatness: hair,
+    tiltDeg, turned, hairNeatness: hair, accessories: acc,
     strengths, coaching, topFix,
   };
 }

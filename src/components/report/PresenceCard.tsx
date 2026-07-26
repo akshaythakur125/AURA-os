@@ -11,6 +11,7 @@ interface Props {
     tiltDeg: number;
     turned: number;
     hairNeatness: number | null;
+    accessories?: { glasses: boolean; hat: boolean; necktie: boolean } | null;
     strengths: string[];
     coaching: string[];
     topFix: string;
@@ -61,6 +62,15 @@ export function PresenceCard({ presence: p }: Props) {
               style={{ width: `${Math.max(3, p.hairNeatness)}%` }}
             />
           </div>
+        </div>
+      )}
+
+      {p.accessories && (p.accessories.glasses || p.accessories.hat || p.accessories.necktie) && (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="text-[11px] font-medium text-[#857b6e]">Spotted:</span>
+          {p.accessories.glasses && <span className="rounded-full border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-2.5 py-0.5 text-[11px] text-[#4a443d]">👓 Glasses</span>}
+          {p.accessories.hat && <span className="rounded-full border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-2.5 py-0.5 text-[11px] text-[#4a443d]">🧢 Hat</span>}
+          {p.accessories.necktie && <span className="rounded-full border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-2.5 py-0.5 text-[11px] text-[#4a443d]">👔 Tie</span>}
         </div>
       )}
 

@@ -142,9 +142,13 @@ async function detectFaceBoxViaMediaPipe(
 ): Promise<{ x0: number; y0: number; x1: number; y1: number; anchors: FaceAnchors; read: FaceRead } | null> {
   try {
     const { scanFace } = await import("@/lib/face/faceScan");
+    // 12s, not 4s: the FIRST call also downloads the MediaPipe WASM + model
+    // (several MB). On a slower mobile connection a 4s cap silently killed face
+    // detection — and with it the skin, presence and accessory cards. Still
+    // bounded, and everything downstream degrades gracefully on timeout.
     const res = await Promise.race([
       scanFace(img),
-      new Promise<null>((r) => setTimeout(() => r(null), 4000)),
+      new Promise<null>((r) => setTimeout(() => r(null), 12000)),
     ]);
     if (!res) return null;
     const a = res.anchors;
@@ -784,9 +788,15 @@ export function analyzeImageDataUrl(
         let faceZone: FaceZone = detectFaceZone(imageData.data, w, h);
         let faceAnchors: FaceAnchors | null = null;
         let faceRead: FaceRead | null = null;
+        let faceBoxNorm: { x0: number; y0: number; x1: number; y1: number } | null = null;
         try {
           const box = await detectFaceBoxViaMediaPipe(img);
-          if (box) { faceZone = faceZoneFromBox(imageData.data, w, h, box); faceAnchors = box.anchors; faceRead = box.read; }
+          if (box) {
+            faceZone = faceZoneFromBox(imageData.data, w, h, box);
+            faceAnchors = box.anchors;
+            faceRead = box.read;
+            faceBoxNorm = { x0: box.x0, y0: box.y0, x1: box.x1, y1: box.y1 };
+          }
         } catch { /* keep heuristic fallback */ }
 
         // ─── New: Lighting direction ───
@@ -880,12 +890,31 @@ export function analyzeImageDataUrl(
           } catch { /* optional enrichment — never break the report */ }
         }
 
+        // ─── Accessories: trained model (precision-first) replaces the old
+        // edge-density guesses. Optional + time-boxed; null on any failure. ───
+        let accessories: import("@/lib/face/accessoryModel").AccessoryResult | null = null;
+        try {
+          const { detectAccessories } = await import("@/lib/face/accessoryModel");
+          accessories = await detectAccessories(img, faceBoxNorm ?? undefined);
+        } catch { /* optional enrichment */ }
+
+        // Trust the trained model over the edge-density heuristic when we have it.
+        if (accessories) {
+          regionData.accessoryDetection.hasGlasses = accessories.glasses;
+          regionData.accessoryDetection.accessoryCount =
+            (accessories.glasses ? 1 : 0) + (accessories.hat ? 1 : 0) + (accessories.necktie ? 1 : 0);
+        }
+
         // ─── Presence: expression, eye contact, head pose + hair neatness ───
         let presenceDetail: import("./presenceDetail").PresenceDetail | null = null;
         if (faceRead) {
           try {
             const { analyzePresence } = await import("./presenceDetail");
-            presenceDetail = analyzePresence(faceRead, regionData.hairRegion?.neatnessScore ?? null);
+            presenceDetail = analyzePresence(
+              faceRead,
+              regionData.hairRegion?.neatnessScore ?? null,
+              accessories ? { glasses: accessories.glasses, hat: accessories.hat, necktie: accessories.necktie } : null
+            );
           } catch { /* optional enrichment */ }
         }
 
@@ -972,6 +1001,7 @@ export function analyzeImageDataUrl(
           colorPalette: getColorPalette(undertoneResult.undertone, undertoneResult.skinDepth, "default"),
           skinDetail,
           presenceDetail,
+          accessories,
           visionAnalysis: null, // ponytail: populated async by analyzeVision()
         });
       } catch {

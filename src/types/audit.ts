@@ -217,6 +217,13 @@ export interface ImageSignalMetrics {
     topFix: string;
     lowConfidence: boolean;
   } | null;
+  /** Trained accessory detection (precision-first). Null when unavailable. */
+  accessories?: {
+    glasses: boolean;
+    hat: boolean;
+    necktie: boolean;
+    scores: { glasses: number; hat: number; necktie: number };
+  } | null;
   /** Expression, eye contact, head pose + hair read (null when no face found). */
   presenceDetail?: {
     smile: number;
@@ -226,6 +233,7 @@ export interface ImageSignalMetrics {
     tiltDeg: number;
     turned: number;
     hairNeatness: number | null;
+    accessories?: { glasses: boolean; hat: boolean; necktie: boolean } | null;
     strengths: string[];
     coaching: string[];
     topFix: string;

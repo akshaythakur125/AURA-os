@@ -53,6 +53,11 @@ datasets/*.tar.gz
 datasets/*.zip
 datasets/*.7z
 models/
+# …but on-device models SHIPPED to the browser must be committed, exactly like
+# public/mediapipe/. Without this the model 404s in production and the feature
+# silently never runs.
+!public/models/
+!public/models/**
 *.onnx
 *.pb
 *.pt

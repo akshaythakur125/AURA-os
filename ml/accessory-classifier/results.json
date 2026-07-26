@@ -1,0 +1,64 @@
+{
+ "labels": [
+  "Eyeglasses",
+  "Wearing_Earrings",
+  "Wearing_Hat",
+  "Wearing_Necklace",
+  "Wearing_Necktie",
+  "Bags_Under_Eyes"
+ ],
+ "report": {
+  "Eyeglasses": {
+   "precision": 0.9,
+   "recall": 0.78,
+   "f1": 0.836,
+   "acc": 0.95,
+   "support": 173
+  },
+  "Wearing_Earrings": {
+   "precision": 0.659,
+   "recall": 0.421,
+   "f1": 0.514,
+   "acc": 0.839,
+   "support": 216
+  },
+  "Wearing_Hat": {
+   "precision": 0.933,
+   "recall": 0.875,
+   "f1": 0.903,
+   "acc": 0.975,
+   "support": 144
+  },
+  "Wearing_Necklace": {
+   "precision": 0.536,
+   "recall": 0.335,
+   "f1": 0.413,
+   "acc": 0.843,
+   "support": 176
+  },
+  "Wearing_Necktie": {
+   "precision": 0.827,
+   "recall": 0.832,
+   "f1": 0.83,
+   "acc": 0.95,
+   "support": 155
+  },
+  "Bags_Under_Eyes": {
+   "precision": 0.705,
+   "recall": 0.319,
+   "f1": 0.439,
+   "acc": 0.84,
+   "support": 210
+  }
+ },
+ "counts": {
+  "Eyeglasses": 1131,
+  "Wearing_Earrings": 1443,
+  "Wearing_Hat": 1100,
+  "Wearing_Necklace": 1205,
+  "Wearing_Necktie": 1136,
+  "Bags_Under_Eyes": 1457
+ },
+ "train": 6055,
+ "val": 1068
+}
