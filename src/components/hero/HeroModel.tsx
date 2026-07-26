@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { AuraCore, type AuraDimension } from "@/components/home/AuraCore";
 import { useWebGLSupport } from "@/hooks/useWebGLSupport";
 
-const CameraScene = dynamic(() => import("@/components/hero/CameraScene"), {
+const GenZScene = dynamic(() => import("@/components/hero/GenZScene"), {
   ssr: false,
   loading: () => null,
 });
@@ -15,10 +15,12 @@ interface HeroModelProps {
 }
 
 /**
- * The hero's centrepiece. On a capable desktop it renders the real modelled
- * camera (WebGL). Under reduced-motion, no WebGL, or the stacked mobile
- * layout it falls back to AuraCore's CSS ring visualization, which stands on
- * its own — so the hero always has a strong focal object, never a blank box.
+ * The hero's centrepiece. On a capable desktop it renders the procedural
+ * "style icon" — a sculpted bust with a hairstyle and signature shades that
+ * reads instantly as *how you present yourself*, which is exactly what the
+ * product scores. Under reduced-motion, no WebGL, or the stacked mobile layout
+ * it falls back to AuraCore's CSS score-ring visualization, which stands on its
+ * own — so the hero always has a strong, self-explanatory focal object.
  */
 export function HeroModel({ dimensions }: HeroModelProps) {
   const webglSupported = useWebGLSupport();
@@ -32,7 +34,8 @@ export function HeroModel({ dimensions }: HeroModelProps) {
     motionMq.addEventListener("change", onMotion);
 
     // The model is tuned for the lg+ two-column layout; below that the layout
-    // stacks and mobile GPUs struggle, so fall back to AuraCore there.
+    // stacks and a second WebGL canvas over the city background strains mobile
+    // GPUs, so we fall back to AuraCore there.
     const widthMq = window.matchMedia("(max-width: 1023px)");
     setIsNarrow(widthMq.matches);
     const onWidth = (e: MediaQueryListEvent) => setIsNarrow(e.matches);
@@ -52,7 +55,7 @@ export function HeroModel({ dimensions }: HeroModelProps) {
 
   return (
     <div className="relative h-[420px] w-[420px] xl:h-[480px] xl:w-[480px]">
-      <CameraScene dense />
+      <GenZScene shape="model" dense />
     </div>
   );
 }

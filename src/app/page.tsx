@@ -26,29 +26,29 @@ export const metadata: Metadata = {
   },
 };
 
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebApplication",
-          name: "AuraCheck",
-          url: "https://fixmyaura.shop",
-          description: "Upload a photo, get your free Aura Score. See what your first impression is really saying.",
-          applicationCategory: "Photography",
-          operatingSystem: "Web",
-          offers: {
-            "@type": "Offer",
-            price: "25",
-            priceCurrency: "INR",
-            description: "Full Aura Report — detailed visual analysis",
-          },
-        }) }}
-      />
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "AuraCheck",
+  url: "https://fixmyaura.shop",
+  description: "Upload a photo, get your free Aura Score. See what your first impression is really saying.",
+  applicationCategory: "Photography",
+  operatingSystem: "Web",
+  offers: {
+    "@type": "Offer",
+    price: "25",
+    priceCurrency: "INR",
+    description: "Full Aura Report — detailed visual analysis",
+  },
+};
 
 export default function HomePage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
+      />
       <HeroSection />
       <PostOrNotBand />
       <HowItWorks />

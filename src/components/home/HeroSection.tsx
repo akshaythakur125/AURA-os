@@ -34,22 +34,22 @@ export function HeroSection() {
             <FadeInView>
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#E14434]/25 bg-[#E14434]/[0.07] px-3 py-1">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#E14434]" />
-                <span className="text-xs font-medium uppercase tracking-[0.14em] text-[#B23A25]">First-impression intelligence</span>
+                <span className="text-xs font-medium uppercase tracking-[0.14em] text-[#B23A25]">Your first impression, scored</span>
               </div>
             </FadeInView>
 
             <FadeInView delay={100}>
               <h1 className="text-4xl font-bold tracking-tight text-[#1C1917] sm:text-5xl lg:text-6xl">
-                See what your photo communicates{" "}
+                See what your pic{" "}
                 <span className="text-[#E14434]">
-                  before anyone reads your bio.
+                  actually says about you.
                 </span>
               </h1>
             </FadeInView>
 
             <FadeInView delay={200}>
-              <p className="mt-6 max-w-xl text-base text-[#6F675E] sm:text-lg leading-relaxed">
-                Upload one photo and get a clear read on your first impression — lighting, styling, background, colour, the works — plus the exact fixes that make you look intentional, not accidental. Free, in under a minute.
+              <p className="mt-6 max-w-md text-base text-[#6F675E] sm:text-lg leading-relaxed">
+                Drop one photo → get your Aura Score and the exact fixes. Free, private, under a minute.
               </p>
             </FadeInView>
 
@@ -57,23 +57,21 @@ export function HeroSection() {
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 <Link href="/audit/new">
                   <Button variant="solid" size="lg" className="w-full sm:w-auto px-8 py-4 text-base font-semibold">
-                    Start My Aura Check
+                    Get My Aura Score
                   </Button>
                 </Link>
                 <Link href="/examples">
                   <Button variant="outline" size="lg" className="w-full sm:w-auto px-8 py-4 text-base border-[#1c1917]/25! text-[#1C1917]! hover:bg-[#1c1917]/[0.05]! hover:border-[#1c1917]/40!">
-                    Try a Sample Photo
+                    Try a sample pic
                   </Button>
                 </Link>
               </div>
             </FadeInView>
 
             <FadeInView delay={400}>
-              <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-xs text-[#8B8175]">
-                <span>Private browser-based analysis</span>
-                <span>No account required for the first scan</span>
-                <span>Clear scoring with actionable recommendations</span>
-              </div>
+              <p className="mt-5 text-xs text-[#8B8175]">
+                No signup · Stays on your phone · 100 = elite
+              </p>
             </FadeInView>
           </div>
 

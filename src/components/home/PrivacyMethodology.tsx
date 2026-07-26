@@ -5,24 +5,20 @@ import { FadeInView } from "@/components/ui/FadeInView";
 
 const ITEMS = [
   {
-    q: "What is analysed?",
-    a: "Visual presentation signals: lighting quality, image sharpness, composition framing, background complexity, colour balance, clothing style, and overall visual consistency.",
+    q: "Does my photo leave my phone?",
+    a: "No. The scan runs entirely in your browser — your photo is never uploaded to us.",
   },
   {
-    q: "Where does processing happen?",
-    a: "Entirely in your browser. Your photo is never uploaded to our servers for the free analysis. All measurements run locally using JavaScript and Canvas.",
+    q: "What gets scored?",
+    a: "Real visual signals: lighting, sharpness, framing, background, colour, styling and vibe. Each scored 0–100.",
   },
   {
-    q: "What can this system infer?",
-    a: "Technical image qualities — brightness, contrast, sharpness, colour distribution, and spatial composition. It cannot read emotions, judge personality, or make subjective beauty assessments.",
+    q: "Is this just AI guessing?",
+    a: "No. Scores are measured from the actual pixels and face geometry — not vibes, not personality reads.",
   },
   {
-    q: "How does scoring work?",
-    a: "Each dimension is scored 0–100 against evidence-based guidelines for effective profile photography. Scores reflect technical image qualities, not personal worth.",
-  },
-  {
-    q: "Is my photo stored?",
-    a: "No. Free scans are processed in-memory and never leave your device. If you choose to save results, metadata (not the image) is stored in your browser's local storage.",
+    q: "Do you save anything?",
+    a: "Free scans are processed in-memory and gone when you leave. Nothing about the image is stored on our servers.",
   },
 ];
 
@@ -32,8 +28,8 @@ export function PrivacyMethodology() {
       <Container>
         <FadeInView>
           <div className="mb-12 text-center">
-            <h2 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">Privacy & methodology</h2>
-            <p className="mt-3 text-sm text-[#857b6e]">What we measure, how we measure it, and what we do with your data.</p>
+            <h2 className="text-2xl font-bold text-[#1C1917] sm:text-3xl">Private by default</h2>
+            <p className="mt-3 text-sm text-[#857b6e]">Your pic stays on your phone. Here&apos;s the honest breakdown.</p>
           </div>
         </FadeInView>
 
