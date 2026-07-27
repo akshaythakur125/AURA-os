@@ -235,8 +235,13 @@ export interface ImageSignalMetrics {
     genuineSmile: boolean;
     eyesOpen: number;
     eyeContact: boolean;
+    browTension: number;
+    lipTension: number;
+    jawOpen: number;
+    cheekRaise: number;
     tiltDeg: number;
     turned: number;
+    framingNote?: string | null;
     hairNeatness: number | null;
     accessories?: { glasses: boolean; hat: boolean; necktie: boolean } | null;
     strengths: string[];

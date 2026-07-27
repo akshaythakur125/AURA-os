@@ -8,8 +8,13 @@ interface Props {
     genuineSmile: boolean;
     eyesOpen: number;
     eyeContact: boolean;
+    browTension: number;
+    lipTension: number;
+    jawOpen: number;
+    cheekRaise: number;
     tiltDeg: number;
     turned: number;
+    framingNote?: string | null;
     hairNeatness: number | null;
     accessories?: { glasses: boolean; hat: boolean; necktie: boolean } | null;
     strengths: string[];
@@ -34,21 +39,32 @@ export function PresenceCard({ presence: p }: Props) {
   const tilt = Math.abs(p.tiltDeg);
   return (
     <Card className="mb-6">
-      <h3 className="text-sm font-semibold text-[#1C1917]">🙂 How you&apos;re showing up</h3>
+      <h3 className="text-sm font-semibold text-[#1C1917]">🙂 Expression &amp; posture</h3>
       <p className="mb-4 text-xs text-[#857b6e]">
-        Expression, eye contact and head position — read from the face model, not guessed.
+        A frame-by-frame read of your face and head position — measured from the face model&apos;s trained markers, not guessed.
       </p>
 
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
         <Chip
-          ok={p.genuineSmile || p.smile >= 30}
+          ok={p.genuineSmile || (p.smile >= 25 && p.cheekRaise >= 20)}
           label="Smile"
-          value={p.genuineSmile ? "Genuine" : p.smile >= 30 ? "Present" : p.smile >= 12 ? "Subtle" : "Flat"}
+          value={p.genuineSmile || (p.smile >= 25 && p.cheekRaise >= 20) ? "Genuine" : p.smile >= 30 ? "Mouth only" : p.smile >= 12 ? "Subtle" : "Flat"}
         />
         <Chip ok={p.eyesOpen >= 70} label="Eyes open" value={`${p.eyesOpen}/100`} />
         <Chip ok={p.eyeContact} label="Eye contact" value={p.eyeContact ? "At camera" : "Looking away"} />
+        <Chip ok={p.browTension < 20} label="Brow" value={p.browTension >= 25 ? "Furrowed" : "Relaxed"} />
+        <Chip ok={p.lipTension < 25} label="Mouth/jaw" value={p.lipTension >= 30 || (p.jawOpen <= 6 && p.lipTension >= 25) ? "Tense" : "Relaxed"} />
         <Chip ok={tilt <= 9} label="Head tilt" value={`${Math.round(tilt)}°`} />
+        <Chip ok={Math.abs(p.turned) <= 0.15} label="Head turn" value={Math.abs(p.turned) <= 0.12 ? "Square" : Math.abs(p.turned) <= 0.3 ? "Slight" : "Turned"} />
+        <Chip ok={p.cheekRaise >= 20} label="Eye warmth" value={p.cheekRaise >= 20 ? "Present" : "Low"} />
       </div>
+
+      {p.framingNote && (
+        <div className="mt-3 rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-[#857b6e]">Framing</div>
+          <p className="mt-0.5 text-xs leading-relaxed text-[#4a443d]">{p.framingNote}</p>
+        </div>
+      )}
 
       {p.hairNeatness != null && (
         <div className="mt-3">

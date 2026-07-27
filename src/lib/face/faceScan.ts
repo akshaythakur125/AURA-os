@@ -29,7 +29,21 @@ export interface FaceScanResult {
   /** Selected blendshape scores (0-1), e.g. smile, eye openness — for tips. */
   blendshapes: Record<string, number>;
   /** Expression read from the model's trained blendshapes (reliable). */
-  expression: { smile: number; eyesOpen: number; genuineSmile: boolean };
+  expression: {
+    smile: number; eyesOpen: number; genuineSmile: boolean;
+    /** 0–100 furrowed-brow tension (browDown). */
+    browTension: number;
+    /** 0–100 raised inner brow — worried/tense forehead. */
+    innerBrowRaise: number;
+    /** 0–100 pressed/stretched lip tension. */
+    lipTension: number;
+    /** 0–100 jaw openness — very low + lip tension = clenched. */
+    jawOpen: number;
+    /** 0–100 cheek raise — the true Duchenne marker of a genuine smile. */
+    cheekRaise: number;
+    /** 0–100 sneer/frown negativity marker. */
+    negative: number;
+  };
   /** Head pose from landmark geometry (reliable): tilt + turn. */
   pose: { rollDeg: number; turned: number };
   /** Gaze from the model's eye-look blendshapes (0-100 each direction). */
@@ -156,6 +170,17 @@ export async function scanFace(img: HTMLImageElement): Promise<FaceScanResult | 
   const eyesOpen = (1 - Math.min(1, ((bs.eyeBlinkLeft || 0) + (bs.eyeBlinkRight || 0)) / 2)) * 100;
   const genuineSmile = smile >= 25 && ((bs.eyeSquintLeft || 0) + (bs.eyeSquintRight || 0)) / 2 > 0.18;
 
+  // Professional-grade expression markers — each is a distinct TRAINED
+  // blendshape a photographer/coach would actually read off a face, not a
+  // generic guess. Averaged L/R where the shape is bilateral.
+  const pct = (v: number) => Math.round(clamp01(v) * 100);
+  const browTension = pct(Math.max(bs.browDownLeft || 0, bs.browDownRight || 0));
+  const innerBrowRaise = pct(bs.browInnerUp || 0);
+  const lipTension = pct(Math.max(bs.mouthPressLeft || 0, bs.mouthPressRight || 0, bs.mouthStretchLeft || 0, bs.mouthStretchRight || 0));
+  const jawOpenPct = pct(bs.jawOpen || 0);
+  const cheekRaise = pct(Math.max(bs.cheekSquintLeft || 0, bs.cheekSquintRight || 0));
+  const negative = pct(Math.max(bs.noseSneerLeft || 0, bs.noseSneerRight || 0, bs.mouthFrownLeft || 0, bs.mouthFrownRight || 0));
+
   // Head pose — from landmark geometry (reliable).
   const lEye = P(IDX.leftEye), rEye = P(IDX.rightEye), nose = P(IDX.noseTip);
   const rollDeg = (Math.atan2((rEye.y - lEye.y) * h, (rEye.x - lEye.x) * w) * 180) / Math.PI;
@@ -178,7 +203,10 @@ export async function scanFace(img: HTMLImageElement): Promise<FaceScanResult | 
     confidence,
     ratios,
     blendshapes,
-    expression: { smile: Math.round(smile), eyesOpen: Math.round(eyesOpen), genuineSmile },
+    expression: {
+      smile: Math.round(smile), eyesOpen: Math.round(eyesOpen), genuineSmile,
+      browTension, innerBrowRaise, lipTension, jawOpen: jawOpenPct, cheekRaise, negative,
+    },
     pose: { rollDeg: Math.round(rollDeg), turned: Math.round(turned * 100) / 100 },
     gaze: { lookIn, lookOut, lookUp, lookDown, atCamera },
     anchors: {

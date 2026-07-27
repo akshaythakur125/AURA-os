@@ -132,7 +132,11 @@ type FaceAnchors = {
 };
 
 type FaceRead = {
-  expression: { smile: number; eyesOpen: number; genuineSmile: boolean };
+  expression: {
+    smile: number; eyesOpen: number; genuineSmile: boolean;
+    browTension: number; innerBrowRaise: number; lipTension: number;
+    jawOpen: number; cheekRaise: number; negative: number;
+  };
   pose: { rollDeg: number; turned: number };
   gaze: { lookIn: number; lookOut: number; lookUp: number; lookDown: number; atCamera: boolean };
 };
@@ -910,10 +914,21 @@ export function analyzeImageDataUrl(
         if (faceRead) {
           try {
             const { analyzePresence } = await import("./presenceDetail");
+            // Framing from the measured face box — real positioning signals
+            // (how you're placed in the frame), not guessed.
+            const framing = faceBoxNorm
+              ? {
+                  centerX: (faceBoxNorm.x0 + faceBoxNorm.x1) / 2,
+                  centerY: (faceBoxNorm.y0 + faceBoxNorm.y1) / 2,
+                  faceHeight: faceBoxNorm.y1 - faceBoxNorm.y0,
+                  headroom: faceBoxNorm.y0,
+                }
+              : null;
             presenceDetail = analyzePresence(
               faceRead,
               regionData.hairRegion?.neatnessScore ?? null,
-              accessories ? { glasses: accessories.glasses, hat: accessories.hat, necktie: accessories.necktie } : null
+              accessories ? { glasses: accessories.glasses, hat: accessories.hat, necktie: accessories.necktie } : null,
+              framing
             );
           } catch { /* optional enrichment */ }
         }

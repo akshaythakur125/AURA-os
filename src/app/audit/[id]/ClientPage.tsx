@@ -1216,7 +1216,7 @@ export default function AuditDetailPage() {
               {/* ─── How you're showing up — paid perk ─── */}
               {displayResult?.imageMetrics?.presenceDetail != null && (
                 <div className="mb-6">
-                  <LockedSection locked={!isUnlocked} label="How You're Showing Up" unlockHref={unlockHref}>
+                  <LockedSection locked={!isUnlocked} label="Expression & Posture" unlockHref={unlockHref}>
                     <PresenceCard presence={displayResult.imageMetrics.presenceDetail} />
                   </LockedSection>
                 </div>
