@@ -30,6 +30,11 @@ export interface PresenceDetail {
   turned: number;
   /** One-line framing note from the measured face box, or null. */
   framingNote: string | null;
+  /** Shoulder-line tilt in degrees from the body-pose model, or null when
+   *  shoulders weren't clearly visible. */
+  shoulderTiltDeg: number | null;
+  /** One-line shoulder/torso posture note, or null. */
+  shoulderNote: string | null;
   /** 0–100 hair neatness (higher = neater), null when unavailable. */
   hairNeatness: number | null;
   /** Detected accessories (trained model, precision-first). */
@@ -61,7 +66,8 @@ export function analyzePresence(
   },
   hairNeatness?: number | null,
   accessories?: { glasses: boolean; hat: boolean; necktie: boolean } | null,
-  framing?: Framing | null
+  framing?: Framing | null,
+  shoulders?: { shoulderTiltDeg: number; headOffset: number } | null
 ): PresenceDetail {
   const e = read.expression;
   const { smile, eyesOpen, genuineSmile, browTension, innerBrowRaise, lipTension, jawOpen, cheekRaise, negative } = e;
@@ -137,8 +143,23 @@ export function analyzePresence(
     else if (framing.headroom > 0.28) framingNote = "Too much empty headroom above you — crop closer; the space should be around your face, not over it.";
     else if (offX > 0.16) framingNote = `You're off-centre (${Math.round(framing.centerX * 100)}% across) — recentre, or commit to the rule-of-thirds deliberately rather than by accident.`;
     else framingNote = "Framing is well-judged — face fills the frame, eyes near the upper third, balanced left-to-right.";
-    if (framingNote.startsWith("Framing is well")) strengths.push(framingNote);
-    else coaching.push(framingNote);
+    // Shown in its own dedicated card slot — not duplicated into the lists.
+  }
+
+  // ── Shoulder / torso posture (body-pose model; only when shoulders visible) ──
+  let shoulderTiltDeg: number | null = null;
+  let shoulderNote: string | null = null;
+  if (shoulders) {
+    shoulderTiltDeg = shoulders.shoulderTiltDeg;
+    const absOffset = Math.abs(shoulders.headOffset);
+    if (shoulders.shoulderTiltDeg >= 7) {
+      shoulderNote = `Your shoulders aren't level (about ${shoulders.shoulderTiltDeg}° off) — square them and consciously drop the higher one. An uneven shoulder line reads as slouching or an off-balance stance.`;
+    } else if (absOffset >= 0.28) {
+      shoulderNote = "Your head is leaning off to one side of your shoulders — bring it back over your spine. A head centred over the torso reads grounded and confident; off-centre reads unsure.";
+    } else {
+      shoulderNote = `Shoulders are level (${shoulders.shoulderTiltDeg}° off) and your head sits centred over them — grounded, confident posture.`;
+    }
+    // Shown in its own dedicated card slot — not duplicated into the lists.
   }
 
   // ── Hair ──
@@ -166,12 +187,14 @@ export function analyzePresence(
   else if (framing && (framing.faceHeight > 0.82 || framing.faceHeight < 0.17 || framing.centerY > 0.62)) topFix = framingNote || "Fix your framing — face at eye level, filling the frame, eyes on the upper third.";
   else if (hair != null && hair < 50) topFix = "Tidy your hair before the next shot — it's the most visible quick win here.";
   else if (absTilt > 9) topFix = "Level your head — a straight, square shot reads more deliberate and professional.";
+  else if (shoulders && shoulders.shoulderTiltDeg >= 8) topFix = "Level your shoulders — square them and drop the higher one for a grounded, balanced posture.";
   else topFix = "Your expression and posture read well — keep the direct gaze, relaxed face and square framing.";
 
   return {
     smile, genuineSmile, eyesOpen, eyeContact,
     browTension, lipTension, jawOpen, cheekRaise,
     tiltDeg, turned, framingNote,
+    shoulderTiltDeg, shoulderNote,
     hairNeatness: hair, accessories: acc,
     strengths, coaching, topFix,
   };

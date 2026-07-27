@@ -803,6 +803,20 @@ export function analyzeImageDataUrl(
           }
         } catch { /* keep heuristic fallback */ }
 
+        // ─── Shoulder posture (optional): only when a face is present, and the
+        // pose model itself only returns a result when shoulders are clearly
+        // visible. Time-boxed so it can never hang; degrades to null. ───
+        let shoulderPose: import("@/lib/face/poseScan").PoseRead | null = null;
+        if (faceRead) {
+          try {
+            const { scanPose } = await import("@/lib/face/poseScan");
+            shoulderPose = await Promise.race([
+              scanPose(img),
+              new Promise<null>((r) => setTimeout(() => r(null), 12000)),
+            ]);
+          } catch { /* optional enrichment */ }
+        }
+
         // ─── New: Lighting direction ───
         const lightingAnalysis = analyzeLightingDirection(ctx, w, h);
 
@@ -928,7 +942,8 @@ export function analyzeImageDataUrl(
               faceRead,
               regionData.hairRegion?.neatnessScore ?? null,
               accessories ? { glasses: accessories.glasses, hat: accessories.hat, necktie: accessories.necktie } : null,
-              framing
+              framing,
+              shoulderPose ? { shoulderTiltDeg: shoulderPose.shoulderTiltDeg, headOffset: shoulderPose.headOffset } : null
             );
           } catch { /* optional enrichment */ }
         }

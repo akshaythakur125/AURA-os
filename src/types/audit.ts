@@ -242,6 +242,8 @@ export interface ImageSignalMetrics {
     tiltDeg: number;
     turned: number;
     framingNote?: string | null;
+    shoulderTiltDeg?: number | null;
+    shoulderNote?: string | null;
     hairNeatness: number | null;
     accessories?: { glasses: boolean; hat: boolean; necktie: boolean } | null;
     strengths: string[];

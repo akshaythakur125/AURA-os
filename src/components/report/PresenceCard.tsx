@@ -15,6 +15,8 @@ interface Props {
     tiltDeg: number;
     turned: number;
     framingNote?: string | null;
+    shoulderTiltDeg?: number | null;
+    shoulderNote?: string | null;
     hairNeatness: number | null;
     accessories?: { glasses: boolean; hat: boolean; necktie: boolean } | null;
     strengths: string[];
@@ -57,12 +59,22 @@ export function PresenceCard({ presence: p }: Props) {
         <Chip ok={tilt <= 9} label="Head tilt" value={`${Math.round(tilt)}°`} />
         <Chip ok={Math.abs(p.turned) <= 0.15} label="Head turn" value={Math.abs(p.turned) <= 0.12 ? "Square" : Math.abs(p.turned) <= 0.3 ? "Slight" : "Turned"} />
         <Chip ok={p.cheekRaise >= 20} label="Eye warmth" value={p.cheekRaise >= 20 ? "Present" : "Low"} />
+        {typeof p.shoulderTiltDeg === "number" && (
+          <Chip ok={p.shoulderTiltDeg <= 6} label="Shoulders" value={p.shoulderTiltDeg <= 6 ? "Level" : `${p.shoulderTiltDeg}° off`} />
+        )}
       </div>
 
       {p.framingNote && (
         <div className="mt-3 rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
           <div className="text-[11px] font-semibold uppercase tracking-wide text-[#857b6e]">Framing</div>
           <p className="mt-0.5 text-xs leading-relaxed text-[#4a443d]">{p.framingNote}</p>
+        </div>
+      )}
+
+      {p.shoulderNote && (
+        <div className="mt-2 rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
+          <div className="text-[11px] font-semibold uppercase tracking-wide text-[#857b6e]">Posture (shoulders)</div>
+          <p className="mt-0.5 text-xs leading-relaxed text-[#4a443d]">{p.shoulderNote}</p>
         </div>
       )}
 
