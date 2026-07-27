@@ -1016,7 +1016,7 @@ export default function AuditDetailPage() {
                         observations, playbook, goal strategy, money map ─── */}
                     {audit?.reportStatus === "unlocked" && serverVerified !== false && displayFull && (
                       <div className="mb-6">
-                        <UnlockedValueHeader content={displayFull} />
+                        <UnlockedValueHeader content={displayFull} auditId={id} imageUrl={audit?.imageDataUrl} />
                         <GlowupShareCard content={displayFull} auditId={id} />
                         <FullReport content={displayFull} />
                       </div>
