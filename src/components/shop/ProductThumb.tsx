@@ -22,9 +22,9 @@ export function ProductThumb({
   const [failed, setFailed] = useState(false);
 
   return (
-    <div className={`relative shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-[#efe8db] to-[#e2d6c0] ${className}`}>
+    <div className={`relative shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-[#F7EEE2] via-[#F1E3D0] to-[#E9D3BB] ring-1 ring-inset ring-[#1c1917]/[0.06] ${className}`}>
       {/* Always-visible emoji base — the real photo covers it when it loads. */}
-      <span className="absolute inset-0 flex items-center justify-center text-2xl leading-none" role="img" aria-label={label || "product"}>{emoji}</span>
+      <span className="absolute inset-0 flex items-center justify-center text-[26px] leading-none drop-shadow-[0_1px_1px_rgba(28,25,23,0.12)]" role="img" aria-label={label || "product"}>{emoji}</span>
       {Boolean(imageUrl) && !failed && (
         // eslint-disable-next-line @next/next/no-img-element
         <img

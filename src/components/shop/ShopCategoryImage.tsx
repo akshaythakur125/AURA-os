@@ -17,11 +17,11 @@ export function ShopCategoryImage({ category, title, keywords = [], className = 
   const [failed, setFailed] = useState(false);
 
   return (
-    <div className={`relative h-44 overflow-hidden rounded-xl bg-gradient-to-br from-[#efe8db] to-[#e2d6c0] ${className}`}>
+    <div className={`relative h-44 overflow-hidden rounded-xl bg-gradient-to-br from-[#F7EEE2] via-[#F1E3D0] to-[#E9D3BB] ${className}`}>
       {/* Always-visible emoji base — the photo covers it when it loads, so the
           tile is never a blank box even if the CDN image fails. */}
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-5xl" role="img" aria-label={category}>{emojiForCategory(category)}</span>
+        <span className="text-6xl drop-shadow-[0_2px_2px_rgba(28,25,23,0.12)]" role="img" aria-label={category}>{emojiForCategory(category)}</span>
       </div>
       {!failed && (
         // eslint-disable-next-line @next/next/no-img-element

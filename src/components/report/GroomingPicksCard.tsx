@@ -33,6 +33,7 @@ export function GroomingPicksCard({ skin, hairNeatness }: { skin: Skin; hairNeat
       why: `Your T-zone shine measured ${skin.shine}/100 — a mattifying primer or blotting sheet keeps you matte instead of glossy on camera.`,
       priceHint: "₹250–600",
       emoji: "🧴",
+      query: "mattifying primer oil control face",
       links: beautyLinks("mattifying primer oil control face", "grooming"),
     });
   }
@@ -42,6 +43,7 @@ export function GroomingPicksCard({ skin, hairNeatness }: { skin: Skin; hairNeat
       why: `Under-eye shadow read ${skin.underEye}/100. A peach colour-corrector or a light concealer cancels it so your eyes look rested in photos.`,
       priceHint: "₹300–700",
       emoji: "👁️",
+      query: "under eye color corrector concealer",
       links: beautyLinks("under eye color corrector concealer", "grooming"),
     });
   }
@@ -51,6 +53,7 @@ export function GroomingPicksCard({ skin, hairNeatness }: { skin: Skin; hairNeat
       why: `Even tone measured ${skin.evenness}/100 — a vitamin C serum helps your skin read more uniform under a camera over a few weeks.`,
       priceHint: "₹350–800",
       emoji: "🍊",
+      query: "vitamin c face serum",
       links: beautyLinks("vitamin c face serum", "grooming"),
     });
   }
@@ -60,6 +63,7 @@ export function GroomingPicksCard({ skin, hairNeatness }: { skin: Skin; hairNeat
       why: `Smoothness measured ${skin.texture}/100. A niacinamide serum + a good moisturiser soften how fine texture catches the light.`,
       priceHint: "₹300–700",
       emoji: "💧",
+      query: "niacinamide serum face",
       links: beautyLinks("niacinamide serum face", "grooming"),
     });
   }
@@ -69,6 +73,7 @@ export function GroomingPicksCard({ skin, hairNeatness }: { skin: Skin; hairNeat
       why: `Your hair read a little unruly (${Math.round(hairNeatness)}/100). A pea-sized smoothing serum tames flyaways so hair stops pulling focus from your face.`,
       priceHint: "₹200–500",
       emoji: "💇",
+      query: "anti frizz hair smoothing serum",
       links: beautyLinks("anti frizz hair smoothing serum", "grooming"),
     });
   }
@@ -80,6 +85,7 @@ export function GroomingPicksCard({ skin, hairNeatness }: { skin: Skin; hairNeat
       why: "Your skin already photographs well — a light moisturiser with SPF keeps it healthy and even for every future shot.",
       priceHint: "₹250–600",
       emoji: "🧴",
+      query: "oil free moisturizer spf face",
       links: beautyLinks("oil free moisturizer spf face", "grooming"),
     });
   }
