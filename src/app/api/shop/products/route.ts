@@ -10,6 +10,8 @@
 //
 // Adding another provider = one more adapter function returning LiveProduct[].
 
+import { affiliateWrap } from "@/lib/shop/affiliate";
+
 export const dynamic = "force-dynamic";
 
 export interface LiveProduct {
@@ -30,17 +32,6 @@ function toNumber(v: unknown): number | null {
   return Number.isFinite(n) ? Math.round(n) : null;
 }
 
-function withAffiliateTag(url: string): string {
-  const tag = process.env.AMAZON_ASSOCIATE_TAG;
-  if (!tag) return url;
-  try {
-    const u = new URL(url);
-    u.searchParams.set("tag", tag);
-    return u.toString();
-  } catch {
-    return url;
-  }
-}
 
 // ── Provider: RapidAPI "real-time-amazon-data" (or a compatible shape) ──
 // Parsing is deliberately defensive: field names vary between RapidAPI Amazon
@@ -75,7 +66,7 @@ async function rapidApiAmazon(query: string, maxPrice?: number): Promise<LivePro
       price,
       currency: "INR",
       image: (it.product_photo ?? it.image ?? it.thumbnail ?? null) as string | null,
-      url: withAffiliateTag(link),
+      url: affiliateWrap(link, "amazon"),
       retailer: "amazon",
     });
   }

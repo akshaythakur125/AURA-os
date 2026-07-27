@@ -48,6 +48,12 @@ export async function GET() {
       present("SHOP_FEED_PROVIDER") || present("RAPIDAPI_KEY")
         ? "set"
         : "missing (using curated buy list)",
+    affiliateLinks:
+      present("NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG") ||
+      present("AMAZON_ASSOCIATE_TAG") ||
+      present("NEXT_PUBLIC_AFFILIATE_LINK_WRAP_TEMPLATE")
+        ? "set"
+        : "plain (no commission)",
     entitlementSync: present("NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY")
       ? "set"
       : "missing",

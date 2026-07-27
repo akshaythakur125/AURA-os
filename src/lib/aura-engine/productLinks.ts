@@ -3,6 +3,7 @@
 // improvement score calculations, and premium product bundles.
 
 import type { ImageSignalMetrics, FullAuraReportContent, Observation } from "@/types/audit";
+import { affiliateWrap } from "@/lib/shop/affiliate";
 
 // ═══════════════════════════════════════════════════
 // 1. BUY LINKS — Indian shopping sites
@@ -25,7 +26,8 @@ const STORES = {
 
 function makeLink(store: keyof typeof STORES, query: string): BuyLink {
   const s = STORES[store];
-  return { store: s.name, label: `Buy on ${s.name}`, url: `${s.base}${encodeURIComponent(query)}`, icon: s.icon };
+  const url = affiliateWrap(`${s.base}${encodeURIComponent(query)}`, store);
+  return { store: s.name, label: `Buy on ${s.name}`, url, icon: s.icon };
 }
 
 /** Hair product links based on observation */

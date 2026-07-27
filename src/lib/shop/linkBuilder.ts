@@ -15,6 +15,8 @@
  * - Nykaa Fashion: /search?q={query} — standard pattern
  */
 
+import { affiliateWrap } from "./affiliate";
+
 export type Retailer = "amazon" | "flipkart" | "myntra" | "ajio" | "nykaa";
 
 export interface LookSpec {
@@ -58,9 +60,14 @@ function buildSearchQuery(spec: LookSpec, retailer: Retailer): string {
 }
 
 /**
- * Builds a retailer-specific search URL from a look spec.
+ * Builds a retailer-specific search URL from a look spec, affiliate-wrapped
+ * when a program is configured (otherwise a plain retailer link).
  */
 export function buildRetailerUrl(spec: LookSpec, retailer: Retailer): string {
+  return affiliateWrap(rawRetailerUrl(spec, retailer), retailer);
+}
+
+function rawRetailerUrl(spec: LookSpec, retailer: Retailer): string {
   const query = buildSearchQuery(spec, retailer);
 
   switch (retailer) {

@@ -31,3 +31,33 @@ parsed, the row safely falls back to the curated link (never a broken price).
 
 Write one adapter function returning `LiveProduct[]` and branch on it in the
 `POST` handler by `SHOP_FEED_PROVIDER`. The client and UI need no changes.
+
+---
+
+# Earning commission (affiliate links)
+
+Live prices and commission are **separate** — you can have either or both.
+Every outbound retailer link (buy list, shop grid, and the report's product
+links) runs through `src/lib/shop/affiliate.ts`, which is off by default.
+
+## Amazon — direct
+Sign up at **affiliate-program.amazon.in**, then set your tag:
+
+    NEXT_PUBLIC_AMAZON_ASSOCIATE_TAG=yourtag-21
+
+Every Amazon link now carries `?tag=yourtag-21`. Works immediately after signup.
+
+## Myntra / Flipkart / Ajio / Nykaa — via one network
+These have no direct self-serve tag. Join **one** affiliate network that covers
+all of them (Cuelinks is the easiest link-kit signup; EarnKaro/Admitad also
+work) and set its redirect template — keep the literal `{url}`:
+
+    NEXT_PUBLIC_AFFILIATE_LINK_WRAP_TEMPLATE=https://linksredirect.com/?pub_id=YOURID&source=linkkit&url={url}
+
+Now non-Amazon links are wrapped through your network and become commissionable.
+Set `NEXT_PUBLIC_AFFILIATE_WRAP_AMAZON=true` to route Amazon through the network
+too (default keeps Amazon on its direct tag, which usually pays better).
+
+Note: EarnKaro generates per-link short URLs rather than a single wrap template,
+so the template approach fits Cuelinks / link-kit networks best. `/api/health`
+shows `features.affiliateLinks` = `set` once any of the above is configured.
