@@ -15,6 +15,7 @@ import { getProductName, getProductPrice, getProductPriceLabel } from "@/lib/pay
 import { getFriendDiscountCode } from "@/lib/storage/referralStore";
 import { PaymentTrust } from "@/components/trust/PaymentTrust";
 import { trackEvent } from "@/lib/storage/analyticsStore";
+import { trackEvent as trackPH, EVENTS } from "@/lib/analytics/events";
 import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
 import { generateDatingProfileReport } from "@/lib/aura-engine/datingAudit";
 import { generateGlowupPlan } from "@/lib/aura-engine/glowupPlan";
@@ -436,6 +437,7 @@ function UnlockForm() {
                 onClick={async () => {
                   try {
                     setError(null);
+                    trackPH(EVENTS.PAYMENT_STARTED, { auditId, productType: defaultProduct, amount: finalPrice });
                     // Load Razorpay script
                     if (!window.Razorpay) {
                       const script = document.createElement("script");
@@ -526,13 +528,17 @@ function UnlockForm() {
                         }
                         updateAudit(auditId, updates as Partial<Audit>);
                         trackEvent({ eventName: "product_unlocked", auditId, productType: defaultProduct });
+                        trackPH(EVENTS.PAYMENT_COMPLETED, { auditId, productType: defaultProduct, amount: finalPrice });
                         setStage("done");
                         setTimeout(() => router.push(`/audit/${auditId}`), 1500);
                       },
                       prefill: { name: customerName, contact: customerContact },
                       theme: { color: "#e11d48" },
                     });
-                    rzp.on("payment.failed", () => setError("Payment failed. Please try again."));
+                    rzp.on("payment.failed", () => {
+                      trackPH(EVENTS.PAYMENT_FAILED, { auditId, productType: defaultProduct });
+                      setError("Payment failed. Please try again.");
+                    });
                     rzp.open();
                   } catch (err) {
                     setError(err instanceof Error ? err.message : "Payment failed. Please try again.");
@@ -542,6 +548,10 @@ function UnlockForm() {
                 Pay ₹{finalPrice} with Razorpay
               </Button>
               {error && <p className="mt-3 rounded-lg bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
+              <p className="mt-3 text-center text-[10px] text-[#9c9184]">
+                Instant digital delivery. All sales are final —{" "}
+                <Link href="/refund" className="underline hover:text-[#6f675e]">no refunds</Link>.
+              </p>
             </Card>
 
             {/* Discreet unlock-code entry — lets the owner comp people with an admin code */}

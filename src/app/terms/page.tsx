@@ -72,7 +72,7 @@ export default function TermsPage() {
               <li>Payments are processed securely by Razorpay (UPI, card, or netbanking); AuraCheck does not store your card or bank details</li>
               <li>Your report unlocks instantly once payment is confirmed</li>
               <li>One-time payments only — no subscriptions or recurring billing</li>
-              <li>Refunds are handled on a case-by-case basis. Contact support with your order details</li>
+              <li>Reports are digital goods delivered instantly, so <span className="font-medium text-[#4a443d]">all sales are final and non-refundable</span> — see our <a href="/refund" className="text-red-300 underline">Refund &amp; Cancellation Policy</a></li>
               <li>Prices and product availability may change without notice</li>
             </ul>
           </section>

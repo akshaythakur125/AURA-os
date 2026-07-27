@@ -17,6 +17,8 @@ const footerLinks = [
     links: [
       { href: "/privacy", label: "Privacy Policy" },
       { href: "/terms", label: "Terms of Service" },
+      { href: "/refund", label: "Refund Policy" },
+      { href: "/contact", label: "Contact Us" },
       { href: "/privacy-center", label: "Privacy Center" },
       { href: "/data", label: "Your Local Data" },
       { href: "/help", label: "Help & FAQ" },
