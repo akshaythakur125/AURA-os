@@ -41,6 +41,7 @@ export function PhotoKitCard({ metrics }: { metrics: Metrics }) {
       label: "Ring light / LED key light",
       why: `Your lighting scored ${lighting}/100 — a key light at eye level is the single biggest, most reusable upgrade for every photo you take.`,
       priceHint: "₹600–1,500",
+      emoji: "💡",
       links: gearLinks("ring light for phone with tripod stand", "lighting"),
     });
   }
@@ -49,6 +50,7 @@ export function PhotoKitCard({ metrics }: { metrics: Metrics }) {
       label: "Phone tripod + shutter remote",
       why: `Sharpness scored ${sharp}/100 — most of that is hand-shake. A tripod lets you use the sharper rear camera and shoot hands-free.`,
       priceHint: "₹300–800",
+      emoji: "📷",
       links: gearLinks("mobile phone tripod stand with bluetooth remote", "clarity"),
     });
   }
@@ -57,6 +59,7 @@ export function PhotoKitCard({ metrics }: { metrics: Metrics }) {
       label: "Plain photo backdrop",
       why: `Background clutter measured ${bg}/100. A collapsible neutral backdrop gives you one clean, repeatable background for every shot.`,
       priceHint: "₹500–1,200",
+      emoji: "🖼️",
       links: gearLinks("collapsible photography backdrop plain grey", "background"),
     });
   }
@@ -65,6 +68,7 @@ export function PhotoKitCard({ metrics }: { metrics: Metrics }) {
       label: "5-in-1 reflector",
       why: "Your light reads flat — a cheap reflector bounces light back onto your face for instant depth and pop, no editing needed.",
       priceHint: "₹500–900",
+      emoji: "🔆",
       links: gearLinks("5 in 1 photography reflector", "lighting"),
     });
   }
@@ -75,6 +79,7 @@ export function PhotoKitCard({ metrics }: { metrics: Metrics }) {
       label: "Bluetooth shutter remote",
       why: "Your setup already works — a tiny shutter remote just makes hands-free, well-framed reshoots effortless.",
       priceHint: "₹200–500",
+      emoji: "🎮",
       links: gearLinks("bluetooth camera shutter remote for phone", "clarity"),
     });
   }

@@ -123,6 +123,20 @@ export const CATEGORY_PHOTOS: Record<LookCategory, TaggedPhoto[]> = {
   ],
 };
 
+// Self-contained emoji per category — the guaranteed-visible fallback when a
+// remote photo is unavailable or fails to load.
+export const CATEGORY_EMOJI: Record<LookCategory, string> = {
+  tshirt: "👕", shirt: "👔", jeans: "👖", trousers: "👖", shorts: "🩳",
+  jacket: "🧥", hoodie: "🧥", sweatshirt: "👚", sneakers: "👟", shoes: "👞",
+  sandals: "👡", watch: "⌚", sunglasses: "🕶️", backpack: "🎒", fragrance: "🌸",
+  grooming: "🧴", earrings: "💎", heels: "👠", flats: "🥿", dress: "👗",
+  kurta: "🥻", saree: "🥻", accessory: "🛍️",
+};
+
+export function emojiForCategory(category: LookCategory): string {
+  return CATEGORY_EMOJI[category] || "🛍️";
+}
+
 export function hashString(str: string): number {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {

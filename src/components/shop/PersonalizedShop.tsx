@@ -10,6 +10,8 @@ import type { Look } from "@/lib/shop/catalogTypes";
 import type { StatusLeakTag } from "@/types/product";
 import { buildRetailerUrl, buildPrimaryShopLink, type Retailer } from "@/lib/shop/linkBuilder";
 import { fetchLiveProducts, queryForLook, type LiveProduct } from "@/lib/shop/liveFeed";
+import { resolveShopImage, emojiForCategory } from "@/lib/shop/shopImage";
+import { ProductThumb } from "./ProductThumb";
 import { formatLookPrice } from "@/lib/shop/pricing";
 import { ShopCategoryImage } from "./ShopCategoryImage";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
@@ -141,10 +143,14 @@ function BuyListRow({ look, index, why, enableLive }: { look: Look; index: numbe
   const title = live?.title ?? look.title;
   const url = live?.url ?? buildPrimaryShopLink({ category: look.category, keywords: look.keywords, gender: look.gender });
   const priceLabel = live ? `₹${live.price.toLocaleString("en-IN")}` : formatLookPrice(look.price);
+  const imageUrl = live?.image ?? resolveShopImage(look.category, look.title, look.keywords).url;
 
   return (
     <li className="flex items-center gap-3 rounded-xl border border-[#1c1917]/[0.07] bg-[#fbf8f2]/70 p-3">
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#E14434] text-xs font-bold text-white">{index + 1}</span>
+      <div className="relative shrink-0">
+        <ProductThumb imageUrl={imageUrl} emoji={emojiForCategory(look.category)} label={title} className="h-14 w-14" />
+        <span className="absolute -left-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#E14434] text-[10px] font-bold text-white shadow">{index + 1}</span>
+      </div>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           {live ? (
