@@ -22,6 +22,7 @@ import { ReshootCelebration } from "@/components/report/ReshootCelebration";
 import { PhotoKitCard } from "@/components/report/PhotoKitCard";
 import { GroomingPicksCard } from "@/components/report/GroomingPicksCard";
 import { CompleteTheLookCard } from "@/components/report/CompleteTheLookCard";
+import { EditRecipeCard } from "@/components/report/EditRecipeCard";
 import { LockedSection } from "@/components/report/LockedSection";
 import { FeedbackPrompt } from "@/components/report/FeedbackPrompt";
 import { GroomingLocalCard, type NearbyPlace } from "@/components/report/GroomingLocalCard";
@@ -1206,6 +1207,13 @@ export default function AuditDetailPage() {
                       <div className="mb-6">
                         <LockedSection locked={!isUnlocked} label="Your Photo Kit" unlockHref={unlockHref}>
                           <PhotoKitCard metrics={displayResult.imageMetrics as any} />
+                        </LockedSection>
+                      </div>
+                    )}
+                    {displayResult.imageMetrics != null && (
+                      <div className="mb-6">
+                        <LockedSection locked={!isUnlocked} label="Which Filter & How to Edit" unlockHref={unlockHref}>
+                          <EditRecipeCard metrics={displayResult.imageMetrics as any} />
                         </LockedSection>
                       </div>
                     )}
