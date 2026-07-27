@@ -19,6 +19,9 @@ import { FullReport } from "@/components/report/FullReport";
 import { UnlockedValueHeader } from "@/components/report/UnlockedValueHeader";
 import { GlowupShareCard } from "@/components/report/GlowupShareCard";
 import { ReshootCelebration } from "@/components/report/ReshootCelebration";
+import { PhotoKitCard } from "@/components/report/PhotoKitCard";
+import { GroomingPicksCard } from "@/components/report/GroomingPicksCard";
+import { CompleteTheLookCard } from "@/components/report/CompleteTheLookCard";
 import { LockedSection } from "@/components/report/LockedSection";
 import { FeedbackPrompt } from "@/components/report/FeedbackPrompt";
 import { GroomingLocalCard, type NearbyPlace } from "@/components/report/GroomingLocalCard";
@@ -1174,24 +1177,41 @@ export default function AuditDetailPage() {
                   photo was quality-gated (auraScore null). The archetype, leaks, goal
                   and budget still drive accurate picks, so a shopper is never left
                   without suggestions just because their photo scored low. */}
-              {personalization != null && displayResult != null && (
-                <PersonalizedShop
-                  looks={getPersonalizedLooks({
-                    styleArchetypes: [personalization.archetype === "Corporate Sharp" ? "professional" : personalization.archetype === "Creator Vibe" ? "creator" : personalization.archetype === "College Casual" ? "college" : personalization.archetype === "Premium Minimalist" ? "premium" : personalization.archetype === "Urban Aspirational" ? "confident" : personalization.archetype === "Loud Flex" ? "bold" : personalization.archetype === "Soft Luxury" ? "understated" : "clean"],
-                    statusLeakTags: (displayResult.statusLeaks ?? []).map((l) => l.category as any).filter(Boolean),
-                    goalTags: audit!.goal ? [audit!.goal as any] : undefined,
-                    budgetMax: audit!.budgetRange as any,
-                    gender: audit!.gender,
-                  })}
-                  userScore={displayResult.auraScore ?? undefined}
-                  archetype={personalization.archetype}
-                  leakTags={(displayResult.statusLeaks ?? []).map((l) => l.category)}
-                  gender={audit!.gender}
-                  locked={!isUnlocked}
-                  freeCount={1}
-                  unlockHref={unlockHref}
-                />
-              )}
+              {personalization != null && displayResult != null && (() => {
+                const shopLooks = getPersonalizedLooks({
+                  styleArchetypes: [personalization.archetype === "Corporate Sharp" ? "professional" : personalization.archetype === "Creator Vibe" ? "creator" : personalization.archetype === "College Casual" ? "college" : personalization.archetype === "Premium Minimalist" ? "premium" : personalization.archetype === "Urban Aspirational" ? "confident" : personalization.archetype === "Loud Flex" ? "bold" : personalization.archetype === "Soft Luxury" ? "understated" : "clean"],
+                  statusLeakTags: (displayResult.statusLeaks ?? []).map((l) => l.category as any).filter(Boolean),
+                  goalTags: audit!.goal ? [audit!.goal as any] : undefined,
+                  budgetMax: audit!.budgetRange as any,
+                  gender: audit!.gender,
+                });
+                return (
+                  <>
+                    <PersonalizedShop
+                      looks={shopLooks}
+                      userScore={displayResult.auraScore ?? undefined}
+                      archetype={personalization.archetype}
+                      leakTags={(displayResult.statusLeaks ?? []).map((l) => l.category)}
+                      gender={audit!.gender}
+                      locked={!isUnlocked}
+                      freeCount={1}
+                      unlockHref={unlockHref}
+                    />
+                    <div className="mb-6">
+                      <LockedSection locked={!isUnlocked} label="Complete The Look" unlockHref={unlockHref}>
+                        <CompleteTheLookCard looks={shopLooks} archetype={personalization.archetype} />
+                      </LockedSection>
+                    </div>
+                    {displayResult.imageMetrics != null && (
+                      <div className="mb-6">
+                        <LockedSection locked={!isUnlocked} label="Your Photo Kit" unlockHref={unlockHref}>
+                          <PhotoKitCard metrics={displayResult.imageMetrics as any} />
+                        </LockedSection>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
 
               {/* ─── How you're showing up — paid perk ─── */}
               {displayResult?.imageMetrics?.presenceDetail != null && (
@@ -1207,6 +1227,18 @@ export default function AuditDetailPage() {
                 <div className="mb-6">
                   <LockedSection locked={!isUnlocked} label="Skin, Close Up" unlockHref={unlockHref}>
                     <SkinDetailCard skin={displayResult.imageMetrics.skinDetail} />
+                  </LockedSection>
+                </div>
+              )}
+
+              {/* ─── Grooming picks from your skin read — paid perk ─── */}
+              {displayResult?.imageMetrics?.skinDetail != null && (
+                <div className="mb-6">
+                  <LockedSection locked={!isUnlocked} label="Grooming Picks" unlockHref={unlockHref}>
+                    <GroomingPicksCard
+                      skin={displayResult.imageMetrics.skinDetail}
+                      hairNeatness={displayResult.imageMetrics?.presenceDetail?.hairNeatness ?? displayResult.imageMetrics?.hairRegion?.neatnessScore ?? null}
+                    />
                   </LockedSection>
                 </div>
               )}
