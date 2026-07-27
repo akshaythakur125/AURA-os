@@ -57,6 +57,7 @@ export async function GET() {
     entitlementSync: present("NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY")
       ? "set"
       : "missing",
+    analytics: present("NEXT_PUBLIC_POSTHOG_KEY") ? "set" : "missing (no events captured)",
     supportEmail: present("NEXT_PUBLIC_SUPPORT_EMAIL") ? "set" : "using default",
     ownerWhatsApp: present("NEXT_PUBLIC_OWNER_WHATSAPP") ? "set" : "missing",
   };
