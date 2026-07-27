@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -9,6 +9,7 @@ import { FadeInView } from "@/components/ui/FadeInView";
 import type { Look } from "@/lib/shop/catalogTypes";
 import type { StatusLeakTag } from "@/types/product";
 import { buildRetailerUrl, buildPrimaryShopLink, type Retailer } from "@/lib/shop/linkBuilder";
+import { fetchLiveProducts, queryForLook, type LiveProduct } from "@/lib/shop/liveFeed";
 import { formatLookPrice } from "@/lib/shop/pricing";
 import { ShopCategoryImage } from "./ShopCategoryImage";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
@@ -113,6 +114,61 @@ function ShopLinks({ look }: { look: Look }) {
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * One decisive buy-list row. When a live product feed is configured it fetches
+ * the cheapest REAL product for this need and shows its exact price + direct
+ * product link (with a "live" tag). Otherwise it falls back to the curated
+ * item and a retailer search link — no visual gap, no fabricated price.
+ */
+function BuyListRow({ look, index, why, enableLive }: { look: Look; index: number; why: string; enableLive: boolean }) {
+  const [live, setLive] = useState<LiveProduct | null>(null);
+
+  useEffect(() => {
+    if (!enableLive) return;
+    let cancelled = false;
+    fetchLiveProducts(
+      queryForLook({ keywords: look.keywords, category: look.category, gender: look.gender }),
+      look.price || undefined
+    ).then((ps) => {
+      if (!cancelled && ps.length > 0) setLive(ps[0]);
+    });
+    return () => { cancelled = true; };
+  }, [look, enableLive]);
+
+  const title = live?.title ?? look.title;
+  const url = live?.url ?? buildPrimaryShopLink({ category: look.category, keywords: look.keywords, gender: look.gender });
+  const priceLabel = live ? `₹${live.price.toLocaleString("en-IN")}` : formatLookPrice(look.price);
+
+  return (
+    <li className="flex items-center gap-3 rounded-xl border border-[#1c1917]/[0.07] bg-[#fbf8f2]/70 p-3">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#E14434] text-xs font-bold text-white">{index + 1}</span>
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          {live ? (
+            <span className="truncate text-sm font-semibold text-[#1C1917]">{title}</span>
+          ) : (
+            <Link href={"/shop/look/" + look.id} className="truncate text-sm font-semibold text-[#1C1917] hover:underline">{title}</Link>
+          )}
+          <span className="shrink-0 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">{priceLabel}</span>
+          {live && (
+            <span className="shrink-0 rounded-full bg-[#E14434]/10 px-1.5 py-0.5 text-[9px] font-semibold text-[#B23A25]" title="Live price from the retailer">● live price</span>
+          )}
+        </div>
+        <p className="mt-0.5 truncate text-[11px] text-[#6f675e]">{why}</p>
+      </div>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => trackEvent(EVENTS.SHOP_LINK_CLICKED, { retailer: live?.retailer ?? "amazon", lookCategory: look.category })}
+        className="shrink-0 rounded-lg bg-[#1C1917] px-3 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90"
+      >
+        Shop →
+      </a>
+    </li>
   );
 }
 
@@ -309,27 +365,7 @@ export function PersonalizedShop({
                       if (leakTags.includes(tag) && !usedLeak.has(tag)) { usedLeak.add(tag); why = LEAK_FIX_COPY[tag as StatusLeakTag] || why; break; }
                     }
                   }
-                  return (
-                    <li key={look.id} className="flex items-center gap-3 rounded-xl border border-[#1c1917]/[0.07] bg-[#fbf8f2]/70 p-3">
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#E14434] text-xs font-bold text-white">{i + 1}</span>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                          <Link href={"/shop/look/" + look.id} className="truncate text-sm font-semibold text-[#1C1917] hover:underline">{look.title}</Link>
-                          <span className="shrink-0 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">{formatLookPrice(look.price)}</span>
-                        </div>
-                        <p className="mt-0.5 truncate text-[11px] text-[#6f675e]">{why}</p>
-                      </div>
-                      <a
-                        href={buildPrimaryShopLink({ category: look.category, keywords: look.keywords, gender: look.gender })}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => trackEvent(EVENTS.SHOP_LINK_CLICKED, { retailer: "amazon", lookCategory: look.category })}
-                        className="shrink-0 rounded-lg bg-[#1C1917] px-3 py-2 text-xs font-semibold text-white transition-opacity hover:opacity-90"
-                      >
-                        Shop →
-                      </a>
-                    </li>
-                  );
+                  return <BuyListRow key={look.id} look={look} index={i} why={why} enableLive={!locked} />;
                 }); })()}
               </ol>
               {locked && lockedRemaining > 0 && (

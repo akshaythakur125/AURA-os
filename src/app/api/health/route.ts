@@ -44,6 +44,10 @@ export async function GET() {
   // ── Paid-feature value dependencies (not blockers, but "value for money") ──
   const features = {
     nearbySalons: present("GOOGLE_MAPS_API_KEY") ? "set" : "missing",
+    liveProductFeed:
+      present("SHOP_FEED_PROVIDER") || present("RAPIDAPI_KEY")
+        ? "set"
+        : "missing (using curated buy list)",
     entitlementSync: present("NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY")
       ? "set"
       : "missing",
