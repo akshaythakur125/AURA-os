@@ -686,11 +686,11 @@ function generateObservations(metrics: ImageSignalMetrics, goal: string): Observ
       category: "hair",
       severity: "needs-work",
       title: "Hair is pulling focus from your face",
-      detail: pick([
+      detail: anchor(pick([
         "Flyaways and uneven texture are creating visual noise. Your face should be the star, not your hair.",
         "The frizz here is competing for attention. Taming it will instantly clean up the whole photo.",
         "Hair looks a bit untamed — not bad, but it's distracting from your best features.",
-      ]),
+      ]), "neatness", metrics.hairRegion.neatnessScore),
       suggestion: pick([
         "Quick fix: brush through before the photo, apply a small amount of smoothing product. 30 seconds, big difference.",
         "A leave-in conditioner or anti-frizz serum before photos. For curly hair, a diffuser attachment works wonders.",
@@ -777,10 +777,10 @@ function generateObservations(metrics: ImageSignalMetrics, goal: string): Observ
       category: "skin",
       severity: "needs-work",
       title: "Uneven skin tone is showing",
-      detail: pick([
+      detail: anchor(pick([
         "Shadows or uneven lighting are creating patches on your face. This is usually a lighting problem, not a skin problem.",
         "Dark circles or uneven patches are visible. Good news: this is almost always fixable with better light.",
-      ]),
+      ]), "evenness", metrics.skinRegion.evenness),
       suggestion: pick([
         "Face a window at 45°. That's it. Natural side light evens everything out.",
         "The #1 fix: move to a window. Side light at 45° does what ₹5000 of skincare can't.",
@@ -806,10 +806,10 @@ function generateObservations(metrics: ImageSignalMetrics, goal: string): Observ
       category: "grooming",
       severity: "needs-work",
       title: "A quick grooming session would change everything",
-      detail: pick([
+      detail: anchor(pick([
         "The basics need attention — tidy eyebrows, moisturized skin, neat hair. These are free and make a visible difference.",
         "A little grooming effort goes a long way in photos. You're leaving points on the table.",
-      ]),
+      ]), "grooming", groomingScore),
       suggestion: pick([
         "30-minute fix: trim stray hairs, shape brows, moisturize. That's it. The photo will look completely different.",
         "Before your next photo: groom. It costs nothing and changes everything.",
@@ -840,10 +840,10 @@ function generateObservations(metrics: ImageSignalMetrics, goal: string): Observ
       category: "background",
       severity: "needs-work",
       title: "Background is competing with your face",
-      detail: pick([
+      detail: anchor(pick([
         "Clutter, objects, or visual noise behind you are pulling attention. In a photo, the background either supports you or undermines you.",
         "The background is too busy. People's eyes are wandering to what's behind you instead of looking at you.",
-      ]),
+      ]), "complexity", metrics.backgroundComplexityEstimate),
       suggestion: pick([
         "Stand in front of a plain wall, open doorway, or outdoor space with minimal clutter 4+ feet behind you.",
         "Clean background = clean signal. Move 3 feet closer to a wall or door.",
@@ -888,6 +888,13 @@ function generateObservations(metrics: ImageSignalMetrics, goal: string): Observ
   }
 
   return obs;
+}
+
+// Anchors a human-voiced observation to its measured number so a "needs-work"
+// call reads as earned, not vibes — matching the rest of the report's register
+// without turning the sentence into a metric dump. Kept to a light parenthetical.
+function anchor(text: string, label: string, value: number): string {
+  return `${text} (${label} measuring ${Math.round(value)}/100)`;
 }
 
 // ponytail: deterministic pick — same input always produces same output
