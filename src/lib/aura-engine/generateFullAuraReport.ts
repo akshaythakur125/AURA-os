@@ -468,6 +468,56 @@ function generateActionPlan(
   ];
 }
 
+/**
+ * Posing/presentation advice built from the measured presence read (expression,
+ * eye contact, head tilt/turn, shoulder line, brow tension) rather than a
+ * generic "keep shoulders relaxed" line. Prioritises the biggest measured
+ * issue first, then closes on the mechanical basics. Falls back gracefully when
+ * no face/presence was detected.
+ */
+function generatePosingAdvice(metrics: ImageSignalMetrics, goal: string): string {
+  const p = metrics.presenceDetail;
+  const base = "Face your light at a slight angle for natural contour, roll your shoulders back and down, and bring your chin slightly forward and down to sharpen the jawline.";
+
+  if (!p) {
+    // No face read — keep it mechanical but sound.
+    return `${base} ${metrics.symmetryScore < 50 ? "The frame looks a little off-balance — centre yourself and keep your eyeline level." : "Look straight into the lens and let your expression settle into something relaxed."}`;
+  }
+
+  const fixes: string[] = [];
+  // 1. Eye contact — the single biggest trust signal for a face photo.
+  if (!p.eyeContact) {
+    fixes.push("you're not quite looking at the lens — direct eye contact is the biggest trust signal a photo has, so look straight down the barrel");
+  }
+  // 2. Head tilt (measured degrees).
+  if (p.tiltDeg >= 9) {
+    fixes.push(`your head is tilted about ${Math.round(p.tiltDeg)}° — ${goal === "office" || goal === "linkedin" ? "straighten it level for a professional shot" : "ease it back toward level (a slight ≤5° tilt reads friendly, more starts to read unsure)"}`);
+  }
+  // 3. Shoulder line (from the pose model, when present).
+  if (p.shoulderNote) {
+    fixes.push(p.shoulderNote.replace(/\.$/, "").toLowerCase());
+  } else if (typeof p.turned === "number" && p.turned > 22) {
+    fixes.push("you're turned fairly far from the camera — square your shoulders up a little more");
+  }
+  // 4. Expression tension vs warmth.
+  if (p.browTension >= 45) {
+    fixes.push(`your brow is doing some work (tension ${p.browTension}/100) — consciously soften it, it's reading as tense`);
+  } else if (p.smile < 25 && !p.genuineSmile) {
+    fixes.push("the expression is flat — think of something genuinely funny right before the shutter so the smile reaches your eyes, not just your mouth");
+  }
+
+  if (fixes.length === 0) {
+    // Presence is already strong — reinforce, don't invent a problem.
+    const strength = p.genuineSmile
+      ? "Your expression already lands genuine and your eyeline is on the lens — that's the hard part done."
+      : "Your posture and eyeline are already working.";
+    return `${strength} ${base}`;
+  }
+
+  const lead = fixes.slice(0, 2).map((f, i) => (i === 0 ? f.charAt(0).toUpperCase() + f.slice(1) : f)).join("; and ");
+  return `${lead}. ${base}`;
+}
+
 function generatePhotoGuidance(metrics: ImageSignalMetrics, goal: string): PhotoGuidance {
   // Now personalized based on actual analysis findings
   const lightingAdvice = metrics.lightingScore < 60
@@ -502,7 +552,7 @@ function generatePhotoGuidance(metrics: ImageSignalMetrics, goal: string): Photo
     lighting: lightingAdvice,
     framing: framingAdvice,
     background: bgAdvice,
-    posingOrPresentation: `Face the light source at a slight angle for natural contour. Keep shoulders relaxed and chin slightly forward. ${metrics.faceDetected && metrics.symmetryScore < 50 ? "Your image shows some asymmetry — a slight head tilt can help balance the composition." : "A genuine smile signals confidence and warmth."}`,
+    posingOrPresentation: generatePosingAdvice(metrics, goal),
     editing: editingAdvice,
   };
 }
