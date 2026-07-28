@@ -16,6 +16,7 @@ import {
   generateVerdict,
 } from "./scoring";
 import { calculateImprovementScore, getBeforeAfter } from "./productLinks";
+import { composeVerdict } from "./verdictComposer";
 import { runIntelligenceAnalysis } from "./intelligence";
 import type { IntelligenceResult } from "./intelligence";
 
@@ -751,33 +752,6 @@ function pick(arr: string[]): string {
   return arr[_pickSeed % arr.length];
 }
 
-function generateFinalVerdict(
-  score: number,
-  category: string,
-  metrics: ImageSignalMetrics
-): string {
-  if (score >= 75) {
-    const refineTarget = metrics.lightingScore < 70 ? "lighting" : metrics.sharpness < 70 ? "clarity" : "framing";
-    return pick([
-      `You're already in the top tier. The ${refineTarget} tweak is the last 10% that separates good from exceptional.`,
-      `Strong photo. One targeted fix in ${refineTarget} and you're at a professional level.`,
-      `This is a solid 75+. The ${refineTarget} adjustment is polish, not a rebuild.`,
-    ]);
-  }
-  if (score >= 60) {
-    return pick([
-      "Good foundation, clear weak spots. Fix the #1 issue in your roadmap and watch the score jump.",
-      "You're closer than you think. Two or three targeted changes and this becomes a genuinely strong photo.",
-      "Above average, but you're leaving easy points on the table. The roadmap shows exactly what to fix.",
-    ]);
-  }
-  return pick([
-    "Honest take: this needs work. But the good news is the biggest improvements are free — lighting and clarity alone can transform this.",
-    "Room to grow, and most of it costs nothing. Start with the free fixes, then build from there.",
-    "This isn't your best photo — but it shows your baseline. Fix the basics and retake. You'll be surprised.",
-  ]);
-}
-
 function hashMetrics(m: { brightness: number; contrast: number; saturation: number; sharpness: number }): number {
   return Math.round(m.brightness * 7 + m.contrast * 13 + m.saturation * 17 + m.sharpness * 23) % 10000;
 }
@@ -811,7 +785,8 @@ export async function generateFullAuraReport(
   }
 
   // ponytail: seed deterministic pick from image metrics
-  setPickSeed(hashMetrics({ brightness: metrics.brightness, contrast: metrics.contrast, saturation: metrics.saturation, sharpness: metrics.sharpness }));
+  const pickSeed = hashMetrics({ brightness: metrics.brightness, contrast: metrics.contrast, saturation: metrics.saturation, sharpness: metrics.sharpness });
+  setPickSeed(pickSeed);
 
   // Run intelligence analysis with vision results if available
   let intelligenceResult: IntelligenceResult | null = null;
@@ -877,12 +852,24 @@ export async function generateFullAuraReport(
   const budgetPlan = generateTieredBudgetPlan(metrics, audit.goal);
   const photoGuidance = generatePhotoGuidance(metrics, audit.goal);
   const goalAdvice = generateGoalAdvice(audit.goal, metrics);
-  const finalVerdict = generateFinalVerdict(score, category, metrics);
   const observations = generateObservations(metrics, audit.goal);
 
   const improvementScore = calculateImprovementScore(metrics, score, statusLeaks);
   const beforeAfter = getBeforeAfter(metrics, score, improvementScore.potentialScore);
   const actionPlan = generateActionPlan(metrics, statusLeaks, audit.goal, improvementScore.potentialScore);
+
+  // Verdict is synthesised last — it needs the measured ceiling and the ranked
+  // top leak so the headline names this photo's real strongest signal, its
+  // biggest cost, and the exact move to close the gap.
+  const topLeak = [...statusLeaks].sort((a, b) => b.impactScore - a.impactScore)[0];
+  const finalVerdict = composeVerdict({
+    score,
+    category,
+    metrics,
+    topLeak,
+    ceiling: improvementScore.potentialScore,
+    seed: pickSeed,
+  });
 
   return {
     fullScore: score,
