@@ -48,13 +48,14 @@ function getOwnerWhatsApp(): string | null {
 
 const PRODUCT_FEATURES: Record<string, string[]> = {
   aura_report: [
-    "Full visual breakdown across 7 dimensions",
-    "Detailed photo-quality issues with personalized fixes",
-    "Budget upgrade plan at every price tier",
-    "Goal-specific profile strategy",
-    "Photo guidance — lighting, framing, background, editing",
-    "Priority upgrade map — what to do first, second, and what to avoid",
-    "Share-ready report view",
+    "Every photo issue with its exact fix, ranked by measured impact",
+    "A 7-day reshoot plan built from your photo's own numbers",
+    "Expression & posture read — smile, eye contact, head tilt, shoulders",
+    "Which Instagram filter fits + exactly how to edit it",
+    "Your colour palette + capsule wardrobe, matched to your undertone",
+    "Face-shape studio — the haircut, glasses & beard that suit you",
+    "Celebrity style match + shop the look in your budget",
+    "Downloadable branded report + share-ready score card",
   ],
   dating_audit: [
     "Profile bio & prompt text analysis",
