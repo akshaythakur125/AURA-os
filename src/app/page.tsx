@@ -3,6 +3,7 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { PostOrNotBand } from "@/components/home/PostOrNotBand";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { AuditDimensions } from "@/components/home/AuditDimensions";
+import { ShopTheVibeBand } from "@/components/home/ShopTheVibeBand";
 import { PrivacyMethodology } from "@/components/home/PrivacyMethodology";
 import { FinalCTA } from "@/components/home/FinalCTA";
 import { DistrictLabel } from "@/components/world/DistrictLabel";
@@ -53,6 +54,7 @@ export default function HomePage() {
       <PostOrNotBand />
       <HowItWorks />
       <AuditDimensions />
+      <ShopTheVibeBand />
       <PrivacyMethodology />
       <FinalCTA />
       <DistrictLabel />
