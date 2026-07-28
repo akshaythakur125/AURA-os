@@ -18,6 +18,7 @@ import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport
 import { FullReport } from "@/components/report/FullReport";
 import { UnlockedValueHeader } from "@/components/report/UnlockedValueHeader";
 import { GlowupShareCard } from "@/components/report/GlowupShareCard";
+import { ReportDownloadCard } from "@/components/report/ReportDownloadCard";
 import { ReshootCelebration } from "@/components/report/ReshootCelebration";
 import { PhotoKitCard } from "@/components/report/PhotoKitCard";
 import { GroomingPicksCard } from "@/components/report/GroomingPicksCard";
@@ -1017,6 +1018,7 @@ export default function AuditDetailPage() {
                     {audit?.reportStatus === "unlocked" && serverVerified !== false && displayFull && (
                       <div className="mb-6">
                         <UnlockedValueHeader content={displayFull} auditId={id} imageUrl={audit?.imageDataUrl} />
+                        <ReportDownloadCard content={displayFull} auditId={id} imageUrl={audit?.imageDataUrl} />
                         <GlowupShareCard content={displayFull} auditId={id} />
                         <FullReport content={displayFull} />
                       </div>
