@@ -14,6 +14,7 @@ import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
 import { renderPostVerdictCard, type PostVerdict } from "@/lib/share/renderPostVerdictCard";
 import { toneLine, TONE_META, type Tone } from "@/lib/aura-engine/toneLines";
 import { trackEvent } from "@/lib/storage/analyticsStore";
+import { ShopNudge } from "@/components/shop/ShopNudge";
 import type { AuditType, AuditGoal, BudgetAmount } from "@/types/audit";
 
 type Stage = "idle" | "analyzing" | "result" | "error";
@@ -350,6 +351,8 @@ export default function PostOrNotPage() {
                   </div>
                 </div>
               </FadeInView>
+
+              <FadeInView delay={240}><ShopNudge variant="gear" /></FadeInView>
 
               <div className="flex justify-center pb-4">
                 <button onClick={reset} className="text-sm text-[#857b6e] underline-offset-2 hover:text-[#4a443d] hover:underline">← Try another photo</button>

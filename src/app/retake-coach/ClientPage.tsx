@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { analyzeImageDataUrl } from "@/lib/aura-engine/imageMetrics";
 import { hasAnyUnlock } from "@/lib/storage/unlockStore";
+import { ShopNudge } from "@/components/shop/ShopNudge";
 
 interface Hint {
   id: string;
@@ -195,6 +196,7 @@ export default function RetakeCoachClient() {
           </div>
         </div>
       )}
+      <ShopNudge variant="gear" title="Gear for a sharper live shot" />
     </Container>
   );
 }

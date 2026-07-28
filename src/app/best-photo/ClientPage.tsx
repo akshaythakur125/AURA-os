@@ -9,6 +9,7 @@ import { FadeInView } from "@/components/ui/FadeInView";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { analyzeImageDataUrl } from "@/lib/aura-engine/imageMetrics";
 import { hasAnyUnlock } from "@/lib/storage/unlockStore";
+import { PhotoKitCard } from "@/components/report/PhotoKitCard";
 
 interface Scored {
   id: string;
@@ -17,6 +18,8 @@ interface Scored {
   dating: number;
   linkedin: number;
   instagram: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metrics: Record<string, any>;
 }
 
 const PLATFORMS = [
@@ -76,7 +79,7 @@ export default function BestPhotoClient() {
         const dataUrl = await readAsDataUrl(f);
         const metrics = await analyzeImageDataUrl(dataUrl);
         const s = scorePhoto(metrics as unknown as Record<string, any>);
-        scored.push({ id: `${f.name}-${scored.length}`, dataUrl, ...s });
+        scored.push({ id: `${f.name}-${scored.length}`, dataUrl, ...s, metrics: metrics as unknown as Record<string, any> });
       } catch { /* skip unreadable */ }
     }
     scored.sort((a, b) => b.overall - a.overall);
@@ -202,6 +205,12 @@ export default function BestPhotoClient() {
               <p className="mt-4 text-center text-[10px] text-[#9c9184]">
                 Scores are guidance from local image analysis, not objective truth.
               </p>
+
+              {/* Gear to push the top pick even higher — tied to its measured gaps */}
+              <div className="mt-8">
+                <p className="mb-2 text-sm font-semibold text-[#1C1917]">Level up your top pick</p>
+                <PhotoKitCard metrics={results[0].metrics} />
+              </div>
             </div>
           )}
         </>

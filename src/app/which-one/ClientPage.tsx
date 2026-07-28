@@ -10,6 +10,7 @@ import { FadeInView } from "@/components/ui/FadeInView";
 import { quickAnalyze } from "@/lib/aura-engine/quickAnalyze";
 import { renderWhichOneCard } from "@/lib/share/renderWhichOneCard";
 import { trackEvent } from "@/lib/storage/analyticsStore";
+import { ShopNudge } from "@/components/shop/ShopNudge";
 
 type Stage = "idle" | "analyzing" | "result" | "error";
 
@@ -222,6 +223,7 @@ export default function WhichOnePage() {
                   </div>
                 </div>
               </FadeInView>
+              <FadeInView delay={240}><ShopNudge variant="gear" /></FadeInView>
               <div className="flex justify-center pb-4"><button onClick={reset} className="text-sm text-[#857b6e] underline-offset-2 hover:text-[#4a443d] hover:underline">← Compare two more</button></div>
             </div>
           )}
