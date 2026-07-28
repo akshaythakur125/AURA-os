@@ -270,7 +270,7 @@ export function PersonalizedShop({
         {locked && lockedRemaining > 0 && (
           <FadeInView delay={20}>
             <p className="mb-6 text-center text-xs text-[#857b6e]">
-              Here&apos;s <span className="font-semibold text-[#B23A25]">1 free pick</span> from your
+              Here&apos;s your <span className="font-semibold text-[#B23A25]">{freeCount} free {freeCount === 1 ? "pick" : "picks"}</span> from your
               personalized set — <span className="font-medium text-[#1C1917]">{lockedRemaining} more</span> are
               in the full report.
             </p>

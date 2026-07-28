@@ -1204,7 +1204,7 @@ export default function AuditDetailPage() {
                       leakTags={(displayResult.statusLeaks ?? []).map((l) => l.category)}
                       gender={audit!.gender}
                       locked={!isUnlocked}
-                      freeCount={1}
+                      freeCount={3}
                       unlockHref={unlockHref}
                     />
                     <div className="mb-6">
@@ -1214,9 +1214,10 @@ export default function AuditDetailPage() {
                     </div>
                     {displayResult.imageMetrics != null && (
                       <div className="mb-6">
-                        <LockedSection locked={!isUnlocked} label="Your Photo Kit" unlockHref={unlockHref}>
-                          <PhotoKitCard metrics={displayResult.imageMetrics as any} />
-                        </LockedSection>
+                        {/* Photo gear is high-intent, reusable, tied to measured
+                            gaps — free for every scanner so affiliate reach isn't
+                            limited to the minority who pay. */}
+                        <PhotoKitCard metrics={displayResult.imageMetrics as any} />
                       </div>
                     )}
                     {displayResult.imageMetrics != null && (
