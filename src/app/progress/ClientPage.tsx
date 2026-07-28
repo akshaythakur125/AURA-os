@@ -10,6 +10,7 @@ import { GlowOrb } from "@/components/ui/GlowOrb";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getAudits } from "@/lib/storage/auditStore";
 import { AuraTrend } from "@/components/progress/AuraTrend";
+import { GlowupJourney } from "@/components/progress/GlowupJourney";
 import { getProgressComparisons, createProgressComparison, deleteProgressComparison } from "@/lib/storage/progressStore";
 import { compareAudits } from "@/lib/progress/compareAudits";
 import { trackEvent } from "@/lib/storage/analyticsStore";
@@ -46,25 +47,25 @@ export default function ProgressPage() {
     return pairs;
   }, [comparisons]);
 
-  function handleCompare() {
+  function comparePair(beforeAuditId: string, afterAuditId: string) {
     setError(null);
     setSuccess(null);
 
-    if (!beforeId || !afterId) {
+    if (!beforeAuditId || !afterAuditId) {
       setError("Please select both a before and after audit.");
       return;
     }
-    if (beforeId === afterId) {
+    if (beforeAuditId === afterAuditId) {
       setError("Before and after audits must be different.");
       return;
     }
-    if (alreadyCompared.has(`${beforeId}-${afterId}`)) {
-      setError("This comparison already exists.");
+    if (alreadyCompared.has(`${beforeAuditId}-${afterAuditId}`)) {
+      setError("This comparison already exists — see it below.");
       return;
     }
 
-    const beforeAudit = audits.find((a) => a.id === beforeId);
-    const afterAudit = audits.find((a) => a.id === afterId);
+    const beforeAudit = audits.find((a) => a.id === beforeAuditId);
+    const afterAudit = audits.find((a) => a.id === afterAuditId);
     if (!beforeAudit || !afterAudit) {
       setError("One or both audits not found.");
       return;
@@ -74,7 +75,11 @@ export default function ProgressPage() {
     const saved = createProgressComparison(comparison);
     setComparisons((prev) => [saved, ...prev]);
     setSuccess("Comparison saved! See your improvement below.");
-    trackEvent({ eventName: "progress_comparison_created", auditId: afterId, metadata: { beforeScore: String(saved.beforeScore), afterScore: String(saved.afterScore) } });
+    trackEvent({ eventName: "progress_comparison_created", auditId: afterAuditId, metadata: { beforeScore: String(saved.beforeScore), afterScore: String(saved.afterScore) } });
+  }
+
+  function handleCompare() {
+    comparePair(beforeId, afterId);
   }
 
   function handleDelete(id: string) {
@@ -101,6 +106,8 @@ export default function ProgressPage() {
         <GlowOrb color="rgba(16, 185, 129, 0.08)" size={250} className="top-[8%] right-[10%]" delay={0} />
         <GlowOrb color="rgba(225, 68, 52, 0.06)" size={200} className="bottom-[20%] left-[8%]" delay={400} />
       <SectionHeading title="Track Your Improvement" subtitle="Compare two audits and see your progress over time." />
+
+      <GlowupJourney onCompare={comparePair} />
 
       <div className="mb-8">
         <AuraTrend />
