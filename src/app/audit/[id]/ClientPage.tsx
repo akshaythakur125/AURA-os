@@ -19,6 +19,7 @@ import { FullReport } from "@/components/report/FullReport";
 import { UnlockedValueHeader } from "@/components/report/UnlockedValueHeader";
 import { GlowupShareCard } from "@/components/report/GlowupShareCard";
 import { ReportDownloadCard } from "@/components/report/ReportDownloadCard";
+import { BestPhotoCard } from "@/components/report/BestPhotoCard";
 import { ReshootCelebration } from "@/components/report/ReshootCelebration";
 import { PhotoKitCard } from "@/components/report/PhotoKitCard";
 import { GroomingPicksCard } from "@/components/report/GroomingPicksCard";
@@ -1019,6 +1020,7 @@ export default function AuditDetailPage() {
                       <div className="mb-6">
                         <UnlockedValueHeader content={displayFull} auditId={id} imageUrl={audit?.imageDataUrl} />
                         <ReportDownloadCard content={displayFull} auditId={id} imageUrl={audit?.imageDataUrl} />
+                        <BestPhotoCard currentId={id} />
                         <GlowupShareCard content={displayFull} auditId={id} />
                         <FullReport content={displayFull} />
                       </div>
