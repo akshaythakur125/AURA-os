@@ -267,33 +267,72 @@ function generatePriorityMap(
   metrics: ImageSignalMetrics,
   goal: string
 ): PriorityUpgradeMap {
-  const issues: { key: string; score: number }[] = [
-    { key: "Improve lighting setup", score: metrics.lightingScore },
-    { key: "Improve image clarity", score: metrics.sharpness },
-    { key: "Improve composition and framing", score: metrics.compositionScore },
-    { key: "Simplify background", score: 100 - metrics.backgroundComplexityEstimate },
-    { key: "Balance color tones", score: 100 - Math.abs(metrics.saturation - 45) },
-    { key: "Improve contrast", score: metrics.contrast },
-    { key: "Fix subject-background separation", score: metrics.subjectBgContrast },
+  // Each dimension carries its measured score, a weak-state line that names the
+  // number and the concrete first move, and a strong-state line for the "don't
+  // spend here" slot. Sorted weakest-first so effort follows measured impact.
+  const bgControl = 100 - metrics.backgroundComplexityEstimate;
+  const colorBalance = 100 - Math.abs(metrics.saturation - 45);
+  const dims: { label: string; score: number; weak: string; strong: string }[] = [
+    {
+      label: "lighting", score: metrics.lightingScore,
+      weak: `Lighting (${metrics.lightingScore}/100) — ${metrics.faceDetected && metrics.faceBrightness < 45 ? "your face is darker than the background; face a window so the light lands on you" : metrics.lightingDirection === "top" ? "it's coming from above and shadowing your eyes; drop it to eye level" : "flat and even; turn to a window at 45° for depth"}`,
+      strong: `lighting (${metrics.lightingScore}/100)`,
+    },
+    {
+      label: "clarity", score: metrics.sharpness,
+      weak: `Image clarity (${metrics.sharpness}/100) — wipe the lens, tap-to-focus on your face, and shoot on the rear camera to kill the softness`,
+      strong: `clarity (${metrics.sharpness}/100)`,
+    },
+    {
+      label: "framing", score: metrics.compositionScore,
+      weak: `Framing (${metrics.compositionScore}/100) — centre yourself chest-up with your eyes on the top-third line`,
+      strong: `framing (${metrics.compositionScore}/100)`,
+    },
+    {
+      label: "background", score: bgControl,
+      weak: `Background (${bgControl}/100 control) — it's competing for attention; step 3–4 ft in front of a plain wall`,
+      strong: `background control (${bgControl}/100)`,
+    },
+    {
+      label: "colour", score: colorBalance,
+      weak: `Colour balance (saturation ${metrics.saturation}/100) — ${metrics.saturation < 30 ? "too washed out; add warmth and a touch of saturation" : metrics.saturation > 65 ? "over-filtered; dial the saturation back by half" : "slightly off-neutral; a small warmth tweak fixes it"}`,
+      strong: `colour balance (${colorBalance}/100)`,
+    },
+    {
+      label: "contrast", score: metrics.contrast,
+      weak: `Contrast (${metrics.contrast}/100) — the image reads flat; add side light or +15% contrast in edit`,
+      strong: `contrast (${metrics.contrast}/100)`,
+    },
+    {
+      label: "separation", score: metrics.subjectBgContrast,
+      weak: `Subject separation (${metrics.subjectBgContrast}/100) — you blend into the background; wear a tone that contrasts it`,
+      strong: `subject separation (${metrics.subjectBgContrast}/100)`,
+    },
   ].sort((a, b) => a.score - b.score);
 
-  if (issues.length >= 3) {
-    return {
-      firstPriority: issues[0].key,
-      secondPriority: issues[1].key,
-      avoidForNow:
-        goal === "dating"
-          ? "Don't invest in expensive accessories before fixing lighting and framing"
-          : goal === "instagram"
-            ? "Don't chase trendy edits before mastering natural light and clean backgrounds"
-            : "Don't buy new outfits before improving how current photos are presented",
-    };
-  }
+  const first = dims[0];
+  const second = dims[1];
+  // Colour balance is derived from distance-to-ideal-saturation and reads ~99
+  // for most normal photos — and it isn't something you *buy* — so it's a poor
+  // "stop spending here" target. Pick the strongest tangible dimension instead.
+  const strongest = dims.filter((d) => d.label !== "colour").sort((a, b) => b.score - a.score)[0];
+
+  // "Don't waste money on" — if something is genuinely strong, steer spend away
+  // from it toward the real gap; otherwise fall back to the goal-specific trap.
+  const avoidForNow = strongest && strongest.score >= 68
+    ? `Your ${strongest.strong} is already strong — don't spend money trying to improve it. Put that effort into ${first.label} instead.`
+    : goal === "dating"
+      ? "Don't buy accessories or new outfits before fixing lighting and framing — they won't move a dating photo that's lit wrong."
+      : goal === "instagram"
+        ? "Don't chase trendy presets before you've nailed natural light and a clean background — filters can't rescue those."
+        : goal === "office"
+          ? "Don't invest in a blazer or props before the lighting and framing read clean — a sharp basic shot beats a styled blurry one."
+          : "Don't spend on new clothes or gear before improving how the current photo is shot — presentation first, purchases second.";
 
   return {
-    firstPriority: "Improve lighting",
-    secondPriority: "Improve clarity",
-    avoidForNow: "Avoid spending on accessories before fixing basic presentation",
+    firstPriority: first.weak,
+    secondPriority: second.weak,
+    avoidForNow,
   };
 }
 
