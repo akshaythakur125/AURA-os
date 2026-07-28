@@ -14,7 +14,6 @@ import { STYLE_COLLECTIONS, getCollectionLooks } from "@/lib/shop/styleCollectio
 import { rotateLooks, getRotationEpoch, hoursUntilNextRotation, ROTATION_HOURS } from "@/lib/shop/rotation";
 import { formatLookPrice } from "@/lib/shop/pricing";
 import { buildRetailerUrl, type Retailer } from "@/lib/shop/linkBuilder";
-import { hasAnyUnlock } from "@/lib/storage/unlockStore";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import type { Look, LookCategory } from "@/lib/shop/catalogTypes";
 import type { GoalTag, BudgetTag } from "@/types/product";
@@ -97,7 +96,6 @@ const RETAILERS: Retailer[] = ["amazon", "flipkart", "myntra", "ajio"];
 
 function ShopLinks({ look }: { look: Look }) {
   const [open, setOpen] = useState(false);
-  const [lockedOpen, setLockedOpen] = useState(false);
 
   const links = RETAILERS.map((retailer) => ({
     retailer,
@@ -114,29 +112,12 @@ function ShopLinks({ look }: { look: Look }) {
         variant="primary"
         size="sm"
         className="w-full text-xs"
-        onClick={() => {
-          // Retailer links are a paid perk — free users get a locked glimpse.
-          if (hasAnyUnlock()) { setLockedOpen(false); setOpen(!open); }
-          else { setOpen(false); setLockedOpen(!lockedOpen); }
-        }}
+        // Retailer links are affiliate-tagged and free for everyone — the shop's
+        // whole job is to drive commissionable clicks, so nothing here is gated.
+        onClick={() => setOpen(!open)}
       >
         Shop This Look
       </Button>
-      {lockedOpen && (
-        <div className="absolute bottom-full left-0 right-0 mb-2 rounded-xl glass-elevated p-3 shadow-2xl z-10" style={{ transform: "perspective(600px) rotateX(4deg)", transformOrigin: "bottom" }}>
-          <div className="pointer-events-none select-none blur-[5px]" aria-hidden="true">
-            {links.slice(0, 3).map((l) => (
-              <div key={l.retailer} className="px-3 py-1.5 text-xs text-[#4a443d]">{l.label} →</div>
-            ))}
-          </div>
-          <div className="mt-1 border-t border-[#1c1917]/[0.08] pt-2 text-center">
-            <p className="mb-1.5 text-[11px] text-[#857b6e]">🔒 Direct retailer links are part of the Full Report</p>
-            <Link href="/pricing" className="inline-block rounded-lg bg-gradient-to-r from-[#E14434] to-[#c0341f] px-4 py-1.5 text-[11px] font-semibold text-white">
-              Unlock to Shop
-            </Link>
-          </div>
-        </div>
-      )}
       {open && (
         <div className="absolute bottom-full left-0 right-0 mb-2 rounded-xl glass-elevated p-1.5 shadow-2xl z-10">
           {links.map((link) => (
