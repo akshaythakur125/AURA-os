@@ -1,7 +1,8 @@
 import type { Audit, FreeAuraResult, StatusLeak, QuickFix } from "@/types/audit";
 import { createLocalId } from "@/types/audit";
 import { analyzeImageDataUrl } from "./imageMetrics";
-import { calculateAuraScore, determineCategory, generateVerdict } from "./scoring";
+import { calculateAuraScore, determineCategory } from "./scoring";
+import { composeTeaserVerdict } from "./verdictComposer";
 import { runIntelligenceAnalysis } from "./intelligence";
 import type { IntelligenceResult } from "./intelligence";
 import { getBudgetUpgradePlan } from "./budgetPlans";
@@ -235,10 +236,11 @@ export async function generateFreeAuraReport(
   });
 
   const category = determineCategory(score, metrics);
-  const oneLineVerdict = generateVerdict(score, category);
   const strongestSignals = findStrongestSignals(metrics);
   const statusLeaks = generateStatusLeaks(score, metrics);
   const quickFixes = generateQuickFixes(metrics);
+  const topLeak = [...statusLeaks].sort((a, b) => b.impactScore - a.impactScore)[0];
+  const oneLineVerdict = composeTeaserVerdict(score, strongestSignals, topLeak);
   const budgetUpgradePlan = getBudgetUpgradePlan(audit.budgetRange);
 
   // If intelligence analysis ran, use its enhanced results

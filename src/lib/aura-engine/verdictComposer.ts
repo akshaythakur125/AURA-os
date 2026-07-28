@@ -1,4 +1,4 @@
-import type { ImageSignalMetrics, FullStatusLeak } from "@/types/audit";
+import type { ImageSignalMetrics, FullStatusLeak, StatusLeak } from "@/types/audit";
 
 /**
  * The verdict is the headline of the paid report — the first thing a ₹25 buyer
@@ -97,6 +97,51 @@ function strengthClause(m: ImageSignalMetrics, seed: number): string | null {
   const best = dims.sort((a, b) => b.v - a.v)[0];
   if (!best || best.v < 62) return null;
   return seededPick(best.lines, seed, 11);
+}
+
+/**
+ * The free-report one-liner — the single most-seen line in the product and the
+ * hook that decides whether someone pays ₹25. The old version was a canned
+ * score-band string. This one is measured and personal: it frames the score,
+ * gives credit for the real strongest signal, and names the biggest leak (with
+ * its measured evidence) — an honest tension that motivates the full unlock
+ * without giving away the fix (that's what the report is for). One tight line.
+ */
+export function composeTeaserVerdict(
+  score: number,
+  strongestSignals: string[],
+  topLeak?: StatusLeak,
+): string {
+  const seed = score;
+  const strengthRaw = strongestSignals.find((s) => s && !s.toLowerCase().startsWith("potential"));
+  const strength = strengthRaw ? strengthRaw.toLowerCase().replace("color", "colour") : null;
+
+  const frame = score >= 78 ? "Strong photo" : score >= 62 ? `Solid — you're at ${score}` : score >= 45 ? `You're at ${score}` : `Honest baseline at ${score}`;
+
+  // Name the biggest leak with its measured evidence, but not the fix.
+  let leakClause = "";
+  if (topLeak) {
+    const ev = topLeak.evidence ? ` (${topLeak.evidence.toLowerCase()})` : "";
+    const t = topLeak.title.charAt(0).toLowerCase() + topLeak.title.slice(1);
+    leakClause = `${t}${ev}`;
+  }
+
+  if (strength && leakClause) {
+    return seededPick([
+      `${frame}. Your ${strength} is genuinely working — the one thing holding it back is ${leakClause}.`,
+      `${frame}. ${strength.charAt(0).toUpperCase() + strength.slice(1)} is a real strength here; your biggest leak is ${leakClause}.`,
+    ], seed, 0);
+  }
+  if (leakClause) {
+    return seededPick([
+      `${frame}. The biggest thing costing you: ${leakClause}.`,
+      `${frame}, and the clearest fix is ${leakClause}.`,
+    ], seed, 0);
+  }
+  if (strength) {
+    return `${frame} — your ${strength} is carrying it, and you're close to your ceiling.`;
+  }
+  return `${frame}. The full breakdown shows exactly where the points are hiding.`;
 }
 
 export function composeVerdict({ score, category, metrics, topLeak, ceiling, seed }: VerdictInputs): string {
