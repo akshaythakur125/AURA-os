@@ -37,7 +37,7 @@ export function HeroSection() {
 
             <FadeInView delay={200}>
               <p className="mt-6 max-w-md text-base text-[#6F675E] sm:text-lg leading-relaxed">
-                Drop one photo → get your Aura Score and the exact fixes. Free, private, under a minute.
+                Drop one photo → get your Aura Score, then the exact fixes for your lighting, angle, and expression. Measured, not vibes. Free and private, under a minute.
               </p>
             </FadeInView>
 
