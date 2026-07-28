@@ -508,51 +508,108 @@ function generatePhotoGuidance(metrics: ImageSignalMetrics, goal: string): Photo
 }
 
 function generateGoalAdvice(goal: string, metrics: ImageSignalMetrics): GoalSpecificAdvice {
-  const goalSpecific = {
+  // A short measured lead so the "Do this" reads like it's about THIS photo,
+  // not a generic goal template — it names the one thing to prioritise given
+  // what we actually saw, then hands off to the goal-specific tactics.
+  const faceDark = metrics.faceDetected && metrics.faceBrightness < 45;
+  const lightWeak = metrics.lightingScore < 55;
+  const lightStrong = metrics.lightingScore >= 68;
+  const busyBg = metrics.backgroundComplexityEstimate > 58;
+  const overFiltered = metrics.saturation > 65;
+  const genuineSmile = !!metrics.presenceDetail?.genuineSmile;
+  const lead = faceDark
+    ? `First, the fix that matters most for this shot: your face is under-lit (${metrics.faceBrightness}/100) — get it properly lit before anything else, because for this goal a clearly-lit face is non-negotiable. `
+    : lightWeak
+      ? `Start with the light — it scored ${metrics.lightingScore}/100 here and it caps every other signal for this goal. `
+      : lightStrong
+        ? `Your lighting is already an asset (${metrics.lightingScore}/100) — keep that exact setup and build the rest of the shot around it. `
+        : busyBg
+          ? `Clean the background first (${100 - metrics.backgroundComplexityEstimate}/100 control) — for this goal a distraction-free frame is doing more than you think. `
+          : "";
+
+  const goalSpecific: Record<string, GoalSpecificAdvice> = {
     dating: {
-      goal: "Dating Profile Optimization",
+      goal: "Dating profile — read as warm, real, and worth a swipe",
       strategy:
-        "Dating profile photos should feel warm, approachable, and intentional. Prioritize clear face visibility, genuine smile, and a background that suggests a social or interesting lifestyle without trying too hard.",
-      doThis: metrics.faceDetected && metrics.faceBrightness > 60
-        ? "Your face lighting is good — build on this with a well-lit chest-up shot as your primary photo. Add one full-body shot and one hobby/context photo. Keep editing minimal."
-        : "Use a well-lit chest-up shot as your primary photo. Make sure your face is clearly visible and well-lit. Add one full-body shot and one hobby/context photo.",
-      avoidThis: "Avoid group photos as primary, heavy filters, mirror selfies, or anything that looks like it was taken in a hurry. Over-edited photos reduce trust signals significantly.",
+        "On dating apps the first photo decides everything in under a second. It has to read warm, high-trust, and unmistakably you — a clearly-lit face, real eye contact, and an expression that looks like you'd be easy to talk to. Your grid then tells a story: one clean face shot, one full-body, one that shows a life.",
+      doThis:
+        lead +
+        `Lead with a well-lit chest-up shot where your face is the brightest thing in frame and you're looking at the lens. ${genuineSmile ? "Your smile already lands genuine — use a frame like this one as the primary." : "Aim for a real, relaxed smile (think of something actually funny right before the shot) — a posed grin reads as trying too hard."} Follow it with one full-body and one hobby/context photo so you look like a person, not a profile.`,
+      avoidThis:
+        "Never use a group photo as your primary — people can't find you and swipe left. Skip mirror selfies, heavy filters, sunglasses on the face shot, and anything blurry. Over-editing quietly tanks trust, which is the one thing a dating photo can't afford to lose.",
     },
     instagram: {
-      goal: "Instagram Profile Cohesion",
+      goal: "Instagram — a feed that reads as one intentional profile",
       strategy:
-        "Instagram is about visual consistency. Your feed should tell a story through repeated colors, lighting styles, and framing choices. Each photo should feel like it belongs to the same profile.",
-      doThis: metrics.dominantHue === "neutral"
-        ? "You don't have a strong color signature yet. Pick 2-3 color tones (based on your best outfit colors) and stick to them. Use consistent lighting and keep backgrounds on-brand."
-        : `Your dominant tone is ${metrics.dominantHue} — build on this. Establish 2-3 color tones around it and stick to them. Use consistent lighting (all indoor or all natural). Keep backgrounds clean and on-brand.`,
-      avoidThis: "Avoid posting random photo qualities, mixing heavy filters with natural shots, or inconsistent backgrounds. Don't post low-resolution images or screenshots.",
+        "Instagram rewards cohesion. A profile that repeats a colour story, a lighting style, and a framing rhythm reads as intentional and gets the follow; a grid of mismatched one-offs reads as a camera roll. Pick a visual signature and let every post reinforce it.",
+      doThis:
+        lead +
+        (metrics.dominantHue === "neutral" || !metrics.dominantHue
+          ? "You don't have a colour signature locked in yet — choose 2–3 tones (pull them from your best outfit and background) and commit to them across your next posts. "
+          : `Your dominant tone here is ${metrics.dominantHue} — make it your signature. Build a 2–3 colour palette around it and repeat it. `) +
+        "Keep lighting consistent (all natural or all indoor, not a mix) and shoot for the grid crop (4:5 feed, 1:1 tile) so nothing important gets cut.",
+      avoidThis:
+        "Don't mix heavily-filtered shots with natural ones — the inconsistency is what makes a feed look amateur. Avoid low-res uploads and screenshots (Instagram compresses them further), and don't post a great photo with a cluttered background that breaks your colour story.",
     },
     office: {
-      goal: "Professional / LinkedIn Presentation",
+      goal: "LinkedIn / professional — understated, sharp, credible",
       strategy:
-        "For professional contexts, the signal should be understated, clean, and confident. Less is more — neutral backgrounds, solid colors, and clear framing signal reliability.",
-      doThis: "Use a simple solid background (white, grey, or muted). Wear solid, well-fitted clothing in neutral colors. Use even, soft lighting. A slight smile conveys approachability.",
-      avoidThis: "Avoid busy backgrounds, casual outfit details, extreme filters, or any frame that looks like a casual selfie. Maintain eye contact with the camera.",
+        "A professional headshot sells reliability, not personality. The signal you want is 'competent and approachable': clean solid background, well-fitted neutral clothing, even soft light, steady eye contact, and a slight smile. Every extra element (busy background, loud outfit, hard filter) subtracts credibility.",
+      doThis:
+        lead +
+        "Frame chest-up against a plain wall in white, grey, or muted tone. Wear a solid, well-fitted top in a neutral colour, keep the light even and soft (window light works), hold eye contact with the lens, and give a small genuine smile. That combination reads senior and trustworthy at thumbnail size.",
+      avoidThis:
+        "Avoid busy or 'fun' backgrounds, cropped party photos, strong filters, sunglasses, or a stiff unsmiling stare. And don't run mismatched avatars across LinkedIn, email, and Slack — inconsistent professional photos read as neglect.",
     },
     college: {
-      goal: "College / University Social Presence",
+      goal: "College / campus — authentic but clearly put-together",
       strategy:
-        "College profiles should feel authentic but intentional. You don't need to look formal — just put-together and aware. Clean framing and good lighting set you apart.",
-      doThis: "Use natural light. Keep backgrounds simple (campus wall, library, outdoor). Show genuine context — a hobby, a coffee shop, or a clean dorm corner works well.",
-      avoidThis: "Avoid overcrowded frames, messy room backgrounds, or heavily filtered photos. Don't try too hard to look like someone you're not.",
+        "College profiles work best when they look effortless but aware — you don't need formal, you need intentional. Good natural light and a clean, real setting (campus, café, tidy corner) instantly separate you from the messy-bedroom-selfie crowd without looking like you tried too hard.",
+      doThis:
+        lead +
+        "Shoot in natural daylight against a simple real backdrop — a campus wall, library, café, or clean outdoor spot. Show a bit of genuine context (a hobby, a coffee, your actual world) so it reads authentic rather than staged. One relaxed, well-lit shot beats ten heavily-edited ones.",
+      avoidThis:
+        "Avoid messy-room backgrounds, overcrowded group frames, and heavy beauty filters — they read as either careless or insecure. Don't over-style into someone you're not; the goal is the best real version of you.",
+    },
+    content: {
+      goal: "Content creator — a scroll-stopping, on-brand presence",
+      strategy:
+        "As a creator your photo is your logo — it has to stop the scroll and be instantly recognisable across every platform. That means bold, consistent lighting, a signature colour or framing, and enough visual energy to survive a tiny thumbnail. Recognisability beats variety.",
+      doThis:
+        lead +
+        "Lock one high-energy, well-lit look and reuse it as your avatar everywhere so people recognise you at a glance. Give the frame a clear focal pop (colour, expression, or a clean strong background) and shoot vertical-friendly so it works for Reels, Shorts, and profile tiles alike.",
+      avoidThis:
+        "Don't change your look and vibe every post — inconsistency kills recognition. Avoid dull flat lighting and cluttered frames that disappear at thumbnail size, and don't over-filter to the point your real face is unrecognisable off-camera.",
+    },
+    confidence: {
+      goal: "Confidence — a photo that looks like self-assurance",
+      strategy:
+        "Perceived confidence in a photo is mostly mechanical: square, relaxed shoulders, a lifted chin, real eye contact, and an unforced expression. Get the posture and eye line right and the photo reads self-assured even on a day you didn't feel it.",
+      doThis:
+        lead +
+        `Square your shoulders to the camera, roll them back and down, lift your chin slightly, and look straight into the lens. ${genuineSmile ? "Your expression already reads warm — that plus open posture is exactly the signal." : "Let the expression settle — a calm, slightly amused look reads more confident than a big forced smile."} Shoot from eye level or just above, never from below the chin.`,
+      avoidThis:
+        "Avoid hunched or turned-away shoulders, a dropped chin, and looking off-camera — they read as uncertainty. Skip the low-angle 'up the nose' shot and anything so heavily edited it looks like you're hiding.",
     },
     glowup: {
-      goal: "Overall Glow-Up / Personal Upgrade",
+      goal: "Overall glow-up — upgrade every signal, in order",
       strategy:
-        "A glow-up is about improving across the board — lighting, grooming, wardrobe, and confidence. Start with the basics (lighting, clarity, background) before spending on accessories.",
-      doThis: metrics.lightingScore < 50
-        ? "Start with lighting — it's your biggest gap and makes the biggest difference. Fix that first, then improve grooming and wardrobe basics. Document progress with weekly photos."
-        : "Fix lighting first — it makes the biggest difference. Then improve grooming and wardrobe basics. Document your progress with weekly photos to track improvement.",
-      avoidThis: "Avoid skipping the fundamentals (lighting, clarity) to jump straight to accessories or expensive changes. Slow, consistent upgrades create lasting results.",
+        "A real glow-up is sequenced, not scattered: nail the free fundamentals (lighting, clarity, clean background) first, then grooming and wardrobe basics, and only then accessories or spend. Doing it in that order is what makes the score actually move and hold.",
+      doThis:
+        lead +
+        (metrics.lightingScore < 50
+          ? "Lighting is your biggest lever right now — fix it first, then move to grooming and wardrobe basics. "
+          : "With lighting handled, put the next effort into grooming and one clean wardrobe upgrade. ") +
+        "Re-scan every couple of weeks with the same setup so you're tracking a trend, not a one-off — the progress hub is built for exactly this.",
+      avoidThis:
+        "Don't skip the free fundamentals to jump straight to buying accessories or expensive changes — it's the most common way people spend money and see the score barely move. Slow, ordered upgrades compound; scattered ones don't.",
     },
   };
 
-  return goalSpecific[goal as keyof typeof goalSpecific] || goalSpecific.glowup;
+  // Goals that share a lens map to the closest expert profile.
+  const alias: Record<string, string> = { linkedin: "office", festival: "instagram", travel: "instagram" };
+  const key = goalSpecific[goal] ? goal : alias[goal] || "glowup";
+  return goalSpecific[key];
 }
 
 function generateObservations(metrics: ImageSignalMetrics, goal: string): Observation[] {
