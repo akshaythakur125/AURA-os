@@ -13,18 +13,29 @@ interface ConversionFunnelProps {
   score: number;
   photoIssueCount: number;
   topLeakTitle: string;
+  /** Measured evidence for the top leak, e.g. "Sharpness 38/100" — concrete proof. */
+  topLeakEvidence?: string;
+  /** The user's strongest measured signal, e.g. "Lighting" — credit before the tension. */
+  strongestSignal?: string;
 }
 
 /**
- * Prominent conversion funnel — appears RIGHT AFTER the score,
- * not buried at the bottom. This is the money-maker.
+ * Prominent conversion funnel — appears RIGHT AFTER the score, not buried at the
+ * bottom. This is the money-maker. It mirrors the measured teaser verdict:
+ * credit for the real strength, then the biggest leak with its measured
+ * evidence as proof, then an honest list of what the ₹25 actually delivers.
  */
 export function ConversionFunnel({
   auditId,
   score,
   photoIssueCount,
   topLeakTitle,
+  topLeakEvidence,
+  strongestSignal,
 }: ConversionFunnelProps) {
+  const strength = strongestSignal && !strongestSignal.toLowerCase().startsWith("potential")
+    ? strongestSignal.toLowerCase().replace("color", "colour")
+    : null;
   return (
     <div className="mb-8 space-y-4">
       {/* Urgency hook */}
@@ -37,16 +48,18 @@ export function ConversionFunnel({
           </Badge>
 
           <p className="mb-3 text-sm text-[#4a443d]">
-            You scored{" "}
-            <span className="font-bold text-[#1C1917]">{score}/100</span>.{" "}
-            {photoIssueCount !== 1
-              ? "Those issues are quietly costing you attention — and every one is fixable."
-              : "That issue is quietly costing you attention — and it's fixable."}
+            You scored <span className="font-bold text-[#1C1917]">{score}/100</span>
+            {strength ? (
+              <>. Your <span className="font-semibold text-[#1C1917]">{strength}</span> is genuinely working — but you&apos;re leaving points on the table.</>
+            ) : (
+              <>. {photoIssueCount !== 1 ? "Those issues are quietly costing you attention — and every one is fixable." : "That issue is quietly costing you attention — and it's fixable."}</>
+            )}
           </p>
 
           <p className="mb-4 text-xs text-[#6f675e]">
             Biggest one right now:{" "}
             <span className="font-medium text-[#1C1917]">{topLeakTitle}</span>
+            {topLeakEvidence ? <span className="text-[#857b6e]"> — {topLeakEvidence.toLowerCase()}</span> : null}
           </p>
 
           {/* Social proof */}
@@ -67,11 +80,20 @@ export function ConversionFunnel({
           <h3 className="mb-2 text-lg font-bold text-[#1C1917]">
             See exactly how to fix it — and how far this photo can go
           </h3>
-          <p className="mx-auto mb-5 max-w-sm text-sm text-[#6f675e]">
-            Every issue with the exact fix, a step-by-step roadmap, your colour
-            palette and capsule wardrobe, celebrity style matches, and shoppable
-            picks in your budget.
-          </p>
+          <ul className="mx-auto mb-5 max-w-sm space-y-1.5 text-left text-[13px] text-[#4a443d]">
+            {[
+              "Every issue with its exact fix, ranked by measured impact",
+              "A 7-day reshoot plan built from your photo's own numbers",
+              "Your colour palette + capsule wardrobe matched to your undertone",
+              "Expression & posture read, skin analysis, face-shape studio",
+              "Shoppable picks in your budget",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-2">
+                <span className="mt-0.5 text-emerald-500">✓</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
 
           {/* The button */}
           <Link

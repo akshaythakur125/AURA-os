@@ -914,14 +914,19 @@ export default function AuditDetailPage() {
                     })()}
 
                     {/* Conversion funnel — only for accepted/limited results */}
-                    {!isUnlocked && displayResult && typeof displayResult.auraScore === "number" && (
-                      <ConversionFunnel
-                        auditId={audit.id}
-                        score={displayResult.auraScore}
-                        photoIssueCount={displayResult.statusLeaks?.length ?? 0}
-                        topLeakTitle={displayResult.statusLeaks?.[0]?.title || "Unknown"}
-                      />
-                    )}
+                    {!isUnlocked && displayResult && typeof displayResult.auraScore === "number" && (() => {
+                      const topLeak = [...(displayResult.statusLeaks ?? [])].sort((a, b) => (b.impactScore ?? 0) - (a.impactScore ?? 0))[0];
+                      return (
+                        <ConversionFunnel
+                          auditId={audit.id}
+                          score={displayResult.auraScore}
+                          photoIssueCount={displayResult.statusLeaks?.length ?? 0}
+                          topLeakTitle={topLeak?.title || "Unknown"}
+                          topLeakEvidence={topLeak?.evidence}
+                          strongestSignal={displayResult.strongestSignals?.[0]}
+                        />
+                      );
+                    })()}
 
                     {/* Celebrity match — blurred teaser for free users */}
                     {!isUnlocked && celebMatches.length > 0 && (
