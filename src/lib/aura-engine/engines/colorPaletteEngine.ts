@@ -129,6 +129,23 @@ const PALETTES: Record<Undertone, Record<string, ColorPalette>> = {
 };
 
 /**
+ * Map an audit goal to the closest palette occasion, so office/linkedin users
+ * get the professional palette, content maps to the instagram aesthetic, etc.
+ * Goals without a distinct palette fall back to the versatile everyday set.
+ */
+export function goalToOccasion(goal?: string): string {
+  switch (goal) {
+    case "dating": return "dating";
+    case "instagram":
+    case "content": return "instagram";
+    case "office":
+    case "linkedin": return "professional";
+    case "festival": return "festival";
+    default: return "default"; // college, glowup, travel, confidence
+  }
+}
+
+/**
  * Get color palette recommendations based on undertone and occasion.
  */
 export function getColorPalette(
@@ -143,8 +160,12 @@ export function getColorPalette(
   const adjusted = { ...base };
   if (skinDepth === "fair" || skinDepth === "light") {
     adjusted.colors = [...adjusted.colors, "burgundy", "forest green", "navy"];
+    adjusted.reasoning = `${base.reasoning} With your ${skinDepth} depth, deeper anchors like burgundy and navy add contrast without washing you out.`;
   } else if (skinDepth === "dark" || skinDepth === "deep") {
     adjusted.colors = [...adjusted.colors, "white", "cream", "gold", "coral", "bright blue"];
+    adjusted.reasoning = `${base.reasoning} On your ${skinDepth} depth, bright, clean tones — white, gold, coral — pop hardest against the skin.`;
+  } else if (skinDepth === "medium" || skinDepth === "olive") {
+    adjusted.reasoning = `${base.reasoning} Your ${skinDepth} depth carries both muted and saturated versions of these, so lean into whichever suits the occasion.`;
   }
 
   return adjusted;

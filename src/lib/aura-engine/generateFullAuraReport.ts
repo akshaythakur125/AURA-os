@@ -922,7 +922,7 @@ export async function generateFullAuraReport(
   const metrics = audit.fullReport?.freeResult?.imageMetrics
     ? audit.fullReport.freeResult.imageMetrics
     : audit.imageDataUrl
-      ? await analyzeImageDataUrl(audit.imageDataUrl)
+      ? await analyzeImageDataUrl(audit.imageDataUrl, audit.goal)
       : null;
 
   if (!metrics) {

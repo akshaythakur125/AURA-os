@@ -193,7 +193,7 @@ export async function generateFreeAuraReport(
   if (!audit.imageDataUrl) {
     throw new Error("No image data available for this audit.");
   }
-  const metrics = await analyzeImageDataUrl(audit.imageDataUrl);
+  const metrics = await analyzeImageDataUrl(audit.imageDataUrl, audit.goal);
 
   // ponytail: quality gate — reject unusable images before scoring
   if (metrics.qualityGate && !metrics.qualityGate.canProceed) {

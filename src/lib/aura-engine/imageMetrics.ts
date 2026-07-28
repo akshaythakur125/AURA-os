@@ -3,7 +3,7 @@ import { runQualityGate } from "./engines/qualityGate";
 import { analyzeImage, type VisionAnalysis } from "../vision/providers";
 import { assessGrooming } from "./engines/groomingEngine";
 import { detectStyle } from "./engines/styleDetectionEngine";
-import { getColorPalette } from "./engines/colorPaletteEngine";
+import { getColorPalette, goalToOccasion } from "./engines/colorPaletteEngine";
 import type { ImageSignalMetrics } from "@/types/audit";
 
 const ANALYSIS_WIDTH = 256;
@@ -726,7 +726,8 @@ function averageSaturation(
 // ─── Main export ───
 
 export function analyzeImageDataUrl(
-  dataUrl: string
+  dataUrl: string,
+  goal?: string
 ): Promise<ImageSignalMetrics> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -1027,8 +1028,9 @@ export function analyzeImageDataUrl(
           qualityGate: { qualityScore: qualityResult.qualityScore, issues: qualityResult.issues, canProceed: qualityResult.canProceed, message: qualityResult.message },
           groomingResult: { overallScore: groomingResult.overallScore, hairNeatness: groomingResult.hairNeatness, skinClarity: groomingResult.skinClarity, facialHair: groomingResult.facialHair, eyebrows: groomingResult.eyebrows, assessment: groomingResult.assessment, topFix: groomingResult.topFix },
           detectedStyle: { detectedStyle: styleResult.detectedStyle, confidence: styleResult.confidence, reasoning: styleResult.reasoning, upgradePath: styleResult.upgradePath },
-          // ponytail: color palette uses default occasion, goal-specific wiring in report generation
-          colorPalette: getColorPalette(undertoneResult.undertone, undertoneResult.skinDepth, "default"),
+          // Palette follows the audit goal when we know it (office → professional,
+          // content → instagram, …); falls back to the everyday set otherwise.
+          colorPalette: getColorPalette(undertoneResult.undertone, undertoneResult.skinDepth, goalToOccasion(goal)),
           skinDetail,
           presenceDetail,
           accessories,
