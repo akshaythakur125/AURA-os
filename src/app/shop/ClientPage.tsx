@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useMemo, useEffect } from "react";
 import { Container } from "@/components/ui/Container";
 import { Card } from "@/components/ui/Card";
@@ -8,10 +9,16 @@ import { Button } from "@/components/ui/Button";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { GlowOrb } from "@/components/ui/GlowOrb";
 import { ShopCategoryImage } from "@/components/shop/ShopCategoryImage";
-import { getAllLooks } from "@/lib/shop/catalog";
-import { buildRetailerUrl, type Retailer } from "@/lib/shop/linkBuilder";
+import { getShoppableLooks } from "@/lib/shop/catalog";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
-import type { Look, LookCategory } from "@/lib/shop/catalogTypes";
+import { type Look, type LookCategory } from "@/lib/shop/catalogTypes";
+import {
+  formatIndianPrice,
+  getLookDisplayDescription,
+  getLookDisplayTitle,
+  getLookPieceCount,
+  getLookTotalPrice,
+} from "@/lib/shop/lookCompositions";
 import type { GoalTag, BudgetTag } from "@/types/product";
 import type { StyleIntent } from "@/types/personalization";
 
@@ -44,10 +51,10 @@ const CATEGORY_OPTIONS: { label: string; value: LookCategory | null }[] = [
 
 const BUDGET_OPTIONS: { label: string; value: BudgetTag | null }[] = [
   { label: "Any Budget", value: null },
-  { label: "Under ₹2,000", value: 2000 },
-  { label: "Under ₹5,000", value: 5000 },
-  { label: "Under ₹10,000", value: 10000 },
-  { label: "₹10,000+", value: 25000 },
+  { label: "Under Rs 2,000", value: 2000 },
+  { label: "Under Rs 5,000", value: 5000 },
+  { label: "Under Rs 10,000", value: 10000 },
+  { label: "Rs 10,000+", value: 25000 },
 ];
 
 const GOAL_OPTIONS: { label: string; value: GoalTag | null }[] = [
@@ -79,61 +86,22 @@ const GENDER_OPTIONS: { label: string; value: "men" | "women" | "unisex" | null 
   { label: "Unisex", value: "unisex" },
 ];
 
-const RETAILER_LABELS: Record<Retailer, string> = {
-  amazon: "Amazon",
-  flipkart: "Flipkart",
-  myntra: "Myntra",
-  ajio: "Ajio",
-  nykaa: "Nykaa",
-};
-
-const RETAILERS: Retailer[] = ["amazon", "flipkart", "myntra", "ajio"];
-
-function ShopLinks({ look }: { look: Look }) {
-  const [open, setOpen] = useState(false);
-
-  const links = RETAILERS.map((retailer) => ({
-    retailer,
-    url: buildRetailerUrl(
-      { category: look.category, keywords: look.keywords, gender: look.gender },
-      retailer
-    ),
-    label: RETAILER_LABELS[retailer],
-  }));
-
+function ViewLookButton({ look }: { look: Look }) {
   return (
-    <div className="relative">
-      <Button
-        variant="primary"
-        size="sm"
-        className="w-full text-xs"
-        onClick={() => setOpen(!open)}
-      >
-        Shop This Look
-      </Button>
-      {open && (
-        <div className="absolute bottom-full left-0 right-0 mb-2 rounded-xl glass-elevated p-1.5 shadow-2xl z-10">
-          {links.map((link) => (
-            <a
-              key={link.retailer}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block rounded-lg px-3 py-2 text-xs text-gray-300 transition-colors hover:bg-white/[0.06] hover:text-white"
-              onClick={() => {
-                setOpen(false);
-                trackEvent(EVENTS.SHOP_LINK_CLICKED, {
-                  retailer: link.retailer,
-                  lookCategory: look.category,
-                });
-              }}
-            >
-              {link.label} →
-            </a>
-          ))}
-        </div>
-      )}
-    </div>
+    <Link
+      href={`/shop/look/${look.id}`}
+      className="inline-flex w-full items-center justify-center rounded-lg bg-white px-3 py-2 text-xs font-medium text-black transition-opacity hover:opacity-90"
+      onClick={() =>
+        trackEvent(EVENTS.SHOP_LINK_CLICKED, {
+          retailer: "amazon",
+          lookCategory: look.category,
+          exactMatch: true,
+          destination: "look-detail",
+        })
+      }
+    >
+      View Full Look
+    </Link>
   );
 }
 
@@ -148,12 +116,12 @@ export default function ShopPage() {
   const [gender, setGender] = useState<"men" | "women" | "unisex" | null>(null);
   const [visibleCount, setVisibleCount] = useState(INITIAL_BATCH);
 
-  const allLooks = useMemo(() => getAllLooks(), []);
+  const allLooks = useMemo(() => getShoppableLooks(), []);
 
   const filtered = useMemo(() => {
     return allLooks.filter((look) => {
       if (category && look.category !== category) return false;
-      if (budget && look.price > budget) return false;
+      if (budget && getLookTotalPrice(look) > budget) return false;
       if (goal && !look.goalTags.includes(goal)) return false;
       if (style && !look.styleArchetypes.includes(style)) return false;
       if (gender && look.gender !== gender && look.gender !== "unisex") return false;
@@ -161,7 +129,6 @@ export default function ShopPage() {
     });
   }, [allLooks, category, budget, goal, style, gender]);
 
-  // Reset to first batch when filters change
   useEffect(() => {
     setVisibleCount(INITIAL_BATCH);
   }, [category, budget, goal, style, gender]);
@@ -177,38 +144,33 @@ export default function ShopPage() {
         <GlowOrb color="rgba(147, 51, 234, 0.1)" size={350} className="top-[5%] right-[5%]" delay={0} />
         <GlowOrb color="rgba(14, 165, 233, 0.06)" size={250} className="bottom-[20%] left-[10%]" delay={500} />
 
-        {/* Hero */}
         <div className="mb-10 relative">
           <h1 className="text-2xl font-bold text-white sm:text-3xl">
-            Upgrade Your Visual Signal
+            Shop Real Full Looks
           </h1>
           <p className="mt-2 text-sm text-gray-400">
-            Curated upgrades that target your biggest photo-quality issues — without
-            wasting money.
+            Each card is a complete outfit or setup, not a single product. Open any look to shop every piece separately.
           </p>
           <p className="mt-1 text-xs text-gray-600">
-            {allLooks.length} looks · Real retailer search links · Prices verified
+            {allLooks.length} looks | Exact piece links where available | Prices estimated per full look
           </p>
         </div>
 
-        {/* Filters */}
         <Card className="mb-8">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Category */}
             <div>
               <label className="mb-1.5 block text-xs text-gray-500">Category</label>
               <select
                 value={category || ""}
-                onChange={(e) => setCategory(e.target.value as LookCategory || null)}
+                onChange={(e) => setCategory((e.target.value as LookCategory) || null)}
                 className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
               >
-                {CATEGORY_OPTIONS.map((c) => (
-                  <option key={c.label} value={c.value ?? ""}>{c.label}</option>
+                {CATEGORY_OPTIONS.map((option) => (
+                  <option key={option.label} value={option.value ?? ""}>{option.label}</option>
                 ))}
               </select>
             </div>
 
-            {/* Budget */}
             <div>
               <label className="mb-1.5 block text-xs text-gray-500">Budget</label>
               <select
@@ -216,55 +178,51 @@ export default function ShopPage() {
                 onChange={(e) => setBudget(e.target.value ? (Number(e.target.value) as BudgetTag) : null)}
                 className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
               >
-                {BUDGET_OPTIONS.map((b) => (
-                  <option key={b.label} value={b.value ?? ""}>{b.label}</option>
+                {BUDGET_OPTIONS.map((option) => (
+                  <option key={option.label} value={option.value ?? ""}>{option.label}</option>
                 ))}
               </select>
             </div>
 
-            {/* Goal */}
             <div>
               <label className="mb-1.5 block text-xs text-gray-500">Goal</label>
               <select
                 value={goal || ""}
-                onChange={(e) => setGoal(e.target.value as GoalTag || null)}
+                onChange={(e) => setGoal((e.target.value as GoalTag) || null)}
                 className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
               >
-                {GOAL_OPTIONS.map((g) => (
-                  <option key={g.label} value={g.value ?? ""}>{g.label}</option>
+                {GOAL_OPTIONS.map((option) => (
+                  <option key={option.label} value={option.value ?? ""}>{option.label}</option>
                 ))}
               </select>
             </div>
 
-            {/* Style */}
             <div>
               <label className="mb-1.5 block text-xs text-gray-500">Style</label>
               <select
                 value={style || ""}
-                onChange={(e) => setStyle(e.target.value as StyleIntent || null)}
+                onChange={(e) => setStyle((e.target.value as StyleIntent) || null)}
                 className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
               >
-                {STYLE_OPTIONS.map((s) => (
-                  <option key={s.label} value={s.value ?? ""}>{s.label}</option>
+                {STYLE_OPTIONS.map((option) => (
+                  <option key={option.label} value={option.value ?? ""}>{option.label}</option>
                 ))}
               </select>
             </div>
 
-            {/* Gender */}
             <div>
               <label className="mb-1.5 block text-xs text-gray-500">Gender</label>
               <select
                 value={gender || ""}
-                onChange={(e) => setGender(e.target.value as "men" | "women" | "unisex" || null)}
+                onChange={(e) => setGender((e.target.value as "men" | "women" | "unisex") || null)}
                 className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-purple-500/50 focus:outline-none"
               >
-                {GENDER_OPTIONS.map((g) => (
-                  <option key={g.label} value={g.value ?? ""}>{g.label}</option>
+                {GENDER_OPTIONS.map((option) => (
+                  <option key={option.label} value={option.value ?? ""}>{option.label}</option>
                 ))}
               </select>
             </div>
 
-            {/* Clear */}
             {hasFilters && (
               <div className="flex items-end">
                 <button
@@ -278,7 +236,6 @@ export default function ShopPage() {
           </div>
         </Card>
 
-        {/* Results */}
         {filtered.length === 0 ? (
           <Card className="py-12 text-center">
             <p className="text-sm text-gray-400">No looks match your filters.</p>
@@ -298,18 +255,21 @@ export default function ShopPage() {
               {visibleLooks.map((look, i) => (
                 <FadeInView key={look.id} delay={Math.min(i * 50, 400)}>
                   <Card hover className="flex flex-col h-full">
-                    <ShopCategoryImage category={look.category} title={look.title} />
+                    <ShopCategoryImage category={look.category} title={getLookDisplayTitle(look)} />
                     <div className="mt-3 flex-1">
                       <div className="mb-1 flex items-start justify-between gap-2">
                         <h3 className="text-sm font-semibold text-white leading-tight">
-                          {look.title}
+                          {getLookDisplayTitle(look)}
                         </h3>
                         <span className="text-xs font-medium text-amber-400 whitespace-nowrap">
-                          {look.priceLabel}
+                          ~Rs {formatIndianPrice(getLookTotalPrice(look))}
                         </span>
                       </div>
                       <p className="text-xs text-gray-500 line-clamp-2">
-                        {look.description}
+                        {getLookDisplayDescription(look)}
+                      </p>
+                      <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-gray-600">
+                        {getLookPieceCount(look)}-piece look
                       </p>
                       <div className="mt-2 flex flex-wrap gap-1">
                         {look.styleArchetypes.slice(0, 2).map((tag) => (
@@ -325,7 +285,7 @@ export default function ShopPage() {
                       </div>
                     </div>
                     <div className="mt-3">
-                      <ShopLinks look={look} />
+                      <ViewLookButton look={look} />
                     </div>
                   </Card>
                 </FadeInView>
@@ -333,10 +293,7 @@ export default function ShopPage() {
             </div>
             {hasMore && (
               <div className="mt-8 text-center">
-                <Button
-                  variant="outline"
-                  onClick={() => setVisibleCount((c) => c + BATCH_SIZE)}
-                >
+                <Button variant="outline" onClick={() => setVisibleCount((count) => count + BATCH_SIZE)}>
                   Load More ({filtered.length - visibleLooks.length} remaining)
                 </Button>
               </div>
@@ -344,11 +301,9 @@ export default function ShopPage() {
           </>
         )}
 
-        {/* Trust */}
         <Card className="mt-8 text-center relative">
           <p className="text-xs text-gray-500">
-            AuraCheck does not guarantee social, dating, career, or financial
-            outcomes. Prices are approximate. Verify details before buying from any vendor.
+            AuraCheck does not guarantee social, dating, career, or financial outcomes. Prices are approximate totals for the full look. Verify details before buying.
           </p>
         </Card>
       </Container>

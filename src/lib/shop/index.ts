@@ -4,12 +4,24 @@ export type { Retailer, LookSpec } from "./linkBuilder";
 export type { Look, LookCategory } from "./catalogTypes";
 export { getLookShopLinks, getLookPrimaryUrl } from "./catalogTypes";
 
+export {
+  getLookComposition,
+  getLookDisplayTitle,
+  getLookDisplayDescription,
+  getResolvedLookPieces,
+  getLookPieceCount,
+  getLookTotalPrice,
+  formatIndianPrice,
+  hasLookComposition,
+} from "./lookCompositions";
+
 export { HERO_LOOKS } from "./heroLooks";
 export { generateLongTailLooks } from "./generatedLooks";
 
 export {
   getAllLooks,
   getHeroLooks,
+  getShoppableLooks,
   getCatalogStats,
   getPersonalizedLooks,
   getDefaultLooks,

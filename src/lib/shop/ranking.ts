@@ -1,7 +1,9 @@
 import type { Look } from "./catalogTypes";
-
-// ponytail: deterministic ranking — same inputs always produce same output
-// weights sum to 1.0
+import {
+  getLookDisplayDescription,
+  getLookDisplayTitle,
+  getLookTotalPrice,
+} from "./lookCompositions";
 
 const WEIGHTS = {
   auditRelevance: 0.35,
@@ -23,21 +25,15 @@ export function rankLooks(
 
   return [...looks]
     .map((look) => {
-      // Audit relevance: how many leak tags does this look address?
-      const leakOverlap = look.statusLeakTags.filter((t) => leakTags.includes(t)).length;
+      const leakOverlap = look.statusLeakTags.filter((tag) => leakTags.includes(tag)).length;
       const auditScore = leakTags.length > 0 ? leakOverlap / leakTags.length : 0.5;
 
-      // Goal relevance: how many goal tags match?
-      const goalOverlap = look.goalTags.filter((t) => goalTags.includes(t)).length;
+      const goalOverlap = look.goalTags.filter((tag) => goalTags.includes(tag)).length;
       const goalScore = goalTags.length > 0 ? goalOverlap / goalTags.length : 0.5;
 
-      // Price value: lower price = higher value (for budget items)
-      const priceScore = look.price > 0 ? 1 - Math.min(look.price / 5000, 1) : 1;
-
-      // Budget fit: does it fit the user's budget?
-      const budgetScore = maxBudget ? (look.price <= maxBudget ? 1 : 0) : 1;
-
-      // Data freshness: always 1 for static catalog
+      const totalPrice = getLookTotalPrice(look);
+      const priceScore = totalPrice > 0 ? 1 - Math.min(totalPrice / 5000, 1) : 1;
+      const budgetScore = maxBudget ? (totalPrice <= maxBudget ? 1 : 0) : 1;
       const freshnessScore = 1;
 
       const totalScore =
@@ -50,19 +46,22 @@ export function rankLooks(
       return { look, score: totalScore };
     })
     .sort((a, b) => b.score - a.score)
-    .map((r) => r.look);
+    .map((item) => item.look);
 }
 
 export function searchLooks(looks: Look[], query: string): Look[] {
   const q = query.toLowerCase().trim();
   if (!q) return looks;
+
   return looks.filter(
-    (l) =>
-      l.title.toLowerCase().includes(q) ||
-      l.description.toLowerCase().includes(q) ||
-      l.category.toLowerCase().includes(q) ||
-      l.keywords.some((k) => k.toLowerCase().includes(q)) ||
-      l.styleArchetypes.some((s) => s.toLowerCase().includes(q)) ||
-      l.goalTags.some((g) => g.toLowerCase().includes(q))
+    (look) =>
+      getLookDisplayTitle(look).toLowerCase().includes(q) ||
+      getLookDisplayDescription(look).toLowerCase().includes(q) ||
+      look.title.toLowerCase().includes(q) ||
+      look.description.toLowerCase().includes(q) ||
+      look.category.toLowerCase().includes(q) ||
+      look.keywords.some((keyword) => keyword.toLowerCase().includes(q)) ||
+      look.styleArchetypes.some((style) => style.toLowerCase().includes(q)) ||
+      look.goalTags.some((goal) => goal.toLowerCase().includes(q))
   );
 }

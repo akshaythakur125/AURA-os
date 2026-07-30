@@ -13,7 +13,8 @@
 
 import type { StatusLeakTag, GoalTag, BudgetTag, AuditTypeTag } from "@/types/product";
 import type { StyleIntent } from "@/types/personalization";
-import type { Retailer } from "./linkBuilder";
+import { buildAllShopLinks, buildPrimaryShopLink, type Retailer } from "./linkBuilder";
+import { getExactProductLink } from "./exactProductLinks";
 
 export type LookCategory =
   | "tshirt"
@@ -67,23 +68,60 @@ export interface Look {
   createdAt: string;
 }
 
+export interface ShopLink {
+  retailer: Retailer;
+  url: string;
+  label: string;
+  exact?: boolean;
+  productTitle?: string;
+}
+
+function getAffiliateRedirectUrl(lookId: string): string {
+  return `/api/shop/affiliate?lookId=${encodeURIComponent(lookId)}`;
+}
+
 /**
  * Builds all shop links for a look using the link-builder utility.
  */
-export function getLookShopLinks(look: Look) {
-  const { buildAllShopLinks } = require("./linkBuilder");
-  return buildAllShopLinks({
+export function getLookShopLinks(look: Look): ShopLink[] {
+  const exact = getExactProductLink(look.id);
+  const searchLinks = buildAllShopLinks({
     category: look.category,
     keywords: look.keywords,
     gender: look.gender,
-  });
+  }).map((link) => ({
+    ...link,
+    label: exact && link.retailer === exact.retailer ? `${link.label} Search` : link.label,
+  }));
+
+  if (!exact) {
+    return searchLinks;
+  }
+
+  return [
+    {
+      retailer: exact.retailer,
+      url: getAffiliateRedirectUrl(look.id),
+      label: "Amazon Exact Match",
+      exact: true,
+      productTitle: exact.productTitle,
+    },
+    ...searchLinks,
+  ];
+}
+
+export function getLookExactProduct(look: Look) {
+  return getExactProductLink(look.id);
 }
 
 /**
  * Returns the primary shop URL for a look.
  */
 export function getLookPrimaryUrl(look: Look): string {
-  const { buildPrimaryShopLink } = require("./linkBuilder");
+  if (getExactProductLink(look.id)) {
+    return getAffiliateRedirectUrl(look.id);
+  }
+
   return buildPrimaryShopLink({
     category: look.category,
     keywords: look.keywords,

@@ -8,11 +8,17 @@ import { Button } from "@/components/ui/Button";
 import { FadeInView } from "@/components/ui/FadeInView";
 import type { Look } from "@/lib/shop/catalogTypes";
 import type { StatusLeakTag } from "@/types/product";
-import { buildRetailerUrl, type Retailer } from "@/lib/shop/linkBuilder";
 import { ShopCategoryImage } from "./ShopCategoryImage";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { rankLooks, searchLooks } from "@/lib/shop/ranking";
 import { useSavedProducts } from "@/hooks/useSavedProducts";
+import {
+  formatIndianPrice,
+  getLookDisplayDescription,
+  getLookDisplayTitle,
+  getLookPieceCount,
+  getLookTotalPrice,
+} from "@/lib/shop/lookCompositions";
 
 interface PersonalizedShopProps {
   looks: Look[];
@@ -21,16 +27,6 @@ interface PersonalizedShopProps {
   leakTags?: string[];
   gender?: "men" | "women" | "unisex";
 }
-
-const RETAILER_LABELS: Record<Retailer, string> = {
-  amazon: "Amazon",
-  flipkart: "Flipkart",
-  myntra: "Myntra",
-  ajio: "Ajio",
-  nykaa: "Nykaa",
-};
-
-const RETAILERS: Retailer[] = ["amazon", "flipkart", "myntra", "ajio"];
 
 const LEAK_FIX_COPY: Record<StatusLeakTag, string> = {
   lighting: "Fixes your harsh or flat lighting",
@@ -58,54 +54,25 @@ function getLeakFixText(look: Look, leakTags: string[]): string | null {
 }
 
 function LookImage({ look }: { look: Look }) {
-  return <ShopCategoryImage category={look.category} title={look.title} />;
+  return <ShopCategoryImage category={look.category} title={getLookDisplayTitle(look)} />;
 }
 
-function ShopLinks({ look }: { look: Look }) {
-  const [open, setOpen] = useState(false);
-
-  const links = RETAILERS.map((retailer) => ({
-    retailer,
-    url: buildRetailerUrl(
-      { category: look.category, keywords: look.keywords, gender: look.gender },
-      retailer
-    ),
-    label: RETAILER_LABELS[retailer],
-  }));
-
+function ViewLookButton({ look }: { look: Look }) {
   return (
-    <div className="relative">
-      <Button
-        variant="primary"
-        size="sm"
-        className="w-full text-xs"
-        onClick={() => setOpen(!open)}
-      >
-        Search This Item
-      </Button>
-      {open && (
-        <div className="absolute bottom-full left-0 right-0 mb-2 rounded-xl glass-elevated p-1.5 shadow-2xl z-10">
-          {links.map((link) => (
-            <a
-              key={link.retailer}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block rounded-lg px-3 py-2 text-xs text-gray-300 transition-colors hover:bg-white/[0.06] hover:text-white"
-              onClick={() => {
-                setOpen(false);
-                trackEvent(EVENTS.SHOP_LINK_CLICKED, {
-                  retailer: link.retailer,
-                  lookCategory: look.category,
-                });
-              }}
-            >
-              {link.label} →
-            </a>
-          ))}
-        </div>
-      )}
-    </div>
+    <Link
+      href={"/shop/look/" + look.id}
+      className="inline-flex w-full items-center justify-center rounded-lg bg-white px-3 py-2 text-xs font-medium text-black transition-opacity hover:opacity-90"
+      onClick={() =>
+        trackEvent(EVENTS.SHOP_LINK_CLICKED, {
+          retailer: "amazon",
+          lookCategory: look.category,
+          exactMatch: true,
+          destination: "look-detail",
+        })
+      }
+    >
+      View Full Look
+    </Link>
   );
 }
 
@@ -120,11 +87,10 @@ export function PersonalizedShop({
   const [compareIds, setCompareIds] = useState<string[]>([]);
   const { isSaved, toggleSave } = useSavedProducts();
 
-  // ponytail: deterministic ranking + search
   const ranked = rankLooks(looks, { leakTags, goalTags: [], maxBudget: budgetFilter || undefined });
   const searched = searchQuery ? searchLooks(ranked, searchQuery) : ranked;
   const visibleLooks = showAll ? searched : searched.slice(0, 12);
-  const compareLooks = looks.filter((l) => compareIds.includes(l.id));
+  const compareLooks = looks.filter((look) => compareIds.includes(look.id));
 
   const worstLeak = leakTags && leakTags.length > 0 ? leakTags[0] : null;
 
@@ -147,26 +113,23 @@ export function PersonalizedShop({
   return (
     <section className="border-t border-white/[0.04] py-12">
       <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:px-10">
-        {/* Header — stylist picks branding */}
         <FadeInView>
           <div className="mb-8 text-center">
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1">
-              <span className="text-xs">✨</span>
-              <span className="text-xs font-medium text-amber-300">Personalized Picks</span>
+              <span className="text-xs">*</span>
+              <span className="text-xs font-medium text-amber-300">Personalized Looks</span>
             </div>
             <h2 className="gradient-text-animated text-2xl font-bold sm:text-3xl">
               {worstLeak
-                ? `Your stylist picks to fix "${leakLabels[worstLeak] || worstLeak}"`
-                : "Your personalized style picks"}
+                ? `Looks picked to fix "${leakLabels[worstLeak] || worstLeak}"`
+                : "Your personalized looks"}
             </h2>
             <p className="mt-3 text-sm text-gray-400">
-              {archetype && (
-                <span className="text-purple-300">{archetype}</span>
-              )}
-              {archetype && worstLeak && " · "}
+              {archetype && <span className="text-purple-300">{archetype}</span>}
+              {archetype && worstLeak && " | "}
               {worstLeak && (
                 <span>
-                  Each pick directly addresses your{" "}
+                  Each look directly addresses your{" "}
                   <span className="text-red-300">{leakLabels[worstLeak] || worstLeak}</span> issue
                 </span>
               )}
@@ -175,9 +138,8 @@ export function PersonalizedShop({
           </div>
         </FadeInView>
 
-        {/* Search */}
         <FadeInView delay={30}>
-          <div className="mb-4 max-w-md mx-auto">
+          <div className="mb-4 mx-auto max-w-md">
             <input
               type="text"
               placeholder="Search by category, style, or need..."
@@ -188,54 +150,52 @@ export function PersonalizedShop({
           </div>
         </FadeInView>
 
-        {/* Budget filter */}
         <FadeInView delay={50}>
           <div className="mb-6 flex flex-wrap items-center justify-center gap-2">
             <span className="text-xs text-gray-500">Budget:</span>
             {[
               { label: "All", value: null },
-              { label: "Under ₹500", value: 500 },
-              { label: "Under ₹1000", value: 1000 },
-              { label: "Under ₹2000", value: 2000 },
-            ].map((b) => (
+              { label: "Under Rs 500", value: 500 },
+              { label: "Under Rs 1000", value: 1000 },
+              { label: "Under Rs 2000", value: 2000 },
+            ].map((budget) => (
               <button
-                key={b.label}
-                onClick={() => setBudgetFilter(b.value)}
+                key={budget.label}
+                onClick={() => setBudgetFilter(budget.value)}
                 className={`rounded-full px-3 py-1 text-xs transition-all ${
-                  budgetFilter === b.value
+                  budgetFilter === budget.value
                     ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
                     : "bg-white/[0.04] text-gray-400 border border-white/[0.06] hover:bg-white/[0.08]"
                 }`}
               >
-                {b.label}
+                {budget.label}
               </button>
             ))}
           </div>
         </FadeInView>
 
-        {/* Free fixes — always first, no purchase needed */}
         {leakTags && leakTags.length > 0 && (
           <FadeInView delay={30}>
             <div className="mb-8 rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] p-5">
               <div className="mb-3 flex items-center gap-2">
-                <span className="text-sm">💡</span>
+                <span className="text-sm">!</span>
                 <h3 className="text-sm font-semibold text-emerald-300">Try these free fixes first</h3>
               </div>
               <div className="space-y-2">
                 {leakTags.slice(0, 3).map((tag) => (
                   <div key={tag} className="flex items-start gap-2">
-                    <span className="mt-0.5 text-emerald-500">✓</span>
+                    <span className="mt-0.5 text-emerald-500">+</span>
                     <div>
                       <span className="text-xs font-medium text-white">{leakLabels[tag] || tag}: </span>
                       <span className="text-xs text-gray-400">{
-                        tag === "lighting" && "Face a window at 45°. Natural side light is free and the single biggest upgrade."
+                        tag === "lighting" && "Face a window at 45 degrees. Natural side light is free and the single biggest upgrade."
                         || tag === "background" && "Stand against a plain wall or step outside. A clean background costs nothing."
                         || tag === "clarity" && "Use your phone's rear camera, clean the lens, and hold steady or use a timer."
-                        || tag === "framing" && "Centre yourself with eyes at the top-third line. Chest-up framing works best."
-                        || tag === "color" && "Wear solid colours that contrast your skin — dark on light, light on dark."
-                        || tag === "grooming" && "Clean, neat grooming reads as put-together. No product needed."
+                        || tag === "framing" && "Center yourself with eyes at the top-third line. Chest-up framing works best."
+                        || tag === "color" && "Wear solid colors that contrast your skin."
+                        || tag === "grooming" && "Clean, neat grooming reads as put-together."
                         || tag === "outfit_fit" && "Well-fitted basics beat expensive logos every time."
-                        || "Small changes in this area can make a significant difference to your photo."
+                        || "Small changes in this area can make a visible difference to your photo."
                       }</span>
                     </div>
                   </div>
@@ -245,7 +205,6 @@ export function PersonalizedShop({
           </FadeInView>
         )}
 
-        {/* Look grid */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {visibleLooks.map((look, i) => {
             const fixText = leakTags ? getLeakFixText(look, leakTags) : null;
@@ -256,24 +215,25 @@ export function PersonalizedShop({
                   <div className="mt-3 flex-1">
                     <div className="mb-1 flex items-start justify-between gap-2">
                       <Link href={"/shop/look/" + look.id} className="text-sm font-semibold text-white leading-tight hover:underline">
-                        {look.title}
+                        {getLookDisplayTitle(look)}
                       </Link>
                       <span className="text-xs font-medium text-amber-400 whitespace-nowrap">
-                        {look.priceLabel}
+                        ~Rs {formatIndianPrice(getLookTotalPrice(look))}
                       </span>
                     </div>
                     <p className="text-xs text-gray-500 line-clamp-2">
-                      {look.description}
+                      {getLookDisplayDescription(look)}
                     </p>
-                    {/* Why this fixes it */}
+                    <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-gray-600">
+                      {getLookPieceCount(look)}-piece look
+                    </p>
                     {fixText && (
                       <div className="mt-2 rounded-lg border border-emerald-500/15 bg-emerald-500/5 px-2.5 py-1.5">
                         <p className="text-[10px] font-medium text-emerald-400">
-                          ✓ {fixText}
+                          + {fixText}
                         </p>
                       </div>
                     )}
-                    {/* Tags */}
                     <div className="mt-2 flex flex-wrap gap-1">
                       {look.styleArchetypes.slice(0, 2).map((tag) => (
                         <Badge key={tag} variant="default" className="text-[9px] px-1.5 py-0">
@@ -283,14 +243,14 @@ export function PersonalizedShop({
                     </div>
                   </div>
                   <div className="mt-3 flex gap-2">
-                    <div className="flex-1"><ShopLinks look={look} /></div>
+                    <div className="flex-1"><ViewLookButton look={look} /></div>
                     <button
-                      onClick={() => toggleSave({ id: look.id, title: look.title, category: look.category, priceLabel: look.priceLabel })}
+                      onClick={() => toggleSave({ id: look.id, title: getLookDisplayTitle(look), category: look.category, priceLabel: `Rs ${formatIndianPrice(getLookTotalPrice(look))}` })}
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] text-xs transition-colors hover:bg-white/[0.06]"
-                      aria-label={isSaved(look.id) ? "Remove from saved" : "Save product"}
+                      aria-label={isSaved(look.id) ? "Remove from saved" : "Save look"}
                       title={isSaved(look.id) ? "Saved" : "Save"}
                     >
-                      {isSaved(look.id) ? "★" : "☆"}
+                      {isSaved(look.id) ? "[]" : "+"}
                     </button>
                     <button
                       onClick={() => {
@@ -303,7 +263,7 @@ export function PersonalizedShop({
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] text-xs transition-colors hover:bg-white/[0.06]"
                       aria-label={compareIds.includes(look.id) ? "Remove from compare" : "Add to compare"}
                     >
-                      {compareIds.includes(look.id) ? "✓" : "⇔"}
+                      {compareIds.includes(look.id) ? "OK" : "<>"}
                     </button>
                   </div>
                 </Card>
@@ -312,7 +272,6 @@ export function PersonalizedShop({
           })}
         </div>
 
-        {/* Comparison table */}
         {compareLooks.length >= 2 && (
           <FadeInView delay={100}>
             <div className="mb-8 overflow-x-auto rounded-2xl border border-white/[0.06] bg-white/[0.02] p-4">
@@ -323,19 +282,19 @@ export function PersonalizedShop({
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-white/[0.06]">
-                    <th className="py-2 pr-3 text-left text-gray-500">Product</th>
+                    <th className="py-2 pr-3 text-left text-gray-500">Look</th>
                     <th className="py-2 pr-3 text-left text-gray-500">Category</th>
-                    <th className="py-2 pr-3 text-left text-gray-500">Price</th>
+                    <th className="py-2 pr-3 text-left text-gray-500">Estimated Total</th>
                     <th className="py-2 pr-3 text-left text-gray-500">Addresses</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {compareLooks.map((l) => (
-                    <tr key={l.id} className="border-b border-white/[0.03]">
-                      <td className="py-2 pr-3 font-medium text-white">{l.title}</td>
-                      <td className="py-2 pr-3 text-gray-400">{l.category}</td>
-                      <td className="py-2 pr-3 text-amber-400">{l.priceLabel}</td>
-                      <td className="py-2 pr-3 text-gray-400">{l.statusLeakTags.join(", ") || "—"}</td>
+                  {compareLooks.map((look) => (
+                    <tr key={look.id} className="border-b border-white/[0.03]">
+                      <td className="py-2 pr-3 font-medium text-white">{getLookDisplayTitle(look)}</td>
+                      <td className="py-2 pr-3 text-gray-400">{look.category}</td>
+                      <td className="py-2 pr-3 text-amber-400">Rs {formatIndianPrice(getLookTotalPrice(look))}</td>
+                      <td className="py-2 pr-3 text-gray-400">{look.statusLeakTags.join(", ") || "-"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -344,22 +303,16 @@ export function PersonalizedShop({
           </FadeInView>
         )}
 
-        {/* Affiliate disclosure */}
         <FadeInView delay={150}>
           <p className="mt-6 text-center text-[10px] text-gray-600">
-            FixMyAura may earn a commission when you purchase through eligible links. This does not change the price you pay.
-            Product links open retailer search pages — verify current price and availability on the retailer site.
+            FixMyAura may earn a commission when you purchase through eligible links. Each look opens into individually shoppable pieces.
           </p>
         </FadeInView>
 
-        {/* Show more */}
         {looks.length > 12 && !showAll && (
           <FadeInView delay={200}>
             <div className="mt-8 text-center">
-              <Button
-                variant="outline"
-                onClick={() => setShowAll(true)}
-              >
+              <Button variant="outline" onClick={() => setShowAll(true)}>
                 Show All {looks.length} Looks
               </Button>
             </div>

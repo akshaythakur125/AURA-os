@@ -2,19 +2,19 @@ import type { Metadata } from "next";
 import ShopPage from "./ClientPage";
 
 export const metadata: Metadata = {
-  title: "Shop Curated Upgrades — Visual Signal Products",
+  title: "Shop Full Looks - AuraCheck",
   description:
-    "Browse curated upgrades targeting your specific photo-quality issues — grooming, outfits, lighting, backgrounds. Filter by category, budget, and goal. Prices and links verified.",
+    "Browse full shoppable looks with individual piece links. Filter by category, budget, and goal to find outfits that fit your style and your audit needs.",
   openGraph: {
-    title: "AuraCheck Shop — Targeted Upgrades for Your Biggest Leaks",
+    title: "AuraCheck Shop - Full Looks You Can Shop Piece by Piece",
     description:
-      "Curated products that fix the specific things weakening your first impression. Filter by budget and goal.",
+      "Complete looks, not random single products. Open any look to shop each piece separately.",
     images: [
       {
-        url: "/api/og?category=Shop+Curated+Upgrades&leak=Targeted+fixes+for+your+status+leaks",
+        url: "/api/og?category=Shop+Full+Looks&leak=Complete+looks+with+piece-by-piece+buy+links",
         width: 1200,
         height: 630,
-        alt: "AuraCheck Shop — Curated Upgrades",
+        alt: "AuraCheck Shop - Full Looks",
       },
     ],
     type: "website",
