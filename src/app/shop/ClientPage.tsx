@@ -19,6 +19,7 @@ import type { Look, LookCategory } from "@/lib/shop/catalogTypes";
 import type { GoalTag, BudgetTag } from "@/types/product";
 import type { StyleIntent } from "@/types/personalization";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
+import { hasAnyUnlock } from "@/lib/storage/unlockStore";
 
 const CATEGORY_OPTIONS: { label: string; value: LookCategory | null }[] = [
   { label: "All Categories", value: null },
@@ -96,6 +97,7 @@ const RETAILERS: Retailer[] = ["amazon", "flipkart", "myntra", "ajio"];
 
 function ShopLinks({ look }: { look: Look }) {
   const [open, setOpen] = useState(false);
+  const [lockedOpen, setLockedOpen] = useState(false);
 
   const links = RETAILERS.map((retailer) => ({
     retailer,
@@ -112,12 +114,32 @@ function ShopLinks({ look }: { look: Look }) {
         variant="primary"
         size="sm"
         className="w-full text-xs"
-        // Retailer links are affiliate-tagged and free for everyone — the shop's
-        // whole job is to drive commissionable clicks, so nothing here is gated.
-        onClick={() => setOpen(!open)}
+        // Full catalog is members-only: shopping the /shop looks needs any ₹25
+        // report unlock. Free users get a locked glimpse (the 50 free looks live
+        // on the homepage). Members get the real affiliate links.
+        onClick={() => {
+          if (hasAnyUnlock()) { setLockedOpen(false); setOpen(!open); }
+          else { setOpen(false); setLockedOpen(!lockedOpen); }
+        }}
       >
         Shop This Look
       </Button>
+      {lockedOpen && (
+        <div className="absolute bottom-full left-0 right-0 mb-2 rounded-xl glass-elevated p-3 shadow-2xl z-10" style={{ transform: "perspective(600px) rotateX(4deg)", transformOrigin: "bottom" }}>
+          <div className="pointer-events-none select-none blur-[5px]" aria-hidden="true">
+            {links.slice(0, 3).map((l) => (
+              <div key={l.retailer} className="px-3 py-1.5 text-xs text-[#4a443d]">{l.label} →</div>
+            ))}
+          </div>
+          <div className="mt-1 border-t border-[#1c1917]/[0.08] pt-2 text-center">
+            <p className="mb-1.5 text-[11px] text-[#857b6e]">🔒 Full-shop links unlock with any ₹25 report</p>
+            <Link href="/audit/new" className="inline-block rounded-lg bg-gradient-to-r from-[#E14434] to-[#c0341f] px-4 py-1.5 text-[11px] font-semibold text-white">
+              Unlock the shop
+            </Link>
+            <p className="mt-1.5 text-[10px] text-[#9c9184]">or shop 50 free looks on the home page</p>
+          </div>
+        </div>
+      )}
       {open && (
         <div className="absolute bottom-full left-0 right-0 mb-2 rounded-xl glass-elevated p-1.5 shadow-2xl z-10">
           {links.map((link) => (

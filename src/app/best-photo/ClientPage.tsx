@@ -10,6 +10,7 @@ import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { analyzeImageDataUrl } from "@/lib/aura-engine/imageMetrics";
 import { hasAnyUnlock } from "@/lib/storage/unlockStore";
 import { PhotoKitCard } from "@/components/report/PhotoKitCard";
+import { ShopNudge } from "@/components/shop/ShopNudge";
 
 interface Scored {
   id: string;
@@ -206,10 +207,13 @@ export default function BestPhotoClient() {
                 Scores are guidance from local image analysis, not objective truth.
               </p>
 
-              {/* Gear to push the top pick even higher — tied to its measured gaps */}
+              {/* Gear to push the top pick higher — members get the measured kit;
+                  non-members get the shop teaser (shopping is members-only). */}
               <div className="mt-8">
                 <p className="mb-2 text-sm font-semibold text-[#1C1917]">Level up your top pick</p>
-                <PhotoKitCard metrics={results[0].metrics} />
+                {hasAnyUnlock()
+                  ? <PhotoKitCard metrics={results[0].metrics} />
+                  : <ShopNudge variant="gear" title="Gear to level up your top pick" />}
               </div>
             </div>
           )}
