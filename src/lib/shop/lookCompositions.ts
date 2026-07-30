@@ -22,6 +22,59 @@ export interface ResolvedLookPiece {
 
 const HERO_LOOKS_BY_ID = new Map(HERO_LOOKS.map((look) => [look.id, look]));
 
+const LOOK_CELEBRITIES: Record<string, string> = {
+  "hero-m-001": "Inspired by Shah Rukh Khan off-duty streetwear",
+  "hero-m-002": "Inspired by Hrithik Roshan clean monochrome fits",
+  "hero-m-003": "Inspired by David Beckham smart-casual polo looks",
+  "hero-m-004": "Inspired by Vicky Kaushal rugged casual styling",
+  "hero-m-005": "Inspired by Ryan Reynolds low-effort sharp basics",
+  "hero-m-010": "Inspired by Ranbir Kapoor polished airport style",
+  "hero-m-011": "Inspired by Shahid Kapoor office-ready menswear",
+  "hero-m-012": "Inspired by Sidharth Malhotra vacation evening fits",
+  "hero-m-013": "Inspired by Timothee Chalamet layered casual looks",
+  "hero-m-014": "Inspired by Virat Kohli resort casual styling",
+  "hero-m-020": "Inspired by Tom Holland clean denim basics",
+  "hero-m-021": "Inspired by Ranveer Singh toned-down formal tailoring",
+  "hero-m-022": "Inspired by Zayn Malik smart casual neutrals",
+  "hero-m-023": "Inspired by Justin Bieber elevated athleisure",
+  "hero-m-030": "Inspired by Ayushmann Khurrana minimal sneaker fits",
+  "hero-m-031": "Inspired by John Abraham dark evening looks",
+  "hero-m-032": "Inspired by Travis Scott sport-street sneaker styling",
+  "hero-m-033": "Inspired by Saif Ali Khan old-money loafers look",
+  "hero-m-040": "Inspired by George Clooney timeless menswear details",
+  "hero-m-041": "Inspired by Diljit Dosanjh summer travel style",
+  "hero-m-042": "Inspired by Karan Johar luxury minimal accessories",
+  "hero-m-043": "Inspired by Kartik Aaryan polished campus casual",
+  "hero-m-050": "Inspired by Aditya Roy Kapur easy daytime charm",
+  "hero-m-051": "Inspired by Fawad Khan evening signature style",
+  "hero-m-060": "Inspired by Varun Dhawan fresh grooming-first casual",
+  "hero-m-061": "Inspired by Dev Patel textured clean grooming",
+  "hero-w-001": "Inspired by Kendall Jenner clean denim off-duty",
+  "hero-w-002": "Inspired by Deepika Padukone sleek night-out style",
+  "hero-w-003": "Inspired by Alia Bhatt soft luxe weekend fits",
+  "hero-w-004": "Inspired by Ananya Panday city-casual styling",
+  "hero-w-010": "Inspired by Priyanka Chopra elegant black dress energy",
+  "hero-w-011": "Inspired by Sonam Kapoor structured shirt-dress looks",
+  "hero-w-012": "Inspired by Taylor Swift romantic evening styling",
+  "hero-w-020": "Inspired by Hailey Bieber black-jeans basics",
+  "hero-w-021": "Inspired by Rosie Huntington-Whiteley cream-trouser polish",
+  "hero-w-022": "Inspired by Selena Gomez relaxed daytime denim",
+  "hero-w-030": "Inspired by Dua Lipa platform sneaker streetwear",
+  "hero-w-031": "Inspired by Kiara Advani minimal date-night dressing",
+  "hero-w-032": "Inspired by Meghan Markle quiet office elegance",
+  "hero-w-040": "Inspired by Jennifer Lopez statement-hoop casual glam",
+  "hero-w-041": "Inspired by Gigi Hadid soft glam layering",
+  "hero-w-042": "Inspired by Shraddha Kapoor easy weekend crossbody looks",
+  "hero-w-043": "Inspired by Victoria Beckham structured workwear chic",
+  "hero-w-050": "Inspired by Katrina Kaif soft feminine finishing",
+  "hero-w-060": "Inspired by Aditi Rao Hydari minimal ethnic grace",
+  "hero-w-061": "Inspired by Kareena Kapoor relaxed luxe kurti styling",
+  "hero-u-001": "Inspired by MrBeast studio-ready creator setup",
+  "hero-u-002": "Inspired by Emma Chamberlain casual creator camera setup",
+  "hero-u-003": "Inspired by Nancy Tyagi clean-content backdrop setup",
+  "hero-u-004": "Inspired by Prajakta Koli stable solo-shoot setup",
+};
+
 const LOOK_COMPOSITIONS: Record<string, LookComposition> = {
   "hero-m-001": { lookName: "Street Starter Look", stylingNote: "A black oversized tee, dark denim, clean white sneakers, and a simple watch give you an easy off-duty frame that still photographs sharp.", pieces: [{ slot: "Top", productId: "hero-m-001" }, { slot: "Bottom", productId: "hero-m-020" }, { slot: "Shoes", productId: "hero-m-030" }, { slot: "Accessory", productId: "hero-m-040" }] },
   "hero-m-002": { lookName: "Clean Date-Night Look", stylingNote: "A fitted white tee with black trousers and brown loafers keeps the silhouette simple and expensive-looking.", pieces: [{ slot: "Top", productId: "hero-m-002" }, { slot: "Bottom", productId: "hero-m-021" }, { slot: "Shoes", productId: "hero-m-033" }, { slot: "Accessory", productId: "hero-m-040" }] },
@@ -93,6 +146,10 @@ export function getLookDisplayTitle(look: Look): string {
 
 export function getLookDisplayDescription(look: Look): string {
   return LOOK_COMPOSITIONS[look.id]?.stylingNote || look.description;
+}
+
+export function getLookCelebritySource(look: Look): string | null {
+  return LOOK_CELEBRITIES[look.id] || null;
 }
 
 export function getResolvedLookPieces(look: Look): ResolvedLookPiece[] {

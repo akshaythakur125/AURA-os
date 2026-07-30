@@ -8,6 +8,7 @@ export {
   getLookComposition,
   getLookDisplayTitle,
   getLookDisplayDescription,
+  getLookCelebritySource,
   getResolvedLookPieces,
   getLookPieceCount,
   getLookTotalPrice,

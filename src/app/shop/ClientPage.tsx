@@ -13,6 +13,7 @@ import { getShoppableLooks } from "@/lib/shop/catalog";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { type Look, type LookCategory } from "@/lib/shop/catalogTypes";
 import {
+  getLookCelebritySource,
   formatIndianPrice,
   getLookDisplayDescription,
   getLookDisplayTitle,
@@ -146,10 +147,10 @@ export default function ShopPage() {
 
         <div className="mb-10 relative">
           <h1 className="text-2xl font-bold text-white sm:text-3xl">
-            Shop Real Full Looks
+            Shop Celebrity-Inspired Looks
           </h1>
           <p className="mt-2 text-sm text-gray-400">
-            Each card is a complete outfit or setup, not a single product. Open any look to shop every piece separately.
+            Each card is a celebrity-inspired full look, not a random product. Open any look to shop every piece separately.
           </p>
           <p className="mt-1 text-xs text-gray-600">
             {allLooks.length} looks | Exact piece links where available | Prices estimated per full look
@@ -268,6 +269,11 @@ export default function ShopPage() {
                       <p className="text-xs text-gray-500 line-clamp-2">
                         {getLookDisplayDescription(look)}
                       </p>
+                      {getLookCelebritySource(look) && (
+                        <p className="mt-2 text-[10px] uppercase tracking-[0.16em] text-rose-300">
+                          {getLookCelebritySource(look)}
+                        </p>
+                      )}
                       <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-gray-600">
                         {getLookPieceCount(look)}-piece look
                       </p>

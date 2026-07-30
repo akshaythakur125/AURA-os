@@ -14,6 +14,7 @@ import { rankLooks, searchLooks } from "@/lib/shop/ranking";
 import { useSavedProducts } from "@/hooks/useSavedProducts";
 import {
   formatIndianPrice,
+  getLookCelebritySource,
   getLookDisplayDescription,
   getLookDisplayTitle,
   getLookPieceCount,
@@ -121,8 +122,8 @@ export function PersonalizedShop({
             </div>
             <h2 className="gradient-text-animated text-2xl font-bold sm:text-3xl">
               {worstLeak
-                ? `Looks picked to fix "${leakLabels[worstLeak] || worstLeak}"`
-                : "Your personalized looks"}
+                ? `Celebrity-inspired looks to fix "${leakLabels[worstLeak] || worstLeak}"`
+                : "Your celebrity-inspired looks"}
             </h2>
             <p className="mt-3 text-sm text-gray-400">
               {archetype && <span className="text-purple-300">{archetype}</span>}
@@ -224,6 +225,11 @@ export function PersonalizedShop({
                     <p className="text-xs text-gray-500 line-clamp-2">
                       {getLookDisplayDescription(look)}
                     </p>
+                    {getLookCelebritySource(look) && (
+                      <p className="mt-2 text-[10px] uppercase tracking-[0.16em] text-rose-300">
+                        {getLookCelebritySource(look)}
+                      </p>
+                    )}
                     <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-gray-600">
                       {getLookPieceCount(look)}-piece look
                     </p>

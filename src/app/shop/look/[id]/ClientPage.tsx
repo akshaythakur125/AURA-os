@@ -9,6 +9,7 @@ import { ShopCategoryImage } from "@/components/shop/ShopCategoryImage";
 import type { Look } from "@/lib/shop/catalogTypes";
 import {
   formatIndianPrice,
+  getLookCelebritySource,
   getLookDisplayDescription,
   getLookDisplayTitle,
   getLookTotalPrice,
@@ -39,6 +40,12 @@ export function LookDetailClient({ look }: { look: Look }) {
             </div>
             <h1 className="mb-3 text-2xl font-bold text-white">{getLookDisplayTitle(look)}</h1>
             <p className="mb-4 text-sm text-gray-400">{getLookDisplayDescription(look)}</p>
+            {getLookCelebritySource(look) && (
+              <div className="mb-4 rounded-xl border border-rose-500/20 bg-rose-500/[0.05] p-3">
+                <p className="text-xs font-medium text-rose-300">Celebrity reference</p>
+                <p className="mt-1 text-xs text-gray-300">{getLookCelebritySource(look)}</p>
+              </div>
+            )}
 
             {look.statusLeakTags.length > 0 && (
               <div className="mb-4 rounded-xl border border-emerald-500/15 bg-emerald-500/[0.04] p-3">
