@@ -14,7 +14,7 @@ interface Metrics {
 }
 
 /**
- * Pro perk (inside the ₹25 report): a real, importable Lightroom preset built
+ * Pro perk (inside the ₹21 report): a real, importable Lightroom preset built
  * from THIS photo's measured edit recipe — not a generic filter, the exact
  * corrections the analysis called for. A tangible thing the buyer owns and can
  * one-tap onto every future photo in the free Lightroom mobile app.

@@ -27,7 +27,7 @@ interface ConversionFunnelProps {
  * Prominent conversion funnel — appears RIGHT AFTER the score, not buried at the
  * bottom. This is the money-maker. It mirrors the measured teaser verdict:
  * credit for the real strength, then the biggest leak with its measured
- * evidence as proof, then an honest list of what the ₹25 actually delivers.
+ * evidence as proof, then an honest list of what the ₹21 actually delivers.
  */
 export function ConversionFunnel({
   auditId,
@@ -123,13 +123,13 @@ export function ConversionFunnel({
             className="block"
           >
             <Button size="lg" className="w-full max-w-sm mx-auto text-base font-bold">
-              Unlock My Full Report — ₹25
+              Unlock My Full Report — ₹21
             </Button>
           </Link>
 
           {/* Price anchoring */}
           <p className="mx-auto mt-3 max-w-sm text-[11px] text-[#857b6e]">
-            ₹25, one-time — less than a coffee, and it&apos;s yours forever. One
+            ₹21, one-time — less than a coffee, and it&apos;s yours forever. One
             photo that actually lands is worth far more.
           </p>
 

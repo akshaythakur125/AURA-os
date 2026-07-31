@@ -9,7 +9,7 @@ import type { FullAuraReportContent } from "@/types/audit";
 /**
  * The unlock payoff — paid-only, and now a *moment*: the user's own photo, a
  * one-time confetti + chime reveal (the first time they open the unlocked
- * report), the score→ceiling flex, an honest inventory of what the ₹25
+ * report), the score→ceiling flex, an honest inventory of what the ₹21
  * unlocked, and the single highest-impact move. Nothing invented — it surfaces
  * value already generated so it lands instead of reading as a wall of data.
  */
@@ -118,7 +118,7 @@ export function UnlockedValueHeader({
             </div>
           </div>
 
-          {/* What the ₹25 unlocked */}
+          {/* What the ₹21 unlocked */}
           <div className="mt-4 flex flex-wrap gap-1.5">
             {deliverables.map((d) => (
               <span key={d} className="rounded-full border border-[#1c1917]/10 bg-[#fbf8f2]/70 px-2.5 py-1 text-[11px] font-medium text-[#4a443d]">

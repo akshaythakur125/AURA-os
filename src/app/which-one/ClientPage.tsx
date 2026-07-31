@@ -219,7 +219,7 @@ export default function WhichOnePage() {
                   <p className="mx-auto mt-1 max-w-sm text-xs text-[#6f675e]">Every fix, your colours, and shoppable picks to make your best photo even better.</p>
                   <div className="mt-4 flex flex-wrap justify-center gap-2">
                     <Link href={`/audit/${res.auditWinner}`}><Button size="sm" variant="secondary">See full report</Button></Link>
-                    <Link href={`/unlock?auditId=${res.auditWinner}&product=aura_report`}><Button size="sm">Unlock — ₹25</Button></Link>
+                    <Link href={`/unlock?auditId=${res.auditWinner}&product=aura_report`}><Button size="sm">Unlock — ₹21</Button></Link>
                   </div>
                 </div>
               </FadeInView>

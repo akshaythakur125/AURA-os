@@ -1,7 +1,7 @@
 // Content for the "best glasses for your face shape" SEO guides. Each entry is
 // genuine, substantive eyewear guidance (frames that flatter, what to avoid,
 // how to tell your shape) — not thin templated filler — because thin pages hurt
-// both ranking and the brand. Every guide funnels to a free face scan (→ ₹25)
+// both ranking and the brand. Every guide funnels to a free face scan (→ ₹21)
 // and a Lenskart shop link (→ eyewear commission).
 
 export interface GlassesGuide {

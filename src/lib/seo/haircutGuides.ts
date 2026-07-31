@@ -2,7 +2,7 @@
 // substantive styling guidance — cuts that balance each shape, what to avoid,
 // how to tell your shape, and a styling-product note — because thin pages hurt
 // both ranking and the brand. Every guide funnels to a free face-shape scan
-// (→ ₹25) and a grooming-product shop link (→ commission).
+// (→ ₹21) and a grooming-product shop link (→ commission).
 
 export interface HaircutGuide {
   slug: string; // "oval"

@@ -32,7 +32,7 @@ export default function RefundPage() {
           <section>
             <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">What you&apos;re buying</h2>
             <ul className="mt-2 list-inside list-disc space-y-1">
-              <li>A one-time ₹25 Full Aura Report (or other listed one-time product), unlocked instantly after payment</li>
+              <li>A one-time ₹21 Full Aura Report (or other listed one-time product), unlocked instantly after payment</li>
               <li>No subscriptions and no recurring billing — there is nothing to cancel later</li>
               <li>Scores and recommendations are presentation guidance, not objective truth or guaranteed outcomes</li>
             </ul>

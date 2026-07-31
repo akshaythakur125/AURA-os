@@ -6,7 +6,7 @@ import { useMouseTilt } from "@/hooks/useMouseTilt";
 /**
  * The hero's focal object: a faithful phone screenshot of the *actual* Aura
  * report a user gets — same light theme, same vermilion brand, same score
- * gauge, measured fix, strongest-signal chips and the ₹25 unlock. It's a
+ * gauge, measured fix, strongest-signal chips and the ₹21 unlock. It's a
  * product mockup (illustrative example values), not a real user's result, but
  * every element mirrors the live report UI so the hero shows exactly what you
  * pay for. Pure CSS/SVG — renders everywhere, no WebGL, no fallback needed.
@@ -126,7 +126,7 @@ export function HeroReportMockup() {
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="rounded-full bg-[#E14434] px-3 py-1 text-[10px] font-semibold text-white shadow-sm">
-                  🔓 Unlock full report · ₹25
+                  🔓 Unlock full report · ₹21
                 </span>
               </div>
             </div>

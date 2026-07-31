@@ -2,7 +2,7 @@
 // (.xmp). Every value is derived from THIS photo's numbers — it's not a generic
 // filter, it's the exact set of corrections the analysis called for, packaged
 // as a one-tap preset for the free Lightroom mobile app. A tangible, ownable
-// deliverable that makes the ₹25 land harder and gets shared.
+// deliverable that makes the ₹21 land harder and gets shared.
 
 import type { EditRecipe } from "@/lib/aura-engine/editRecipe";
 

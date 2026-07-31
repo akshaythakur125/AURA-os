@@ -37,7 +37,7 @@ const JSON_LD = {
   operatingSystem: "Web",
   offers: {
     "@type": "Offer",
-    price: "25",
+    price: "21",
     priceCurrency: "INR",
     description: "Full Aura Report — detailed visual analysis",
   },

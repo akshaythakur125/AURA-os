@@ -8,7 +8,7 @@ import { hasAnyUnlock } from "@/lib/storage/unlockStore";
 
 /**
  * A compact "shop the fix" nudge for the lightweight tools (post-or-not,
- * fit-check, which-one, retake-coach). Shopping is members-only (any ₹25 report
+ * fit-check, which-one, retake-coach). Shopping is members-only (any ₹21 report
  * unlock), so non-members see a teaser pointing at the 50 free homepage looks +
  * the unlock; members get the affiliate-tagged retailer links. Rendered
  * member-state only after mount to avoid a hydration mismatch.
@@ -51,7 +51,7 @@ export function ShopNudge({
           <h3 className="text-sm font-semibold text-[#1C1917]">{heading}</h3>
         </div>
         <p className="mb-3 text-xs text-[#857b6e]">
-          Shopping unlocks with any ₹25 report — or shop <span className="font-medium text-[#4a443d]">50 free looks</span> on the home page.
+          Shopping unlocks with any ₹21 report — or shop <span className="font-medium text-[#4a443d]">50 free looks</span> on the home page.
         </p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Link href="/#shop" className="flex-1 rounded-xl border border-[#1c1917]/[0.08] bg-[#fbf8f2]/70 px-3 py-2.5 text-center text-xs font-semibold text-[#1C1917] transition-colors hover:border-[#E14434]/40">

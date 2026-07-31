@@ -347,7 +347,7 @@ export default function PostOrNotPage() {
                   </p>
                   <div className="mt-4 flex flex-wrap justify-center gap-2">
                     <Link href={`/audit/${result.auditId}`}><Button size="sm" variant="secondary">See full free report</Button></Link>
-                    <Link href={`/unlock?auditId=${result.auditId}&product=aura_report`}><Button size="sm">Unlock Full Report — ₹25</Button></Link>
+                    <Link href={`/unlock?auditId=${result.auditId}&product=aura_report`}><Button size="sm">Unlock Full Report — ₹21</Button></Link>
                   </div>
                 </div>
               </FadeInView>

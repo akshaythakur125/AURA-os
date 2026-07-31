@@ -115,7 +115,7 @@ function ShopLinks({ look }: { look: Look }) {
         variant="primary"
         size="sm"
         className="w-full text-xs"
-        // Full catalog is members-only: shopping the /shop looks needs any ₹25
+        // Full catalog is members-only: shopping the /shop looks needs any ₹21
         // report unlock. Free users get a locked glimpse (the 50 free looks live
         // on the homepage). Members get the real affiliate links.
         onClick={() => {
@@ -133,7 +133,7 @@ function ShopLinks({ look }: { look: Look }) {
             ))}
           </div>
           <div className="mt-1 border-t border-[#1c1917]/[0.08] pt-2 text-center">
-            <p className="mb-1.5 text-[11px] text-[#857b6e]">🔒 Full-shop links unlock with any ₹25 report</p>
+            <p className="mb-1.5 text-[11px] text-[#857b6e]">🔒 Full-shop links unlock with any ₹21 report</p>
             <Link href="/audit/new" className="inline-block rounded-lg bg-gradient-to-r from-[#E14434] to-[#c0341f] px-4 py-1.5 text-[11px] font-semibold text-white">
               Unlock the shop
             </Link>

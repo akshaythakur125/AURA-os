@@ -8,7 +8,7 @@ import { FadeInView } from "@/components/ui/FadeInView";
  * The homepage's "what the scan reads" beat — the same signals + now→ceiling
  * story the report tells, animated on scroll: bars fill, numbers count up, the
  * ceiling gap resolves. Product-true (these are the real measured dimensions),
- * and it earns the ₹25 pitch before the shopping sections below.
+ * and it earns the ₹21 pitch before the shopping sections below.
  */
 const SIGNALS: { name: string; val: number; note: string }[] = [
   { name: "Clarity", val: 68, note: "Slightly soft — wipe the lens, tap-to-focus, shoot on the rear camera." },

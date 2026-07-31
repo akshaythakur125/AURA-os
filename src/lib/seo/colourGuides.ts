@@ -2,7 +2,7 @@
 // Genuine, substantive colour-analysis guidance — how to find your undertone,
 // the colours that make your skin glow, what to skip, and how to shop them —
 // because thin pages hurt both ranking and the brand. Every guide funnels to a
-// free undertone scan (→ ₹25) and colour-specific shop links (→ apparel
+// free undertone scan (→ ₹21) and colour-specific shop links (→ apparel
 // commission).
 
 export interface ColourGuide {

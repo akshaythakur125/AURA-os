@@ -10,7 +10,7 @@ import type { FullAuraReportContent } from "@/types/audit";
 /**
  * Paid-only "flex your glow-up" Story card. Turns the score→ceiling story into
  * a share-ready image so a GenZ buyer can post their potential — social
- * currency that makes the ₹25 feel worth it, and pulls new users in with every
+ * currency that makes the ₹21 feel worth it, and pulls new users in with every
  * share. Numbers only; the photo is never included.
  */
 export function GlowupShareCard({ content, auditId }: { content: FullAuraReportContent; auditId: string }) {

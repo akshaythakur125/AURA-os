@@ -8,7 +8,7 @@ import { LookGallery } from "@/components/shop/LookGallery";
 /**
  * Homepage "Shop the vibe" — the free shopping tier, built around curated LOOKS
  * (complete outfits per aesthetic) rather than individual products. The full
- * catalog + picks matched to your own photo unlock with any ₹25 report.
+ * catalog + picks matched to your own photo unlock with any ₹21 report.
  */
 export function ShopTheVibeBand() {
   return (
@@ -24,7 +24,7 @@ export function ShopTheVibeBand() {
               Steal the whole fit, not just one piece
             </h2>
             <p className="mx-auto mt-3 max-w-md text-sm text-[#6F675E]">
-              Complete looks that photograph well — each one styled to a vibe and ready to shop. Picks matched to <em>your</em> photo unlock with any ₹25 report.
+              Complete looks that photograph well — each one styled to a vibe and ready to shop. Picks matched to <em>your</em> photo unlock with any ₹21 report.
             </p>
           </div>
         </FadeInView>
@@ -36,7 +36,7 @@ export function ShopTheVibeBand() {
           <div className="mt-12 rounded-2xl border border-[#E14434]/20 bg-gradient-to-b from-[#E14434]/[0.06] to-transparent p-6 text-center">
             <p className="text-sm font-semibold text-[#1C1917]">Want looks built for your face, colours &amp; vibe?</p>
             <p className="mx-auto mt-1 max-w-md text-xs text-[#6f675e]">
-              Unlock the full catalog, your personalized buy list, colour palette, and capsule wardrobe with any ₹25 report.
+              Unlock the full catalog, your personalized buy list, colour palette, and capsule wardrobe with any ₹21 report.
             </p>
             <Link
               href="/audit/new"

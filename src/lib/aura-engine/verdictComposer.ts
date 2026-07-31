@@ -1,7 +1,7 @@
 import type { ImageSignalMetrics, FullStatusLeak, StatusLeak } from "@/types/audit";
 
 /**
- * The verdict is the headline of the paid report — the first thing a ₹25 buyer
+ * The verdict is the headline of the paid report — the first thing a ₹21 buyer
  * reads. A canned "good foundation, clear weak spots" line reads like every
  * other AI tool. This composer instead synthesises a stylist-grade paragraph
  * from THIS photo's measured signals: it frames the score honestly, gives
@@ -101,7 +101,7 @@ function strengthClause(m: ImageSignalMetrics, seed: number): string | null {
 
 /**
  * The free-report one-liner — the single most-seen line in the product and the
- * hook that decides whether someone pays ₹25. The old version was a canned
+ * hook that decides whether someone pays ₹21. The old version was a canned
  * score-band string. This one is measured and personal: it frames the score,
  * gives credit for the real strongest signal, and names the biggest leak (with
  * its measured evidence) — an honest tension that motivates the full unlock
