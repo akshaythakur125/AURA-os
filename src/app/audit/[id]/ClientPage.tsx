@@ -39,6 +39,7 @@ import { AiPhotoReadCard } from "@/components/report/AiPhotoReadCard";
 import { GlowupTracker } from "@/components/report/GlowupTracker";
 import { ProgressProofCard } from "@/components/report/ProgressProofCard";
 import { buildDatingPlaybookHtml } from "@/lib/share/datingArtifact";
+import { DatingCoachVoice } from "@/components/dating/DatingCoachVoice";
 import { downloadTextFile } from "@/lib/share/download";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
@@ -1444,6 +1445,9 @@ export default function AuditDetailPage() {
                   >
                     ⬇ Download my profile playbook
                   </button>
+                  <div className="mb-4">
+                    <DatingCoachVoice context={{ goal: audit.goal, gender: audit.gender, archetype: audit.personalization?.archetype }} />
+                  </div>
                   {audit.datingProfileReport.bioAnalysis && (
                     <div className="mb-4 grid gap-3 sm:grid-cols-2">
                       <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
