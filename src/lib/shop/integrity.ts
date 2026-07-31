@@ -19,7 +19,18 @@
  */
 
 import type { Look } from "./catalogTypes";
-import { CATEGORY_PHOTOS, resolveShopImage } from "./shopImage";
+import {
+  CATEGORY_PHOTOS,
+  resolveShopImage,
+  tokenize,
+  tagMatches,
+  baseScore,
+  scorePhoto,
+  requestedColors,
+  photoColorSet,
+  colorRelation,
+  type ColorRelation,
+} from "./shopImage";
 import { buildAllShopLinks, type Retailer } from "./linkBuilder";
 import { formatLookPrice } from "./pricing";
 
@@ -29,6 +40,7 @@ export interface LookIssue {
   category: string;
   kind:
     | "image-out-of-category"
+    | "image-colour-mismatch"
     | "price-invalid"
     | "link-malformed"
     | "link-missing-category";
@@ -40,12 +52,20 @@ export interface CatalogReport {
   total: number;
   checkedAt: string;
   imageFallbacks: number;
+  /** Products whose named colour has NO matching photo in the pool (coverage
+   * gaps — soft, since the resolver still returns the least-wrong image). */
+  colourGaps: number;
   noKeywords: number;
   byCategory: Record<string, number>;
   issues: LookIssue[];
 }
 
-function checkImage(look: Look, issues: LookIssue[]): boolean {
+interface ImageCheck {
+  matched: boolean; // a tag actually matched (vs. hash fallback)
+  colourGap: boolean; // the named colour has no matching photo in the pool
+}
+
+function checkImage(look: Look, issues: LookIssue[]): ImageCheck {
   const pool = CATEGORY_PHOTOS[look.category];
   const chosen = resolveShopImage(look.category, look.title, look.keywords);
   // The chosen photo must come from this category's own pool.
@@ -58,12 +78,51 @@ function checkImage(look: Look, issues: LookIssue[]): boolean {
       kind: "image-out-of-category",
       detail: `resolved image "${chosen.alt}" is not in the ${look.category} pool`,
     });
-    return false;
+    return { matched: false, colourGap: false };
   }
-  // Did any tag actually match, or did we fall back to the hash pick?
+
   const text = `${look.title} ${look.keywords.join(" ")} ${look.category}`.toLowerCase();
-  const matched = pool.some((p) => p.tags.some((t) => text.includes(t)));
-  return matched; // returns "true match" so caller can count fallbacks
+  const tokens = tokenize(text);
+  const matched = pool.some((p) => p.tags.some((t) => tagMatches(t, tokens)));
+
+  // Colour consistency. The resolver picks the highest (type + colour) score,
+  // so a colour clash is only an AVOIDABLE bug when another photo is at least
+  // as type-correct AND strictly more colour-correct — i.e. the resolver should
+  // have chosen it. When the clashing photo is the most type-correct option
+  // (type beats colour, by design) or nothing matches the colour, it's a soft
+  // coverage gap: surfaced in the count, but not a hard failure.
+  let colourGap = false;
+  const req = requestedColors(text);
+  const chosenRel = req.size ? colorRelation(req, photoColorSet(chosen)) : "n/a";
+  if (chosenRel === "clash") {
+    // Was this a real, positive-score pick, or a stable hash fallback (no photo
+    // matched at all)? A clash is only an AVOIDABLE bug when the resolver made a
+    // positive pick AND another photo is at least as type-correct and strictly
+    // more colour-correct. Otherwise it's a soft coverage gap.
+    const positivePick = pool.some((p) => scorePhoto(p, tokens, req) > 0);
+    const rank: Record<ColorRelation, number> = { match: 3, compatible: 2, "n/a": 1, clash: 0 };
+    const chosenType = baseScore(chosen, tokens);
+    const dominant = positivePick
+      ? pool.find(
+          (p) =>
+            p.url !== chosen.url &&
+            baseScore(p, tokens) >= chosenType &&
+            rank[colorRelation(req, photoColorSet(p))] > rank[chosenRel],
+        )
+      : undefined;
+    if (dominant) {
+      issues.push({
+        id: look.id,
+        title: look.title,
+        category: look.category,
+        kind: "image-colour-mismatch",
+        detail: `chose "${chosen.alt}" but "${dominant.alt}" is as on-type and better on colour`,
+      });
+    } else {
+      colourGap = true;
+    }
+  }
+  return { matched, colourGap };
 }
 
 function checkLinks(look: Look, issues: LookIssue[]): void {
@@ -119,13 +178,15 @@ function checkPrice(look: Look, issues: LookIssue[]): void {
 export function verifyCatalog(looks: Look[]): CatalogReport {
   const issues: LookIssue[] = [];
   let imageFallbacks = 0;
+  let colourGaps = 0;
   let noKeywords = 0;
   const byCategory: Record<string, number> = {};
 
   for (const look of looks) {
     byCategory[look.category] = (byCategory[look.category] ?? 0) + 1;
-    const matched = checkImage(look, issues);
+    const { matched, colourGap } = checkImage(look, issues);
     if (!matched) imageFallbacks++;
+    if (colourGap) colourGaps++;
     checkLinks(look, issues);
     checkPrice(look, issues);
     if (!look.keywords || look.keywords.length === 0) noKeywords++;
@@ -136,6 +197,7 @@ export function verifyCatalog(looks: Look[]): CatalogReport {
     total: looks.length,
     checkedAt: new Date().toISOString(),
     imageFallbacks,
+    colourGaps,
     noKeywords,
     byCategory,
     issues,

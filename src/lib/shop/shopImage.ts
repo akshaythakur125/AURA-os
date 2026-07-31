@@ -227,9 +227,12 @@ const COLOR_FAMILY: Record<string, string> = {
   pastel: "pastel", nude: "pastel", neutral: "neutral",
 };
 
-// Dark neutrals read as interchangeable in apparel: a grey/navy short is an
-// acceptable stand-in for "black", so they never penalise each other.
-const DARK_NEUTRAL = new Set(["black", "grey", "navy", "olive", "neutral"]);
+// Neutrals read as interchangeable within their lightness band: a grey short
+// stands in for "black", a beige shirt for "cream" — so they never penalise
+// each other even across colour families (beige is brown-family, cream is
+// white-family, but both are light neutrals).
+const DARK_NEUTRAL = new Set(["black", "charcoal", "grey", "gray", "slate", "navy", "olive", "neutral"]);
+const LIGHT_NEUTRAL = new Set(["white", "offwhite", "ivory", "cream", "beige", "tan", "khaki", "camel", "sand", "nude", "pastel", "neutral"]);
 
 function familiesIn(words: Iterable<string>): Set<string> {
   const fams = new Set<string>();
@@ -240,28 +243,76 @@ function familiesIn(words: Iterable<string>): Set<string> {
   return fams;
 }
 
-function scorePhoto(photo: TaggedPhoto, text: string, reqColors: Set<string>): number {
-  let score = 0;
-  const photoColors = new Set<string>();
-  for (const tag of photo.tags) {
-    if (COLOR_FAMILY[tag]) photoColors.add(tag);
-    if (text.includes(tag)) score += TYPE_TAGS.has(tag) ? 10 : 1;
-  }
+/** Splits product text into a set of whole words (colour/type-safe). */
+export function tokenize(text: string): Set<string> {
+  return new Set(text.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));
+}
 
-  // Colour adjustment — only when the product actually names a colour and the
-  // photo has its own colour identity. Type match (above) still dominates.
-  if (reqColors.size && photoColors.size) {
-    const photoFams = familiesIn(photoColors);
-    const shared = [...reqColors].some((c) => photoFams.has(COLOR_FAMILY[c] || c));
-    if (shared) {
-      score += 4; // exact colour match — strongly preferred within a type
-    } else {
-      const reqDark = [...reqColors].some((c) => DARK_NEUTRAL.has(c));
-      const photoDark = [...photoColors].some((c) => DARK_NEUTRAL.has(c));
-      score += reqDark && photoDark ? 1 : -5; // compatible dark neutrals, else clash
-    }
+/**
+ * Whole-word tag match — no substring false positives (the old `includes`
+ * matched "red" inside "layered"/"structured" and missed hyphenated tags):
+ *  - multi-word tags ("low-top") require every part present as a word;
+ *  - single long tags (>= 5 chars) also match a plural/compound word that
+ *    contains them ("jogger" → "joggers"); short tags need an exact word.
+ */
+export function tagMatches(tag: string, tokens: Set<string>): boolean {
+  const parts = tag.split(/[^a-z0-9]+/).filter(Boolean);
+  if (parts.length === 0) return false;
+  if (parts.length > 1) return parts.every((p) => tokens.has(p));
+  const t = parts[0];
+  if (tokens.has(t)) return true;
+  if (t.length >= 5) {
+    for (const w of tokens) if (w.includes(t)) return true;
+  }
+  return false;
+}
+
+/** The colour words a photo declares about itself. */
+export function photoColorSet(photo: TaggedPhoto): Set<string> {
+  const cols = new Set<string>();
+  for (const tag of photo.tags) if (COLOR_FAMILY[tag]) cols.add(tag);
+  return cols;
+}
+
+export type ColorRelation = "match" | "compatible" | "clash" | "n/a";
+
+/**
+ * How a photo's colours relate to the colours a product asks for. Shared by the
+ * resolver (to score) and the integrity auditor (to catch mismatches), so both
+ * speak the exact same colour language.
+ */
+export function colorRelation(reqColors: Set<string>, photoColors: Set<string>): ColorRelation {
+  if (!reqColors.size || !photoColors.size) return "n/a";
+  const photoFams = familiesIn(photoColors);
+  if ([...reqColors].some((c) => photoFams.has(COLOR_FAMILY[c] || c))) return "match";
+  const bandCompatible = (band: Set<string>) =>
+    [...reqColors].some((c) => band.has(c)) && [...photoColors].some((c) => band.has(c));
+  if (bandCompatible(DARK_NEUTRAL) || bandCompatible(LIGHT_NEUTRAL)) return "compatible";
+  return "clash";
+}
+
+const COLOR_SCORE: Record<ColorRelation, number> = { match: 5, compatible: 1, clash: -6, "n/a": 0 };
+
+/** Type/keyword score for a photo, ignoring colour (type tags 10, others 1). */
+export function baseScore(photo: TaggedPhoto, tokens: Set<string>): number {
+  let score = 0;
+  for (const tag of photo.tags) {
+    if (tagMatches(tag, tokens)) score += TYPE_TAGS.has(tag) ? 10 : 1;
   }
   return score;
+}
+
+/** Full score for a photo against a product: type/keyword base + colour tie-break. */
+export function scorePhoto(photo: TaggedPhoto, tokens: Set<string>, reqColors: Set<string>): number {
+  // Colour is only a tie-break — type match still dominates.
+  return baseScore(photo, tokens) + COLOR_SCORE[colorRelation(reqColors, photoColorSet(photo))];
+}
+
+/** The colours a product's own text names. */
+export function requestedColors(text: string): Set<string> {
+  const req = new Set<string>();
+  for (const w of tokenize(text)) if (COLOR_FAMILY[w]) req.add(w);
+  return req;
 }
 
 /**
@@ -275,17 +326,13 @@ export function resolveShopImage(
 ): TaggedPhoto {
   const pool = CATEGORY_PHOTOS[category] || CATEGORY_PHOTOS.accessory;
   const text = `${title} ${keywords.join(" ")} ${category}`.toLowerCase();
-
-  // The colours the product itself names — drives the colour-aware tie-break.
-  const reqColors = new Set<string>();
-  for (const w of text.split(/[^a-z]+/)) {
-    if (COLOR_FAMILY[w]) reqColors.add(w);
-  }
+  const tokens = tokenize(text);
+  const reqColors = requestedColors(text);
 
   let best: TaggedPhoto | null = null;
   let bestScore = 0;
   for (const photo of pool) {
-    const s = scorePhoto(photo, text, reqColors);
+    const s = scorePhoto(photo, tokens, reqColors);
     if (s > bestScore) {
       best = photo;
       bestScore = s;
