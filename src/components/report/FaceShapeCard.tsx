@@ -61,6 +61,23 @@ const RECS: Record<Shape, { goal: string; haircuts: string[]; glasses: string[];
   },
 };
 
+// Frame colour/material by undertone — a real optician's rule: warm colouring
+// glows in gold and tortoiseshell, cool colouring in silver and black.
+const FRAME_COLORS: Record<"warm" | "cool" | "neutral", { colors: string[]; note: string }> = {
+  warm: {
+    colors: ["Gold", "Tortoiseshell", "Brown", "Honey", "Warm tortoise"],
+    note: "Warm metals and tortoiseshell echo your golden undertone.",
+  },
+  cool: {
+    colors: ["Silver", "Black", "Gunmetal", "Navy", "Cool grey"],
+    note: "Silver, black and blue-based frames sit best on your cool undertone.",
+  },
+  neutral: {
+    colors: ["Tortoiseshell", "Black", "Brown", "Rose gold"],
+    note: "Your neutral undertone takes almost anything — these are the safest wins.",
+  },
+};
+
 function Pills({ items }: { items: string[] }) {
   return (
     <div className="flex flex-wrap gap-1.5">
@@ -96,8 +113,9 @@ function photoTips(
   return tips;
 }
 
-export function FaceShapeCard({ initial = "oval", imageDataUrl }: { initial?: Shape; imageDataUrl?: string }) {
+export function FaceShapeCard({ initial = "oval", imageDataUrl, undertone }: { initial?: Shape; imageDataUrl?: string; undertone?: "warm" | "cool" | "neutral" }) {
   const [shape, setShape] = useState<Shape>(initial);
+  const frame = undertone ? FRAME_COLORS[undertone] : null;
   const [scanState, setScanState] = useState<"idle" | "scanning" | "done" | "no-face" | "error">("idle");
   const [detected, setDetected] = useState<{ shape: Shape; confidence: number } | null>(null);
   const [read, setRead] = useState<{ ok: boolean; text: string }[] | null>(null);
@@ -202,15 +220,25 @@ export function FaceShapeCard({ initial = "oval", imageDataUrl }: { initial?: Sh
         </div>
         <div>
           <p className="mb-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#857b6e]">👓 Glasses frames</p>
+          <p className="mb-1.5 text-[11px] text-[#857b6e]">Shapes for your {shape} face:</p>
           <Pills items={r.glasses} />
+          {frame && (
+            <div className="mt-3">
+              <p className="mb-1.5 text-[11px] text-[#857b6e]">
+                Frame colours for your <span className="font-semibold text-[#B23A25]">{undertone}</span> undertone:
+              </p>
+              <Pills items={frame.colors} />
+              <p className="mt-1.5 text-[10px] text-[#9c9184]">{frame.note}</p>
+            </div>
+          )}
           <a
-            href={searchLink(`${r.glasses[0]} frame eyeglasses`, "lenskart")}
+            href={searchLink(`${frame ? frame.colors[0] + " " : ""}${r.glasses[0]} frame eyeglasses`, "lenskart")}
             target="_blank"
             rel="noopener noreferrer sponsored"
             onClick={() => trackEvent(EVENTS.SHOP_LINK_CLICKED, { retailer: "lenskart", lookCategory: "sunglasses" })}
-            className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-[#1c1917]/10 bg-[#fbf8f2]/70 px-3 py-1.5 text-[11px] font-semibold text-[#1C1917] transition-colors hover:border-[#E14434]/40"
+            className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-[#1c1917]/10 bg-[#fbf8f2]/70 px-3 py-1.5 text-[11px] font-semibold text-[#1C1917] transition-colors hover:border-[#E14434]/40"
           >
-            👓 Shop {r.glasses[0].toLowerCase()} frames on Lenskart →
+            👓 Shop {frame ? frame.colors[0].toLowerCase() + " " : ""}{r.glasses[0].toLowerCase()} frames on Lenskart →
           </a>
         </div>
         <div>

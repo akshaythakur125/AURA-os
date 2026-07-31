@@ -15,8 +15,18 @@ import { trackEvent, EVENTS } from "@/lib/analytics/events";
  * fit total and a direct affiliate link per piece. Same "shop the fit" language
  * as the homepage gallery, personalised to this person.
  */
-export function CompleteTheLookCard({ looks, archetype }: { looks: Look[]; archetype?: string }) {
-  const outfits = buildOutfits(looks, 3);
+export function CompleteTheLookCard({
+  looks,
+  archetype,
+  paletteColors,
+  undertone,
+}: {
+  looks: Look[];
+  archetype?: string;
+  paletteColors?: string[];
+  undertone?: "warm" | "cool" | "neutral";
+}) {
+  const outfits = buildOutfits(looks, 3, { paletteColors });
   if (outfits.length === 0) return null;
 
   return (
@@ -26,7 +36,7 @@ export function CompleteTheLookCard({ looks, archetype }: { looks: Look[]; arche
         {archetype && <span className="text-xs font-semibold text-[#B23A25]">{archetype}</span>}
       </div>
       <p className="mb-4 text-xs text-[#857b6e]">
-        Coordinated {archetype ? `${archetype} ` : ""}outfits built from your picks — grab the whole thing, not just one piece.
+        Coordinated {archetype ? `${archetype} ` : ""}outfits built from your picks{undertone ? `, in colours that flatter your ${undertone} undertone` : ""} — grab the whole thing, not just one piece.
       </p>
 
       <div className="space-y-4">

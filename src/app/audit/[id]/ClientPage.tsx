@@ -1217,7 +1217,7 @@ export default function AuditDetailPage() {
                     />
                     <div className="mb-6">
                       <LockedSection locked={!isUnlocked} label="Your Looks — Shop the Fit" unlockHref={unlockHref}>
-                        <CompleteTheLookCard looks={shopLooks} archetype={personalization.archetype} />
+                        <CompleteTheLookCard looks={shopLooks} archetype={personalization.archetype} paletteColors={colorPalette?.colors} undertone={undertone} />
                       </LockedSection>
                     </div>
                     {displayResult.imageMetrics != null && (
@@ -1294,7 +1294,7 @@ export default function AuditDetailPage() {
               {displayResult != null && (
                 <div className="mb-6">
                   <LockedSection locked={!isUnlocked} label="Face-Shape Studio" unlockHref={unlockHref}>
-                    <FaceShapeCard imageDataUrl={audit?.imageDataUrl} />
+                    <FaceShapeCard imageDataUrl={audit?.imageDataUrl} undertone={displayResult?.imageMetrics?.undertone?.undertone} />
                   </LockedSection>
                 </div>
               )}

@@ -1,4 +1,5 @@
 import type { Look, LookCategory } from "./catalogTypes";
+import { requestedColors, colorRelation } from "./shopImage";
 
 // A coordinated outfit is one item per slot: top + bottom + footwear + accent.
 export const OUTFIT_SLOTS: { key: string; cats: LookCategory[] }[] = [
@@ -20,9 +21,24 @@ export const isApparel = (l: Look) => !(l.statusLeakTags || []).some((t) => GEAR
  * rather than leaving a gap. Shared by the homepage look gallery and the paid
  * report's "complete the look" so shopping speaks one language everywhere.
  */
-export function buildOutfits(pool: Look[], count: number): Look[][] {
+export function buildOutfits(pool: Look[], count: number, opts?: { paletteColors?: string[] }): Look[][] {
   const apparel = pool.filter(isApparel);
-  const bySlot = OUTFIT_SLOTS.map((s) => apparel.filter((l) => s.cats.includes(l.category) && l.price > 0).sort((a, b) => a.price - b.price));
+  // When a colour palette is supplied, order each slot by colour flattery first
+  // (a match beats a clash), then price — so the outfit stays in the person's
+  // undertone colours instead of just grabbing the cheapest piece.
+  const palette = opts?.paletteColors?.length ? requestedColors(opts.paletteColors.join(" ")) : null;
+  const colorRank = (l: Look): number => {
+    if (!palette) return 0;
+    const cols = requestedColors(`${l.title} ${l.keywords.join(" ")}`);
+    if (!cols.size) return 2; // colourless piece — neutral middle
+    const rel = colorRelation(palette, cols);
+    return rel === "match" ? 0 : rel === "compatible" ? 1 : 3;
+  };
+  const bySlot = OUTFIT_SLOTS.map((s) =>
+    apparel
+      .filter((l) => s.cats.includes(l.category) && l.price > 0)
+      .sort((a, b) => colorRank(a) - colorRank(b) || a.price - b.price),
+  );
   const outfits: Look[][] = [];
   const used = new Set<string>();
   for (let n = 0; n < count; n++) {
