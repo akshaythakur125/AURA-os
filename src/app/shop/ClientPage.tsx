@@ -20,6 +20,7 @@ import type { GoalTag, BudgetTag } from "@/types/product";
 import type { StyleIntent } from "@/types/personalization";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { hasAnyUnlock } from "@/lib/storage/unlockStore";
+import { LookGallery } from "@/components/shop/LookGallery";
 
 const CATEGORY_OPTIONS: { label: string; value: LookCategory | null }[] = [
   { label: "All Categories", value: null },
@@ -258,9 +259,18 @@ export default function ShopPage() {
           </div>
         </div>
 
+        {/* Shop by look — curated complete outfits, look-first */}
+        <div className="mb-12">
+          <div className="mb-5">
+            <h2 className="text-xl font-bold text-[#1C1917] sm:text-2xl">Shop the fit</h2>
+            <p className="mt-1 text-sm text-[#6f675e]">Complete looks styled to a vibe — grab the whole outfit, not just one piece.</p>
+          </div>
+          <LookGallery initial={6} />
+        </div>
+
         {/* Style collections rail — browse by aesthetic */}
         <div className="mb-8">
-          <p className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-[#857b6e]">Shop by aesthetic</p>
+          <p className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-[#857b6e]">Or shop individual pieces</p>
           <div className="flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {STYLE_COLLECTIONS.map((c) => {
               const active = collection === c.id;
