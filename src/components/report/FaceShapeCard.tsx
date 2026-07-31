@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
+import { searchLink } from "@/lib/shop/searchLink";
+import { trackEvent, EVENTS } from "@/lib/analytics/events";
 
 type Shape = "oval" | "round" | "square" | "oblong" | "heart" | "diamond";
 
@@ -202,6 +203,15 @@ export function FaceShapeCard({ initial = "oval", imageDataUrl }: { initial?: Sh
         <div>
           <p className="mb-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#857b6e]">👓 Glasses frames</p>
           <Pills items={r.glasses} />
+          <a
+            href={searchLink(`${r.glasses[0]} frame eyeglasses`, "lenskart")}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            onClick={() => trackEvent(EVENTS.SHOP_LINK_CLICKED, { retailer: "lenskart", lookCategory: "sunglasses" })}
+            className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-[#1c1917]/10 bg-[#fbf8f2]/70 px-3 py-1.5 text-[11px] font-semibold text-[#1C1917] transition-colors hover:border-[#E14434]/40"
+          >
+            👓 Shop {r.glasses[0].toLowerCase()} frames on Lenskart →
+          </a>
         </div>
         <div>
           <p className="mb-1.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#857b6e]">🧔 Beard / facial hair</p>
@@ -209,9 +219,15 @@ export function FaceShapeCard({ initial = "oval", imageDataUrl }: { initial?: Sh
         </div>
       </div>
       <p className="mt-3 text-[11px] text-[#9c9184]">✕ {r.avoid}</p>
-      <Link href="/shop?category=sunglasses" className="mt-3 inline-flex items-center gap-1.5 rounded-xl border border-[#1c1917]/12 px-4 py-2 text-xs font-semibold text-[#4a443d] transition-colors hover:border-[#E14434]/40 hover:text-[#1C1917]">
-        Shop frames that fit →
-      </Link>
+      <a
+        href={searchLink(`${shape} face eyeglasses frames`, "lenskart")}
+        target="_blank"
+        rel="noopener noreferrer sponsored"
+        onClick={() => trackEvent(EVENTS.SHOP_LINK_CLICKED, { retailer: "lenskart", lookCategory: "sunglasses" })}
+        className="mt-3 inline-flex items-center gap-1.5 rounded-xl border border-[#1c1917]/12 px-4 py-2 text-xs font-semibold text-[#4a443d] transition-colors hover:border-[#E14434]/40 hover:text-[#1C1917]"
+      >
+        Shop all {shape}-flattering frames on Lenskart →
+      </a>
     </div>
   );
 }
