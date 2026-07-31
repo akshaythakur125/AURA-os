@@ -27,20 +27,59 @@ export function ScanHero() {
   const [score, setScore] = useState(0);
   const [tagsIn, setTagsIn] = useState(false);
 
-  // Subtle pointer-driven 3D tilt for depth (desktop only; skipped for touch and
-  // reduced-motion). Applied directly to the node to avoid a re-render per move.
-  const onTilt = (e: React.MouseEvent<HTMLDivElement>) => {
+  // 3D depth engine. Drives the card's rotation every frame from three sources
+  // so the depth is alive on ANY device, not just under a mouse:
+  //   • ambient — a slow sine sway, always on (this is what mobile mostly sees);
+  //   • gyroscope — tilt the phone, the card tilts with it (mobile "wow");
+  //   • pointer — follows the cursor on desktop.
+  // The layers sit at different translateZ, so this rotation parallaxes them for
+  // real depth. Skipped only for reduced-motion.
+  useEffect(() => {
     const el = cardRef.current;
-    if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches || matchMedia("(pointer: coarse)").matches) return;
-    const r = e.currentTarget.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width - 0.5;
-    const py = (e.clientY - r.top) / r.height - 0.5;
-    el.style.transform = `rotateX(${(-py * 8).toFixed(2)}deg) rotateY(${(px * 10).toFixed(2)}deg)`;
-  };
-  const offTilt = () => {
-    const el = cardRef.current;
-    if (el) el.style.transform = "rotateX(0deg) rotateY(0deg)";
-  };
+    const wrap = el?.parentElement;
+    if (!el || !wrap) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let targetRX = 0, targetRY = 0, curRX = 0, curRY = 0, raf = 0;
+    const t0 = performance.now();
+
+    const onPointer = (e: PointerEvent) => {
+      if (matchMedia("(pointer: coarse)").matches) return; // touch handled by gyro/ambient
+      const r = el.getBoundingClientRect();
+      targetRX = -((e.clientY - r.top) / r.height - 0.5) * 12;
+      targetRY = ((e.clientX - r.left) / r.width - 0.5) * 14;
+    };
+    const onLeave = () => { targetRX = 0; targetRY = 0; };
+    const onOrient = (e: DeviceOrientationEvent) => {
+      if (e.beta == null || e.gamma == null) return;
+      const clamp = (v: number) => Math.max(-32, Math.min(32, v));
+      targetRX = -clamp(e.beta - 42) * 0.3; // ~42° = a comfortable holding angle
+      targetRY = clamp(e.gamma) * 0.55;
+    };
+
+    wrap.addEventListener("pointermove", onPointer);
+    wrap.addEventListener("pointerleave", onLeave);
+    window.addEventListener("deviceorientation", onOrient);
+
+    const frame = (now: number) => {
+      const s = (now - t0) / 1000;
+      // Ambient sway is added on top of whatever pointer/gyro asks for, so the
+      // card always breathes even with no input.
+      const tRX = targetRX + Math.sin(s * 0.7) * 3;
+      const tRY = targetRY + Math.cos(s * 0.52) * 4.4;
+      curRX += (tRX - curRX) * 0.07;
+      curRY += (tRY - curRY) * 0.07;
+      el.style.transform = `rotateX(${curRX.toFixed(2)}deg) rotateY(${curRY.toFixed(2)}deg)`;
+      raf = requestAnimationFrame(frame);
+    };
+    raf = requestAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(raf);
+      wrap.removeEventListener("pointermove", onPointer);
+      wrap.removeEventListener("pointerleave", onLeave);
+      window.removeEventListener("deviceorientation", onOrient);
+    };
+  }, []);
 
   useEffect(() => {
     const cv = canvasRef.current, card = cardRef.current;
@@ -176,24 +215,27 @@ export function ScanHero() {
           {/* Scan card */}
           <div className="order-1 lg:order-2">
             <FadeInView delay={120}>
-             <div
-               className="mx-auto w-full max-w-[400px] [perspective:1100px]"
-               onMouseMove={onTilt}
-               onMouseLeave={offTilt}
-             >
+             <div className="mx-auto w-full max-w-[400px] [perspective:1100px] [perspective-origin:50%_40%]">
               <div
                 ref={cardRef}
-                className="relative aspect-[4/5] w-full overflow-hidden rounded-[22px] border border-[#1c1917]/[0.08] bg-white shadow-[0_28px_64px_-32px_rgba(28,25,23,0.45)] transition-transform duration-200 ease-out [transform-style:preserve-3d] will-change-transform"
+                className="relative aspect-[4/5] w-full rounded-[22px] border border-[#1c1917]/[0.08] bg-white shadow-[0_28px_64px_-32px_rgba(28,25,23,0.45)] [transform-style:preserve-3d] will-change-transform"
                 aria-label="Live photo analysis demo"
               >
-                <canvas ref={canvasRef} width={640} height={800} className="block h-full w-full" />
+                {/* Base layer — the scanned portrait, clipped to the card. Kept in
+                    its own overflow-hidden wrapper so the CARD itself can stay a
+                    real 3D context (overflow:hidden would flatten it). */}
+                <div className="absolute inset-0 overflow-hidden rounded-[22px]" style={{ transform: "translateZ(0px)" }}>
+                  <canvas ref={canvasRef} width={640} height={800} className="block h-full w-full" />
+                </div>
+                {/* Floating signal tags — lifted toward the viewer so the card's
+                    rotation parallaxes them over the face. */}
                 {(["lighting · side-lit", "expression · genuine", "background · clean"] as const).map((t, i) => (
                   <span
                     key={t}
-                    className="absolute rounded-full border border-[#1c1917]/[0.08] bg-white/80 px-2.5 py-1 font-mono text-[11px] text-[#1C1917] backdrop-blur-sm transition-all duration-500"
+                    className="absolute rounded-full border border-[#1c1917]/[0.08] bg-white/80 px-2.5 py-1 font-mono text-[11px] text-[#1C1917] shadow-[0_6px_18px_-8px_rgba(28,25,23,0.5)] backdrop-blur-sm transition-[opacity] duration-500"
                     style={{
                       opacity: tagsIn ? 1 : 0,
-                      transform: tagsIn ? "none" : "translateY(6px)",
+                      transform: `translateZ(42px) translateY(${tagsIn ? 0 : 6}px)`,
                       transitionDelay: `${200 + i * 300}ms`,
                       ...(i === 0 ? { top: 14, right: 16 } : i === 1 ? { top: "30%", left: 14 } : { top: "52%", right: 14 }),
                     }}
@@ -201,7 +243,8 @@ export function ScanHero() {
                     {t}
                   </span>
                 ))}
-                <div className="absolute bottom-4 left-4 flex items-baseline gap-2.5 rounded-2xl border border-[#1c1917]/[0.08] bg-white/80 px-3.5 py-3 backdrop-blur-sm" style={{ transform: "translateZ(40px)" }}>
+                {/* Score chip — closest to the viewer, strongest parallax. */}
+                <div className="absolute bottom-4 left-4 flex items-baseline gap-2.5 rounded-2xl border border-[#1c1917]/[0.08] bg-white/85 px-3.5 py-3 shadow-[0_12px_30px_-12px_rgba(28,25,23,0.55)] backdrop-blur-sm" style={{ transform: "translateZ(72px)" }}>
                   <span className="font-mono text-[2.6rem] font-bold leading-none tracking-tight tabular-nums text-[#1C1917]">{score}</span>
                   <div>
                     <div className="font-mono text-sm text-[#857b6e]">/100</div>
