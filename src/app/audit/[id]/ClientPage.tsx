@@ -41,6 +41,7 @@ import { ReferralShare } from "@/components/referral/ReferralShare";
 import { ResultCapture } from "@/components/recovery/ResultCapture";
 import { PersonalizedShop } from "@/components/shop/PersonalizedShop";
 import { getPersonalizedLooks } from "@/lib/shop/catalog";
+import { scentProfileFor, groomingProfileFor } from "@/lib/shop/scentGrooming";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
 import { RecentScores } from "@/components/social-proof/RecentScores";
 import { PercentileBadge } from "@/components/social-proof/PercentileBadge";
@@ -1191,6 +1192,8 @@ export default function AuditDetailPage() {
               {personalization != null && displayResult != null && (() => {
                 const colorPalette = displayResult.imageMetrics?.colorPalette;
                 const undertone = displayResult.imageMetrics?.undertone?.undertone;
+                const scent = scentProfileFor(personalization.archetype, audit!.goal ?? undefined);
+                const grooming = groomingProfileFor(displayResult.imageMetrics?.groomingResult, displayResult.imageMetrics?.skinDetail);
                 const shopLooks = getPersonalizedLooks({
                   styleArchetypes: [personalization.archetype === "Corporate Sharp" ? "professional" : personalization.archetype === "Creator Vibe" ? "creator" : personalization.archetype === "College Casual" ? "college" : personalization.archetype === "Premium Minimalist" ? "premium" : personalization.archetype === "Urban Aspirational" ? "confident" : personalization.archetype === "Loud Flex" ? "bold" : personalization.archetype === "Soft Luxury" ? "understated" : "clean"],
                   statusLeakTags: (displayResult.statusLeaks ?? []).map((l) => l.category as any).filter(Boolean),
@@ -1199,6 +1202,8 @@ export default function AuditDetailPage() {
                   gender: audit!.gender,
                   paletteColors: colorPalette?.colors,
                   avoidColors: colorPalette?.avoid,
+                  scentFamilies: scent.families,
+                  groomingFocus: grooming.keywords,
                 });
                 return (
                   <>
@@ -1211,6 +1216,10 @@ export default function AuditDetailPage() {
                       undertone={undertone}
                       paletteColors={colorPalette?.colors}
                       paletteName={colorPalette?.name}
+                      scentFamilies={scent.families}
+                      scentReason={scent.reason}
+                      groomingFocus={grooming.keywords}
+                      groomingReason={grooming.reason}
                       locked={!isUnlocked}
                       freeCount={1}
                       unlockHref={unlockHref}

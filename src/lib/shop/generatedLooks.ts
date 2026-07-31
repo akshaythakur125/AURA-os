@@ -410,19 +410,30 @@ function generateLooksFromTemplate(
   const titleCase = (s: string) => s.replace(/\b\w/g, (c) => c.toUpperCase());
   const singular = template.category.replace(/s$/, "");
 
-  for (const color of template.colors) {
+  // Colourless categories (fragrance, grooming) carry an empty colours list —
+  // iterate once with no colour so their style variants (woody, citrus / face
+  // wash, beard oil) are still generated instead of producing nothing.
+  for (const color of template.colors.length > 0 ? template.colors : [""]) {
     for (const fit of template.fits.length > 0 ? template.fits : [""]) {
       for (const style of template.styles) {
         const keywords = [color, fit, style].filter(Boolean);
         // Clean product name: colour + style + category noun (drop the noisy
         // "regular" fit), e.g. "Black Pointed Toe Flats", "Black Ballet Flats".
-        const title = titleCase(`${color} ${style} ${template.category}`).replace(/\s+/g, " ").trim();
+        // Colourless categories name themselves by style: grooming products ARE
+        // the style ("Face Wash", "Beard Oil"); fragrances read "Woody Fragrance".
+        const title = color
+          ? titleCase(`${color} ${style} ${template.category}`).replace(/\s+/g, " ").trim()
+          : template.category === "grooming"
+            ? titleCase(style)
+            : titleCase(`${style} ${template.category}`).replace(/\s+/g, " ").trim();
 
         looks.push({
           id: `gen-${template.gender}-${id.toString().padStart(4, "0")}`,
           title,
           // Natural, human description — no internal taxonomy jargon.
-          description: `${titleCase(style)} ${singular} in ${color}. Clean, camera-ready, and easy to style.`,
+          description: color
+            ? `${titleCase(style)} ${singular} in ${color}. Clean, camera-ready, and easy to style.`
+            : `${titleCase(style)} ${singular}. Clean, camera-ready, and easy to style.`,
           category: template.category,
           price: template.basePrice,
           priceLabel: template.priceLabel,

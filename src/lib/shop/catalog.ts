@@ -94,9 +94,23 @@ function scoreLook(
     budgetMax?: BudgetTag;
     paletteColors?: string[];
     avoidColors?: string[];
+    scentFamilies?: string[];
+    groomingFocus?: string[];
   }
 ): number {
   let score = 0;
+
+  // Fragrance → the person's vibe; grooming → their detected fix. Weighted like
+  // a colour match, since scent family / product type IS the personal signal for
+  // these two colourless categories.
+  if (look.category === "fragrance" && params.scentFamilies?.length) {
+    const t = `${look.title} ${look.keywords.join(" ")}`.toLowerCase();
+    if (params.scentFamilies.some((f) => t.includes(f))) score += 32;
+  }
+  if (look.category === "grooming" && params.groomingFocus?.length) {
+    const t = `${look.title} ${look.keywords.join(" ")}`.toLowerCase();
+    if (params.groomingFocus.some((f) => t.includes(f))) score += 32;
+  }
 
   // Style archetype match (high weight)
   if (params.styleArchetypes) {
@@ -175,6 +189,10 @@ export interface PersonalizationParams {
   paletteColors?: string[];
   /** Colours the report says clash with the person's undertone. */
   avoidColors?: string[];
+  /** Scent families that suit the person's vibe (fragrance matching). */
+  scentFamilies?: string[];
+  /** Grooming product types that fix the person's detected issue. */
+  groomingFocus?: string[];
   limit?: number;
 }
 

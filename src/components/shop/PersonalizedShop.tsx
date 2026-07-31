@@ -30,6 +30,12 @@ interface PersonalizedShopProps {
   paletteColors?: string[];
   /** Name of the matched palette, e.g. "Warm Romantic". */
   paletteName?: string;
+  /** Scent families that suit the person's vibe, + the reason to show. */
+  scentFamilies?: string[];
+  scentReason?: string;
+  /** Grooming product types matched to the detected issue, + the reason. */
+  groomingFocus?: string[];
+  groomingReason?: string;
   /** Free users: show `freeCount` picks fully, lock the rest behind the paywall. */
   locked?: boolean;
   /** How many picks a free user gets to see fully. Default 1. */
@@ -191,6 +197,10 @@ export function PersonalizedShop({
   undertone,
   paletteColors,
   paletteName,
+  scentFamilies,
+  scentReason,
+  groomingFocus,
+  groomingReason,
   locked = false,
   freeCount = 1,
   unlockHref = "/pricing",
@@ -211,6 +221,17 @@ export function PersonalizedShop({
     const word = [...cols].find((c) => !NEUTRAL.has(c));
     if (!word) return null;
     return `${word.charAt(0).toUpperCase() + word.slice(1)} flatters your ${undertone} undertone`;
+  };
+
+  // Colourless categories get their own personal reason: fragrance by vibe,
+  // grooming by the detected fix.
+  const personalReason = (look: Look): string | null => {
+    const flat = flatteryReason(look);
+    if (flat) return flat;
+    const t = `${look.title} ${look.keywords.join(" ")}`.toLowerCase();
+    if (look.category === "fragrance" && scentReason && scentFamilies?.some((f) => t.includes(f))) return scentReason;
+    if (look.category === "grooming" && groomingReason && groomingFocus?.some((f) => t.includes(f))) return groomingReason;
+    return null;
   };
   const [showAll, setShowAll] = useState(false);
   const [budgetFilter, setBudgetFilter] = useState<number | null>(null);
@@ -427,7 +448,7 @@ export function PersonalizedShop({
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {visibleLooks.map((look, i) => {
             const fixText = leakTags ? getLeakFixText(look, leakTags) : null;
-            const colorReason = flatteryReason(look);
+            const colorReason = personalReason(look);
             return (
               <FadeInView key={look.id} delay={Math.min(i * 50, 400)}>
                 <Card hover className="flex flex-col h-full">
