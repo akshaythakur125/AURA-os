@@ -1,67 +1,64 @@
 "use client";
 
-import Link from "next/link";
 import { Card } from "@/components/ui/Card";
-import type { Look, LookCategory } from "@/lib/shop/catalogTypes";
+import type { Look } from "@/lib/shop/catalogTypes";
+import { buildOutfits } from "@/lib/shop/outfits";
 import { buildPrimaryShopLink } from "@/lib/shop/linkBuilder";
 import { formatLookPrice } from "@/lib/shop/pricing";
 import { ShopCategoryImage } from "@/components/shop/ShopCategoryImage";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 
 /**
- * "Complete the look" — assembles ONE coordinated outfit (top + bottom +
- * footwear + an accent) from the personalized looks, with a combined total and
- * a direct affiliate link per piece. Bigger basket than a single item, and it
- * answers what shoppers actually want: the whole fit, not the parts.
+ * "Your looks" — the paid report's shopping, made look-first: instead of a
+ * loose list of products it assembles 2–3 complete, coordinated outfits from
+ * the shopper's personalized (archetype-matched) picks, each with a combined
+ * fit total and a direct affiliate link per piece. Same "shop the fit" language
+ * as the homepage gallery, personalised to this person.
  */
-const GROUPS: { key: string; cats: LookCategory[] }[] = [
-  { key: "top", cats: ["tshirt", "shirt", "hoodie", "sweatshirt", "jacket", "kurta", "dress", "saree"] },
-  { key: "bottom", cats: ["jeans", "trousers", "shorts"] },
-  { key: "footwear", cats: ["sneakers", "shoes", "sandals", "heels", "flats"] },
-  { key: "accent", cats: ["watch", "sunglasses", "backpack", "accessory", "earrings", "fragrance"] },
-];
-
 export function CompleteTheLookCard({ looks, archetype }: { looks: Look[]; archetype?: string }) {
-  const pieces: Look[] = [];
-  for (const g of GROUPS) {
-    const pick = looks.find((l) => g.cats.includes(l.category) && !pieces.some((p) => p.id === l.id));
-    if (pick) pieces.push(pick);
-  }
-  if (pieces.length < 2) return null;
-
-  const total = pieces.reduce((sum, p) => sum + (p.price > 0 ? p.price : 0), 0);
+  const outfits = buildOutfits(looks, 3);
+  if (outfits.length === 0) return null;
 
   return (
     <Card className="mb-6">
       <div className="mb-1 flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="text-sm font-semibold text-[#1C1917]">🧩 Complete the look</h3>
-        {total > 0 && (
-          <span className="text-xs font-semibold text-[#B23A25]">Full fit ≈ ₹{total.toLocaleString("en-IN")}</span>
-        )}
+        <h3 className="text-sm font-semibold text-[#1C1917]">🧩 Your looks — shop the whole fit</h3>
+        {archetype && <span className="text-xs font-semibold text-[#B23A25]">{archetype}</span>}
       </div>
       <p className="mb-4 text-xs text-[#857b6e]">
-        A coordinated {archetype ? `${archetype} ` : ""}outfit built from your picks — grab the whole thing, not just one piece.
+        Coordinated {archetype ? `${archetype} ` : ""}outfits built from your picks — grab the whole thing, not just one piece.
       </p>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {pieces.map((p) => (
-          <div key={p.id} className="flex flex-col rounded-xl border border-[#1c1917]/[0.07] bg-[#fbf8f2]/60 p-2">
-            <ShopCategoryImage category={p.category} title={p.title} keywords={p.keywords} />
-            <Link href={"/shop/look/" + p.id} className="mt-2 line-clamp-2 text-xs font-semibold text-[#1C1917] hover:underline">
-              {p.title}
-            </Link>
-            <span className="mt-0.5 text-[11px] font-medium text-emerald-700">{formatLookPrice(p.price)}</span>
-            <a
-              href={buildPrimaryShopLink({ category: p.category, keywords: p.keywords, gender: p.gender })}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => trackEvent(EVENTS.SHOP_LINK_CLICKED, { retailer: "amazon", lookCategory: p.category })}
-              className="mt-2 rounded-lg bg-[#1C1917] px-2 py-1.5 text-center text-[11px] font-semibold text-white transition-opacity hover:opacity-90"
-            >
-              Shop →
-            </a>
-          </div>
-        ))}
+      <div className="space-y-4">
+        {outfits.map((pieces, oi) => {
+          const total = pieces.reduce((s, p) => s + (p.price > 0 ? p.price : 0), 0);
+          return (
+            <div key={oi} className="overflow-hidden rounded-2xl border border-[#1c1917]/[0.08] bg-[#fbf8f2]/50">
+              <div className="flex items-center justify-between border-b border-[#1c1917]/[0.06] px-3.5 py-2">
+                <span className="text-xs font-bold text-[#1C1917]">Look {oi + 1}</span>
+                {total > 0 && <span className="rounded-full bg-[#E14434]/10 px-2.5 py-1 text-[11px] font-bold text-[#B23A25]">fit ≈ ₹{total.toLocaleString("en-IN")}</span>}
+              </div>
+              <div className="grid grid-cols-2 gap-2.5 p-3 sm:grid-cols-4">
+                {pieces.map((p) => (
+                  <a
+                    key={p.id}
+                    href={buildPrimaryShopLink({ category: p.category, keywords: p.keywords, gender: p.gender })}
+                    target="_blank"
+                    rel="noopener noreferrer sponsored"
+                    onClick={() => trackEvent(EVENTS.SHOP_LINK_CLICKED, { retailer: "amazon", lookCategory: p.category })}
+                    className="flex flex-col overflow-hidden rounded-xl border border-[#1c1917]/[0.06] bg-[#FBF8F2] transition-all hover:-translate-y-0.5 hover:border-[#E14434]/30"
+                  >
+                    <ShopCategoryImage category={p.category} title={p.title} keywords={p.keywords} />
+                    <div className="flex items-center justify-between gap-1 px-2 py-1.5">
+                      <span className="line-clamp-1 text-[11px] font-medium text-[#4a443d]">{p.title}</span>
+                      <span className="shrink-0 text-[11px] font-semibold text-amber-600">{formatLookPrice(p.price)}</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </Card>
   );

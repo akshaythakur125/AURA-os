@@ -7,22 +7,9 @@ import { buildPrimaryShopLink } from "@/lib/shop/linkBuilder";
 import { formatLookPrice } from "@/lib/shop/pricing";
 import { getAllLooks } from "@/lib/shop/catalog";
 import { STYLE_COLLECTIONS, getCollectionLooks } from "@/lib/shop/styleCollections";
+import { buildOutfits } from "@/lib/shop/outfits";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
-import type { Look, LookCategory } from "@/lib/shop/catalogTypes";
-
-// A "look" is a coordinated outfit, not a single product — top + bottom +
-// footwear + one accent, styled to a vibe.
-const SLOTS: { key: string; cats: LookCategory[] }[] = [
-  { key: "top", cats: ["tshirt", "shirt", "hoodie", "sweatshirt", "jacket", "kurta", "dress", "saree"] },
-  { key: "bottom", cats: ["jeans", "trousers", "shorts"] },
-  { key: "footwear", cats: ["sneakers", "shoes", "sandals", "heels", "flats"] },
-  { key: "accent", cats: ["watch", "sunglasses", "backpack", "accessory", "earrings", "fragrance"] },
-];
-
-// Photo-gear items (backdrops, lights, tripods) are catalogued under apparel
-// categories like "accessory" but belong in the Photo Kit, never in an outfit.
-const GEAR_TAGS = new Set(["background", "lighting", "clarity", "resolution", "phone_condition", "room_clutter"]);
-const isApparel = (l: Look) => !(l.statusLeakTags || []).some((t) => GEAR_TAGS.has(t));
+import type { Look } from "@/lib/shop/catalogTypes";
 
 interface StyledLook {
   id: string;
@@ -33,26 +20,6 @@ interface StyledLook {
   total: number;
 }
 
-/** Build up to `perVibe` coordinated outfits from a collection's items. Each
- * outfit prefers pieces not used by an earlier outfit of the same vibe. */
-function buildLooks(collectionLooks: Look[], perVibe: number): Look[][] {
-  const apparel = collectionLooks.filter(isApparel);
-  const bySlot = SLOTS.map((s) => apparel.filter((l) => s.cats.includes(l.category) && l.price > 0).sort((a, b) => a.price - b.price));
-  const outfits: Look[][] = [];
-  const usedGlobal = new Set<string>();
-  for (let n = 0; n < perVibe; n++) {
-    const pieces: Look[] = [];
-    for (const slot of bySlot) {
-      if (slot.length === 0) continue;
-      const fresh = slot.find((l) => !usedGlobal.has(l.id));
-      const chosen = fresh || slot[n % slot.length];
-      if (chosen) { usedGlobal.add(chosen.id); pieces.push(chosen); }
-    }
-    if (pieces.length >= 3) outfits.push(pieces);
-  }
-  return outfits;
-}
-
 /** Deterministically build the styled-look set once, shared by the homepage
  * band and the /shop page so both speak the same "shop the fit" language. */
 export function useStyledLooks(perVibe = 2): StyledLook[] {
@@ -60,7 +27,7 @@ export function useStyledLooks(perVibe = 2): StyledLook[] {
     const all = getAllLooks();
     const out: StyledLook[] = [];
     for (const c of STYLE_COLLECTIONS) {
-      buildLooks(getCollectionLooks(c.id, all), perVibe).forEach((pieces, i) => {
+      buildOutfits(getCollectionLooks(c.id, all), perVibe).forEach((pieces, i) => {
         out.push({
           id: `${c.id}-${i}`,
           vibe: c.name,

@@ -1208,7 +1208,7 @@ export default function AuditDetailPage() {
                       unlockHref={unlockHref}
                     />
                     <div className="mb-6">
-                      <LockedSection locked={!isUnlocked} label="Complete The Look" unlockHref={unlockHref}>
+                      <LockedSection locked={!isUnlocked} label="Your Looks — Shop the Fit" unlockHref={unlockHref}>
                         <CompleteTheLookCard looks={shopLooks} archetype={personalization.archetype} />
                       </LockedSection>
                     </div>
