@@ -487,12 +487,10 @@ export default function AuditDetailPage() {
     }).then((r) => r.json()).then((d) => {
       setServerVerified(d.valid === true);
       if (d.valid === false) {
-        // Payment not verified — re-lock the report
-        try {
-          const audits = JSON.parse(localStorage.getItem("aura_audits") || "[]");
-          const idx = audits.findIndex((a: { id: string }) => a.id === id);
-          if (idx >= 0) { audits[idx].reportStatus = "free_generated"; localStorage.setItem("aura_audits", JSON.stringify(audits)); }
-        } catch {}
+        // Payment not verified — re-lock the report. Use the audit store so it
+        // writes the real key (auracheck:v1:audits), not a stray "aura_audits"
+        // array that never existed — the old code silently did nothing.
+        try { updateAudit(id, { reportStatus: "free_generated" }); } catch {}
       }
     }).catch(() => setServerVerified(true)); // On network error, don't lock out
   }, [audit, id]);
@@ -1192,6 +1190,11 @@ export default function AuditDetailPage() {
               {personalization != null && displayResult != null && (() => {
                 const colorPalette = displayResult.imageMetrics?.colorPalette;
                 const undertone = displayResult.imageMetrics?.undertone?.undertone;
+                // Only trust the undertone strongly above ~45/100 confidence.
+                // Below that we still nudge toward flattering colours (a safe
+                // bet) but never PENALISE on "avoid" colours — being confidently
+                // wrong erodes trust more than a soft miss.
+                const undertoneConfident = (displayResult.imageMetrics?.undertone?.confidence ?? 0) >= 45;
                 const scent = scentProfileFor(personalization.archetype, audit!.goal ?? undefined);
                 const grooming = groomingProfileFor(displayResult.imageMetrics?.groomingResult, displayResult.imageMetrics?.skinDetail);
                 const shopLooks = getPersonalizedLooks({
@@ -1201,7 +1204,7 @@ export default function AuditDetailPage() {
                   budgetMax: audit!.budgetRange as any,
                   gender: audit!.gender,
                   paletteColors: colorPalette?.colors,
-                  avoidColors: colorPalette?.avoid,
+                  avoidColors: undertoneConfident ? colorPalette?.avoid : undefined,
                   scentFamilies: scent.families,
                   groomingFocus: grooming.keywords,
                 });
@@ -1214,6 +1217,7 @@ export default function AuditDetailPage() {
                       leakTags={(displayResult.statusLeaks ?? []).map((l) => l.category)}
                       gender={audit!.gender}
                       undertone={undertone}
+                      undertoneConfident={undertoneConfident}
                       paletteColors={colorPalette?.colors}
                       paletteName={colorPalette?.name}
                       scentFamilies={scent.families}
@@ -1226,7 +1230,7 @@ export default function AuditDetailPage() {
                     />
                     <div className="mb-6">
                       <LockedSection locked={!isUnlocked} label="Your Looks — Shop the Fit" unlockHref={unlockHref}>
-                        <CompleteTheLookCard looks={shopLooks} archetype={personalization.archetype} paletteColors={colorPalette?.colors} undertone={undertone} />
+                        <CompleteTheLookCard looks={shopLooks} archetype={personalization.archetype} paletteColors={colorPalette?.colors} undertone={undertone} undertoneConfident={undertoneConfident} />
                       </LockedSection>
                     </div>
                     {displayResult.imageMetrics != null && (
@@ -1303,7 +1307,7 @@ export default function AuditDetailPage() {
               {displayResult != null && (
                 <div className="mb-6">
                   <LockedSection locked={!isUnlocked} label="Face-Shape Studio" unlockHref={unlockHref}>
-                    <FaceShapeCard imageDataUrl={audit?.imageDataUrl} undertone={displayResult?.imageMetrics?.undertone?.undertone} />
+                    <FaceShapeCard imageDataUrl={audit?.imageDataUrl} undertone={displayResult?.imageMetrics?.undertone?.undertone} undertoneConfident={(displayResult?.imageMetrics?.undertone?.confidence ?? 0) >= 45} />
                   </LockedSection>
                 </div>
               )}

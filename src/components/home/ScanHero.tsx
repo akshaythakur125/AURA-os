@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
@@ -215,11 +216,13 @@ export function ScanHero() {
                     Kept in its own overflow-hidden wrapper so the CARD itself can
                     stay a real 3D context (overflow:hidden would flatten it). */}
                 <div className="absolute inset-0 overflow-hidden rounded-[22px]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={HERO_PHOTO}
                     alt="A portrait being analysed by AuraCheck"
-                    className="absolute inset-0 h-full w-full object-cover"
+                    fill
+                    priority
+                    sizes="(max-width: 640px) 100vw, 400px"
+                    className="object-cover"
                     style={{ objectPosition: HERO_FOCUS }}
                   />
                   {/* Readability + brand tint so the white overlay and chips read

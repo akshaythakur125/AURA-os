@@ -26,6 +26,8 @@ interface PersonalizedShopProps {
   gender?: "men" | "women" | "unisex";
   /** Detected skin undertone — drives the "flatters your undertone" reasons. */
   undertone?: "warm" | "cool" | "neutral";
+  /** Whether the undertone read is confident — softens the wording if not. */
+  undertoneConfident?: boolean;
   /** Undertone-flattering colours from the report's colour palette. */
   paletteColors?: string[];
   /** Name of the matched palette, e.g. "Warm Romantic". */
@@ -195,6 +197,7 @@ export function PersonalizedShop({
   archetype,
   leakTags,
   undertone,
+  undertoneConfident = true,
   paletteColors,
   paletteName,
   scentFamilies,
@@ -220,7 +223,10 @@ export function PersonalizedShop({
     // "white flatters you" on every basic does not.
     const word = [...cols].find((c) => !NEUTRAL.has(c));
     if (!word) return null;
-    return `${word.charAt(0).toUpperCase() + word.slice(1)} flatters your ${undertone} undertone`;
+    const cap = word.charAt(0).toUpperCase() + word.slice(1);
+    return undertoneConfident
+      ? `${cap} flatters your ${undertone} undertone`
+      : `${cap} suits a ${undertone}-leaning undertone`;
   };
 
   // Colourless categories get their own personal reason: fragrance by vibe,
@@ -313,9 +319,9 @@ export function PersonalizedShop({
             {undertone && paletteName && paletteColors && paletteColors.length > 0 && (
               <div className="mt-4 rounded-2xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-3.5 text-left">
                 <p className="text-xs text-[#4a443d]">
-                  Matched to your colouring — your undertone reads{" "}
+                  Matched to your colouring — your undertone {undertoneConfident ? "reads" : "leans"}{" "}
                   <span className="font-semibold text-[#B23A25]">{undertone}</span>, so these lean into your{" "}
-                  <span className="font-semibold text-[#1C1917]">{paletteName}</span> palette:
+                  <span className="font-semibold text-[#1C1917]">{paletteName}</span> palette{undertoneConfident ? "" : " (a light read — treat it as a nudge)"}:
                 </p>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {paletteColors.slice(0, 7).map((c) => (

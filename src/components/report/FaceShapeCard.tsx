@@ -113,7 +113,7 @@ function photoTips(
   return tips;
 }
 
-export function FaceShapeCard({ initial = "oval", imageDataUrl, undertone }: { initial?: Shape; imageDataUrl?: string; undertone?: "warm" | "cool" | "neutral" }) {
+export function FaceShapeCard({ initial = "oval", imageDataUrl, undertone, undertoneConfident = true }: { initial?: Shape; imageDataUrl?: string; undertone?: "warm" | "cool" | "neutral"; undertoneConfident?: boolean }) {
   const [shape, setShape] = useState<Shape>(initial);
   const frame = undertone ? FRAME_COLORS[undertone] : null;
   const [scanState, setScanState] = useState<"idle" | "scanning" | "done" | "no-face" | "error">("idle");
@@ -225,7 +225,7 @@ export function FaceShapeCard({ initial = "oval", imageDataUrl, undertone }: { i
           {frame && (
             <div className="mt-3">
               <p className="mb-1.5 text-[11px] text-[#857b6e]">
-                Frame colours for your <span className="font-semibold text-[#B23A25]">{undertone}</span> undertone:
+                Frame colours for your <span className="font-semibold text-[#B23A25]">{undertone}</span>{undertoneConfident ? "" : "-leaning"} undertone:
               </p>
               <Pills items={frame.colors} />
               <p className="mt-1.5 text-[10px] text-[#9c9184]">{frame.note}</p>

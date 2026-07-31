@@ -20,11 +20,13 @@ export function CompleteTheLookCard({
   archetype,
   paletteColors,
   undertone,
+  undertoneConfident = true,
 }: {
   looks: Look[];
   archetype?: string;
   paletteColors?: string[];
   undertone?: "warm" | "cool" | "neutral";
+  undertoneConfident?: boolean;
 }) {
   const outfits = buildOutfits(looks, 3, { paletteColors });
   if (outfits.length === 0) return null;
@@ -36,7 +38,7 @@ export function CompleteTheLookCard({
         {archetype && <span className="text-xs font-semibold text-[#B23A25]">{archetype}</span>}
       </div>
       <p className="mb-4 text-xs text-[#857b6e]">
-        Coordinated {archetype ? `${archetype} ` : ""}outfits built from your picks{undertone ? `, in colours that flatter your ${undertone} undertone` : ""} — grab the whole thing, not just one piece.
+        Coordinated {archetype ? `${archetype} ` : ""}outfits built from your picks{undertone ? `, in colours that ${undertoneConfident ? `flatter your ${undertone} undertone` : `suit a ${undertone}-leaning undertone`}` : ""} — grab the whole thing, not just one piece.
       </p>
 
       <div className="space-y-4">
