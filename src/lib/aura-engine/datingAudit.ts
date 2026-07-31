@@ -1,4 +1,66 @@
-import type { Audit, BioAnalysis, PromptAnalysis, RedFlag, SuggestedBio, DatingProfileReport } from "@/types/audit";
+import type { Audit, BioAnalysis, PromptAnalysis, RedFlag, SuggestedBio, DatingProfileReport, PhotoStrategy, PlatformTip } from "@/types/audit";
+
+/**
+ * Photo strategy — the highest-leverage part of any dating profile, and the one
+ * most people get wrong. Expert best-practice, lightly personalised from the
+ * free scan's measured signals when a photo is present.
+ */
+function analyzePhotoStrategy(audit: Audit): PhotoStrategy {
+  const m = audit.fullReport?.freeResult?.imageMetrics as
+    | { lightingScore?: number; clarityScore?: number; scores?: { expression?: number; background?: number } }
+    | undefined;
+  const weakLight = typeof m?.lightingScore === "number" && m.lightingScore < 50;
+  const weakClarity = typeof m?.clarityScore === "number" && m.clarityScore < 45;
+  const strongExpression = (m?.scores?.expression ?? 0) >= 62;
+
+  const leadPhoto = strongExpression
+    ? "Lead with a clear, well-lit solo photo where your eyes are visible and you're giving a genuine smile — your scan shows expression is your strongest asset, so open on it."
+    : "Lead with a bright, front-facing solo shot from the chest up: eyes visible, soft natural light, clean background, a real (not forced) smile. This is the half-second decision photo — everything else only gets seen if this one lands.";
+
+  const sequence: { slot: string; show: string }[] = [
+    { slot: "1 · The hook", show: "Sharp solo headshot, natural light, genuine expression. No sunglasses, no group, no filter." },
+    { slot: "2 · Full body", show: "A full-length shot in a fitted outfit so your build reads honestly — this quietly builds trust." },
+    { slot: "3 · Social proof", show: "You with one or two others (not a crowd you disappear into) — signals you have a life and friends." },
+    { slot: "4 · A passion", show: "Mid-activity: gym, guitar, hiking, cooking, travel. This is the photo people actually message you about." },
+    { slot: "5 · Warmth", show: "A candid with real emotion — laughing, relaxed. End the set on likeability, not another posed shot." },
+  ];
+
+  const avoid: string[] = [
+    "A group photo as photo #1 — matches can't tell which one is you and just swipe on.",
+    "Sunglasses or a cap in every shot — hiding your eyes reads as hiding something.",
+    weakLight
+      ? "Dark or yellow indoor lighting — your scan flagged weak lighting, and it looks even worse shrunk to a profile card."
+      : "Heavy filters or beauty-smoothing — they read as 'catfish' and kill trust instantly.",
+    weakClarity
+      ? "Soft / blurry shots — your scan flagged low sharpness; wipe the lens and use the rear camera."
+      : "Mirror selfies with a cluttered background — they undercut every other signal you're sending.",
+    "Only stiff, posed photos — at least one genuine candid is what makes you look human and dateable.",
+  ];
+
+  return { leadPhoto, sequence, avoid };
+}
+
+/** Platform-specific tactics — the same profile should be played differently. */
+function platformPlaybook(): PlatformTip[] {
+  return [
+    { platform: "Hinge", tip: "Hinge is prompt-first — answers do the work, not the bio. Make prompts specific and story-shaped, and leave one obvious 'reply here' hook. A like on a specific prompt (with a comment) converts far better than a blank like." },
+    { platform: "Bumble", tip: "Women message first, so make replying effortless: one clear mid-activity photo plus one prompt that ends in a natural question-back. Keep the bio short and warm — a vibe, not a CV." },
+    { platform: "Tinder", tip: "Tinder is photo-first and brutally fast — your lead photo is ~80% of the outcome. Keep the bio to one or two punchy lines with a single hook; nobody reads paragraphs mid-swipe." },
+  ];
+}
+
+/** Opening hooks — ready-to-use lines engineered to make matches message first. */
+function generateOpeningHooks(tone: string): string[] {
+  const hooks = [
+    "End your bio with a low-stakes question they can answer in five words — e.g. 'Settle a debate: is cereal a soup?'",
+    "Drop one oddly specific detail ('I make the third-best butter chicken in my building') — specifics get replies, generic 'I love food' gets ignored.",
+    "Give them a fill-in-the-blank: 'The way to my heart is ____ (wrong answers encouraged)' — it's almost impossible not to reply to.",
+  ];
+  if (tone.includes("humorous")) hooks.push("Lean into your humour with a bit: 'Two truths and a lie — I've met a celebrity, I can do a backflip, I reply within a day.'");
+  if (tone.includes("ambitious")) hooks.push("Turn ambition into a hook, not a flex: 'Building something cool — will trade the story for a good coffee rec.'");
+  if (tone.includes("thoughtful")) hooks.push("Invite a real answer: 'Best thing you've read/watched lately? I'm collecting recommendations from strangers with taste.'");
+  return hooks.slice(0, 4);
+}
 
 const NEGATIVE_WORDS = ["hate", "boring", "sucks", "awful", "terrible", "worst", "ugly", "dull", "lame", "cringe", "dead", "hopeless", "lonely", "alone", "nobody", "nothing"];
 const CLICHE_PHRASES = ["i love to travel", "i love food", "looking for my partner in crime", "fluent in sarcasm", "dog mom", "dog dad", "live laugh love", "adventure seeker", "coffee addict", "netflix and chill", "go with the flow", "i like to have fun", "just ask", "i enjoy long walks", "work hard play hard", "living my best life", "not sure what to put here", "i like to laugh"];
@@ -254,6 +316,9 @@ export function generateDatingProfileReport(audit: Audit): DatingProfileReport {
     promptAnalysis,
     redFlags,
     suggestedBios,
+    photoStrategy: analyzePhotoStrategy(audit),
+    platformTips: platformPlaybook(),
+    openingHooks: generateOpeningHooks(bioAnalysis.tone),
     overallAdvice,
     generatedAt: new Date().toISOString(),
   };

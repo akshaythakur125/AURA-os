@@ -1471,6 +1471,49 @@ export default function AuditDetailPage() {
                       </div>
                     </div>
                   )}
+                  {audit.datingProfileReport.photoStrategy && (
+                    <div className="mt-5">
+                      <h4 className="mb-2 text-xs font-semibold text-[#1C1917]">📸 Photo strategy</h4>
+                      <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
+                        <p className="text-xs text-[#4a443d]"><span className="font-semibold text-[#1C1917]">Lead photo — </span>{audit.datingProfileReport.photoStrategy.leadPhoto}</p>
+                        <div className="mt-2.5 space-y-1.5">
+                          {audit.datingProfileReport.photoStrategy.sequence.map((s) => (
+                            <div key={s.slot} className="flex gap-2 text-xs">
+                              <span className="shrink-0 font-semibold text-red-300">{s.slot}</span>
+                              <span className="text-[#4a443d]">{s.show}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="mt-3 text-[10px] font-semibold uppercase tracking-wide text-[#857b6e]">Avoid</p>
+                        <ul className="ml-3 list-disc text-[11px] text-[#6f675e]">
+                          {audit.datingProfileReport.photoStrategy.avoid.map((a) => <li key={a}>{a}</li>)}
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                  {audit.datingProfileReport.openingHooks && audit.datingProfileReport.openingHooks.length > 0 && (
+                    <div className="mt-5">
+                      <h4 className="mb-2 text-xs font-semibold text-[#1C1917]">💬 Opening hooks — get them to message first</h4>
+                      <ul className="space-y-1.5">
+                        {audit.datingProfileReport.openingHooks.map((h, i) => (
+                          <li key={i} className="rounded-lg border border-red-500/20 bg-red-500/5 p-2.5 text-xs text-[#4a443d]">{h}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {audit.datingProfileReport.platformTips && audit.datingProfileReport.platformTips.length > 0 && (
+                    <div className="mt-5">
+                      <h4 className="mb-2 text-xs font-semibold text-[#1C1917]">🎯 Platform playbook</h4>
+                      <div className="space-y-2">
+                        {audit.datingProfileReport.platformTips.map((pt) => (
+                          <div key={pt.platform} className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
+                            <div className="text-xs font-semibold text-[#1C1917]">{pt.platform}</div>
+                            <p className="mt-0.5 text-xs text-[#4a443d]">{pt.tip}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </Card>
                 </FadeInView>
               )}
@@ -1480,7 +1523,25 @@ export default function AuditDetailPage() {
                 <FadeInView>
                 <Card className="mb-6">
                   <Badge variant="success" className="mb-2">30-Day Glow-Up Plan</Badge>
-                  <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Your 4-Week Roadmap</h3>
+                  <h3 className="mb-3 text-sm font-semibold text-[#1C1917]">Your 4-Week Roadmap</h3>
+                  {audit.glowupPlan.focus && (
+                    <div className="mb-4 rounded-lg border border-[#E14434]/20 bg-[#E14434]/[0.06] p-3">
+                      <p className="text-xs text-[#4a443d]"><span className="font-semibold text-[#B23A25]">Your focus — </span>{audit.glowupPlan.focus}</p>
+                    </div>
+                  )}
+                  {audit.glowupPlan.milestones && audit.glowupPlan.milestones.length > 0 && (
+                    <div className="mb-4">
+                      <h4 className="mb-2 text-xs font-semibold text-[#1C1917]">📈 Weekly milestones</h4>
+                      <div className="space-y-1.5">
+                        {audit.glowupPlan.milestones.map((ms) => (
+                          <div key={ms.week} className="flex items-start gap-2 rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-2.5 text-xs">
+                            <span className="shrink-0 rounded-full bg-red-500/20 px-2 py-0.5 text-[10px] font-semibold text-red-300">W{ms.week}</span>
+                            <span className="text-[#4a443d]">{ms.target}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   <div className="mb-4 grid gap-4 sm:grid-cols-2">
                     {[audit.glowupPlan.week1, audit.glowupPlan.week2, audit.glowupPlan.week3, audit.glowupPlan.week4].map((week, wi) => (
                       <details key={wi} className="group rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03]">

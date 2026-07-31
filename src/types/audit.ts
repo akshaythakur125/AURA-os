@@ -412,8 +412,22 @@ export interface DatingProfileReport {
   promptAnalysis: PromptAnalysis[];
   redFlags: RedFlag[];
   suggestedBios: SuggestedBio[];
+  photoStrategy: PhotoStrategy;
+  platformTips: PlatformTip[];
+  openingHooks: string[];
   overallAdvice: string;
   generatedAt: string;
+}
+
+export interface PhotoStrategy {
+  leadPhoto: string; // what your first photo must do
+  sequence: { slot: string; show: string }[]; // the 5-slot order
+  avoid: string[]; // photo mistakes that kill matches
+}
+
+export interface PlatformTip {
+  platform: string; // "Hinge" | "Bumble" | "Tinder"
+  tip: string;
 }
 
 export interface BioAnalysis {
@@ -450,6 +464,10 @@ export interface SuggestedBio {
 // ── 30-Day Glow-Up Plan Types ──
 
 export interface GlowupPlan {
+  /** Personalised headline — which signal these 30 days attack first. */
+  focus: string;
+  /** One measurable target per week, so progress is provable not vibes. */
+  milestones: { week: number; target: string }[];
   week1: WeekPlan;
   week2: WeekPlan;
   week3: WeekPlan;

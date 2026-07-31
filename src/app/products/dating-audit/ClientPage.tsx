@@ -102,6 +102,9 @@ export default function DatingAuditPage() {
               { title: "Prompt grading", desc: "Each prompt answer graded weak/average/good/excellent with improvement suggestions." },
               { title: "Red-flag detection", desc: "5 categories: negative, cliché, low effort, aggressive, desperate — with severity." },
               { title: "3 suggested bios", desc: "Three alternative bio versions tailored to your style and confidence level." },
+              { title: "Photo strategy", desc: "Your lead photo, the exact 5-slot photo order that converts, and the shots to cut." },
+              { title: "Platform playbook", desc: "Tailored tactics for Hinge, Bumble and Tinder — the same profile, played to each app's rules." },
+              { title: "Opening hooks", desc: "Ready-to-paste bio lines engineered to make matches message you first." },
               { title: "Overall advice", desc: "A clear summary of your biggest friction points and what to change first." },
             ].map((f) => (
               <Card key={f.title} hover>

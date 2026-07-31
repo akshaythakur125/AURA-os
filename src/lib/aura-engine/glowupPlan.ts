@@ -296,8 +296,40 @@ function generateBudgetRoadmap(audit: Audit): BudgetRoadmap2 {
   };
 }
 
+/**
+ * Personalises the plan to the person's weakest measured signal, so the 30 days
+ * read as bespoke — plus a measurable target per week so progress is provable.
+ */
+function personalizeFocus(audit: Audit): { focus: string; milestones: { week: number; target: string }[] } {
+  const scores = (audit.fullReport?.freeResult?.imageMetrics as { scores?: Record<string, number> } | undefined)?.scores;
+  const DIMS = ["lighting", "background", "outfit", "grooming", "expression"] as const;
+  let weakest: (typeof DIMS)[number] = "lighting";
+  if (scores) {
+    weakest = [...DIMS]
+      .filter((d) => typeof scores[d] === "number")
+      .sort((a, b) => (scores[a] ?? 100) - (scores[b] ?? 100))[0] ?? "lighting";
+  }
+  const focusMap: Record<(typeof DIMS)[number], string> = {
+    lighting: "Your weakest signal is lighting — so this plan front-loads how and where you shoot. It's the single change that moves your score the most, and it's free.",
+    background: "Your weakest signal is your background — the cheapest points on the table. The early days focus on controlling what's behind you.",
+    outfit: "Your weakest signal is outfit and fit — the plan leans into colour, fit and a small capsule that photographs well without overspending.",
+    grooming: "Your weakest signal is grooming — the first stretch targets the small details that read instantly on a camera.",
+    expression: "Your weakest signal is expression — the plan drills the smile-and-eyes work that's hardest to fake and highest-impact.",
+  };
+  const milestones = [
+    { week: 1, target: "Nail one repeatable, well-lit photo spot and bank a clean baseline selfie." },
+    { week: 2, target: "Lock a go-to colour palette and one fitted outfit that photographs well." },
+    { week: 3, target: "Capture a strong outdoor / context shot with a genuine expression." },
+    { week: 4, target: "Produce a final photo that visibly beats your day-1 shot — your glow-up proof." },
+  ];
+  return { focus: focusMap[weakest], milestones };
+}
+
 export function generateGlowupPlan(audit: Audit): GlowupPlan {
+  const { focus, milestones } = personalizeFocus(audit);
   return {
+    focus,
+    milestones,
     week1: generateWeek1(audit),
     week2: generateWeek2(),
     week3: generateWeek3(),
