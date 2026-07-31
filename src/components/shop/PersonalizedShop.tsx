@@ -10,7 +10,7 @@ import type { Look } from "@/lib/shop/catalogTypes";
 import type { StatusLeakTag } from "@/types/product";
 import { buildRetailerUrl, buildPrimaryShopLink, type Retailer } from "@/lib/shop/linkBuilder";
 import { fetchLiveProducts, queryForLook, type LiveProduct } from "@/lib/shop/liveFeed";
-import { resolveShopImage, emojiForCategory } from "@/lib/shop/shopImage";
+import { resolveShopImage, emojiForCategory, requestedColors, colorRelation } from "@/lib/shop/shopImage";
 import { ProductThumb } from "./ProductThumb";
 import { formatLookPrice } from "@/lib/shop/pricing";
 import { ShopCategoryImage } from "./ShopCategoryImage";
@@ -24,6 +24,12 @@ interface PersonalizedShopProps {
   archetype?: string;
   leakTags?: string[];
   gender?: "men" | "women" | "unisex";
+  /** Detected skin undertone — drives the "flatters your undertone" reasons. */
+  undertone?: "warm" | "cool" | "neutral";
+  /** Undertone-flattering colours from the report's colour palette. */
+  paletteColors?: string[];
+  /** Name of the matched palette, e.g. "Warm Romantic". */
+  paletteName?: string;
   /** Free users: show `freeCount` picks fully, lock the rest behind the paywall. */
   locked?: boolean;
   /** How many picks a free user gets to see fully. Default 1. */
@@ -182,10 +188,30 @@ export function PersonalizedShop({
   looks,
   archetype,
   leakTags,
+  undertone,
+  paletteColors,
+  paletteName,
   locked = false,
   freeCount = 1,
   unlockHref = "/pricing",
 }: PersonalizedShopProps) {
+  // Undertone-flattering colour reasons — the most "personal" signal. Reuses
+  // the shared colour engine so the shop and the report agree on what flatters.
+  const paletteSet = useMemo(
+    () => (paletteColors?.length ? requestedColors(paletteColors.join(" ")) : null),
+    [paletteColors],
+  );
+  const NEUTRAL = new Set(["white", "black", "grey", "gray", "offwhite", "ivory", "cream", "charcoal"]);
+  const flatteryReason = (look: Look): string | null => {
+    if (!paletteSet || !undertone) return null;
+    const cols = requestedColors(`${look.title} ${look.keywords.join(" ")}`);
+    if (!cols.size || colorRelation(paletteSet, cols) !== "match") return null;
+    // Only call it out for a distinctive colour — "olive flatters you" lands;
+    // "white flatters you" on every basic does not.
+    const word = [...cols].find((c) => !NEUTRAL.has(c));
+    if (!word) return null;
+    return `${word.charAt(0).toUpperCase() + word.slice(1)} flatters your ${undertone} undertone`;
+  };
   const [showAll, setShowAll] = useState(false);
   const [budgetFilter, setBudgetFilter] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -263,6 +289,22 @@ export function PersonalizedShop({
               )}
               {!worstLeak && "Curated based on your audit results"}
             </p>
+            {undertone && paletteName && paletteColors && paletteColors.length > 0 && (
+              <div className="mt-4 rounded-2xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.02] p-3.5 text-left">
+                <p className="text-xs text-[#4a443d]">
+                  Matched to your colouring — your undertone reads{" "}
+                  <span className="font-semibold text-[#B23A25]">{undertone}</span>, so these lean into your{" "}
+                  <span className="font-semibold text-[#1C1917]">{paletteName}</span> palette:
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {paletteColors.slice(0, 7).map((c) => (
+                    <span key={c} className="rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-[#4a443d] shadow-[0_1px_0_rgba(28,25,23,0.06)] ring-1 ring-[#1c1917]/[0.06]">
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </FadeInView>
 
@@ -385,6 +427,7 @@ export function PersonalizedShop({
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {visibleLooks.map((look, i) => {
             const fixText = leakTags ? getLeakFixText(look, leakTags) : null;
+            const colorReason = flatteryReason(look);
             return (
               <FadeInView key={look.id} delay={Math.min(i * 50, 400)}>
                 <Card hover className="flex flex-col h-full">
@@ -401,7 +444,15 @@ export function PersonalizedShop({
                     <p className="text-xs text-[#857b6e] line-clamp-2">
                       {look.description}
                     </p>
-                    {/* Why this fixes it */}
+                    {/* Why this suits you — colour flattery first (most personal),
+                        then the leak it fixes. */}
+                    {colorReason && (
+                      <div className="mt-2 rounded-lg border border-[#E14434]/20 bg-[#E14434]/[0.06] px-2.5 py-1.5">
+                        <p className="text-[10px] font-medium text-[#B23A25]">
+                          ◆ {colorReason}
+                        </p>
+                      </div>
+                    )}
                     {fixText && (
                       <div className="mt-2 rounded-lg border border-emerald-500/15 bg-emerald-500/5 px-2.5 py-1.5">
                         <p className="text-[10px] font-medium text-emerald-400">

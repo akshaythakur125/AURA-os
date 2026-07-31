@@ -10,6 +10,21 @@ import type { StyleIntent } from "@/types/personalization";
 import type { StatusLeakTag, GoalTag, BudgetTag } from "@/types/product";
 import { HERO_LOOKS } from "./heroLooks";
 import { generateLongTailLooks } from "./generatedLooks";
+import { requestedColors, colorRelation } from "./shopImage";
+
+/** The colour words a look wears, drawn from its own title + keywords. */
+function lookColors(look: Look): Set<string> {
+  return requestedColors(`${look.title} ${look.keywords.join(" ")}`);
+}
+
+// "Boring" neutrals — they technically sit in almost every palette (via cream /
+// charcoal), so they shouldn't earn the full colour-flattery boost or a special
+// reason. Distinctive colours (olive, rust, camel, navy…) are what make a
+// suggestion feel personal.
+const NEUTRAL_COLORS = new Set(["white", "black", "grey", "gray", "offwhite", "ivory", "cream", "charcoal"]);
+function hasDistinctiveColor(cols: Set<string>): boolean {
+  return [...cols].some((c) => !NEUTRAL_COLORS.has(c));
+}
 
 // Singleton cache for generated looks
 let _generatedCache: Look[] | null = null;
@@ -77,6 +92,8 @@ function scoreLook(
     statusLeakTags?: StatusLeakTag[];
     goalTags?: GoalTag[];
     budgetMax?: BudgetTag;
+    paletteColors?: string[];
+    avoidColors?: string[];
   }
 ): number {
   let score = 0;
@@ -86,6 +103,28 @@ function scoreLook(
     for (const arch of params.styleArchetypes) {
       if (look.styleArchetypes.includes(arch)) {
         score += 35;
+      }
+    }
+  }
+
+  // Colour flattery — the most "personal" signal. Boost looks whose colour
+  // sits in the person's undertone-matched palette, and push down colours the
+  // engine says to avoid. Colourless items (bags, tech, most accessories) are
+  // untouched. Reuses the shared colour-family engine.
+  if (params.paletteColors?.length || params.avoidColors?.length) {
+    const cols = lookColors(look);
+    if (cols.size) {
+      if (params.paletteColors?.length) {
+        const rel = colorRelation(requestedColors(params.paletteColors.join(" ")), cols);
+        // A distinctive colour match is weighted like an archetype match, so
+        // genuinely flattering colours surface — not a wall of white hero looks
+        // (white "matches" a warm palette only via cream, so it earns less).
+        if (rel === "match") score += hasDistinctiveColor(cols) ? 34 : 8;
+        else if (rel === "compatible") score += 6;
+      }
+      if (params.avoidColors?.length) {
+        const avoidRel = colorRelation(requestedColors(params.avoidColors.join(" ")), cols);
+        if (avoidRel === "match") score -= 32;
       }
     }
   }
@@ -132,6 +171,10 @@ export interface PersonalizationParams {
   goalTags?: GoalTag[];
   budgetMax?: BudgetTag;
   gender?: "men" | "women" | "unisex";
+  /** Undertone-flattering colours (from the report's colour palette). */
+  paletteColors?: string[];
+  /** Colours the report says clash with the person's undertone. */
+  avoidColors?: string[];
   limit?: number;
 }
 
@@ -159,10 +202,26 @@ export function getPersonalizedLooks(params: PersonalizationParams): Look[] {
 
   // Sort by score descending
   scored.sort((a, b) => b.score - a.score);
+  const sorted = scored.map((s) => s.look);
 
-  // Return top N (default 20)
+  // Diversity pass — a real stylist shows a RANGE (a top, a bottom, shoes, an
+  // accessory), not twelve near-identical sage tees. Take the best few per
+  // category first so the set spans a wardrobe, then backfill with the rest.
   const limit = params.limit || 20;
-  return scored.slice(0, limit).map((s) => s.look);
+  const perCategoryMax = 2;
+  const catCount = new Map<string, number>();
+  const primary: Look[] = [];
+  const overflow: Look[] = [];
+  for (const look of sorted) {
+    const n = catCount.get(look.category) ?? 0;
+    if (n < perCategoryMax) {
+      primary.push(look);
+      catCount.set(look.category, n + 1);
+    } else {
+      overflow.push(look);
+    }
+  }
+  return [...primary, ...overflow].slice(0, limit);
 }
 
 /**

@@ -1189,12 +1189,16 @@ export default function AuditDetailPage() {
                   and budget still drive accurate picks, so a shopper is never left
                   without suggestions just because their photo scored low. */}
               {personalization != null && displayResult != null && (() => {
+                const colorPalette = displayResult.imageMetrics?.colorPalette;
+                const undertone = displayResult.imageMetrics?.undertone?.undertone;
                 const shopLooks = getPersonalizedLooks({
                   styleArchetypes: [personalization.archetype === "Corporate Sharp" ? "professional" : personalization.archetype === "Creator Vibe" ? "creator" : personalization.archetype === "College Casual" ? "college" : personalization.archetype === "Premium Minimalist" ? "premium" : personalization.archetype === "Urban Aspirational" ? "confident" : personalization.archetype === "Loud Flex" ? "bold" : personalization.archetype === "Soft Luxury" ? "understated" : "clean"],
                   statusLeakTags: (displayResult.statusLeaks ?? []).map((l) => l.category as any).filter(Boolean),
                   goalTags: audit!.goal ? [audit!.goal as any] : undefined,
                   budgetMax: audit!.budgetRange as any,
                   gender: audit!.gender,
+                  paletteColors: colorPalette?.colors,
+                  avoidColors: colorPalette?.avoid,
                 });
                 return (
                   <>
@@ -1204,6 +1208,9 @@ export default function AuditDetailPage() {
                       archetype={personalization.archetype}
                       leakTags={(displayResult.statusLeaks ?? []).map((l) => l.category)}
                       gender={audit!.gender}
+                      undertone={undertone}
+                      paletteColors={colorPalette?.colors}
+                      paletteName={colorPalette?.name}
                       locked={!isUnlocked}
                       freeCount={1}
                       unlockHref={unlockHref}
