@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { HeroSection } from "@/components/home/HeroSection";
+import { ScanHero } from "@/components/home/ScanHero";
 import { PostOrNotBand } from "@/components/home/PostOrNotBand";
 import { HowItWorks } from "@/components/home/HowItWorks";
 import { AuditDimensions } from "@/components/home/AuditDimensions";
@@ -50,7 +50,7 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
       />
-      <HeroSection />
+      <ScanHero />
       <PostOrNotBand />
       <HowItWorks />
       <AuditDimensions />
