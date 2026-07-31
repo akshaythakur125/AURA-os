@@ -37,6 +37,7 @@ import { FaceShapeCard } from "@/components/report/FaceShapeCard";
 import { PhotoRankerWidget } from "@/components/vision/PhotoRankerWidget";
 import { AiPhotoReadCard } from "@/components/report/AiPhotoReadCard";
 import { GlowupTracker } from "@/components/report/GlowupTracker";
+import { ProgressProofCard } from "@/components/report/ProgressProofCard";
 import { buildDatingPlaybookHtml } from "@/lib/share/datingArtifact";
 import { downloadTextFile } from "@/lib/share/download";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
@@ -1568,6 +1569,7 @@ export default function AuditDetailPage() {
                   )}
                   <div className="mb-4">
                     <GlowupTracker plan={audit.glowupPlan} auditId={id} />
+                    <ProgressProofCard audit={audit} />
                   </div>
                   <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-4">
                     <h4 className="mb-2 text-xs font-semibold text-[#1C1917]">Budget Roadmap</h4>
