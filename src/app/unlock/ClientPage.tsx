@@ -23,25 +23,13 @@ import type { ProductType } from "@/types/payment";
 import type { Audit } from "@/types/audit";
 import type { OfferApplication } from "@/types/offer";
 
-type UnlockStage = "request" | "submit" | "summary" | "unlock" | "done";
-
-function getUpiId(): string {
-  if (typeof process !== "undefined" && process.env && (process.env as Record<string, string | undefined>).NEXT_PUBLIC_MANUAL_UPI_ID) {
-    return (process.env as Record<string, string | undefined>).NEXT_PUBLIC_MANUAL_UPI_ID as string;
-  }
-  return "your-upi-id@upi";
-}
+// Razorpay Checkout is the only way to pay. "unlock" is a discreet admin/comp
+// code override (not a customer payment method); "done" is the success screen.
+type UnlockStage = "request" | "unlock" | "done";
 
 function getSupportEmail(): string | null {
   if (typeof process !== "undefined" && process.env && (process.env as Record<string, string | undefined>).NEXT_PUBLIC_SUPPORT_EMAIL) {
     return (process.env as Record<string, string | undefined>).NEXT_PUBLIC_SUPPORT_EMAIL as string;
-  }
-  return null;
-}
-
-function getOwnerWhatsApp(): string | null {
-  if (typeof process !== "undefined" && process.env && (process.env as Record<string, string | undefined>).NEXT_PUBLIC_OWNER_WHATSAPP) {
-    return (process.env as Record<string, string | undefined>).NEXT_PUBLIC_OWNER_WHATSAPP as string;
   }
   return null;
 }
@@ -86,12 +74,8 @@ function UnlockForm() {
   const [unlockCode, setUnlockCode] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerContact, setCustomerContact] = useState("");
-  const [userNote, setUserNote] = useState("");
-  const [upiTxRef, setUpiTxRef] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [unlocking, setUnlocking] = useState(false);
-  const [orderId, setOrderId] = useState<string | null>(null);
-  const [copied, setCopied] = useState<string | null>(null);
   const [offerCode, setOfferCode] = useState("");
   const [offerResult, setOfferResult] = useState<OfferApplication | null>(null);
 
@@ -102,60 +86,13 @@ function UnlockForm() {
   const finalPrice = offerResult?.isValid ? offerResult.finalAmount : productPrice;
   const finalPriceLabel = offerResult?.isValid && offerResult.finalAmount !== productPrice ? `₹${offerResult.finalAmount}` : productPriceLabel;
   const features = PRODUCT_FEATURES[defaultProduct] || PRODUCT_FEATURES.aura_report;
-  const upiId = getUpiId();
   const supportEmail = getSupportEmail();
-  const ownerWhatsApp = getOwnerWhatsApp();
 
   const isAlreadyUnlocked = audit?.unlockedProducts?.includes(defaultProduct);
 
   const missingDatingText = defaultProduct === "dating_audit" && (!audit?.profileTexts?.bio || audit.profileTexts.bio.trim() === "");
   const missingGlowupData = defaultProduct === "glowup_plan" && (!audit?.imageDataUrl && !audit?.fullReport?.freeResult?.imageMetrics);
   const cannotGenerate = (defaultProduct === "dating_audit" && missingDatingText) || (defaultProduct === "glowup_plan" && missingGlowupData);
-
-  function buildUpiDeepLink(): string {
-    const base = "upi://pay";
-    const params = new URLSearchParams();
-    params.set("pa", upiId);
-    params.set("pn", "AuraCheck");
-    params.set("am", String(finalPrice));
-    params.set("cu", "INR");
-    params.set("tn", `AuraCheck ${productName} ${auditId.slice(0, 8)}`);
-    return `${base}?${params.toString()}`;
-  }
-
-  function buildPaymentNote(): string {
-    return `AuraCheck ${productName}\nAmount: ${finalPriceLabel}\nAudit: ${auditId.slice(0, 8)}...\nUPI: ${upiId}`;
-  }
-
-  function buildPaymentSummary(): string {
-    const lines = [
-      `Product: ${productName}`,
-      `Amount: ${finalPriceLabel}`,
-      `Audit ID: ${auditId}`,
-      `UPI ID: ${upiId}`,
-    ];
-    if (offerResult?.isValid && offerResult.finalAmount !== productPrice) {
-      lines.push(`Discount: ${offerResult.code} — You pay ₹${offerResult.finalAmount} (was ₹${productPrice})`);
-    }
-    if (customerName) lines.push(`Name: ${customerName}`);
-    if (customerContact) lines.push(`Contact: ${customerContact}`);
-    if (upiTxRef) lines.push(`UPI Ref: ${upiTxRef}`);
-    if (userNote) lines.push(`Note: ${userNote}`);
-    lines.push(`Status: Payment Submitted`);
-    return lines.join("\n");
-  }
-
-  function buildWhatsAppSummary(): string {
-    return encodeURIComponent(
-      `AuraCheck Payment Request\n\nProduct: ${productName}\nAmount: ${finalPriceLabel}\nAudit ID: ${auditId}\n${offerResult?.isValid && offerResult.finalAmount !== productPrice ? `Discount: ${offerResult.code} — Pay ₹${offerResult.finalAmount}\n` : ""}${customerName ? `Name: ${customerName}\n` : ""}${customerContact ? `Contact: ${customerContact}\n` : ""}${upiTxRef ? `UPI Ref: ${upiTxRef}\n` : ""}${userNote ? `Note: ${userNote}\n` : ""}\nStatus: Payment Submitted`
-    );
-  }
-
-  function handleCopy(text: string, label: string) {
-    navigator.clipboard.writeText(text);
-    setCopied(label);
-    setTimeout(() => setCopied(null), 2000);
-  }
 
   function handleApplyOffer() {
     if (!offerCode.trim()) {
@@ -202,45 +139,6 @@ function UnlockForm() {
       });
   }
 
-  async function handleSavePaymentRequest() {
-    if (!audit || !auditId) return;
-    try {
-      const orderRes = await fetch("/api/payments/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          productType: defaultProduct,
-          offerCode: offerResult?.isValid ? offerResult.code : undefined,
-          customerName,
-          customerContact,
-          userNote,
-          auditId,
-        }),
-      });
-      const orderData = await orderRes.json();
-      const order = createOrder({
-        auditId,
-        productType: defaultProduct,
-        customerName: customerName.trim() || undefined,
-        customerContact: customerContact.trim() || undefined,
-        userNote: userNote.trim() || undefined,
-        offerCode: orderData.appliedOffer || undefined,
-        originalAmount: orderData.originalAmount,
-        discountAmount: orderData.discountAmount,
-        finalAmount: orderData.finalAmount,
-      });
-      const withRef = order.upiTransactionRef !== upiTxRef.trim() ? { ...order, upiTransactionRef: upiTxRef.trim() || undefined } : order;
-      if (withRef.upiTransactionRef !== order.upiTransactionRef) {
-        updateOrder(order.id, withRef);
-      }
-      setOrderId(order.id);
-      trackEvent({ eventName: "payment_request_saved", auditId, productType: defaultProduct });
-      setStage("summary");
-    } catch {
-      setError("Failed to create order. Please try again.");
-    }
-  }
-
   async function handleUnlock() {
     if (!audit || !auditId) return;
     setError(null);
@@ -259,7 +157,6 @@ function UnlockForm() {
         return;
       }
       createUnlockRecord({ auditId, productType: defaultProduct, unlockCode: unlockCode.trim() });
-      if (orderId) updateOrder(orderId, { status: "unlocked", generatedUnlockCode: unlockCode.trim(), unlockedAt: new Date().toISOString() });
 
       const updates: Record<string, unknown> = {};
       updates.unlockedProducts = [...(audit.unlockedProducts || []), defaultProduct];
@@ -564,102 +461,7 @@ function UnlockForm() {
           </>
         )}
 
-        {/* ─── STAGE 2: Submit Payment Details ─── */}
-        {stage === "submit" && (
-          <Card className="mb-6">
-            <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Submit Payment Details</h3>
-            {offerResult?.isValid && offerResult.finalAmount !== productPrice && (
-              <div className="mb-4 rounded-lg bg-emerald-500/10 px-3 py-2 text-xs text-emerald-400">
-                Offer {offerResult.code} applied: {productPriceLabel} → <span className="font-bold">{finalPriceLabel}</span>
-              </div>
-            )}
-            <div className="space-y-4">
-              <div>
-                <label className="mb-1 block text-xs text-[#857b6e]">Your Name <span className="text-[#9c9184]">(optional)</span></label>
-                <input type="text" value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="e.g. Rahul" className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none" />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs text-[#857b6e]">WhatsApp / Contact <span className="text-[#9c9184]">(optional)</span></label>
-                <input type="text" value={customerContact} onChange={(e) => setCustomerContact(e.target.value)} placeholder="e.g. +91 98765 43210" className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none" />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs text-[#857b6e]">UPI Transaction Reference <span className="text-[#9c9184]">(optional)</span></label>
-                <input type="text" value={upiTxRef} onChange={(e) => setUpiTxRef(e.target.value)} placeholder="e.g. UPI123456789" className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none" />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs text-[#857b6e]">Note <span className="text-[#9c9184]">(optional)</span></label>
-                <textarea value={userNote} onChange={(e) => setUserNote(e.target.value)} placeholder="Any additional information for the owner..." className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none" rows={2} />
-              </div>
-
-              {error && <p className="rounded-lg bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
-
-              <Button className="w-full" size="lg" onClick={handleSavePaymentRequest}>
-                Save Payment Request
-              </Button>
-
-              <div className="flex justify-center">
-                <button onClick={() => setStage("request")} className="text-xs text-[#857b6e] hover:text-[#4a443d]">Back to payment details</button>
-              </div>
-            </div>
-          </Card>
-        )}
-
-        {/* ─── STAGE: Payment Summary (after submit) ─── */}
-        {stage === "summary" && (
-          <>
-            <Card className="mb-6 border-emerald-500/20">
-              <Badge variant="success" className="mb-3">Payment Submitted</Badge>
-              <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Payment Request Summary</h3>
-              <div className="space-y-3 rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-4">
-                <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Product</span><span className="text-[#1C1917]">{productName}</span></div>
-                <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Amount</span><span className="text-amber-400">{finalPriceLabel}</span></div>
-              {offerResult?.isValid && offerResult.finalAmount !== productPrice && (
-                <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Original</span><span className="text-[#857b6e] line-through">{productPriceLabel}</span></div>
-              )}
-              {offerResult?.isValid && offerResult.finalAmount !== productPrice && (
-                <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Discount</span><span className="text-emerald-400">-₹{offerResult.discountAmount}</span></div>
-              )}
-                <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Audit ID</span><span className="text-[#1C1917] text-xs truncate max-w-[200px]">{auditId}</span></div>
-                {customerName && <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Name</span><span className="text-[#1C1917]">{customerName}</span></div>}
-                {customerContact && <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Contact</span><span className="text-[#1C1917]">{customerContact}</span></div>}
-                {upiTxRef && <div className="flex justify-between text-sm"><span className="text-[#857b6e]">UPI Ref</span><span className="text-[#1C1917]">{upiTxRef}</span></div>}
-                <div className="flex justify-between text-sm"><span className="text-[#857b6e]">Status</span><Badge variant="success">Payment Submitted</Badge></div>
-              </div>
-              <p className="mt-4 text-xs text-[#857b6e]">Send this summary to the owner/admin to receive your unlock code.</p>
-            </Card>
-
-            <div className="mb-6 flex flex-wrap gap-3">
-              <Button size="sm" variant="secondary" onClick={() => handleCopy(buildPaymentSummary(), "summary")}>
-                {copied === "summary" ? "Copied!" : "Copy Payment Summary"}
-              </Button>
-              <Button size="sm" variant="secondary" onClick={() => handleCopy(auditId, "audit2")}>
-                {copied === "audit2" ? "Copied!" : "Copy Audit ID"}
-              </Button>
-              {ownerWhatsApp && (
-                <a href={`https://wa.me/${ownerWhatsApp.replace(/[^0-9]/g, "")}?text=${buildWhatsAppSummary()}`} target="_blank" rel="noopener noreferrer">
-                  <Button size="sm">Send on WhatsApp</Button>
-                </a>
-              )}
-            </div>
-
-            <Card className="mb-6">
-              <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Step 3: Enter Unlock Code</h3>
-              <p className="mb-4 text-xs text-[#857b6e]">Once the owner/admin sends you an unlock code, enter it below.</p>
-              <div className="space-y-4">
-                <div>
-                  <label className="mb-1 block text-xs text-[#857b6e]">Unlock Code <span className="text-red-400">*</span></label>
-                  <input type="text" value={unlockCode} onChange={(e) => setUnlockCode(e.target.value)} placeholder="e.g. AURA-XXXXXX" className="w-full rounded-lg border border-[#1c1917]/10 bg-[#1c1917]/[0.04] px-3 py-2 text-sm text-[#1C1917] placeholder-gray-600 focus:border-red-500/50 focus:outline-none" />
-                </div>
-                {error && <p className="rounded-lg bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
-                <Button className="w-full" size="lg" onClick={handleUnlock} disabled={unlocking}>
-                {unlocking ? "Generating Report..." : `Unlock ${productName} — ${finalPriceLabel}`}
-                </Button>
-              </div>
-            </Card>
-          </>
-        )}
-
-        {/* ─── STAGE 3: Unlock (standalone when user already has code) ─── */}
+        {/* ─── STAGE: Admin/comp unlock code (standalone) ─── */}
         {stage === "unlock" && (
           <Card className="mb-6">
             <h3 className="mb-4 text-sm font-semibold text-[#1C1917]">Enter Unlock Code</h3>
