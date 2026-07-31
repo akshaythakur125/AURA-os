@@ -67,3 +67,6 @@ artifacts/benchmarks/*.json
 artifacts/benchmarks/*.md
 datasets/real-photos/quarantined/
 datasets/real-photos/acquisition-cache/
+
+# Self-hosted CLIP weights (fetched by scripts/fetch-clip-model.mjs at deploy, never committed)
+/public/models/Xenova/

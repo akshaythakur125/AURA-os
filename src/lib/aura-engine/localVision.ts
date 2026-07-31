@@ -190,7 +190,10 @@ export async function getClassifier(): Promise<any> {
     try {
       // Dynamic import to avoid bundling issues
       const transformers = await import("@huggingface/transformers");
-      const classifier = await transformers.pipeline("zero-shot-image-classification", CLIP_MODEL_ID);
+      // Pin q8 (quantized) — the smallest well-supported build, ~150MB, and
+      // deterministic so the self-host fetch script knows exactly which weights
+      // to serve. Cast: dtype exists at runtime but isn't in the loose types.
+      const classifier = await (transformers.pipeline as any)("zero-shot-image-classification", CLIP_MODEL_ID, { dtype: "q8" });
       return classifier;
     } catch (err) {
       console.warn("[local-vision] CLIP model unavailable — analysis will use pixel-based metrics only:", err);

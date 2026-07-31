@@ -39,7 +39,8 @@
     "real-photos:readiness": "node scripts/real-photo-readiness.mjs",
     "test:no-external-analysis": "node scripts/test-no-external-analysis.mjs",
     "test:security": "node scripts/test-no-external-analysis.mjs",
-    "test:kill-switch": "node -e \"const f=require(\"./src/lib/feature-flags.ts\"); console.log(\"feature-flags module loads OK\")\""
+    "test:kill-switch": "node -e \"const f=require(\"./src/lib/feature-flags.ts\"); console.log(\"feature-flags module loads OK\")\"",
+    "clip:fetch": "node scripts/fetch-clip-model.mjs"
   },
   "dependencies": {
     "@huggingface/transformers": "^4.2.0",
