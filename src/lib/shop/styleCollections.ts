@@ -31,7 +31,7 @@ export const STYLE_COLLECTIONS: StyleCollection[] = [
     name: "Streetwear",
     emoji: "🛹",
     tagline: "oversized fits, chunky kicks",
-    test: (l) => kw(l, "oversized", "cargo", "graphic", "street", "hoodie", "high-top", "boxy") || (cat(l, "hoodie", "sweatshirt") && arch(l, "bold", "creator")),
+    test: (l) => kw(l, "oversized", "cargo", "graphic", "street", "hoodie", "high-top", "boxy") || (cat(l, "hoodie", "sweatshirt") && arch(l, "bold", "creator")) || cat(l, "sneakers", "sunglasses", "backpack"),
   },
   {
     id: "old-money",
@@ -59,7 +59,7 @@ export const STYLE_COLLECTIONS: StyleCollection[] = [
     name: "Athleisure",
     emoji: "🏃",
     tagline: "gym-to-café energy",
-    test: (l) => kw(l, "jogger", "athleisure", "running", "mesh", "track", "sport", "sweatpants") || cat(l, "shorts"),
+    test: (l) => kw(l, "jogger", "athleisure", "running", "mesh", "track", "sport", "sweatpants") || cat(l, "shorts", "hoodie", "sweatshirt", "sneakers") || (cat(l, "tshirt") && kw(l, "cotton", "crew", "grey", "black", "regular", "oversized")),
   },
   {
     id: "office-core",
@@ -73,7 +73,7 @@ export const STYLE_COLLECTIONS: StyleCollection[] = [
     name: "Date Night",
     emoji: "🌹",
     tagline: "first-impression heavy hitters",
-    test: (l) => arch(l, "attractive") || kw(l, "midi", "wrap", "bodycon", "cocktail", "heel", "fragrance", "parfum", "eau de") || cat(l, "fragrance", "heels", "dress"),
+    test: (l) => arch(l, "attractive") || kw(l, "midi", "wrap", "bodycon", "cocktail", "heel", "fragrance", "parfum", "eau de") || cat(l, "fragrance", "heels", "dress") || (cat(l, "jeans", "trousers") && kw(l, "black", "dark", "slim", "tailored", "indigo")) || (cat(l, "shirt") && kw(l, "black", "silk", "slim")),
   },
   {
     id: "campus",
@@ -87,7 +87,7 @@ export const STYLE_COLLECTIONS: StyleCollection[] = [
     name: "Desi Fusion",
     emoji: "🪔",
     tagline: "ethnic staples, modern styling",
-    test: (l) => cat(l, "kurta", "saree") || kw(l, "kurta", "kurti", "saree", "blockprint", "ethnic"),
+    test: (l) => cat(l, "kurta", "saree") || kw(l, "kurta", "kurti", "saree", "blockprint", "ethnic") || (cat(l, "trousers") && kw(l, "black", "cream", "beige", "tailored")) || cat(l, "flats", "sandals"),
   },
   {
     id: "soft-aesthetic",
@@ -101,14 +101,14 @@ export const STYLE_COLLECTIONS: StyleCollection[] = [
     name: "Grunge / Alt",
     emoji: "🖤",
     tagline: "black on black, boots on",
-    test: (l) => (kw(l, "black", "dark", "suede", "leather") && cat(l, "jacket", "shoes", "jeans", "sunglasses")) || kw(l, "chelsea", "biker", "moto", "boot"),
+    test: (l) => (kw(l, "black", "dark", "suede", "leather") && cat(l, "jacket", "shoes", "jeans", "sunglasses")) || kw(l, "chelsea", "biker", "moto", "boot") || (cat(l, "tshirt", "hoodie") && kw(l, "black", "dark", "charcoal", "graphic")),
   },
   {
     id: "clean-girl",
     name: "Clean Girl",
     emoji: "✨",
     tagline: "sleek buns and glossy basics",
-    test: (l) => kw(l, "sleek", "bodysuit", "hoop", "layered", "fitted", "crossbody") || cat(l, "grooming", "earrings"),
+    test: (l) => kw(l, "sleek", "bodysuit", "hoop", "layered", "fitted", "crossbody") || cat(l, "grooming", "earrings", "flats", "heels", "sandals") || (cat(l, "trousers", "jeans") && kw(l, "black", "white", "tailored", "slim", "straight", "cream")) || (cat(l, "tshirt") && kw(l, "white", "fitted", "slim", "crew")),
   },
 ];
 
