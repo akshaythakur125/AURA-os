@@ -27,6 +27,21 @@ export function ScanHero() {
   const [score, setScore] = useState(0);
   const [tagsIn, setTagsIn] = useState(false);
 
+  // Subtle pointer-driven 3D tilt for depth (desktop only; skipped for touch and
+  // reduced-motion). Applied directly to the node to avoid a re-render per move.
+  const onTilt = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = cardRef.current;
+    if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches || matchMedia("(pointer: coarse)").matches) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `rotateX(${(-py * 8).toFixed(2)}deg) rotateY(${(px * 10).toFixed(2)}deg)`;
+  };
+  const offTilt = () => {
+    const el = cardRef.current;
+    if (el) el.style.transform = "rotateX(0deg) rotateY(0deg)";
+  };
+
   useEffect(() => {
     const cv = canvasRef.current, card = cardRef.current;
     if (!cv || !card) return;
@@ -161,9 +176,14 @@ export function ScanHero() {
           {/* Scan card */}
           <div className="order-1 lg:order-2">
             <FadeInView delay={120}>
+             <div
+               className="mx-auto w-full max-w-[400px] [perspective:1100px]"
+               onMouseMove={onTilt}
+               onMouseLeave={offTilt}
+             >
               <div
                 ref={cardRef}
-                className="relative mx-auto aspect-[4/5] w-full max-w-[400px] overflow-hidden rounded-[22px] border border-[#1c1917]/[0.08] bg-white shadow-[0_28px_64px_-32px_rgba(28,25,23,0.45)]"
+                className="relative aspect-[4/5] w-full overflow-hidden rounded-[22px] border border-[#1c1917]/[0.08] bg-white shadow-[0_28px_64px_-32px_rgba(28,25,23,0.45)] transition-transform duration-200 ease-out [transform-style:preserve-3d] will-change-transform"
                 aria-label="Live photo analysis demo"
               >
                 <canvas ref={canvasRef} width={640} height={800} className="block h-full w-full" />
@@ -181,7 +201,7 @@ export function ScanHero() {
                     {t}
                   </span>
                 ))}
-                <div className="absolute bottom-4 left-4 flex items-baseline gap-2.5 rounded-2xl border border-[#1c1917]/[0.08] bg-white/80 px-3.5 py-3 backdrop-blur-sm">
+                <div className="absolute bottom-4 left-4 flex items-baseline gap-2.5 rounded-2xl border border-[#1c1917]/[0.08] bg-white/80 px-3.5 py-3 backdrop-blur-sm" style={{ transform: "translateZ(40px)" }}>
                   <span className="font-mono text-[2.6rem] font-bold leading-none tracking-tight tabular-nums text-[#1C1917]">{score}</span>
                   <div>
                     <div className="font-mono text-sm text-[#857b6e]">/100</div>
@@ -189,6 +209,7 @@ export function ScanHero() {
                   </div>
                 </div>
               </div>
+             </div>
             </FadeInView>
           </div>
         </div>

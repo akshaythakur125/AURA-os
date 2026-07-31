@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { ScanHero } from "@/components/home/ScanHero";
+import { ScanSignals } from "@/components/home/ScanSignals";
 import { PostOrNotBand } from "@/components/home/PostOrNotBand";
 import { HowItWorks } from "@/components/home/HowItWorks";
-import { AuditDimensions } from "@/components/home/AuditDimensions";
 import { ShopTheVibeBand } from "@/components/home/ShopTheVibeBand";
 import { PrivacyMethodology } from "@/components/home/PrivacyMethodology";
 import { FinalCTA } from "@/components/home/FinalCTA";
@@ -51,9 +51,9 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }}
       />
       <ScanHero />
+      <ScanSignals />
       <PostOrNotBand />
       <HowItWorks />
-      <AuditDimensions />
       <ShopTheVibeBand />
       <PrivacyMethodology />
       <FinalCTA />
