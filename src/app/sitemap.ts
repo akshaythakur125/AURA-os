@@ -1,9 +1,20 @@
 import type { MetadataRoute } from "next";
+import { GLASSES_GUIDES } from "@/lib/seo/glassesGuides";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://fixmyaura.shop";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const glassesGuides: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/glasses-for-your-face-shape`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
+    ...GLASSES_GUIDES.map((g) => ({
+      url: `${BASE_URL}/glasses-for-your-face-shape/${g.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    })),
+  ];
   return [
+    ...glassesGuides,
     {
       url: BASE_URL,
       lastModified: new Date(),
