@@ -34,6 +34,8 @@ import { SkinDetailCard } from "@/components/report/SkinDetailCard";
 import { PresenceCard } from "@/components/report/PresenceCard";
 import { CapsuleWardrobeCard } from "@/components/report/CapsuleWardrobeCard";
 import { FaceShapeCard } from "@/components/report/FaceShapeCard";
+import { PhotoRankerWidget } from "@/components/vision/PhotoRankerWidget";
+import { AiPhotoReadCard } from "@/components/report/AiPhotoReadCard";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
@@ -1249,6 +1251,13 @@ export default function AuditDetailPage() {
                         </LockedSection>
                       </div>
                     )}
+                    {audit?.imageDataUrl && (
+                      <div className="mb-6">
+                        <LockedSection locked={!isUnlocked} label="AI Photo Read" unlockHref={unlockHref}>
+                          <AiPhotoReadCard imageDataUrl={audit.imageDataUrl} />
+                        </LockedSection>
+                      </div>
+                    )}
                     {displayResult.imageMetrics != null && (
                       <div className="mb-6">
                         <LockedSection locked={!isUnlocked} label="Your Lightroom Preset" unlockHref={unlockHref}>
@@ -1514,6 +1523,12 @@ export default function AuditDetailPage() {
                       </div>
                     </div>
                   )}
+                  {/* AI Photo Ranker — rank the user's ACTUAL profile photos in-browser */}
+                  <div className="mt-5">
+                    <h4 className="mb-1 text-xs font-semibold text-[#1C1917]">🤖 Rank your actual profile photos</h4>
+                    <p className="mb-2 text-[11px] text-[#857b6e]">Upload the shots you&apos;re choosing between — an on-device AI ranks which to lead with, keep, or cut. Photos never leave your browser.</p>
+                    <PhotoRankerWidget compact />
+                  </div>
                 </Card>
                 </FadeInView>
               )}
