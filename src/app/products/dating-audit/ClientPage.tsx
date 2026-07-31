@@ -51,6 +51,13 @@ export default function DatingAuditPage() {
               <AuditCTA productType="dating_audit" />
               <Link href="/examples"><Button variant="outline" size="lg">See Example</Button></Link>
             </div>
+            <p className="mt-5 text-sm text-[#6f675e]">
+              Not sure which photo to lead with?{" "}
+              <Link href="/photo-ranker" className="font-semibold text-[#B23A25] underline underline-offset-2">
+                Try the free AI Photo Ranker →
+              </Link>{" "}
+              — it ranks your photos in your browser, privately.
+            </p>
           </div>
         </Container>
       </section>

@@ -7,8 +7,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { env } from "@huggingface/transformers";
 
-// Configure to cache models in browser
+// Model source. To keep the privacy promise ("photo never leaves your device")
+// AND avoid depending on an external CDN, the CLIP weights can be self-hosted in
+// /public/models (like the MediaPipe weights already are). Set
+// NEXT_PUBLIC_LOCAL_CLIP=1 once the weights are placed under
+// /public/models/Xenova/clip-vit-base-patch32 to serve them from your own
+// domain; otherwise it falls back to the Hugging Face CDN (still local
+// inference — only the one-time model download is remote).
 env.cacheDir = "transformers-cache";
+const SELF_HOST =
+  typeof process !== "undefined" && process.env && (process.env as Record<string, string | undefined>).NEXT_PUBLIC_LOCAL_CLIP === "1";
+if (SELF_HOST) {
+  env.allowRemoteModels = false;
+  env.allowLocalModels = true;
+  env.localModelPath = "/models/";
+}
+
+/** Shared CLIP model id — one loader, reused by the report and the photo ranker. */
+export const CLIP_MODEL_ID = "Xenova/clip-vit-base-patch32";
 
 export interface LocalVisionScores {
   lighting: number;
@@ -163,20 +179,18 @@ const OBSERVATION_TEMPLATES: Record<string, Record<string, Array<{ title: string
   },
 };
 
-// Lazy-loaded classifier
+// Lazy-loaded classifier — shared by the report engine and the photo ranker so
+// the CLIP weights download at most once per session.
 let classifierPromise: Promise<any> | null = null;
 
-async function getClassifier(): Promise<any> {
+export async function getClassifier(): Promise<any> {
   if (classifierPromise) return classifierPromise;
 
   classifierPromise = (async () => {
     try {
       // Dynamic import to avoid bundling issues
       const transformers = await import("@huggingface/transformers");
-      const classifier = await transformers.pipeline(
-        "zero-shot-image-classification",
-        "Xenova/clip-vit-base-patch32"
-      );
+      const classifier = await transformers.pipeline("zero-shot-image-classification", CLIP_MODEL_ID);
       return classifier;
     } catch (err) {
       console.warn("[local-vision] CLIP model unavailable — analysis will use pixel-based metrics only:", err);
@@ -186,6 +200,16 @@ async function getClassifier(): Promise<any> {
   })();
 
   return classifierPromise;
+}
+
+/** Score one image against a set of positive vs negative prompts (0-100). Exported for the ranker. */
+export async function scoreDimensionWith(
+  classifier: any,
+  imageData: string,
+  positivePrompts: string[],
+  negativePrompts: string[],
+): Promise<number> {
+  return scoreDimension(classifier, imageData, positivePrompts, negativePrompts);
 }
 
 /**
@@ -237,13 +261,43 @@ function pickObservation(category: string, score: number): LocalVisionObservatio
 }
 
 /**
- * Run full local vision analysis on an image.
- * Completely self-sustained — no external API calls.
- * Model loads from Hugging Face on first use, then cached in browser.
+ * Run full local vision analysis on an image — CLIP zero-shot understanding,
+ * entirely in the browser. Falls back to null (pixel-based metrics take over) if
+ * the model can't load, so the report never breaks.
  */
-export async function runLocalVisionAnalysis(_imageDataUrl: string): Promise<LocalVisionResult | null> {
-  // ponytail: CLIP disabled — no external CDN model downloads
-  // pixel-based metrics in imageMetrics.ts handle all technical analysis
-  console.info("[local-vision] CLIP semantic analysis skipped — using pixel-based metrics only");
-  return null;
+export async function runLocalVisionAnalysis(imageDataUrl: string): Promise<LocalVisionResult | null> {
+  const classifier = await getClassifier();
+  if (!classifier) {
+    console.info("[local-vision] CLIP unavailable — using pixel-based metrics only");
+    return null;
+  }
+
+  try {
+    const dims = ["lighting", "background", "outfit", "grooming", "expression"] as const;
+    const scores = {} as LocalVisionScores;
+    for (const d of dims) {
+      const p = SCORING_PROMPTS[d];
+      (scores as any)[d] = await scoreDimension(classifier, imageDataUrl, p.positive, p.negative);
+    }
+    // Weighted overall — expression and lighting carry the first impression most.
+    scores.overall = Math.round(
+      scores.lighting * 0.22 + scores.expression * 0.28 + scores.background * 0.18 + scores.outfit * 0.16 + scores.grooming * 0.16,
+    );
+
+    const observations = dims.map((d) => pickObservation(d, (scores as any)[d]));
+    const topLeak = [...dims].sort((a, b) => (scores as any)[a] - (scores as any)[b])[0];
+
+    const quickFixes = observations
+      .filter((o) => o.severity !== "positive")
+      .sort((a, b) => a.confidence - b.confidence)
+      .slice(0, 4)
+      .map((o) => ({ title: o.title, description: o.suggestion, impact: Math.round((100 - (scores as any)[o.category]) * 0.6) }));
+
+    const improvementTips = observations.filter((o) => o.severity !== "positive").map((o) => o.suggestion);
+
+    return { scores, observations, topLeak, quickFixes, improvementTips };
+  } catch (err) {
+    console.warn("[local-vision] analysis failed — falling back to pixel metrics:", err);
+    return null;
+  }
 }
