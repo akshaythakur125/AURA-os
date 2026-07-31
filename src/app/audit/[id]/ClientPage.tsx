@@ -36,6 +36,9 @@ import { CapsuleWardrobeCard } from "@/components/report/CapsuleWardrobeCard";
 import { FaceShapeCard } from "@/components/report/FaceShapeCard";
 import { PhotoRankerWidget } from "@/components/vision/PhotoRankerWidget";
 import { AiPhotoReadCard } from "@/components/report/AiPhotoReadCard";
+import { GlowupTracker } from "@/components/report/GlowupTracker";
+import { buildDatingPlaybookHtml } from "@/lib/share/datingArtifact";
+import { downloadTextFile } from "@/lib/share/download";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
@@ -1434,6 +1437,12 @@ export default function AuditDetailPage() {
                   <div className="mb-4 rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-4">
                     <p className="text-xs text-[#4a443d]">{audit.datingProfileReport.overallAdvice}</p>
                   </div>
+                  <button
+                    onClick={() => downloadTextFile(buildDatingPlaybookHtml(audit.datingProfileReport!), "my-dating-playbook.html", "text/html")}
+                    className="mb-4 inline-flex items-center gap-1.5 rounded-xl border border-[#1c1917]/12 px-4 py-2 text-xs font-semibold text-[#1C1917] transition-colors hover:border-[#E14434]/40"
+                  >
+                    ⬇ Download my profile playbook
+                  </button>
                   {audit.datingProfileReport.bioAnalysis && (
                     <div className="mb-4 grid gap-3 sm:grid-cols-2">
                       <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-3">
@@ -1557,27 +1566,8 @@ export default function AuditDetailPage() {
                       </div>
                     </div>
                   )}
-                  <div className="mb-4 grid gap-4 sm:grid-cols-2">
-                    {[audit.glowupPlan.week1, audit.glowupPlan.week2, audit.glowupPlan.week3, audit.glowupPlan.week4].map((week, wi) => (
-                      <details key={wi} className="group rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03]">
-                        <summary className="flex cursor-pointer items-center gap-2 px-4 py-3 text-sm font-medium text-[#1C1917] hover:bg-[#1c1917]/[0.04]">
-                          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500/20 text-[10px] text-red-300">W{wi + 1}</span>
-                          {week.title}
-                        </summary>
-                        <div className="px-4 pb-3">
-                          <p className="mb-2 text-xs text-red-300">{week.focus}</p>
-                          <div className="space-y-1">
-                            {week.dailyMissions.map((m) => (
-                              <div key={m.day} className="flex items-start gap-2 text-xs">
-                                <span className="shrink-0 text-[#857b6e]">D{m.day}</span>
-                                <span className="text-[#4a443d]">{m.title}</span>
-                                <Badge variant={m.effort === "hard" ? "danger" : m.effort === "medium" ? "warning" : "default"}>{m.effort}</Badge>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </details>
-                    ))}
+                  <div className="mb-4">
+                    <GlowupTracker plan={audit.glowupPlan} auditId={id} />
                   </div>
                   <div className="rounded-lg border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-4">
                     <h4 className="mb-2 text-xs font-semibold text-[#1C1917]">Budget Roadmap</h4>
