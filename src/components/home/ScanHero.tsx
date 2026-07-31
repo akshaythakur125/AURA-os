@@ -7,19 +7,26 @@ import { Button } from "@/components/ui/Button";
 import { FadeInView } from "@/components/ui/FadeInView";
 
 /**
- * The homepage hero, made to *perform* the product: a photo gets scanned in a
- * canvas (sweep + landmark rings), the signal tags fade in, and the score
- * counts up. Pure Canvas + CSS — no 3D engine — so it stays fast on the mobile
- * India launch while still landing the "wow". Everything points at one action:
- * scan my photo.
+ * The homepage hero, made to *perform* the product: a REAL face photo gets
+ * scanned — a sweep line runs down it, facial landmark points light up as it
+ * passes, the signal tags fade in, and the score counts up. The photo is the
+ * base layer; a transparent canvas draws the analysis overlay on top; the tags
+ * and score sit at real depth (translateZ) on a preserve-3d card that tilts
+ * (ambient + gyro + pointer) so they pop off the face. Everything points at one
+ * action: scan my photo.
  */
+const HERO_PHOTO = "/celebs/instagram-photoshoot.jpg";
+// Framing so the face lands in the upper-centre of the 4:5 card.
+const HERO_FOCUS = "34% 4%";
+
+// Landmark points over the face region (normalised to the card), roughly on
+// brow / eyes / nose / mouth / jaw — they illuminate as the scan line passes.
 const MARKS: [number, number][] = [
-  [0.5, 0.30], [0.38, 0.40], [0.62, 0.40], [0.5, 0.52],
-  [0.42, 0.62], [0.58, 0.62], [0.5, 0.68], [0.35, 0.34], [0.65, 0.34],
+  [0.5, 0.16], [0.4, 0.20], [0.6, 0.20], [0.5, 0.26],
+  [0.44, 0.32], [0.56, 0.32], [0.5, 0.38], [0.35, 0.22], [0.65, 0.22],
 ];
 
-// App light-theme tokens (the site commits to the warm theme).
-const C = { ink: "#1C1917", accent: "#E14434", card: "#FFFFFF", card2: "#F2ECE1", faint: "rgba(28,25,23,0.10)" };
+const ACCENT = "#E14434";
 
 export function ScanHero() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -89,54 +96,37 @@ export function ScanHero() {
     const W = cv.width, H = cv.height;
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    function mix(a: string, b: string, t: number) {
-      const pa = hex(a), pb = hex(b);
-      return `rgb(${Math.round(pa[0] + (pb[0] - pa[0]) * t)},${Math.round(pa[1] + (pb[1] - pa[1]) * t)},${Math.round(pa[2] + (pb[2] - pa[2]) * t)})`;
-    }
-    function hex(h: string): [number, number, number] {
-      const s = h.replace("#", "");
-      return [parseInt(s.slice(0, 2), 16), parseInt(s.slice(2, 4), 16), parseInt(s.slice(4, 6), 16)];
-    }
-
-    function portrait() {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, W, H);
-      const bg = ctx.createLinearGradient(0, 0, 0, H);
-      bg.addColorStop(0, C.card2); bg.addColorStop(1, C.card);
-      ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
-      const cx = W * 0.5, cy = H * 0.42, r = W * 0.22;
-      const g = ctx.createRadialGradient(cx - r * 0.3, cy - r * 0.4, r * 0.2, cx, cy, r * 1.5);
-      g.addColorStop(0, mix(C.ink, C.card, 0.74));
-      g.addColorStop(1, mix(C.ink, C.card, 0.9));
-      ctx.fillStyle = g;
-      ctx.beginPath(); ctx.ellipse(cx, cy, r * 0.82, r, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(cx - r * 1.7, H);
-      ctx.quadraticCurveTo(cx - r * 1.5, cy + r * 1.05, cx, cy + r * 1.15);
-      ctx.quadraticCurveTo(cx + r * 1.5, cy + r * 1.05, cx + r * 1.7, H);
-      ctx.closePath(); ctx.fill();
-    }
-
+    // The canvas is a TRANSPARENT overlay on top of the real face photo — it
+    // draws only the analysis: a faint mesh, landmark points that light up as
+    // the scan line passes, and the sweep line itself with its glow.
     function draw(scanY: number) {
       if (!ctx) return;
-      portrait();
-      ctx.strokeStyle = "rgba(28,25,23,0.08)"; ctx.lineWidth = 1;
+      ctx.clearRect(0, 0, W, H);
+
+      // Faint measurement mesh over the photo.
+      ctx.strokeStyle = "rgba(255,255,255,0.07)"; ctx.lineWidth = 1;
       for (let gx = 0; gx <= W; gx += W / 8) { ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke(); }
       for (let gy = 0; gy <= H; gy += H / 10) { ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+
+      // Landmark points — appear once the scan has swept past them.
       for (const [mxN, myN] of MARKS) {
         const my = myN * H;
-        if (my < scanY) {
-          const mx = mxN * W;
-          ctx.beginPath(); ctx.arc(mx, my, 7, 0, Math.PI * 2); ctx.strokeStyle = C.accent; ctx.lineWidth = 2; ctx.stroke();
-          ctx.beginPath(); ctx.arc(mx, my, 2.2, 0, Math.PI * 2); ctx.fillStyle = C.accent; ctx.fill();
-        }
+        if (my >= scanY) continue;
+        const mx = mxN * W;
+        const fresh = scanY - my < 90; // brief flare right after the line passes
+        ctx.beginPath(); ctx.arc(mx, my, fresh ? 9 : 7, 0, Math.PI * 2);
+        ctx.strokeStyle = fresh ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.75)";
+        ctx.lineWidth = 2; ctx.stroke();
+        ctx.beginPath(); ctx.arc(mx, my, 2.4, 0, Math.PI * 2); ctx.fillStyle = ACCENT; ctx.fill();
       }
-      const grad = ctx.createLinearGradient(0, scanY - 60, 0, scanY);
-      grad.addColorStop(0, "rgba(225,68,52,0)"); grad.addColorStop(1, "rgba(225,68,52,0.16)");
-      ctx.fillStyle = grad; ctx.fillRect(0, scanY - 60, W, 60);
-      ctx.strokeStyle = C.accent; ctx.lineWidth = 2;
+
+      // Scan sweep: a soft leading glow + the bright line + an end node.
+      const grad = ctx.createLinearGradient(0, scanY - 80, 0, scanY);
+      grad.addColorStop(0, "rgba(225,68,52,0)"); grad.addColorStop(1, "rgba(225,68,52,0.28)");
+      ctx.fillStyle = grad; ctx.fillRect(0, scanY - 80, W, 80);
+      ctx.strokeStyle = ACCENT; ctx.lineWidth = 2.5;
       ctx.beginPath(); ctx.moveTo(0, scanY); ctx.lineTo(W, scanY); ctx.stroke();
-      ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(W - 18, scanY, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = ACCENT; ctx.beginPath(); ctx.arc(W - 18, scanY, 4.5, 0, Math.PI * 2); ctx.fill();
     }
 
     let raf = 0, scanY = -20, running = false, payoff = 0;
@@ -221,11 +211,24 @@ export function ScanHero() {
                 className="relative aspect-[4/5] w-full rounded-[22px] border border-[#1c1917]/[0.08] bg-white shadow-[0_28px_64px_-32px_rgba(28,25,23,0.45)] [transform-style:preserve-3d] will-change-transform"
                 aria-label="Live photo analysis demo"
               >
-                {/* Base layer — the scanned portrait, clipped to the card. Kept in
-                    its own overflow-hidden wrapper so the CARD itself can stay a
-                    real 3D context (overflow:hidden would flatten it). */}
-                <div className="absolute inset-0 overflow-hidden rounded-[22px]" style={{ transform: "translateZ(0px)" }}>
-                  <canvas ref={canvasRef} width={640} height={800} className="block h-full w-full" />
+                {/* Base layer — the REAL face being analysed, clipped to the card.
+                    Kept in its own overflow-hidden wrapper so the CARD itself can
+                    stay a real 3D context (overflow:hidden would flatten it). */}
+                <div className="absolute inset-0 overflow-hidden rounded-[22px]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={HERO_PHOTO}
+                    alt="A portrait being analysed by AuraCheck"
+                    className="absolute inset-0 h-full w-full object-cover"
+                    style={{ objectPosition: HERO_FOCUS }}
+                  />
+                  {/* Readability + brand tint so the white overlay and chips read
+                      cleanly against any photo. */}
+                  <div
+                    className="absolute inset-0"
+                    style={{ background: "linear-gradient(180deg, rgba(20,14,11,0.20), rgba(20,14,11,0.02) 38%, rgba(20,14,11,0.45))" }}
+                  />
+                  <canvas ref={canvasRef} width={640} height={800} className="absolute inset-0 block h-full w-full" />
                 </div>
                 {/* Floating signal tags — lifted toward the viewer so the card's
                     rotation parallaxes them over the face. */}
