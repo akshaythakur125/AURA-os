@@ -152,7 +152,11 @@ function sampleLandmarkSkin(
         const i = (y * w + x) * 4;
         const r = data[i], g = data[i + 1], b = data[i + 2];
         const luma = 0.299 * r + 0.587 * g + 0.114 * b;
-        if (luma < 45 || luma > 240) continue;        // drop shadow & specular/blowout
+        // Floor of 33 (just above the YCbCr skin detector's 30) keeps genuinely
+        // darker skin and mildly-underexposed shots instead of discarding them
+        // and falling back to the noisy whole-frame scan; the chroma gate below
+        // still rejects true (desaturated) shadow. Ceiling drops blown specular.
+        if (luma < 33 || luma > 243) continue;
         if (!isSkinTone(r, g, b)) continue;            // drop stray hair/brow/eye pixels
         R.push(r); G.push(g); B.push(b);
       }
