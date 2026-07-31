@@ -3,20 +3,26 @@
  *
  * Picks the most accurate product photo for a look by scoring a tagged photo
  * library against the product's own words (title + keywords + category) — not
- * by category alone. This is why a "Grey Jogger" now shows joggers instead of
- * formal trousers: the joggers photo carries jogger/athleisure tags that the
- * product text matches, and the formal photo does not.
+ * by category alone. Two things decide the winner, in order:
+ *
+ *  1. GARMENT TYPE. Type tags (jogger, crossbody, chino, platform…) count 10×,
+ *     so a "Grey Jogger" always resolves to joggers, never a formal trouser
+ *     that merely shares the word "grey".
+ *  2. COLOUR. Within a garment type, the product's colour breaks the tie: a
+ *     matching-colour photo is boosted and a clashing-colour photo is pushed
+ *     down, so "White Platform Sneakers" shows white shoes and "Black Crossbody
+ *     Bag" shows a black bag — not whatever photo happened to share the type.
  *
  * Selection:
  *  1. Take the category's photo pool (fallback: accessory).
- *  2. Score each photo by how many of its tags appear in the product text.
- *     Specific tags (>= 5 chars) count double so "jogger" beats "grey".
- *  3. Highest score wins. On a real match this is a precise, accurate image.
+ *  2. Score each photo: type tags 10, other tags 1, plus a colour adjustment.
+ *  3. Highest positive score wins — a precise, colour-true image.
  *  4. If nothing matches (generic generated looks), fall back to a stable
  *     title-hash pick so cards still get varied, category-correct imagery.
  *
- * Every URL here is a live Unsplash CDN image; specific garment photos were
- * sourced and content-verified per type.
+ * Every URL here is a live Unsplash CDN image; each photo's tags describe its
+ * ACTUAL content (verified by eye), not an assumed label — so a red running
+ * shoe is tagged red/running, not "white low-top".
  */
 
 import type { LookCategory } from "./catalogTypes";
@@ -30,11 +36,14 @@ const U = (id: string) => `https://images.unsplash.com/${id}?w=400&q=80`;
 // category is guaranteed to have accurate imagery.
 export const CATEGORY_PHOTOS: Record<LookCategory, TaggedPhoto[]> = {
   tshirt: [
-    { url: U("photo-1521572163474-6864f9cf17ab"), alt: "White cotton t-shirt", tags: ["white", "tee", "crew", "crewneck", "plain", "basic", "slim", "fitted", "cotton"] },
+    { url: U("photo-1521572163474-6864f9cf17ab"), alt: "White cotton t-shirt", tags: ["white", "tee", "crew", "crewneck", "plain", "basic", "slim", "cotton"] },
     { url: U("photo-1583743814966-8936f5b7be1a"), alt: "Graphic / striped tee", tags: ["graphic", "print", "oversized", "street", "breton", "stripe", "striped", "navy"] },
     { url: U("photo-1618354691373-d851c5c3a990"), alt: "Relaxed cotton crew tee", tags: ["cotton", "crew", "henley", "cargo", "pocket", "olive", "charcoal", "relaxed", "fullsleeve", "military", "sage"] },
     { url: U("photo-1625910513413-c23b8bb81cba"), alt: "Collared polo shirt", tags: ["polo", "pique", "collar", "collared"] },
-    { url: U("photo-1777868475400-993602b1e971"), alt: "Sleek fitted bodysuit", tags: ["bodysuit", "bodycon", "sleek", "crop", "croptop"] },
+    // Women's crop tops — real, verified content (the old "bodysuit" photo was
+    // both a colour mismatch and off-brand, so it was removed).
+    { url: U("photo-1564257631407-4deb1f99d992"), alt: "White cropped top", tags: ["white", "crop", "croptop", "cropped", "fitted", "tie", "blouse", "ivory"] },
+    { url: U("photo-1503342217505-b0a15ec3261c"), alt: "Black graphic crop top", tags: ["black", "crop", "croptop", "cropped", "graphic", "fitted", "bodysuit", "bodycon", "sleek", "tee"] },
   ],
   shirt: [
     { url: U("photo-1596755094514-f87e34085b2c"), alt: "Oxford button-down shirt", tags: ["button", "buttondown", "button-down", "oxford", "poplin"] },
@@ -52,7 +61,14 @@ export const CATEGORY_PHOTOS: Record<LookCategory, TaggedPhoto[]> = {
     { url: U("photo-1656991483595-8a11da8d2bde"), alt: "Grey tapered joggers", tags: ["jogger", "joggers", "athleisure", "sweatpants", "track", "tapered"] },
   ],
   shorts: [
-    { url: U("photo-1591195853828-11db59a44f6b"), alt: "Casual shorts", tags: ["shorts", "casual", "cargo", "chino", "bermuda"] },
+    // Blue denim cut-offs — only for denim/blue shorts, not the catalog's
+    // black/khaki/olive/grey chino & cargo shorts (which now get the neutral pair below).
+    { url: U("photo-1591195853828-11db59a44f6b"), alt: "Blue denim shorts", tags: ["shorts", "denim", "blue", "distressed", "cutoff", "mom", "casual"] },
+    // Neutral-grey chino/cargo shorts — the workhorse for the catalog's dark
+    // neutral shorts (black/grey/navy/olive/khaki), colour-compatible with all.
+    { url: U("photo-1506629082955-511b1aa562c8"), alt: "Neutral chino shorts", tags: ["shorts", "grey", "navy", "neutral", "chino", "cargo", "athletic", "bermuda", "elastic", "dark"] },
+    // Red casual shorts on-body — covers warm/red shorts.
+    { url: U("photo-1617952236317-0bd127407984"), alt: "Red casual shorts", tags: ["shorts", "red", "casual", "summer", "athletic"] },
   ],
   jacket: [
     { url: U("photo-1551028719-00167b16eac5"), alt: "Leather jacket", tags: ["leather", "biker", "moto"] },
@@ -68,11 +84,14 @@ export const CATEGORY_PHOTOS: Record<LookCategory, TaggedPhoto[]> = {
     { url: U("photo-1556821840-3a63f756013f"), alt: "Zip sweatshirt", tags: ["zip", "sweatshirt", "hoodie"] },
   ],
   sneakers: [
-    { url: U("photo-1542291026-7eec264c27ff"), alt: "White low-top sneakers", tags: ["white", "leather", "minimal", "clean", "low-top", "platform", "chunky"] },
-    { url: U("photo-1549298916-b41d501d3772"), alt: "Running sneakers", tags: ["colorful", "running", "mesh", "sport", "grey", "lightweight"] },
-    { url: U("photo-1600269452121-4f2416e55c28"), alt: "High-top sneakers", tags: ["high-top", "hightop", "boot"] },
+    // Tags describe ACTUAL photo content (verified by eye) — the previous pool
+    // had this red knit runner mislabelled "white low-top", which is why white
+    // queries were showing a red shoe.
+    { url: U("photo-1600269452121-4f2416e55c28"), alt: "White low-top sneakers", tags: ["white", "leather", "minimal", "clean", "low-top", "platform"] },
+    { url: U("photo-1595950653106-6c9ebd614d3a"), alt: "Pastel low-top sneakers", tags: ["pastel", "white", "low-top", "casual", "clean", "minimal"] },
+    { url: U("photo-1549298916-b41d501d3772"), alt: "Tan leather sneakers", tags: ["tan", "brown", "beige", "leather", "low-top", "suede", "casual"] },
     { url: U("photo-1560769629-975ec94e6a86"), alt: "Chunky colour-block sneakers", tags: ["chunky", "colorful", "colourful", "dad", "retro", "running", "mesh"] },
-    { url: U("photo-1595950653106-6c9ebd614d3a"), alt: "Pastel low-top sneakers", tags: ["pastel", "white", "low", "low-top", "casual", "clean", "minimal"] },
+    { url: U("photo-1542291026-7eec264c27ff"), alt: "Red running sneakers", tags: ["red", "running", "knit", "sport", "athletic", "mesh"] },
   ],
   shoes: [
     { url: U("photo-1614252369475-ff36a467d8b9"), alt: "Oxford / formal shoes", tags: ["oxford", "formal", "derby", "brogue", "dress"] },
@@ -123,9 +142,20 @@ export const CATEGORY_PHOTOS: Record<LookCategory, TaggedPhoto[]> = {
     { url: U("photo-1610030469983-98e550d6193c"), alt: "Silk saree", tags: ["saree", "silk", "ethnic", "drape"] },
   ],
   accessory: [
+    // Content gear
     { url: U("photo-1513506003901-1e6a229e2d15"), alt: "Ring light", tags: ["ring", "ringlight", "light", "led", "lighting", "selfie"] },
     { url: U("photo-1516035069371-29a1b244cc32"), alt: "Camera lens kit", tags: ["lens", "camera", "macro", "wideangle", "clip", "clipon", "phone", "kit", "backdrop"] },
-    { url: U("photo-1611085583191-a3b181a88401"), alt: "Fashion accessory", tags: ["accessory", "card", "cardholder", "wallet", "necklace", "gold", "layered", "crossbody", "bag", "neutral", "misc"] },
+    // Jewellery — the necklace photo, now tagged for what it actually shows
+    // (its old bag/wallet/crossbody tags were wrong and hijacked bag products).
+    { url: U("photo-1611085583191-a3b181a88401"), alt: "Gold pendant necklace", tags: ["necklace", "pendant", "gold", "jewelry", "jewellery", "layered", "dainty", "chain"] },
+    // Bags — real, colour-verified handbags & crossbodies
+    { url: U("photo-1548036328-c9fa89d128fa"), alt: "Black quilted crossbody bag", tags: ["black", "crossbody", "sling", "bag", "quilted", "leather", "chain"] },
+    { url: U("photo-1584917865442-de89df76afd3"), alt: "Red structured handbag", tags: ["red", "handbag", "bag", "tote", "structured", "leather"] },
+    { url: U("photo-1590874103328-eac38a683ce7"), alt: "Orange leather handbag", tags: ["orange", "tan", "handbag", "bag", "tote", "leather"] },
+    { url: U("photo-1591561954557-26941169b49e"), alt: "Floral print handbag", tags: ["floral", "print", "pink", "handbag", "bag", "tote"] },
+    { url: U("photo-1594223274512-ad4803739b7c"), alt: "Teal crossbody bag", tags: ["teal", "green", "crossbody", "bag", "handbag", "sling"] },
+    // Small leather goods
+    { url: U("photo-1627123424574-724758594e93"), alt: "Brown leather cardholder", tags: ["brown", "wallet", "cardholder", "card", "leather", "slim", "bifold"] },
   ],
 };
 
@@ -160,7 +190,7 @@ export function hashString(str: string): number {
  */
 const TYPE_TAGS = new Set([
   // tops
-  "polo", "pique", "henley", "cargo", "bodysuit", "bodycon", "crop", "croptop", "breton",
+  "polo", "pique", "henley", "cargo", "bodysuit", "bodycon", "crop", "croptop", "cropped", "breton",
   // shirts
   "oxford", "buttondown", "button-down", "campcollar", "camp", "overshirt", "flannel", "linen", "poplin",
   // denim / trousers
@@ -169,15 +199,67 @@ const TYPE_TAGS = new Set([
   "blazer", "biker", "moto", "trucker", "bomber", "hoodie", "sweatshirt",
   // footwear
   "platform", "running", "high-top", "hightop", "chelsea", "boot", "boots", "loafer", "loafers", "brogue", "derby",
+  // bags & small leather goods
+  "bag", "tote", "handbag", "crossbody", "sling", "wallet", "cardholder", "rucksack", "backpack",
+  // jewellery
+  "necklace", "pendant", "earring", "earrings", "hoop", "stud",
   // accessories / other
-  "smart", "analog", "aviator", "wayfarer", "round", "pilot", "rucksack",
-  "kurta", "kurti", "saree", "ringlight", "lens", "camera", "cardholder", "necklace", "crossbody",
+  "smart", "analog", "aviator", "wayfarer", "round", "pilot",
+  "kurta", "kurti", "saree", "ringlight", "lens", "camera",
 ]);
 
-function scorePhoto(photo: TaggedPhoto, text: string): number {
+/**
+ * Colour vocabulary → family. Lets "grey"/"gray" and light/dark variants group,
+ * so a product's colour can match a photo's colour even across synonyms.
+ */
+const COLOR_FAMILY: Record<string, string> = {
+  white: "white", ivory: "white", cream: "white", offwhite: "white",
+  black: "black", jet: "black",
+  grey: "grey", gray: "grey", charcoal: "grey", slate: "grey",
+  blue: "blue", navy: "blue", indigo: "blue", denim: "blue", cobalt: "blue", sky: "blue",
+  red: "red", crimson: "red", maroon: "red", burgundy: "red", wine: "red",
+  green: "green", olive: "green", sage: "green", teal: "green", emerald: "green",
+  brown: "brown", tan: "brown", beige: "brown", khaki: "brown", camel: "brown", coffee: "brown", chocolate: "brown",
+  pink: "pink", rose: "pink", blush: "pink", coral: "pink",
+  orange: "orange", rust: "orange", terracotta: "orange",
+  purple: "purple", lavender: "purple", lilac: "purple",
+  yellow: "yellow", mustard: "yellow", gold: "yellow",
+  pastel: "pastel", nude: "pastel", neutral: "neutral",
+};
+
+// Dark neutrals read as interchangeable in apparel: a grey/navy short is an
+// acceptable stand-in for "black", so they never penalise each other.
+const DARK_NEUTRAL = new Set(["black", "grey", "navy", "olive", "neutral"]);
+
+function familiesIn(words: Iterable<string>): Set<string> {
+  const fams = new Set<string>();
+  for (const w of words) {
+    const fam = COLOR_FAMILY[w];
+    if (fam) fams.add(fam);
+  }
+  return fams;
+}
+
+function scorePhoto(photo: TaggedPhoto, text: string, reqColors: Set<string>): number {
   let score = 0;
+  const photoColors = new Set<string>();
   for (const tag of photo.tags) {
+    if (COLOR_FAMILY[tag]) photoColors.add(tag);
     if (text.includes(tag)) score += TYPE_TAGS.has(tag) ? 10 : 1;
+  }
+
+  // Colour adjustment — only when the product actually names a colour and the
+  // photo has its own colour identity. Type match (above) still dominates.
+  if (reqColors.size && photoColors.size) {
+    const photoFams = familiesIn(photoColors);
+    const shared = [...reqColors].some((c) => photoFams.has(COLOR_FAMILY[c] || c));
+    if (shared) {
+      score += 4; // exact colour match — strongly preferred within a type
+    } else {
+      const reqDark = [...reqColors].some((c) => DARK_NEUTRAL.has(c));
+      const photoDark = [...photoColors].some((c) => DARK_NEUTRAL.has(c));
+      score += reqDark && photoDark ? 1 : -5; // compatible dark neutrals, else clash
+    }
   }
   return score;
 }
@@ -194,10 +276,16 @@ export function resolveShopImage(
   const pool = CATEGORY_PHOTOS[category] || CATEGORY_PHOTOS.accessory;
   const text = `${title} ${keywords.join(" ")} ${category}`.toLowerCase();
 
+  // The colours the product itself names — drives the colour-aware tie-break.
+  const reqColors = new Set<string>();
+  for (const w of text.split(/[^a-z]+/)) {
+    if (COLOR_FAMILY[w]) reqColors.add(w);
+  }
+
   let best: TaggedPhoto | null = null;
   let bestScore = 0;
   for (const photo of pool) {
-    const s = scorePhoto(photo, text);
+    const s = scorePhoto(photo, text, reqColors);
     if (s > bestScore) {
       best = photo;
       bestScore = s;
