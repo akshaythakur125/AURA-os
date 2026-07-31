@@ -58,6 +58,9 @@ export interface FaceScanResult {
     noseTip: [number, number];
     leftEye: [number, number];
     rightEye: [number, number];
+    /** Skin-safe patch centres (forehead + cheek apples) for precise, on-skin
+     * tone sampling — deliberately away from brows, eyes, lips and hairline. */
+    skinPatches: [number, number][];
   };
 }
 
@@ -101,6 +104,11 @@ const IDX = {
   leftEye: 33,
   rightEye: 263,
 };
+
+// Landmark indices that sit on fleshy, well-lit skin — center forehead strip
+// and both cheek apples — chosen to avoid brows, eyes, lips, nostrils and the
+// hairline. Pooled + pixel-filtered downstream for an accurate tone read.
+const SKIN_PATCH_IDX = [10, 151, 9, 108, 337, 50, 116, 205, 280, 345, 425];
 
 type Pt = { x: number; y: number; z?: number };
 
@@ -217,6 +225,7 @@ export async function scanFace(img: HTMLImageElement): Promise<FaceScanResult | 
       noseTip: anchor(IDX.noseTip),
       leftEye: anchor(IDX.leftEye),
       rightEye: anchor(IDX.rightEye),
+      skinPatches: SKIN_PATCH_IDX.filter((i) => i < face.length).map((i) => anchor(i)),
     },
   };
 }

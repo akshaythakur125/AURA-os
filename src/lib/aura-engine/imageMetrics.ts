@@ -129,7 +129,60 @@ type FaceAnchors = {
   chin: [number, number]; forehead: [number, number];
   leftCheek: [number, number]; rightCheek: [number, number];
   noseTip: [number, number]; leftEye: [number, number]; rightEye: [number, number];
+  skinPatches?: [number, number][];
 };
+
+// ─── Landmark-guided skin sampling + white balance (drives undertone) ───
+// Sampling tone from precise on-skin patches (forehead + cheek apples) instead
+// of "any skin-coloured pixel in the frame" removes hands, warm walls, hair and
+// shadow from the read; grey-world normalization removes the lighting cast so a
+// warm-lit photo doesn't get misread as a warm undertone. Both matter because
+// undertone drives the colour palette and the product recommendations.
+function sampleLandmarkSkin(
+  data: Uint8ClampedArray, w: number, h: number, patches: [number, number][]
+): { R: number[]; G: number[]; B: number[] } {
+  const R: number[] = [], G: number[] = [], B: number[] = [];
+  const rad = Math.max(2, Math.round(Math.min(w, h) * 0.007));
+  for (const [nx, ny] of patches) {
+    const cx = Math.round(nx * w), cy = Math.round(ny * h);
+    for (let dy = -rad; dy <= rad; dy++) {
+      for (let dx = -rad; dx <= rad; dx++) {
+        const x = cx + dx, y = cy + dy;
+        if (x < 0 || y < 0 || x >= w || y >= h) continue;
+        const i = (y * w + x) * 4;
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+        if (luma < 45 || luma > 240) continue;        // drop shadow & specular/blowout
+        if (!isSkinTone(r, g, b)) continue;            // drop stray hair/brow/eye pixels
+        R.push(r); G.push(g); B.push(b);
+      }
+    }
+  }
+  return { R, G, B };
+}
+
+// Moderate, clamped grey-world gains from the scene's mid-tones — enough to
+// cancel a lamp's warm cast or open-shade's cool cast without neutralising a
+// genuinely warm/cool undertone.
+function greyWorldGains(data: Uint8ClampedArray): { gr: number; gg: number; gb: number } {
+  let sr = 0, sg = 0, sb = 0, n = 0;
+  for (let i = 0; i < data.length; i += 4 * 7) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    const luma = 0.299 * r + 0.587 * g + 0.114 * b;
+    if (luma < 60 || luma > 200) continue;
+    sr += r; sg += g; sb += b; n++;
+  }
+  if (n < 50) return { gr: 1, gg: 1, gb: 1 };
+  const mr = sr / n, mg = sg / n, mb = sb / n;
+  const grey = (mr + mg + mb) / 3;
+  const STRENGTH = 0.6;
+  const gain = (mean: number) => {
+    const raw = mean > 0 ? grey / mean : 1;
+    const clamped = Math.max(0.85, Math.min(1.18, raw));
+    return 1 + (clamped - 1) * STRENGTH;
+  };
+  return { gr: gain(mr), gg: gain(mg), gb: gain(mb) };
+}
 
 type FaceRead = {
   expression: {
@@ -894,7 +947,18 @@ export function analyzeImageDataUrl(
         const skinPixelRatio = skinR.length / ((w / 3) * (h / 3));
         const isCartoon = skinPixelRatio < 0.02 && faceZone.density < 0.005;
 
-        const undertoneResult = detectUndertone(skinR, skinG, skinB);
+        // Undertone: prefer precise landmark-guided skin patches (forehead +
+        // cheek apples) when we have a real face; else fall back to the coarse
+        // skin-pixel scan. Either way, apply grey-world white balance so the
+        // lighting cast doesn't get mistaken for the person's undertone.
+        let uR = skinR, uG = skinG, uB = skinB;
+        if (faceAnchors?.skinPatches && faceAnchors.skinPatches.length > 0) {
+          const s = sampleLandmarkSkin(fd, w, h, faceAnchors.skinPatches);
+          if (s.R.length >= 30) { uR = s.R; uG = s.G; uB = s.B; }
+        }
+        const { gr, gg, gb } = greyWorldGains(fd);
+        const wb = (arr: number[], g: number) => arr.map((v) => Math.max(0, Math.min(255, Math.round(v * g))));
+        const undertoneResult = detectUndertone(wb(uR, gr), wb(uG, gg), wb(uB, gb));
 
         // ─── Fine-grained skin read (landmark-anchored; only when we have a
         // real face from MediaPipe, so the regions are actually on skin) ───
