@@ -924,6 +924,8 @@ export default function AuditDetailPage() {
                           topLeakTitle={topLeak?.title || "Unknown"}
                           topLeakEvidence={topLeak?.evidence}
                           strongestSignal={displayResult.strongestSignals?.[0]}
+                          undertone={displayResult.imageMetrics?.undertone?.undertone}
+                          paletteName={displayResult.imageMetrics?.colorPalette?.name}
                         />
                       );
                     })()}

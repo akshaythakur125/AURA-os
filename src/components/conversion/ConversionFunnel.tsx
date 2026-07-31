@@ -17,6 +17,10 @@ interface ConversionFunnelProps {
   topLeakEvidence?: string;
   /** The user's strongest measured signal, e.g. "Lighting" — credit before the tension. */
   strongestSignal?: string;
+  /** Detected undertone + palette name — already computed, teased to prove the
+   * value is a tap away (specificity converts better than a generic promise). */
+  undertone?: "warm" | "cool" | "neutral";
+  paletteName?: string;
 }
 
 /**
@@ -32,10 +36,15 @@ export function ConversionFunnel({
   topLeakTitle,
   topLeakEvidence,
   strongestSignal,
+  undertone,
+  paletteName,
 }: ConversionFunnelProps) {
   const strength = strongestSignal && !strongestSignal.toLowerCase().startsWith("potential")
     ? strongestSignal.toLowerCase().replace("color", "colour")
     : null;
+  const paletteBullet = paletteName
+    ? `Your ${paletteName} palette + a capsule wardrobe matched to your ${undertone ?? ""} undertone`.replace(/\s+/g, " ").trim()
+    : "Your colour palette + capsule wardrobe matched to your undertone";
   return (
     <div className="mb-8 space-y-4">
       {/* Urgency hook */}
@@ -62,6 +71,19 @@ export function ConversionFunnel({
             {topLeakEvidence ? <span className="text-[#857b6e]"> — {topLeakEvidence.toLowerCase()}</span> : null}
           </p>
 
+          {/* Already-computed teaser — proof the value is done, one tap away. */}
+          {(paletteName || undertone) && (
+            <p className="mx-auto mb-3 max-w-sm rounded-lg border border-[#1c1917]/[0.08] bg-white/60 px-3 py-2 text-[11px] text-[#4a443d]">
+              ✓ Already computed from your photo: your undertone reads{" "}
+              <span className="font-semibold text-[#B23A25]">{undertone}</span>
+              {paletteName ? (
+                <> → your <span className="font-semibold text-[#1C1917]">{paletteName}</span> palette is ready to unlock.</>
+              ) : (
+                <>.</>
+              )}
+            </p>
+          )}
+
           {/* Social proof */}
           <SocialProofBar variant="compact" />
         </div>
@@ -84,7 +106,7 @@ export function ConversionFunnel({
             {[
               "Every issue with its exact fix, ranked by measured impact",
               "A 7-day reshoot plan built from your photo's own numbers",
-              "Your colour palette + capsule wardrobe matched to your undertone",
+              paletteBullet,
               "Expression & posture read, skin analysis, face-shape studio",
               "Shoppable picks in your budget",
             ].map((item) => (
