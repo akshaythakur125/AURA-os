@@ -71,13 +71,17 @@ export const CATEGORY_PHOTOS: Record<LookCategory, TaggedPhoto[]> = {
     { url: U("photo-1542291026-7eec264c27ff"), alt: "White low-top sneakers", tags: ["white", "leather", "minimal", "clean", "low-top", "platform", "chunky"] },
     { url: U("photo-1549298916-b41d501d3772"), alt: "Running sneakers", tags: ["colorful", "running", "mesh", "sport", "grey", "lightweight"] },
     { url: U("photo-1600269452121-4f2416e55c28"), alt: "High-top sneakers", tags: ["high-top", "hightop", "boot"] },
+    { url: U("photo-1560769629-975ec94e6a86"), alt: "Chunky colour-block sneakers", tags: ["chunky", "colorful", "colourful", "dad", "retro", "running", "mesh"] },
+    { url: U("photo-1595950653106-6c9ebd614d3a"), alt: "Pastel low-top sneakers", tags: ["pastel", "white", "low", "low-top", "casual", "clean", "minimal"] },
   ],
   shoes: [
-    { url: U("photo-1614252369475-ff36a467d8b9"), alt: "Oxford / formal shoes", tags: ["oxford", "formal", "derby", "brogue", "dress", "loafer", "loafers"] },
+    { url: U("photo-1614252369475-ff36a467d8b9"), alt: "Oxford / formal shoes", tags: ["oxford", "formal", "derby", "brogue", "dress"] },
     { url: U("photo-1608629601270-a0007becead3"), alt: "Suede Chelsea boots", tags: ["chelsea", "boot", "boots", "ankle", "suede"] },
+    { url: U("photo-1533867617858-e7b97e060509"), alt: "Brown monk-strap loafers", tags: ["brown", "tan", "monk", "loafer", "loafers", "leather", "slip-on"] },
   ],
   sandals: [
-    { url: U("photo-1603487742131-4160ec999306"), alt: "Leather sandals", tags: ["sandal", "sandals", "slide", "flip"] },
+    { url: U("photo-1603487742131-4160ec999306"), alt: "Leather sandals", tags: ["sandal", "sandals", "slide", "flip", "cork"] },
+    { url: U("photo-1562273138-f46be4ebdf33"), alt: "Platform strappy sandals", tags: ["platform", "burgundy", "strappy", "chunky", "block", "heeled"] },
   ],
   watch: [
     { url: U("photo-1524592094714-0f0654e20314"), alt: "Classic analog watch", tags: ["classic", "steel", "minimal", "leather", "analog", "dial", "blackdial", "leatherstrap"] },
@@ -99,9 +103,11 @@ export const CATEGORY_PHOTOS: Record<LookCategory, TaggedPhoto[]> = {
   ],
   earrings: [
     { url: U("photo-1535632066927-ab7c9ab60908"), alt: "Gold earrings", tags: ["earring", "earrings", "hoop", "stud", "gold", "jewelry", "jewellery"] },
+    { url: U("photo-1630019852942-f89202989a59"), alt: "Blue drop earrings", tags: ["drop", "dangle", "blue", "statement", "crystal", "danglers"] },
   ],
   heels: [
-    { url: U("photo-1543163521-1bf539c55dd2"), alt: "Block heels", tags: ["heel", "heels", "block", "stiletto", "nude", "pump", "strappy"] },
+    { url: U("photo-1543163521-1bf539c55dd2"), alt: "Floral / block heels", tags: ["heel", "heels", "block", "nude", "floral", "strappy"] },
+    { url: U("photo-1596703263926-eb0762ee17e4"), alt: "Black stiletto pumps", tags: ["black", "stiletto", "pump", "pointed", "classic", "court"] },
   ],
   flats: [
     { url: U("photo-1543163521-1bf539c55dd2"), alt: "Pointed flats", tags: ["flat", "flats", "ballet", "pointed", "pointedtoe", "loafer"] },
