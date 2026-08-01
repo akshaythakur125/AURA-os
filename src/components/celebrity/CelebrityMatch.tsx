@@ -6,7 +6,7 @@ import { CountUp } from "@/components/ui/CountUp";
 import type { MatchResult } from "@/lib/aura-engine/celebrityMatch";
 import { getAspirationalMessage } from "@/lib/aura-engine/celebrityMatch";
 
-export function CelebrityMatch({ matches }: { matches: MatchResult[] }) {
+export function CelebrityMatch({ matches, userImage }: { matches: MatchResult[]; userImage?: string }) {
   if (!matches || matches.length === 0) return null;
 
   const top = matches[0];
@@ -23,15 +23,39 @@ export function CelebrityMatch({ matches }: { matches: MatchResult[] }) {
             ✨ Your Aspirational Match
           </Badge>
 
-          {/* The aspirational look — the aesthetic to aim for */}
-          <div className="mx-auto mb-4 w-40 sm:w-48">
-            <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 shadow-lg">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={top.celebrity.lookImage} alt={`${top.celebrity.name} look`} className="aspect-[4/5] w-full object-cover" loading="lazy" />
-              <span className="absolute right-1.5 top-1.5 rounded-full bg-black/45 px-1.5 py-0.5 text-sm">{top.celebrity.photo}</span>
+          {/* You now → your target look — the aspirational side-by-side */}
+          {userImage ? (
+            <div className="mx-auto mb-4 flex max-w-sm items-center justify-center gap-2 sm:gap-3">
+              <figure className="w-28 sm:w-32">
+                <div className="overflow-hidden rounded-2xl border border-[#1c1917]/15 shadow">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={userImage} alt="You now" className="aspect-[4/5] w-full object-cover" />
+                </div>
+                <figcaption className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-[#857b6e]">You now</figcaption>
+              </figure>
+              <div className="flex flex-col items-center">
+                <span className="text-xl text-amber-500">→</span>
+                <span className="mt-0.5 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold text-amber-600">{top.matchScore}%</span>
+              </div>
+              <figure className="w-28 sm:w-32">
+                <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 shadow-lg">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={top.celebrity.lookImage} alt={`${top.celebrity.name} look`} className="aspect-[4/5] w-full object-cover" loading="lazy" />
+                  <span className="absolute right-1.5 top-1.5 rounded-full bg-black/45 px-1.5 py-0.5 text-sm">{top.celebrity.photo}</span>
+                </div>
+                <figcaption className="mt-1 text-[10px] font-semibold uppercase tracking-wide text-amber-600">Your target</figcaption>
+              </figure>
             </div>
-            <p className="mt-1 text-[10px] text-[#857b6e]">The {top.celebrity.name.split(" ")[0]} look — the aesthetic to aim for</p>
-          </div>
+          ) : (
+            <div className="mx-auto mb-4 w-40 sm:w-48">
+              <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 shadow-lg">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={top.celebrity.lookImage} alt={`${top.celebrity.name} look`} className="aspect-[4/5] w-full object-cover" loading="lazy" />
+                <span className="absolute right-1.5 top-1.5 rounded-full bg-black/45 px-1.5 py-0.5 text-sm">{top.celebrity.photo}</span>
+              </div>
+              <p className="mt-1 text-[10px] text-[#857b6e]">The {top.celebrity.name.split(" ")[0]} look — the aesthetic to aim for</p>
+            </div>
+          )}
 
           <h2 className="mb-1 bg-gradient-to-r from-amber-200 via-white to-amber-200 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
             {top.celebrity.name}

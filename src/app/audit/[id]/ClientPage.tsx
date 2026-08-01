@@ -954,7 +954,7 @@ export default function AuditDetailPage() {
                     {!isUnlocked && celebMatches.length > 0 && (
                       <div className="relative overflow-hidden rounded-2xl border border-red-500/15 bg-red-500/5 p-4">
                         <div className="absolute inset-0 blur-md cursor-pointer" onClick={() => { setPaywallTrigger("Style inspiration"); setPaywallOpen(true); }}>
-                          <CelebrityMatch matches={celebMatches} />
+                          <CelebrityMatch matches={celebMatches} userImage={audit?.imageDataUrl} />
                         </div>
                         <div className="relative z-10 text-center py-6">
                           <div className="text-2xl mb-2">✨</div>
