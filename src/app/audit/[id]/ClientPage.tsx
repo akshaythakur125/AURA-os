@@ -72,6 +72,7 @@ import { SmartInsights } from "@/components/report/SmartInsights";
 import { PhotoReadCard } from "@/components/report/PhotoReadCard";
 import { GridCheck } from "@/components/report/GridCheck";
 import { ScoreBreakdown } from "@/components/report/ScoreBreakdown";
+import { PlatformFitCard } from "@/components/report/PlatformFitCard";
 import { ImprovementRoadmap } from "@/components/report/ImprovementRoadmap";
 import { DynamicGoalAdvice } from "@/components/report/DynamicGoalAdvice";
 import { SignalSculpture, SignalSculptureFallback } from "@/components/report/SignalSculpture";
@@ -979,6 +980,16 @@ export default function AuditDetailPage() {
                         colorPalette={displayResult?.imageMetrics.colorPalette}
                       />
                     </FadeInView>
+
+                    <PlatformFitCard
+                      metrics={{
+                        lightingScore: displayResult.imageMetrics.lightingScore,
+                        clarityScore: displayResult.imageMetrics.clarityScore,
+                        compositionScore: displayResult.imageMetrics.compositionScore,
+                        backgroundComplexityEstimate: displayResult.imageMetrics.backgroundComplexityEstimate,
+                        colorHarmony: displayResult.imageMetrics.colorHarmony,
+                      }}
+                    />
 
                     <FadeInView delay={50}>
                       <div className="mb-6 rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-emerald-500/[0.08] to-transparent p-5 sm:p-6">
