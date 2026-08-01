@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { planAutoFix, applyPixels, computeCrop, type AutoFixMetrics } from "@/lib/photo/autoFix";
+import { composeGlowupCard } from "@/lib/photo/glowupCard";
 
 type AspectKey = "original" | "portrait" | "square";
 const ASPECTS: { key: AspectKey; label: string; ratio: number | null; use: string }[] = [
@@ -25,11 +26,12 @@ const MAX_OUT = 1080; // cap the exported edge for fast, share-friendly files
  * for where they're posting, then hands the improved image back to download.
  * Skips the editing app entirely. The photo never leaves the device.
  */
-export function ReadyToPostPack({ imageDataUrl, metrics }: { imageDataUrl?: string; metrics: AutoFixMetrics }) {
+export function ReadyToPostPack({ imageDataUrl, metrics, score, verdict }: { imageDataUrl?: string; metrics: AutoFixMetrics; score?: number | null; verdict?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [aspect, setAspect] = useState<AspectKey>("portrait");
   const [ready, setReady] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
+  const [sharing, setSharing] = useState(false);
   const plan = useMemo(() => planAutoFix(metrics), [metrics]);
 
   useEffect(() => {
@@ -80,6 +82,32 @@ export function ReadyToPostPack({ imageDataUrl, metrics }: { imageDataUrl?: stri
     try { await navigator.clipboard.writeText(text); setCopied(platform); setTimeout(() => setCopied(null), 1500); } catch { /* clipboard blocked */ }
   }
 
+  // Compose the before/after glow-up card and share it (or download as fallback).
+  async function shareGlowup() {
+    if (!imageDataUrl || sharing) return;
+    setSharing(true);
+    try {
+      const img = new Image();
+      await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = () => rej(); img.src = imageDataUrl; });
+      const card = composeGlowupCard(img, metrics, { score, verdict });
+      const blob = await new Promise<Blob | null>((res) => card.toBlob((b) => res(b), "image/jpeg", 0.92));
+      if (!blob) return;
+      const file = new File([blob], "auracheck-glowup.jpg", { type: "image/jpeg" });
+      const nav = navigator as Navigator & { canShare?: (d: { files: File[] }) => boolean; share?: (d: { files: File[]; text?: string }) => Promise<void> };
+      if (nav.canShare?.({ files: [file] }) && nav.share) {
+        await nav.share({ files: [file], text: "My AuraCheck glow-up ✨ fixmyaura.shop" });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = "auracheck-glowup.jpg";
+        document.body.appendChild(a); a.click(); a.remove();
+        URL.revokeObjectURL(url);
+      }
+    } catch { /* user cancelled share, or compose failed */ } finally {
+      setSharing(false);
+    }
+  }
+
   if (!imageDataUrl) return null;
 
   return (
@@ -127,13 +155,22 @@ export function ReadyToPostPack({ imageDataUrl, metrics }: { imageDataUrl?: stri
         <p className="mt-1.5 text-[11px] text-[#857b6e]">{ASPECTS.find((a) => a.key === aspect)?.use}</p>
       </div>
 
-      <button
-        onClick={download}
-        disabled={!ready}
-        className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#E14434] to-[#c0341f] px-4 py-2.5 text-xs font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:opacity-60"
-      >
-        ⬇ Download my fixed photo
-      </button>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <button
+          onClick={download}
+          disabled={!ready}
+          className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#E14434] to-[#c0341f] px-4 py-2.5 text-xs font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:opacity-60"
+        >
+          ⬇ Download my fixed photo
+        </button>
+        <button
+          onClick={shareGlowup}
+          disabled={sharing}
+          className="inline-flex items-center gap-1.5 rounded-xl border border-[#1c1917]/12 px-4 py-2.5 text-xs font-semibold text-[#1C1917] transition-colors hover:border-[#E14434]/40 disabled:opacity-60"
+        >
+          {sharing ? "Making your card…" : "📸 Share my glow-up (before → after)"}
+        </button>
+      </div>
 
       {/* Caption starters */}
       <div className="mt-5">

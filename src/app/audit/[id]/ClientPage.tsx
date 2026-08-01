@@ -1308,7 +1308,7 @@ export default function AuditDetailPage() {
                     {audit?.imageDataUrl && displayResult.imageMetrics != null && (
                       <div className="mb-6">
                         <LockedSection locked={!isUnlocked} label="Ready-to-Post Pack" unlockHref={unlockHref}>
-                          <ReadyToPostPack imageDataUrl={audit.imageDataUrl} metrics={displayResult.imageMetrics as any} />
+                          <ReadyToPostPack imageDataUrl={audit.imageDataUrl} metrics={displayResult.imageMetrics as any} score={displayResult.auraScore} verdict={displayResult.oneLineVerdict} />
                         </LockedSection>
                       </div>
                     )}
