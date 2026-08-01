@@ -2,6 +2,25 @@
 
 import { useMemo, useState } from "react";
 import { buildOccasionKit, OCCASIONS, type Occasion, type OccasionTraits } from "@/lib/style/occasionKit";
+import { searchLink } from "@/lib/shop/searchLink";
+import { trackEvent, EVENTS } from "@/lib/analytics/events";
+
+// The 2–3 garments to actually buy for each occasion, built from the person's
+// lead colour + gender so the search lands on shoppable results, not a category.
+function shopQueries(occasion: Occasion, color: string, gender?: string): { label: string; query: string }[] {
+  const g = gender === "men" ? " men" : gender === "women" ? " women" : "";
+  const c = color || "navy";
+  switch (occasion) {
+    case "first-date": return [{ label: `${c} shirt`, query: `${c} slim fit shirt${g}` }, { label: "dark denim", query: `dark wash jeans${g}` }, { label: "white sneakers", query: `white sneakers${g}` }];
+    case "interview": return [{ label: "formal shirt", query: `light formal shirt${g}` }, { label: "formal trousers", query: `charcoal formal trousers${g}` }, { label: "formal shoes", query: `formal leather shoes${g}` }];
+    case "headshot": return [{ label: `${c} top`, query: `${c} solid shirt${g}` }];
+    case "wedding": return gender === "women" ? [{ label: `${c} ethnic`, query: `${c} ethnic wear women` }] : [{ label: `${c} kurta`, query: `${c} kurta men` }];
+    case "festival": return [{ label: `${c} ethnic`, query: `${c} ethnic${g}` }];
+    case "night-out": return [{ label: "dark shirt", query: `black slim fit shirt${g}` }, { label: `${c} accent`, query: `${c} shirt${g}` }];
+    case "college":
+    default: return [{ label: `${c} tee`, query: `${c} t-shirt${g}` }, { label: "denim", query: `slim jeans${g}` }, { label: "sneakers", query: `casual sneakers${g}` }];
+  }
+}
 
 function Chips({ items }: { items: string[] }) {
   return (
@@ -53,6 +72,24 @@ export function OccasionKitCard(traits: OccasionTraits) {
           <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#857b6e]">👕 Wear</p>
           <p className="text-xs text-[#33302b]">{kit.wear}</p>
           {kit.colors.length > 0 && <div className="mt-2.5"><Chips items={kit.colors} /></div>}
+          {/* Shop this fit */}
+          <div className="mt-3 border-t border-[#1c1917]/[0.06] pt-2.5">
+            <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#857b6e]">🛍️ Shop this fit</p>
+            <div className="flex flex-wrap gap-1.5">
+              {shopQueries(occasion, (traits.powerColors?.[0] || kit.colors[0] || "").toLowerCase(), traits.gender).map((q) => (
+                <a
+                  key={q.label}
+                  href={searchLink(q.query, "amazon")}
+                  target="_blank"
+                  rel="noopener noreferrer sponsored"
+                  onClick={() => trackEvent(EVENTS.SHOP_LINK_CLICKED, { retailer: "amazon", lookCategory: "outfit" })}
+                  className="inline-flex items-center gap-1 rounded-full border border-[#1c1917]/10 bg-[#fbf8f2]/70 px-2.5 py-1 text-[11px] font-semibold text-[#1C1917] transition-colors hover:border-[#E14434]/40"
+                >
+                  {q.label} →
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
 
         <div className="rounded-xl border border-[#1c1917]/[0.06] bg-white/50 p-3.5">
