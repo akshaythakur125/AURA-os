@@ -65,6 +65,7 @@ import { PaywallPopup } from "@/components/conversion/PaywallPopup";
 import { CelebrityMatch } from "@/components/celebrity/CelebrityMatch";
 import { SmartInsights } from "@/components/report/SmartInsights";
 import { PhotoReadCard } from "@/components/report/PhotoReadCard";
+import { GridCheck } from "@/components/report/GridCheck";
 import { ScoreBreakdown } from "@/components/report/ScoreBreakdown";
 import { ImprovementRoadmap } from "@/components/report/ImprovementRoadmap";
 import { DynamicGoalAdvice } from "@/components/report/DynamicGoalAdvice";
@@ -1060,6 +1061,12 @@ export default function AuditDetailPage() {
                           <p className="mt-1 mb-3 text-xs text-[#6f675e]">Drop the shots you&apos;re choosing between and an on-device AI ranks which to lead with, keep, or cut — with the reason for each. No more polling friends or paying a photo-rating site. Photos never leave your browser.</p>
                           <PhotoRankerWidget compact />
                         </div>
+                      </LockedSection>
+                    </div>
+                    {/* ─── Instagram Grid Check — score the whole profile, not one photo ─── */}
+                    <div className="mb-6">
+                      <LockedSection locked={!isUnlocked} label="Instagram Grid Check" unlockHref={unlockHref}>
+                        <GridCheck />
                       </LockedSection>
                     </div>
                     <LockedSection locked={!isUnlocked} label="Strongest Signals" unlockHref={unlockHref}>
