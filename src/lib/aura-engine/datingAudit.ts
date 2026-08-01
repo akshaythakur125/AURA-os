@@ -107,39 +107,52 @@ function analyzeBio(bio: string, signals: ProfileSignals): BioAnalysis {
   return { length, effort, tone, hooksReader, showsPersonality, feedback };
 }
 
+// Vague filler words that carry no information on their own — quoted back at the user.
+const VAGUE_WORDS = ["interesting", "fun", "nice", "good", "okay", "fine", "cool", "chill", "amazing", "stuff", "things", "whatever", "anything"];
+
+/** Trim a prompt down to the topic word so we can reference it naturally in advice. */
+function promptTopic(prompt: string): string {
+  return prompt.replace(/[?.]+$/, "").replace(/^(i am|i'm|my|what|the|a|an|about|is)\b/i, "").trim().toLowerCase() || "this";
+}
+
 function analyzePrompts(prompts: { prompt: string; answer: string }[]): PromptAnalysis[] {
   return prompts.map((p) => {
-    const answerLength = p.answer.trim().length;
+    const answer = p.answer.trim();
+    const answerLength = answer.length;
+    const topic = promptTopic(p.prompt);
     let quality: PromptAnalysis["quality"] = "average";
     let feedback = "";
     let suggestedImprovement = "";
 
+    const cliche = CLICHE_PHRASES.find((c) => answer.toLowerCase().includes(c));
+    const vague = VAGUE_WORDS.find((w) => new RegExp(`\\b${w}\\b`, "i").test(answer));
+
     if (answerLength < 15) {
       quality = "weak";
-      feedback = "This answer is too short to make an impression.";
-      suggestedImprovement = `Add a specific detail about "${p.prompt.replace(/^(i am|my|what|the|a|an)/i, "").trim()}" — something unique to you.`;
+      feedback = answerLength === 0 ? "You left this one blank — an empty prompt is a wasted slot." : `"${answer}" is too short to land — it reads as effort you didn't want to spend.`;
+      suggestedImprovement = `Answer it with one concrete, true thing about ${topic} — a real example beats a clever half-line.`;
+    } else if (cliche) {
+      quality = "average";
+      feedback = `"${cliche}" shows up in thousands of profiles, so it makes you blend in exactly where you want to stand out.`;
+      suggestedImprovement = `Swap "${cliche}" for your specific version of it — the exact trip, the exact dish, the exact show — so it could only be your answer.`;
+    } else if (vague && answerLength < 60) {
+      quality = "weak";
+      feedback = `The word "${vague}" is doing all the work here, and it tells a stranger nothing they can picture or reply to.`;
+      suggestedImprovement = `Replace "${vague}" with the actual detail behind it — what specifically about ${topic}? Name it.`;
     } else if (answerLength > 200) {
       quality = "average";
-      feedback = "This answer is quite detailed. Consider making it punchier.";
-      suggestedImprovement = `Shorten to 1-2 sentences. Keep the most interesting part.`;
-    } else if (/interesting|fun|nice|good|okay|fine/i.test(p.answer) && answerLength < 40) {
-      quality = "weak";
-      feedback = "This answer feels generic. Specific details make prompts memorable.";
-      suggestedImprovement = "Replace generic words with a specific example or story.";
-    } else if (CLICHE_PHRASES.some((c) => p.answer.toLowerCase().includes(c))) {
-      quality = "average";
-      feedback = "This answer uses a common phrase that appears in many profiles.";
-      suggestedImprovement = "Put a unique spin on this — instead of the cliché, say something specific about your version of it.";
+      feedback = "This answer is detailed but long — the best part is probably buried in the middle.";
+      suggestedImprovement = "Cut to the single most interesting sentence; a punchy prompt gets read, a paragraph gets skimmed.";
     } else if (answerLength >= 30 && answerLength <= 150) {
       quality = "good";
-      feedback = "Solid answer. It has enough detail to be interesting.";
-      suggestedImprovement = "Consider adding a playful or unexpected detail to make it stand out more.";
+      feedback = "Solid answer — enough real detail to be interesting.";
+      suggestedImprovement = "Add one unexpected or playful beat at the end to turn a good answer into a memorable one.";
     }
 
-    if (answerLength >= 50 && quality === "average") {
+    if (answerLength >= 50 && quality === "average" && !cliche) {
       quality = "good";
-      feedback = "Good effort on this answer. It shows you put thought into it.";
-      suggestedImprovement = "Try adding one very specific detail (a place, a memory, a preference) for a personal touch.";
+      feedback = "Good answer — it clearly took some thought.";
+      suggestedImprovement = `End on a small hook about ${topic} that a match can react to, so the prompt does some of the messaging for you.`;
     }
 
     return { prompt: p.prompt, answer: p.answer, quality, feedback, suggestedImprovement };
@@ -350,6 +363,52 @@ function calculateTextScore(bio: string, prompts: { prompt: string; answer: stri
   return Math.max(15, Math.min(100, Math.round(score)));
 }
 
+/**
+ * Overall advice built from the person's ACTUAL diagnosed gaps, in priority
+ * order — not a score band. It names their biggest lever first, then the next,
+ * and opens by crediting a real strength when there is one, so the summary
+ * reads like it was written after reading their profile (because it was).
+ */
+function buildOverallAdvice(x: {
+  signals: ProfileSignals;
+  bioAnalysis: BioAnalysis;
+  promptAnalysis: PromptAnalysis[];
+  redFlags: RedFlag[];
+  textScore: number;
+  bioLength: number;
+}): string {
+  const { signals, bioAnalysis, promptAnalysis, redFlags, textScore, bioLength } = x;
+  const detail = phraseList([...signals.interests.slice(0, 2), ...signals.foods.slice(0, 1)]);
+  const weakPrompts = promptAnalysis.filter((p) => p.quality === "weak").length;
+  const highFlags = redFlags.filter((f) => f.severity === "high").length;
+  const clicheFlags = redFlags.filter((f) => f.type === "cliche").length;
+
+  // Priority-ordered levers — biggest impact first. We surface the top two.
+  const levers: string[] = [];
+  if (highFlags > 0) levers.push(`clear the ${highFlags} flagged line${highFlags > 1 ? "s" : ""} above — one negative or low-effort line drags the whole profile down faster than anything else lifts it`);
+  if (bioLength < 30) levers.push("write an actual bio — even two specific sentences beat a blank, which reads as 'didn't bother'");
+  else if (!bioAnalysis.showsPersonality) levers.push("put one concrete detail in your bio (a hobby, a dish, a place) so a stranger has something real to picture and reply to");
+  else if (!bioAnalysis.hooksReader) levers.push("add a reply hook — end your bio on a question or a 'you' line, because a profile people can't answer just gets a silent like at best");
+  if (clicheFlags > 0) levers.push(`swap the flagged cliché${clicheFlags > 1 ? "s" : ""} for your specific version — the exact trip or dish, not the category`);
+  if (weakPrompts > 0) levers.push(`rewrite the ${weakPrompts} weak prompt answer${weakPrompts > 1 ? "s" : ""} flagged above — a strong prompt often out-pulls the bio itself`);
+
+  const opener = signals.richness === "rich" || signals.richness === "workable"
+    ? `You've given us real material to work with${detail ? ` — ${detail} come through` : ""}, so this is about sharpening, not starting over. `
+    : textScore >= 60
+      ? "The bones are here. "
+      : "There's a clear path up from here. ";
+
+  if (levers.length === 0) {
+    return `${opener}Your text is genuinely strong — it's specific, it invites a reply, and nothing is dragging it down. From here it's maintenance: make sure every single line earns its place, and refresh a prompt whenever an answer starts to feel stale.`;
+  }
+
+  const top = levers.slice(0, 2);
+  const body = top.length === 2
+    ? `Two things will move the needle most: first, ${top[0]}. Then, ${top[1]}.`
+    : `The single highest-leverage move: ${top[0]}.`;
+  return `${opener}${body} The suggested bios below already do this with your own details — use them as your starting point.`;
+}
+
 export function generateDatingProfileReport(audit: Audit): DatingProfileReport {
   const texts = audit.profileTexts;
   const bio = texts?.bio || "";
@@ -364,16 +423,7 @@ export function generateDatingProfileReport(audit: Audit): DatingProfileReport {
   const suggestedBios = generateSuggestedBios(audit, signals);
   const textScore = calculateTextScore(bio, prompts, redFlags);
 
-  let overallAdvice = "";
-  if (textScore < 35) {
-    overallAdvice = "Your profile text needs significant improvement. Start by expanding your bio to at least 2-3 sentences, remove any negative language, and add a specific detail about your interests. Even small changes will improve how your profile is perceived.";
-  } else if (textScore < 55) {
-    overallAdvice = "Your profile has some good elements but also several areas that can be improved. Focus on adding a conversation hook, removing clichés, and making your prompts more specific. The suggested bios below can give you a strong starting point.";
-  } else if (textScore < 75) {
-    overallAdvice = "You have a solid profile text foundation. To take it to the next level, refine your prompts with more specific details and ensure your bio has a clear conversation starter. Authenticity is your strongest asset here.";
-  } else {
-    overallAdvice = "Your profile text is already strong. Small tweaks to prompt answers and ensuring every line adds value will push it to excellent. Keep being specific and authentic — that is what connects best.";
-  }
+  const overallAdvice = buildOverallAdvice({ signals, bioAnalysis, promptAnalysis, redFlags, textScore, bioLength: bio.trim().length });
 
   return {
     textScore,
