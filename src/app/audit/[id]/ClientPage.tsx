@@ -38,6 +38,7 @@ import { CapsuleWardrobeCard } from "@/components/report/CapsuleWardrobeCard";
 import { FaceShapeCard } from "@/components/report/FaceShapeCard";
 import { StylePassport } from "@/components/report/StylePassport";
 import { OccasionKitCard } from "@/components/report/OccasionKitCard";
+import { DateSpotsCard } from "@/components/report/DateSpotsCard";
 import { PhotoRankerWidget } from "@/components/vision/PhotoRankerWidget";
 import { AiPhotoReadCard } from "@/components/report/AiPhotoReadCard";
 import { GlowupTracker } from "@/components/report/GlowupTracker";
@@ -1270,6 +1271,14 @@ export default function AuditDetailPage() {
                         />
                       </LockedSection>
                     </div>
+                    {/* ─── Date & Dining Playbook — social goals only (skip office/LinkedIn) ─── */}
+                    {audit!.goal !== "office" && audit!.goal !== "linkedin" && (
+                      <div className="mb-6">
+                        <LockedSection locked={!isUnlocked} label="Date & Dining Playbook" unlockHref={unlockHref}>
+                          <DateSpotsCard budget={audit!.budgetRange} powerColors={colorPalette?.colors} />
+                        </LockedSection>
+                      </div>
+                    )}
                     {/* ─── Occasion Kits — apply the passport to wherever they're headed next ─── */}
                     <div className="mb-6">
                       <LockedSection locked={!isUnlocked} label="Occasion Kits" unlockHref={unlockHref}>
@@ -1631,6 +1640,13 @@ export default function AuditDetailPage() {
                     <h4 className="mb-1 text-xs font-semibold text-[#1C1917]">🤖 Rank your actual profile photos</h4>
                     <p className="mb-2 text-[11px] text-[#857b6e]">Upload the shots you&apos;re choosing between — an on-device AI ranks which to lead with, keep, or cut. Photos never leave your browser.</p>
                     <PhotoRankerWidget compact />
+                  </div>
+                  {/* Date & Dining Playbook — the profile gets the match, this plans the date */}
+                  <div className="mt-5">
+                    <DateSpotsCard
+                      budget={audit.budgetRange}
+                      powerColors={audit.fullReport?.freeResult?.imageMetrics?.colorPalette?.colors}
+                    />
                   </div>
                 </Card>
                 </FadeInView>
