@@ -396,6 +396,8 @@ export default function AuditDetailPage() {
         const im = report.imageMetrics;
         const matches = matchCelebrity({
           goal: audit.goal || "dating",
+          gender: audit.gender,
+          undertone: im?.undertone?.undertone,
           lightingScore: im?.lightingScore ?? 50,
           groomingScore: im?.clarityScore ?? 50,
           outfitScore: im?.contrast ?? 50,

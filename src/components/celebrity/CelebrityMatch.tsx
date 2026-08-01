@@ -20,10 +20,18 @@ export function CelebrityMatch({ matches }: { matches: MatchResult[] }) {
           <div className="pointer-events-none absolute -left-20 -bottom-20 h-40 w-40 rounded-full bg-red-500/10 blur-3xl" />
 
           <Badge variant="premium" className="mb-4">
-            ✨ Celebrity Match
+            ✨ Your Aspirational Match
           </Badge>
 
-          <div className="mb-4 text-5xl">{top.celebrity.photo}</div>
+          {/* The aspirational look — the aesthetic to aim for */}
+          <div className="mx-auto mb-4 w-40 sm:w-48">
+            <div className="relative overflow-hidden rounded-2xl border border-amber-500/30 shadow-lg">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={top.celebrity.lookImage} alt={`${top.celebrity.name} look`} className="aspect-[4/5] w-full object-cover" loading="lazy" />
+              <span className="absolute right-1.5 top-1.5 rounded-full bg-black/45 px-1.5 py-0.5 text-sm">{top.celebrity.photo}</span>
+            </div>
+            <p className="mt-1 text-[10px] text-[#857b6e]">The {top.celebrity.name.split(" ")[0]} look — the aesthetic to aim for</p>
+          </div>
 
           <h2 className="mb-1 bg-gradient-to-r from-amber-200 via-white to-amber-200 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
             {top.celebrity.name}
@@ -59,6 +67,27 @@ export function CelebrityMatch({ matches }: { matches: MatchResult[] }) {
           <p className="mx-auto mt-5 max-w-md text-sm font-medium text-[#1c1917]/90">
             {getAspirationalMessage(top)}
           </p>
+
+          {/* Your path to this look — the concrete gap to close */}
+          {top.gapReasons.length > 0 && (
+            <div className="mx-auto mt-4 max-w-md rounded-xl border border-amber-500/20 bg-white/50 p-3.5 text-left">
+              <p className="mb-2 text-center text-[11px] font-semibold uppercase tracking-wide text-amber-600">
+                Close the gap → look the part
+              </p>
+              <div className="space-y-1.5">
+                {top.gapReasons.map((g) => (
+                  <div key={g} className="flex items-start gap-2 text-xs text-[#4a443d]">
+                    <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-amber-500/15 text-[10px] text-amber-600">→</span>
+                    {g}
+                  </div>
+                ))}
+                <div className="flex items-start gap-2 text-xs text-[#4a443d]">
+                  <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-amber-500/15 text-[10px] text-amber-600">→</span>
+                  {top.celebrity.improvementNote}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </FadeInView>
 

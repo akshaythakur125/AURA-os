@@ -12,7 +12,10 @@
 export interface CelebrityProfile {
   name: string;
   title: string; // "Bollywood's Clean-Tailored King"
-  photo: string; // placeholder URL or emoji
+  photo: string; // emoji accent
+  /** Representative LOOK image (the aesthetic to aim for), from /public/celebs. */
+  lookImage: string;
+  gender: "men" | "women";
   style: string;
   tags: string[];
   shopLinks: {
@@ -28,6 +31,8 @@ export const CELEBRITY_PROFILES: CelebrityProfile[] = [
     name: "Ranbir Kapoor",
     title: "Bollywood's Effortless Charm",
     photo: "🎭",
+    lookImage: "/celebs/cafe-hopping-casual.jpg",
+    gender: "men",
     style: "Clean casual with subtle luxury — earth tones, well-fitted basics, minimal accessories",
     tags: ["warm", "casual", "natural", "minimal", "warm-tones", "soft-features"],
     shopLinks: [
@@ -46,6 +51,8 @@ export const CELEBRITY_PROFILES: CelebrityProfile[] = [
     name: "Hrithik Roshan",
     title: "The Greek God Standard",
     photo: "💪",
+    lookImage: "/celebs/hrithik-dating-warm.jpg",
+    gender: "men",
     style: "Sharp, athletic, high-contrast — dark colors, structured fits, strong grooming",
     tags: ["sharp", "athletic", "dark", "structured", "groomed", "strong-features"],
     shopLinks: [
@@ -64,6 +71,8 @@ export const CELEBRITY_PROFILES: CelebrityProfile[] = [
     name: "Sidharth Malhotra",
     title: "The College Crush",
     photo: "🎓",
+    lookImage: "/celebs/smart-casual-friday.jpg",
+    gender: "men",
     style: "Relaxed but put-together — light layers, denim, approachable warmth",
     tags: ["relaxed", "layered", "denim", "approachable", "young", "light-colors"],
     shopLinks: [
@@ -82,6 +91,8 @@ export const CELEBRITY_PROFILES: CelebrityProfile[] = [
     name: "Vicky Kaushal",
     title: "The Quiet Confidence",
     photo: "🔥",
+    lookImage: "/celebs/minimalist-everyday.jpg",
+    gender: "men",
     style: "Understated power — neutral palette, clean grooming, strong posture",
     tags: ["neutral", "clean", "power", "understated", "groomed", "confident"],
     shopLinks: [
@@ -100,6 +111,8 @@ export const CELEBRITY_PROFILES: CelebrityProfile[] = [
     name: "Aditya Roy Kapur",
     title: "The Brooding Romantic",
     photo: "🌙",
+    lookImage: "/celebs/nightclub-dark-luxe.jpg",
+    gender: "men",
     style: "Dark, moody, artistic — black/charcoal, textured fabrics, emotional expression",
     tags: ["dark", "moody", "artistic", "textured", "emotional", "romantic"],
     shopLinks: [
@@ -118,6 +131,8 @@ export const CELEBRITY_PROFILES: CelebrityProfile[] = [
     name: "Kartik Aaryan",
     title: "The Boy Next Door",
     photo: "😊",
+    lookImage: "/celebs/kartik-mumbai-street.jpg",
+    gender: "men",
     style: "Fun, colorful, youthful — bright colors, casual fits, genuine smile",
     tags: ["fun", "colorful", "youthful", "bright", "casual", "smile"],
     shopLinks: [
@@ -131,6 +146,66 @@ export const CELEBRITY_PROFILES: CelebrityProfile[] = [
       },
     ],
     improvementNote: "Your expression is too stiff. Kartik's secret is a genuine, relaxed smile — practice in the mirror.",
+  },
+  {
+    name: "Deepika Padukone",
+    title: "Effortless Soft Luxury",
+    photo: "🌸",
+    lookImage: "/celebs/deepika-soft-luxury.jpg",
+    gender: "women",
+    style: "Soft, elegant, warm-toned — clean tailoring, understated jewellery, natural glow",
+    tags: ["warm", "elegant", "soft", "natural", "minimal", "approachable"],
+    shopLinks: [
+      {
+        category: "🌸 Her Style — Soft Luxury",
+        items: [
+          { name: "Neutral Co-ord Set", price: "₹1,799", url: "https://www.myntra.com/gateway/v2/search/query?q=women+co-ord+set+neutral" },
+          { name: "Slip Dress (Earth Tone)", price: "₹1,499", url: "https://www.myntra.com/gateway/v2/search/query?q=women+slip+dress+beige" },
+          { name: "Delicate Gold Jewellery", price: "₹799", url: "https://www.nykaa.com/search/result/?q=delicate+gold+jewellery" },
+        ],
+      },
+    ],
+    improvementNote: "Soft, warm lighting is Deepika's signature — fix your light and half the look is done.",
+  },
+  {
+    name: "Priyanka Chopra",
+    title: "Global Power Style",
+    photo: "👑",
+    lookImage: "/celebs/priyanka-soft-power.jpg",
+    gender: "women",
+    style: "Sharp, structured, high-impact — bold tailoring, defined brows, confident posture",
+    tags: ["sharp", "power", "structured", "bold", "groomed", "confident"],
+    shopLinks: [
+      {
+        category: "👑 Her Style — Power Dressing",
+        items: [
+          { name: "Structured Blazer", price: "₹2,299", url: "https://www.myntra.com/gateway/v2/search/query?q=women+structured+blazer" },
+          { name: "High-Waist Trousers", price: "₹1,299", url: "https://www.myntra.com/gateway/v2/search/query?q=women+high+waist+trousers" },
+          { name: "Statement Watch", price: "₹1,499", url: "https://www.myntra.com/gateway/v2/search/query?q=women+statement+watch" },
+        ],
+      },
+    ],
+    improvementNote: "Priyanka's power comes from posture and defined brows — sharpen both and you own the frame.",
+  },
+  {
+    name: "Ananya Panday",
+    title: "Gen-Z Sporty Luxe",
+    photo: "✨",
+    lookImage: "/celebs/ananya-sporty-luxe.jpg",
+    gender: "women",
+    style: "Young, playful, athleisure-luxe — bright accents, clean sneakers, fresh glow",
+    tags: ["fun", "youthful", "colorful", "casual", "bright", "smile"],
+    shopLinks: [
+      {
+        category: "✨ Her Style — Sporty Luxe",
+        items: [
+          { name: "Cropped Hoodie", price: "₹999", url: "https://www.myntra.com/gateway/v2/search/query?q=women+cropped+hoodie" },
+          { name: "High-Rise Jeans", price: "₹1,199", url: "https://www.myntra.com/gateway/v2/search/query?q=women+high+rise+jeans" },
+          { name: "Chunky White Sneakers", price: "₹1,999", url: "https://www.myntra.com/gateway/v2/search/query?q=women+chunky+white+sneakers" },
+        ],
+      },
+    ],
+    improvementNote: "Ananya's look is all fresh, even skin and a real smile — nail your grooming and expression.",
   },
 ];
 
@@ -149,6 +224,7 @@ export interface MatchResult {
 export function matchCelebrity(options: {
   goal: string;
   undertone?: string;
+  gender?: "men" | "women" | "unisex";
   lightingScore: number;
   groomingScore: number;
   outfitScore: number;
@@ -158,7 +234,12 @@ export function matchCelebrity(options: {
 }): MatchResult[] {
   const results: MatchResult[] = [];
 
-  for (const celeb of CELEBRITY_PROFILES) {
+  // Match within the user's gender when known; fall back to all for unisex.
+  const pool = options.gender === "men" || options.gender === "women"
+    ? CELEBRITY_PROFILES.filter((c) => c.gender === options.gender)
+    : CELEBRITY_PROFILES;
+
+  for (const celeb of pool) {
     let matchScore = 50; // base
     const matchReasons: string[] = [];
     const gapReasons: string[] = [];
