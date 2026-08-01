@@ -161,25 +161,36 @@ function UnlockForm() {
       }
       createUnlockRecord({ auditId, productType: defaultProduct, unlockCode: unlockCode.trim() });
 
-      const updates: Record<string, unknown> = {};
-      updates.unlockedProducts = [...(audit.unlockedProducts || []), defaultProduct];
-
+      // Persist the unlock immediately so a valid code never leaves the user
+      // locked if content generation below fails; the report self-heals on load.
+      const baseUpdates: Record<string, unknown> = {
+        unlockedProducts: [...(audit.unlockedProducts || []), defaultProduct],
+      };
       if (defaultProduct === "aura_report") {
-        const fullContent = await generateFullAuraReport(audit);
-        updates.fullScore = fullContent.fullScore;
-        updates.reportStatus = "unlocked";
-        updates.unlockStatus = "unlocked";
-        updates.fullReport = audit.fullReport
-          ? { ...audit.fullReport, score: { ...audit.fullReport.score, overall: fullContent.fullScore }, isPremium: true, fullContent }
-          : { id: `${auditId}-report`, auditId, score: { overall: fullContent.fullScore, categories: { visual: fullContent.visualBreakdown.lighting, presentation: fullContent.visualBreakdown.clarity, signals: fullContent.visualBreakdown.colorSignal, cohesion: fullContent.visualBreakdown.overallConsistency } }, leaks: [], suggestions: [], summary: fullContent.detailedVerdict, createdAt: fullContent.generatedAt, isPremium: true, fullContent };
-      } else if (defaultProduct === "dating_audit") {
-        updates.datingProfileReport = generateDatingProfileReport(audit);
-        updates.reportStatus = audit.reportStatus === "draft" ? "free_generated" : audit.reportStatus;
-      } else if (defaultProduct === "glowup_plan") {
-        updates.glowupPlan = generateGlowupPlan(audit);
-        updates.reportStatus = audit.reportStatus === "draft" ? "free_generated" : audit.reportStatus;
+        baseUpdates.reportStatus = "unlocked";
+        baseUpdates.unlockStatus = "unlocked";
       }
-      updateAudit(auditId, updates as Partial<Audit>);
+      updateAudit(auditId, baseUpdates as Partial<Audit>);
+
+      try {
+        const enrich: Record<string, unknown> = {};
+        if (defaultProduct === "aura_report") {
+          const fullContent = await generateFullAuraReport(audit);
+          enrich.fullScore = fullContent.fullScore;
+          enrich.fullReport = audit.fullReport
+            ? { ...audit.fullReport, score: { ...audit.fullReport.score, overall: fullContent.fullScore }, isPremium: true, fullContent }
+            : { id: `${auditId}-report`, auditId, score: { overall: fullContent.fullScore, categories: { visual: fullContent.visualBreakdown.lighting, presentation: fullContent.visualBreakdown.clarity, signals: fullContent.visualBreakdown.colorSignal, cohesion: fullContent.visualBreakdown.overallConsistency } }, leaks: [], suggestions: [], summary: fullContent.detailedVerdict, createdAt: fullContent.generatedAt, isPremium: true, fullContent };
+        } else if (defaultProduct === "dating_audit") {
+          enrich.datingProfileReport = generateDatingProfileReport(audit);
+          enrich.reportStatus = audit.reportStatus === "draft" ? "free_generated" : audit.reportStatus;
+        } else if (defaultProduct === "glowup_plan") {
+          enrich.glowupPlan = generateGlowupPlan(audit);
+          enrich.reportStatus = audit.reportStatus === "draft" ? "free_generated" : audit.reportStatus;
+        }
+        if (Object.keys(enrich).length) updateAudit(auditId, enrich as Partial<Audit>);
+      } catch (genErr) {
+        console.warn("[unlock] code-redeem content generation deferred to report page:", genErr);
+      }
       trackEvent({ eventName: "product_unlocked", auditId, productType: defaultProduct });
       setStage("done");
       setTimeout(() => router.push(`/audit/${auditId}`), 1500);
