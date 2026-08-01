@@ -40,6 +40,7 @@ import { GlowupTracker } from "@/components/report/GlowupTracker";
 import { ProgressProofCard } from "@/components/report/ProgressProofCard";
 import { buildDatingPlaybookHtml } from "@/lib/share/datingArtifact";
 import { DatingCoachVoice } from "@/components/dating/DatingCoachVoice";
+import { AiBioRewrite } from "@/components/dating/AiBioRewrite";
 import { downloadTextFile } from "@/lib/share/download";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
@@ -1500,6 +1501,15 @@ export default function AuditDetailPage() {
                           </div>
                         ))}
                       </div>
+                      {(audit.profileTexts?.bio || (audit.profileTexts?.prompts && audit.profileTexts.prompts.length > 0)) && (
+                        <div className="mt-3">
+                          <AiBioRewrite
+                            bio={audit.profileTexts?.bio || ""}
+                            prompts={audit.profileTexts?.prompts}
+                            context={{ goal: audit.goal, gender: audit.gender }}
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
                   {audit.datingProfileReport.photoStrategy && (
