@@ -34,6 +34,7 @@ import { SkinDetailCard } from "@/components/report/SkinDetailCard";
 import { PresenceCard } from "@/components/report/PresenceCard";
 import { CapsuleWardrobeCard } from "@/components/report/CapsuleWardrobeCard";
 import { FaceShapeCard } from "@/components/report/FaceShapeCard";
+import { StylePassport } from "@/components/report/StylePassport";
 import { PhotoRankerWidget } from "@/components/vision/PhotoRankerWidget";
 import { AiPhotoReadCard } from "@/components/report/AiPhotoReadCard";
 import { GlowupTracker } from "@/components/report/GlowupTracker";
@@ -1228,6 +1229,26 @@ export default function AuditDetailPage() {
                 });
                 return (
                   <>
+                    {/* ─── Style Passport — the flagship ₹21 payload: every "what suits me"
+                        answer consolidated into one keepable, downloadable card ─── */}
+                    <div className="mb-6">
+                      <LockedSection locked={!isUnlocked} label="Your Style Passport" unlockHref={unlockHref}>
+                        <StylePassport
+                          imageDataUrl={audit?.imageDataUrl}
+                          undertone={undertone}
+                          undertoneConfident={undertoneConfident}
+                          paletteName={colorPalette?.name}
+                          powerColors={colorPalette?.colors}
+                          avoidColors={colorPalette?.avoid}
+                          archetype={personalization.archetype}
+                          detectedStyle={displayResult.imageMetrics?.detectedStyle?.detectedStyle}
+                          scentFamilies={scent.families}
+                          scentReason={scent.reason}
+                          groomingFocus={displayResult.imageMetrics?.groomingResult?.topFix}
+                          goal={audit!.goal}
+                        />
+                      </LockedSection>
+                    </div>
                     <PersonalizedShop
                       looks={shopLooks}
                       userScore={displayResult.auraScore ?? undefined}
