@@ -13,7 +13,7 @@ function present(...keys: string[]): boolean {
 
 export async function GET() {
   // ── Revenue path A: Razorpay instant checkout ──
-  const razorpayReady = present("RAZORPAY_KEY_ID", "RAZORPAY_KEY_SECRET");
+  const razorpayReady = present("RAZORPAY_KEY_ID", "RAZORPAY_KEY_SECRET", "NEXT_PUBLIC_RAZORPAY_KEY_ID");
 
   // ── Revenue path B: manual UPI + unlock code ──
   // Needs a real UPI id to collect payment AND a way to validate the code the
@@ -33,6 +33,7 @@ export async function GET() {
       ready: razorpayReady,
       RAZORPAY_KEY_ID: present("RAZORPAY_KEY_ID") ? "set" : "missing",
       RAZORPAY_KEY_SECRET: present("RAZORPAY_KEY_SECRET") ? "set" : "missing",
+      NEXT_PUBLIC_RAZORPAY_KEY_ID: present("NEXT_PUBLIC_RAZORPAY_KEY_ID") ? "set" : "missing",
     },
     manualUpi: {
       ready: manualReady,

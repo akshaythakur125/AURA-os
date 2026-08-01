@@ -101,7 +101,8 @@ export async function POST(request: Request) {
       customerName: customerName?.trim() || null,
       customerContact: customerContact?.trim() || null,
     });
-  } catch {
+  } catch (err) {
+    console.error("[payments/create-order]", err instanceof Error ? err.message : "Unknown error");
     return Response.json({ error: "Failed to create order." }, { status: 500 });
   }
 }
