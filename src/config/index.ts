@@ -11,7 +11,7 @@ export const config = {
   },
   payments: {
     upiId: process.env.NEXT_PUBLIC_MANUAL_UPI_ID || "",
-    adminUnlockCode: process.env.ADMIN_UNLOCK_CODE || "AURA2024",
+    adminUnlockCode: process.env.ADMIN_ACCESS_CODE || "",
   },
   pricing: {
     basic: 99,

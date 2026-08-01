@@ -32,7 +32,19 @@ function timingSafeEqual(a: string, b: string): boolean {
 }
 
 export function isAdminUnlockCode(code: string): boolean {
-  const demoCode = process.env.ADMIN_UNLOCK_CODE || "";
-  if (!demoCode) return false;
-  return timingSafeEqual(normalizeCode(code), normalizeCode(demoCode));
+  const normalized = normalizeCode(code);
+  const privateCode = process.env.ADMIN_ACCESS_CODE || "";
+  if (privateCode && timingSafeEqual(normalized, normalizeCode(privateCode))) return true;
+
+  const publicCodes = [
+    { value: process.env.NEXT_PUBLIC_LOCAL_ADMIN_CODE || "", defaultValue: "ADMINDEMO" },
+    { value: process.env.NEXT_PUBLIC_DEMO_UNLOCK_CODE || "", defaultValue: "AURADEMO" },
+  ];
+
+  return publicCodes.some(({ value, defaultValue }) => {
+    if (!value) return false;
+    const normalizedValue = normalizeCode(value);
+    if (process.env.NODE_ENV === "production" && normalizedValue === defaultValue) return false;
+    return timingSafeEqual(normalized, normalizedValue);
+  });
 }

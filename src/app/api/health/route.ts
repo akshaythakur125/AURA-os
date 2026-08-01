@@ -20,7 +20,7 @@ export async function GET() {
   // owner issues (static admin code OR a configured Supabase RPC).
   const upiReady = present("NEXT_PUBLIC_MANUAL_UPI_ID");
   const codeValidationReady =
-    present("ADMIN_UNLOCK_CODE") ||
+    present("ADMIN_ACCESS_CODE") ||
     present("NEXT_PUBLIC_SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY");
   const manualReady = upiReady && codeValidationReady;
 
@@ -37,7 +37,7 @@ export async function GET() {
     manualUpi: {
       ready: manualReady,
       NEXT_PUBLIC_MANUAL_UPI_ID: present("NEXT_PUBLIC_MANUAL_UPI_ID") ? "set" : "missing",
-      codeValidation: codeValidationReady ? "set" : "missing (need ADMIN_UNLOCK_CODE or Supabase)",
+      codeValidation: codeValidationReady ? "set" : "missing (need ADMIN_ACCESS_CODE or Supabase)",
     },
   };
 
