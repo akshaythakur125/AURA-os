@@ -26,6 +26,7 @@ import { GroomingPicksCard } from "@/components/report/GroomingPicksCard";
 import { CompleteTheLookCard } from "@/components/report/CompleteTheLookCard";
 import { EditRecipeCard } from "@/components/report/EditRecipeCard";
 import { PresetDownloadCard } from "@/components/report/PresetDownloadCard";
+import { ReadyToPostPack } from "@/components/report/ReadyToPostPack";
 import { LockedSection } from "@/components/report/LockedSection";
 import { FeedbackPrompt } from "@/components/report/FeedbackPrompt";
 import { GroomingLocalCard, type NearbyPlace } from "@/components/report/GroomingLocalCard";
@@ -1276,6 +1277,14 @@ export default function AuditDetailPage() {
                       <div className="mb-6">
                         <LockedSection locked={!isUnlocked} label="Your Photo Kit" unlockHref={unlockHref}>
                           <PhotoKitCard metrics={displayResult.imageMetrics as any} />
+                        </LockedSection>
+                      </div>
+                    )}
+                    {/* ─── Ready-to-Post Pack — the photo, auto-fixed and cropped, ready to download ─── */}
+                    {audit?.imageDataUrl && displayResult.imageMetrics != null && (
+                      <div className="mb-6">
+                        <LockedSection locked={!isUnlocked} label="Ready-to-Post Pack" unlockHref={unlockHref}>
+                          <ReadyToPostPack imageDataUrl={audit.imageDataUrl} metrics={displayResult.imageMetrics as any} />
                         </LockedSection>
                       </div>
                     )}
