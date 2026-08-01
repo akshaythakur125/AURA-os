@@ -39,6 +39,7 @@ import { FaceShapeCard } from "@/components/report/FaceShapeCard";
 import { StylePassport } from "@/components/report/StylePassport";
 import { OccasionKitCard } from "@/components/report/OccasionKitCard";
 import { DateSpotsCard } from "@/components/report/DateSpotsCard";
+import { FragranceFinderCard } from "@/components/report/FragranceFinderCard";
 import { PhotoRankerWidget } from "@/components/vision/PhotoRankerWidget";
 import { AiPhotoReadCard } from "@/components/report/AiPhotoReadCard";
 import { GlowupTracker } from "@/components/report/GlowupTracker";
@@ -1289,6 +1290,12 @@ export default function AuditDetailPage() {
                           groomingFocus={displayResult.imageMetrics?.groomingResult?.topFix}
                           gender={audit!.gender}
                         />
+                      </LockedSection>
+                    </div>
+                    {/* ─── Fragrance Finder — scent family → budget-tiered search (no fixed images) ─── */}
+                    <div className="mb-6">
+                      <LockedSection locked={!isUnlocked} label="Fragrance Finder" unlockHref={unlockHref}>
+                        <FragranceFinderCard scentFamilies={scent.families} gender={audit!.gender} budget={audit!.budgetRange} />
                       </LockedSection>
                     </div>
                     <PersonalizedShop
