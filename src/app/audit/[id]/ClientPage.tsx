@@ -23,6 +23,7 @@ import { BestPhotoCard } from "@/components/report/BestPhotoCard";
 import { ReshootCelebration } from "@/components/report/ReshootCelebration";
 import { PhotoKitCard } from "@/components/report/PhotoKitCard";
 import { GroomingPicksCard } from "@/components/report/GroomingPicksCard";
+import { GroomingRoutineCard } from "@/components/report/GroomingRoutineCard";
 import { CompleteTheLookCard } from "@/components/report/CompleteTheLookCard";
 import { EditRecipeCard } from "@/components/report/EditRecipeCard";
 import { PresetDownloadCard } from "@/components/report/PresetDownloadCard";
@@ -1358,6 +1359,15 @@ export default function AuditDetailPage() {
                 <div className="mb-6">
                   <LockedSection locked={!isUnlocked} label="Skin, Close Up" unlockHref={unlockHref}>
                     <SkinDetailCard skin={displayResult.imageMetrics.skinDetail} />
+                  </LockedSection>
+                </div>
+              )}
+
+              {/* ─── Grooming routine from your skin read — paid perk ─── */}
+              {displayResult?.imageMetrics?.skinDetail != null && (
+                <div className="mb-6">
+                  <LockedSection locked={!isUnlocked} label="Your Grooming Routine" unlockHref={unlockHref}>
+                    <GroomingRoutineCard skin={displayResult.imageMetrics.skinDetail} />
                   </LockedSection>
                 </div>
               )}
