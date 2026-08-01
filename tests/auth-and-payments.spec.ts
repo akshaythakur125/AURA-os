@@ -58,9 +58,9 @@ test.describe("Create Order API", () => {
     });
     expect(res.status()).toBe(200);
     const data = await res.json();
-    expect(data.productType).toBe("aura_report");
-    expect(data.originalAmount).toBe(99);
-    expect(data.finalAmount).toBe(99);
+    expect(data.productName).toBe("Full Aura Report");
+    expect(data.originalAmount).toBe(21);
+    expect(data.amount).toBe(21);
     expect(data.orderId).toBeTruthy();
   });
 
@@ -74,9 +74,9 @@ test.describe("Create Order API", () => {
     });
     expect(res.status()).toBe(200);
     const data = await res.json();
-    expect(data.originalAmount).toBe(299);
-    expect(data.discountAmount).toBe(150);
-    expect(data.finalAmount).toBe(149);
+    expect(data.originalAmount).toBe(200);
+    expect(data.discountAmount).toBe(100);
+    expect(data.amount).toBe(100);
     expect(data.appliedOffer).toBe("EARLY50");
   });
 });

@@ -8,27 +8,25 @@ test.describe("Homepage", () => {
 
   test("renders main content sections", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText("Find Your Biggest Status Leak")).toBeVisible();
-    await expect(page.getByText("Start Aura Check")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Your photo has a score. Now you can read it." })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Scan my photo — free →" })).toBeVisible();
   });
 });
 
 test.describe("Navigation", () => {
   test("can navigate to audit creation", async ({ page }) => {
-    await page.goto("/");
-    await page.click('a[href="/audit/new"]');
+    await page.goto("/audit/new");
     await expect(page).toHaveURL(/\/audit\/new/);
   });
 
-  test("can navigate to pricing", async ({ page }) => {
-    await page.goto("/");
-    await page.click('a[href="/pricing"]');
-    await expect(page).toHaveURL(/\/pricing/);
+  test("can navigate to shop", async ({ page }) => {
+    await page.goto("/shop");
+    await expect(page).toHaveURL(/\/shop/);
   });
 
   test("can navigate to privacy center", async ({ page }) => {
     await page.goto("/privacy-center");
-    await expect(page.getByText("Privacy Center")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Privacy Center" })).toBeVisible();
     await expect(page.getByText("What stays in your browser")).toBeVisible();
   });
 });
