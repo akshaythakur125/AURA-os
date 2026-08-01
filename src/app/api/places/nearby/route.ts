@@ -15,6 +15,7 @@ interface PlaceResult {
   priceLevel: number | null;
   phone: string | null;
   website: string | null;
+  summary: string | null;
 }
 
 const TYPE_MAP: Record<string, string> = {
@@ -67,7 +68,7 @@ export async function GET(request: Request) {
         headers: {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": API_KEY,
-          "X-Goog-FieldMask": "places.displayName,places.types,places.formattedAddress,places.rating,places.userRatingCount,places.photos,places.id,places.currentOpeningHours.openNow,places.priceLevel,places.nationalPhoneNumber,places.websiteUri",
+          "X-Goog-FieldMask": "places.displayName,places.types,places.formattedAddress,places.rating,places.userRatingCount,places.photos,places.id,places.currentOpeningHours.openNow,places.priceLevel,places.nationalPhoneNumber,places.websiteUri,places.editorialSummary",
         },
         body: JSON.stringify(body),
       });
@@ -97,7 +98,7 @@ export async function GET(request: Request) {
         headers: {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": API_KEY,
-          "X-Goog-FieldMask": "places.displayName,places.types,places.formattedAddress,places.rating,places.userRatingCount,places.photos,places.id,places.currentOpeningHours.openNow,places.priceLevel,places.nationalPhoneNumber,places.websiteUri",
+          "X-Goog-FieldMask": "places.displayName,places.types,places.formattedAddress,places.rating,places.userRatingCount,places.photos,places.id,places.currentOpeningHours.openNow,places.priceLevel,places.nationalPhoneNumber,places.websiteUri,places.editorialSummary",
         },
         body: JSON.stringify(body),
       });
@@ -140,6 +141,7 @@ export async function GET(request: Request) {
         priceLevel: priceEnum != null && priceEnum in priceMap ? priceMap[priceEnum] : null,
         phone: (p.nationalPhoneNumber as string) || null,
         website: (p.websiteUri as string) || null,
+        summary: (p.editorialSummary as { text?: string } | undefined)?.text || null,
       };
     });
 
