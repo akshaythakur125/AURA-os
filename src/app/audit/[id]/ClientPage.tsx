@@ -505,8 +505,9 @@ export default function AuditDetailPage() {
   useEffect(() => {
     if (displayResult) {
       trackEvent(EVENTS.RESULTS_VIEWED, { auditId: id, score: displayResult.auraScore });
+      if (!isUnlocked) trackEvent(EVENTS.FREE_REPORT_VIEWED, { auditId: id, score: displayResult.auraScore });
     }
-  }, [displayResult, id]);
+  }, [displayResult, isUnlocked, id]);
 
   useEffect(() => {
     if (displayResult && !isUnlocked) {

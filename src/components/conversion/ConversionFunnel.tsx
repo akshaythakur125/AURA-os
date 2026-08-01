@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { CountUp } from "@/components/ui/CountUp";
 import { SocialProofBar } from "@/components/social-proof/SocialProofBar";
 import { FadeInView } from "@/components/ui/FadeInView";
+import { trackEvent, EVENTS } from "@/lib/analytics/events";
 
 interface ConversionFunnelProps {
   auditId: string;
@@ -121,6 +122,7 @@ export function ConversionFunnel({
           <Link
             href={`/unlock?auditId=${auditId}&product=aura_report`}
             className="block"
+            onClick={() => trackEvent(EVENTS.PAYWALL_CTA_CLICKED, { auditId, productType: "aura_report", source: "conversion_funnel" })}
           >
             <Button size="lg" className="w-full max-w-sm mx-auto text-base font-bold">
               Unlock My Full Report — ₹21

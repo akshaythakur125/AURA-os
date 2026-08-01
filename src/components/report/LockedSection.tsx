@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useCallback } from "react";
+import { trackEvent, EVENTS } from "@/lib/analytics/events";
 
 interface LockedSectionProps {
   /** when false, children render normally (paid users) */
@@ -64,6 +65,7 @@ export function LockedSection({ locked, label, unlockHref, children }: LockedSec
             href={unlockHref}
             className="mt-3 inline-block rounded-xl bg-gradient-to-r from-[#E14434] to-[#c0341f] px-5 py-2 text-xs font-semibold text-white shadow-lg transition-transform hover:scale-[1.04]"
             style={{ transform: "translateZ(30px)" }}
+            onClick={() => trackEvent(EVENTS.PAYWALL_CTA_CLICKED, { label, source: "locked_section" })}
           >
             Unlock Full Report
           </Link>

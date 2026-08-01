@@ -19,6 +19,7 @@ export const EVENTS = {
   ANALYSIS_COMPLETED: "analysis_completed",
 
   // Results
+  FREE_REPORT_VIEWED: "free_report_viewed",
   RESULTS_VIEWED: "results_viewed",
   RESULTS_SHARED: "results_shared",
 
