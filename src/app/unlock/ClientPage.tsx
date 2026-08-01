@@ -36,14 +36,15 @@ function getSupportEmail(): string | null {
 
 const PRODUCT_FEATURES: Record<string, string[]> = {
   aura_report: [
+    "Instagram Grid Check — your whole profile (grid + bio) scored the way visitors see it",
+    "Ready-to-Post Pack — we auto-fix your photo & crop it for Instagram, Hinge or LinkedIn",
+    "Style Passport — your colours, frames, scent & grooming in one card you keep",
+    "‘Which one should I post?’ — on-device AI ranks your candidate photos",
+    "Occasion Kits — what to wear & how to prep for a date, interview or shaadi",
     "Every photo issue with its exact fix, ranked by measured impact",
-    "A 7-day reshoot plan built from your photo's own numbers",
-    "Expression & posture read — smile, eye contact, head tilt, shoulders",
-    "Which Instagram filter fits + exactly how to edit it",
-    "Your colour palette + capsule wardrobe, matched to your undertone",
-    "Face-shape studio — the haircut, glasses & beard that suit you",
+    "Face-shape studio + colour palette & capsule wardrobe, matched to your undertone",
     "Celebrity style match + shop the look in your budget",
-    "Downloadable branded report + share-ready score card",
+    "Downloadable report + a shareable before → after glow-up card",
   ],
   dating_audit: [
     "Bio & prompt scoring with line-by-line rewrites",

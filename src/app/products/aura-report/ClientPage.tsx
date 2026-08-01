@@ -64,6 +64,11 @@ export default function AuraReportPage() {
           <SectionHeading title="What you get" subtitle="Everything in the free score, plus a detailed breakdown." />
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
+              { title: "Instagram Grid Check", desc: "See your whole profile — grid + bio — scored the way a visitor reads it in two seconds: cohesion, the weak-link tile, which shot should lead, and a bio critique. No login, no password." },
+              { title: "Ready-to-Post Pack", desc: "We apply the recommended edit to your actual photo and crop it for Instagram, Hinge or LinkedIn — download it ready to post. No editing app, no tutorials." },
+              { title: "Style Passport", desc: "Your face shape, power colours, metals, frames, scent and grooming in one keepable card — carry it to the salon, the optician, or mid-shop." },
+              { title: "‘Which one should I post?’", desc: "Drop your candidate photos and an on-device AI ranks them lead / keep / cut, with the reason for each. Photos never leave your device." },
+              { title: "Occasion Kits", desc: "Getting ready for a date, interview or shaadi? An instant kit — what to wear from your own colours, how to groom, and which photo to use." },
               { title: "Full visual breakdown", desc: "7-dimension analysis: lighting, clarity, composition, background control, color signal, premium signal, and overall consistency." },
               { title: "Detailed photo-quality issues", desc: "Every issue affecting your photo quality, ranked by severity. No fluff — just what matters." },
               { title: "Status archetype", desc: "See which of 11 status archetypes your presentation matches and which direction to upgrade." },
@@ -71,7 +76,7 @@ export default function AuraReportPage() {
               { title: "Budget upgrade plan", desc: "From free tweaks to ₹25,000 — ranked by impact per rupee so you never waste money on the wrong upgrade." },
               { title: "Marketplace recommendations", desc: "Products matched to your archetype, budget, and biggest leak. Not random shopping." },
               { title: "Goal-specific strategy", desc: "Advice tailored to your goal — dating, Instagram, college, office, or general glow-up." },
-              { title: "Shareable card", desc: "Generate a clean Aura Score card without exposing your photo. Built to share." },
+              { title: "Shareable glow-up card", desc: "A before → after card from your auto-fixed photo with your score — or a clean score card without your photo. Built to share." },
               { title: "Print / save report", desc: "Export your full report as a printable page. Keep it, share it, track your progress." },
             ].map((f) => (
               <Card key={f.title} hover>
