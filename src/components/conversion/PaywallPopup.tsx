@@ -10,6 +10,10 @@ interface PaywallPopupProps {
   onClose: () => void;
   auditId: string;
   trigger?: string; // what they tried to unlock
+  /** The user's measured score, so the modal speaks to their actual result. */
+  score?: number | null;
+  /** How many fixable issues were found — concrete, personalised urgency. */
+  issueCount?: number;
 }
 
 const FEATURES = [
@@ -25,8 +29,11 @@ const FEATURES = [
   { icon: "🛍️", text: "Personalized product picks — styled for your look & budget" },
 ];
 
-export function PaywallPopup({ open, onClose, auditId, trigger }: PaywallPopupProps) {
+export function PaywallPopup({ open, onClose, auditId, trigger, score, issueCount }: PaywallPopupProps) {
   if (!open) return null;
+
+  const hasScore = typeof score === "number";
+  const issues = issueCount ?? 0;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
@@ -54,6 +61,29 @@ export function PaywallPopup({ open, onClose, auditId, trigger }: PaywallPopupPr
               <p className="mt-1 text-xs text-[#857b6e]">{trigger} is inside — plus everything below</p>
             )}
           </div>
+
+          {/* Personalised banner — mirror their actual result, not a generic pitch */}
+          {hasScore && (
+            <div className="mb-5 rounded-xl border border-[#E14434]/20 bg-[#E14434]/[0.05] px-4 py-3 text-center">
+              <p className="text-sm text-[#1C1917]">
+                You scored <span className="font-bold">{score}/100</span>
+                {issues > 0 && (
+                  <>
+                    {" · "}
+                    <span className="font-bold text-[#B23A25]">
+                      {issues} fixable issue{issues !== 1 ? "s" : ""}
+                    </span>{" "}
+                    found
+                  </>
+                )}
+              </p>
+              <p className="mt-0.5 text-[11px] text-[#857b6e]">
+                {issues > 0
+                  ? "Every fix — ranked by measured impact — is inside."
+                  : "See exactly how far this photo can go."}
+              </p>
+            </div>
+          )}
 
           {/* What you get */}
           <div className="mb-5 space-y-2.5">

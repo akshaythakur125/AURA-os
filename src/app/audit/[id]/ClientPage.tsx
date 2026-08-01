@@ -1927,7 +1927,7 @@ export default function AuditDetailPage() {
           />
         </div>
       )}
-    <PaywallPopup open={paywallOpen} onClose={() => setPaywallOpen(false)} auditId={audit?.id || ""} trigger={paywallTrigger} />
+    <PaywallPopup open={paywallOpen} onClose={() => setPaywallOpen(false)} auditId={audit?.id || ""} trigger={paywallTrigger} score={displayResult?.auraScore ?? null} issueCount={displayResult?.statusLeaks?.length ?? 0} />
       </Container>
     </>
   );
