@@ -6,9 +6,14 @@ import type { ProductType } from "@/types/payment";
 export const dynamic = "force-dynamic";
 
 // ponytail: read env vars inside handler to avoid module-scope capture issues
+function envValue(key: string): string {
+  return String(process.env[key] || "").trim().replace(/^(['"])(.*)\1$/, "$2").trim();
+}
+
 async function createRazorpayOrder(amount: number, receipt: string) {
-  const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || "";
-  const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || "";
+  const RAZORPAY_KEY_ID = envValue("RAZORPAY_KEY_ID");
+  const RAZORPAY_KEY_SECRET = envValue("RAZORPAY_KEY_SECRET");
+  if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) throw new Error("Razorpay credentials missing");
   const auth = Buffer.from(`${RAZORPAY_KEY_ID}:${RAZORPAY_KEY_SECRET}`).toString("base64");
   const res = await fetch("https://api.razorpay.com/v1/orders", {
     method: "POST",
@@ -91,7 +96,7 @@ export async function POST(request: Request) {
 
     return Response.json({
       orderId: order.id,
-      razorpayKeyId: process.env.RAZORPAY_KEY_ID || "",
+      razorpayKeyId: envValue("NEXT_PUBLIC_RAZORPAY_KEY_ID") || envValue("RAZORPAY_KEY_ID"),
       amount: finalAmount,
       currency: "INR",
       productName,

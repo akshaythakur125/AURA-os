@@ -8,7 +8,10 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 function present(...keys: string[]): boolean {
-  return keys.every((k) => Boolean(process.env[k] && String(process.env[k]).trim()));
+  return keys.every((k) => {
+    const v = String(process.env[k] || "").trim().replace(/^(['"])(.*)\1$/, "$2").trim();
+    return Boolean(v);
+  });
 }
 
 export async function GET() {

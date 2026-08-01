@@ -1,6 +1,7 @@
 const env = process.env;
-const has = (k) => Boolean((env[k] || "").trim());
-const defaulted = (k, v) => (env[k] || "").trim().toUpperCase() === v;
+const val = (k) => (env[k] || "").trim().replace(/^(['"])(.*)\1$/, "$2").trim();
+const has = (k) => Boolean(val(k));
+const defaulted = (k, v) => val(k).toUpperCase() === v;
 
 let failed = false;
 const rows = [];
