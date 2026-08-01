@@ -1,6 +1,6 @@
 import { generatePortraits, photoshootConfigured } from "@/lib/photoshoot/imageGenClient";
 import { getPhotoshootStyle } from "@/lib/photoshoot/stylePresets";
-import { isAdminUnlockCode, verifyRazorpayOrderPaid } from "@/lib/payments/serverUnlock";
+import { isAdminUnlockCode, verifyRazorpayPaymentCaptured } from "@/lib/payments/serverUnlock";
 
 export const dynamic = "force-dynamic";
 
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     aesthetic?: string;
     count?: number;
     consent?: boolean;
-    orderId?: string;
+    paymentId?: string;
     code?: string;
   };
   try {
@@ -81,10 +81,10 @@ export async function POST(request: Request) {
     return Response.json({ error: "invalid_style" }, { status: 400 });
   }
 
-  // Payment gate: a real paid order, or the founder's admin code.
+  // Payment gate: a real captured payment, or the founder's admin code.
   const admin = typeof body.code === "string" && isAdminUnlockCode(body.code);
   if (!admin) {
-    const paid = await verifyRazorpayOrderPaid(body.orderId || "");
+    const paid = await verifyRazorpayPaymentCaptured(body.paymentId || "");
     if (!paid) {
       return Response.json({ error: "payment_required" }, { status: 402 });
     }

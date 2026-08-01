@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { Badge } from "@/components/ui/Badge";
 import { CountUp } from "@/components/ui/CountUp";
@@ -113,6 +114,30 @@ export function CelebrityMatch({ matches, userImage }: { matches: MatchResult[];
             </div>
           )}
         </div>
+      </FadeInView>
+
+      {/* Upsell — turn this match into a real AI photoshoot */}
+      <FadeInView delay={60}>
+        <Link
+          href={`/photoshoot?aesthetic=${encodeURIComponent(`${top.celebrity.name} — ${top.celebrity.style}`)}`}
+          className="group block overflow-hidden rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 to-red-500/5 p-4 transition hover:border-amber-500/50"
+        >
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-red-500 text-xl">
+              📸
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-[#1c1917]">
+                Get an AI photoshoot in the {top.celebrity.name.split(" ")[0]} look
+              </p>
+              <p className="mt-0.5 text-[11px] text-[#857b6e]">
+                Upload a few selfies → studio portraits in this exact aesthetic, ready for Insta,
+                LinkedIn &amp; dating.
+              </p>
+            </div>
+            <span className="shrink-0 text-amber-600 transition group-hover:translate-x-0.5">→</span>
+          </div>
+        </Link>
       </FadeInView>
 
       {/* Other matches */}
