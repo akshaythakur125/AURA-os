@@ -101,9 +101,13 @@ export function CelebrityMatch({ matches }: { matches: MatchResult[] }) {
                 className="rounded-xl border border-[#1c1917]/10 bg-[#1c1917]/[0.03] p-4"
               >
                 <div className="mb-2 flex items-center gap-3">
-                  <span className="text-2xl">{match.celebrity.photo}</span>
-                  <div>
-                    <div className="text-sm font-semibold text-[#1C1917]">
+                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-amber-500/25">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={match.celebrity.lookImage} alt={`${match.celebrity.name} look`} className="h-full w-full object-cover" loading="lazy" />
+                    <span className="absolute right-0.5 top-0.5 rounded-full bg-black/45 px-1 text-[11px] leading-tight">{match.celebrity.photo}</span>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-semibold text-[#1C1917]">
                       {match.celebrity.name}
                     </div>
                     <div className="text-[10px] text-[#857b6e]">
