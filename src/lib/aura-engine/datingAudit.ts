@@ -1,4 +1,5 @@
 import type { Audit, BioAnalysis, PromptAnalysis, RedFlag, SuggestedBio, DatingProfileReport, PhotoStrategy, PlatformTip } from "@/types/audit";
+import { extractProfileSignals, openersFromSignals, topBioHook, phraseList, type ProfileSignals } from "./profileSignals";
 
 /**
  * Photo strategy — the highest-leverage part of any dating profile, and the one
@@ -49,17 +50,21 @@ function platformPlaybook(): PlatformTip[] {
   ];
 }
 
-/** Opening hooks — ready-to-use lines engineered to make matches message first. */
-function generateOpeningHooks(tone: string): string[] {
-  const hooks = [
+/**
+ * Opening hooks — lead with lines grounded in what they actually wrote, then
+ * top up with strong generics so there are always at least three.
+ */
+function generateOpeningHooks(signals: ProfileSignals): string[] {
+  const grounded = openersFromSignals(signals);
+  const generic = [
     "End your bio with a low-stakes question they can answer in five words — e.g. 'Settle a debate: is cereal a soup?'",
     "Drop one oddly specific detail ('I make the third-best butter chicken in my building') — specifics get replies, generic 'I love food' gets ignored.",
     "Give them a fill-in-the-blank: 'The way to my heart is ____ (wrong answers encouraged)' — it's almost impossible not to reply to.",
   ];
-  if (tone.includes("humorous")) hooks.push("Lean into your humour with a bit: 'Two truths and a lie — I've met a celebrity, I can do a backflip, I reply within a day.'");
-  if (tone.includes("ambitious")) hooks.push("Turn ambition into a hook, not a flex: 'Building something cool — will trade the story for a good coffee rec.'");
-  if (tone.includes("thoughtful")) hooks.push("Invite a real answer: 'Best thing you've read/watched lately? I'm collecting recommendations from strangers with taste.'");
-  return hooks.slice(0, 4);
+  if (signals.tone.includes("humorous")) generic.push("Lean into your humour with a bit: 'Two truths and a lie — I've met a celebrity, I can do a backflip, I reply within a day.'");
+  if (signals.tone.includes("ambitious")) generic.push("Turn ambition into a hook, not a flex: 'Building something cool — will trade the story for a good coffee rec.'");
+  if (signals.tone.includes("thoughtful")) generic.push("Invite a real answer: 'Best thing you've read/watched lately? I'm collecting recommendations from strangers with taste.'");
+  return [...grounded, ...generic].slice(0, 4);
 }
 
 const NEGATIVE_WORDS = ["hate", "boring", "sucks", "awful", "terrible", "worst", "ugly", "dull", "lame", "cringe", "dead", "hopeless", "lonely", "alone", "nobody", "nothing"];
@@ -68,30 +73,36 @@ const LOW_EFFORT_PATTERNS = [/^\.+$/, /^……+$/, /^whats up/i, /^hey$/i, /^idk
 const AGGRESSIVE_WORDS = ["swipe left if", "don't waste my time", "if you can't handle me", "no drama", "you should be", "must have", "require", "demand"];
 const DESPERATE_SIGNS = ["anyone interested", "please like me", "i need", "desperate", "i'll take anyone", "low standards", "begging", "any girl", "any guy"];
 
-function analyzeBio(bio: string): BioAnalysis {
+function analyzeBio(bio: string, signals: ProfileSignals): BioAnalysis {
   const cleaned = bio.trim();
   const charCount = cleaned.length;
 
   const length: BioAnalysis["length"] = charCount < 30 ? "too_short" : charCount > 500 ? "too_long" : "good";
   const effort: BioAnalysis["effort"] = charCount < 50 ? "low" : charCount > 150 ? "high" : "medium";
 
-  const toneWords: string[] = [];
-  if (/fun|love|happ|excite|adventure|explore/i.test(cleaned)) toneWords.push("positive");
-  if (/ambiti|driven|work|career|passion|goal/i.test(cleaned)) toneWords.push("ambitious");
-  if (/chill|relax|casual|easy|simple|laid.back/i.test(cleaned)) toneWords.push("casual");
-  if (/funny|humor|joke|wit|sarcasm|laugh/i.test(cleaned)) toneWords.push("humorous");
-  if (/deep|meaning|think|philosoph|soul|mind|connect/i.test(cleaned)) toneWords.push("thoughtful");
-  const tone = toneWords.length > 0 ? toneWords.join(", ") : "neutral / unclear";
+  const tone = signals.tone.length > 0 ? signals.tone.join(", ") : "neutral / unclear";
 
-  const hooksReader = /you|we|let's|together|someone who|looking for|if you|a guy who|a girl who/i.test(cleaned);
-  const showsPersonality = charCount > 60 && /i (love|enjoy|like|am|do|play|read|watch|create|make|code|cook|draw)/i.test(cleaned);
+  const hooksReader = /you|we|let's|together|someone who|looking for|if you|a guy who|a girl who|\?/i.test(cleaned);
+  // Real, named specifics beat a keyword regex — if we extracted an interest,
+  // food, job or city, the bio genuinely shows personality.
+  const namedSpecifics = signals.interests.length + signals.foods.length + (signals.profession ? 1 : 0) + (signals.city ? 1 : 0);
+  const showsPersonality = charCount > 40 && namedSpecifics > 0;
+
+  // Echo their actual details back so the feedback can't be mistaken for generic.
+  const detailList = phraseList([...signals.interests.slice(0, 2), ...signals.foods.slice(0, 1)]);
 
   let feedback = "";
-  if (charCount < 30) feedback = "Your bio is very short, which can read as low effort. Adding a sentence about your interests or what you are looking for helps.";
-  else if (charCount > 500) feedback = "Your bio is quite long. Consider trimming it to keep the most interesting parts — shorter bios get read more often.";
-  else if (!hooksReader) feedback = "Your bio describes you but does not invite engagement. Try adding a question or a 'we' statement to start conversations.";
-  else if (!showsPersonality) feedback = "Your bio covers the basics but could use a specific detail that shows your personality — a hobby, a quirk, or a specific interest.";
-  else feedback = "Your bio has good structure. To make it stronger, consider adding one specific conversation starter.";
+  if (charCount < 30) {
+    feedback = "Your bio is very short, which reads as low effort — matches assume you didn't bother. Add two sentences: one specific thing you're into, and one line that invites a reply.";
+  } else if (charCount > 500) {
+    feedback = "Your bio is long enough that most people won't finish it. Cut to the two most interesting lines — shorter bios get read all the way through.";
+  } else if (!showsPersonality) {
+    feedback = "Your bio covers the basics but stays generic — nothing in it is unmistakably you. Name one concrete thing (a hobby, a dish, a place you love), because a specific detail is what a stranger can actually reply to.";
+  } else if (!hooksReader) {
+    feedback = `Good — you mention ${detailList || "real details"}, so your personality comes through. What's missing is a way in: end on a question or a 'you' line so a match has an obvious reason to message.`;
+  } else {
+    feedback = `Strong bio — ${detailList ? `${detailList} give it real personality` : "it has personality"} and it invites a reply. Keep every line earning its place and you're in the top tier.`;
+  }
 
   return { length, effort, tone, hooksReader, showsPersonality, feedback };
 }
@@ -204,51 +215,104 @@ function detectRedFlags(texts: string[]): RedFlag[] {
   return flags.slice(0, 8);
 }
 
-function generateSuggestedBios(audit: Audit): SuggestedBio[] {
-  const d = audit.deepInput;
-  const style = d?.styleIntent || "clean";
-  const goal = audit.goal;
+function cap(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
-  const versions: { version: string; text: string; whyItWorks: string }[] = [];
+/**
+ * Bios built from the user's OWN extracted details — their real interests,
+ * work, city and go-to food — so the suggestions read as written for them.
+ * Falls back to clearly-labelled starter templates only when there's genuinely
+ * nothing to work with.
+ */
+function personalisedBios(signals: ProfileSignals, confident: boolean): SuggestedBio[] {
+  const top = signals.interests.slice(0, 3);
+  const hook = topBioHook(signals);
+  const food = signals.foods[0];
+  const place = signals.city;
+  const prof = signals.profession;
+  const bios: SuggestedBio[] = [];
 
-  if (goal === "dating" || goal === "instagram") {
-    versions.push({
-      version: "The Balanced",
-      text: "I spend most of my time between work, the gym, and finding the best coffee spots in town. Looking for someone who is down for a Sunday market visit or a random road trip. If you can suggest a better playlist than mine, we are already off to a good start.",
-      whyItWorks: "It shows routine + hobbies + a conversation starter (playlist challenge). Balanced effort without oversharing.",
-    });
-    versions.push({
-      version: "The Specific Hook",
-      text: "I am a [your profession] by day and a [your hobby] enthusiast by night. Currently trying to perfect my mom's biryani recipe and learning guitar. Tell me your favorite song to play on a road trip — I will add it to my playlist.",
-      whyItWorks: "Shows personality, ambition, and ends with a question that invites reply. Specificity signals confidence.",
-    });
-    if (d?.selfRatedConfidence === "high" || style === "bold") {
-      versions.push({
-        version: "The Direct",
-        text: "I know what I bring to the table. Looking for someone who has their own menu. Let's skip the small talk and grab a coffee this week. Bonus points if you can beat me at chess or foosball.",
-        whyItWorks: "Direct and confident without being aggressive. It sets expectations and filters for confident matches.",
-      });
-    } else {
-      versions.push({
-        version: "The Casual Opener",
-        text: "Pretty simple — I enjoy good food, great conversations, and exploring new places. Recently got into pottery (my first vase looked like a potato, but it is the thought that counts). Send me your best travel story if you want to skip the boring intro.",
-        whyItWorks: "Honest and self-deprecating in a charming way. The pottery detail is memorable and the last line invites a response.",
-      });
-    }
-  } else {
-    versions.push({
-      version: "The Professional",
-      text: "Professional working in [industry] with a passion for [interest]. I value genuine connections, good conversations, and people who are intentional about where they are headed. Looking for someone with a spark.",
-      whyItWorks: "Professional but warm, suitable for office or college contexts.",
-    });
-    versions.push({
-      version: "The Simple Approach",
-      text: "Down-to-earth person who values honesty and good vibes. When I'm not working/studying, you will find me exploring new restaurants or catching up on [show/book genre]. Let's start with coffee and see where it goes.",
-      whyItWorks: "Low-pressure and approachable. It sets realistic expectations while showing personality.",
+  // 1 — Tightened & specific: their real details, cleaned into a punchy bio.
+  {
+    const parts: string[] = [];
+    if (prof) parts.push(`${cap(prof)}${place ? `, based in ${place}` : ""}.`);
+    else if (place) parts.push(`${place}-based.`);
+    if (top.length) parts.push(`Off the clock: ${phraseList(top)}.`);
+    if (food) parts.push(`Firm believer that ${food} fixes most bad days.`);
+    parts.push(hook || "Tell me the most niche thing you're weirdly passionate about — I'll match it.");
+    const drivers = [prof && "your work", top.length > 0 && "your interests", food && "your go-to food"].filter(Boolean).join(", ");
+    bios.push({
+      version: "Tightened & specific",
+      text: parts.join(" ").trim(),
+      whyItWorks: `Built from what you actually wrote${drivers ? ` (${drivers})` : ""} — that specificity is what makes a profile read as real instead of copy-pasted, and it ends on a question so a match has an obvious way in.`,
     });
   }
 
-  return versions;
+  // 2 — Hook-first: lead with the most distinctive interest, not a résumé line.
+  {
+    const lead = top[0] || "the stuff I actually care about";
+    const parts: string[] = [`Ask me about ${lead} and you won't get me to shut up.`];
+    const rest = [top[1], top[2]].filter(Boolean) as string[];
+    if (rest.length) parts.push(`Also deep into ${phraseList(rest)}.`);
+    if (place) parts.push(`Around ${place}.`);
+    parts.push(hook || "Tell me your most niche obsession and I'll raise you mine.");
+    bios.push({
+      version: "Hook-first",
+      text: parts.join(" ").trim(),
+      whyItWorks: "Opens on your strongest interest instead of a job title, so the first thing they read is a conversation, not a list — ideal for Hinge prompts and Bumble where a reply has to feel easy.",
+    });
+  }
+
+  // 3 — tone-matched third option.
+  if (confident) {
+    bios.push({
+      version: "Direct & confident",
+      text: `I know what I bring to the table${prof ? ` ${prof}, sorted, low on drama` : ""} — looking for someone just as clear about theirs.${top[0] ? ` Fastest way in: talk to me about ${top[0]}.` : ""} Let's skip the small talk and grab a coffee this week.`,
+      whyItWorks: "Direct without being aggressive — it sets expectations and quietly filters for people who match your confidence. Works best when your photos already carry warmth.",
+    });
+  } else {
+    bios.push({
+      version: "Warm & self-aware",
+      text: `Pretty low-key — big on ${top[0] || "good food and better conversations"}${top[1] ? `, and enthusiastically mediocre at ${top[1]}` : ""}. ${hook || "Send me your best story if you want to skip the boring intro."}`,
+      whyItWorks: "Honest and a little self-deprecating, which reads as secure, not insecure. The specific interest makes you memorable and the last line hands them a reason to reply.",
+    });
+  }
+
+  return bios;
+}
+
+/** Clearly-labelled starter bios — only used when the profile text is basically empty. */
+function starterBios(goal: string): SuggestedBio[] {
+  if (goal === "dating" || goal === "instagram") {
+    return [
+      {
+        version: "Starter — swap the brackets",
+        text: "I'm a [your work] with a [your hobby] problem. Currently [something you're into right now]. Tell me [a question about a thing you love] — best answer wins a coffee.",
+        whyItWorks: "You haven't given us enough to personalise yet — fill each bracket with one true, specific detail and this becomes yours. Specifics beat adjectives every time.",
+      },
+      {
+        version: "Starter — the one-liner",
+        text: "[City]-based, mildly obsessed with [one specific thing]. Warning: I will absolutely send you [a meme / a playlist / a food rec] unprompted.",
+        whyItWorks: "Short, punchy, and built around one memorable detail — swap the brackets for your real ones. Great for Tinder where nobody reads paragraphs.",
+      },
+    ];
+  }
+  return [
+    {
+      version: "Starter — swap the brackets",
+      text: "[Your work] who cares about [one thing you actually care about]. Off the clock you'll find me [your go-to activity]. Looking for someone I can [do that thing] with.",
+      whyItWorks: "Add your real details in place of the brackets — one specific interest does more work than three vague adjectives.",
+    },
+  ];
+}
+
+function generateSuggestedBios(audit: Audit, signals: ProfileSignals): SuggestedBio[] {
+  const confident = audit.deepInput?.selfRatedConfidence === "high" || audit.deepInput?.styleIntent === "bold";
+  if (signals.richness === "empty" || signals.richness === "thin") {
+    return starterBios(audit.goal);
+  }
+  return personalisedBios(signals, confident);
 }
 
 function calculateTextScore(bio: string, prompts: { prompt: string; answer: string }[], redFlags: RedFlag[]): number {
@@ -293,10 +357,11 @@ export function generateDatingProfileReport(audit: Audit): DatingProfileReport {
 
   const allTexts = [bio, ...prompts.map((p) => p.answer), texts?.captions || ""].filter(Boolean);
 
-  const bioAnalysis = analyzeBio(bio);
+  const signals = extractProfileSignals(allTexts);
+  const bioAnalysis = analyzeBio(bio, signals);
   const promptAnalysis = analyzePrompts(prompts);
   const redFlags = detectRedFlags(allTexts);
-  const suggestedBios = generateSuggestedBios(audit);
+  const suggestedBios = generateSuggestedBios(audit, signals);
   const textScore = calculateTextScore(bio, prompts, redFlags);
 
   let overallAdvice = "";
@@ -318,7 +383,7 @@ export function generateDatingProfileReport(audit: Audit): DatingProfileReport {
     suggestedBios,
     photoStrategy: analyzePhotoStrategy(audit),
     platformTips: platformPlaybook(),
-    openingHooks: generateOpeningHooks(bioAnalysis.tone),
+    openingHooks: generateOpeningHooks(signals),
     overallAdvice,
     generatedAt: new Date().toISOString(),
   };
