@@ -695,11 +695,11 @@ export default function AuditDetailPage() {
               <div className="mb-6 grid grid-cols-2 gap-3 rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-4 sm:grid-cols-4">
                 <div>
                   <div className="text-xs text-[#857b6e]">Width</div>
-                  <div className="text-sm text-[#1C1917]">{audit.imageMeta.width || "ΓÇö"} px</div>
+                  <div className="text-sm text-[#1C1917]">{audit.imageMeta.width || "—"} px</div>
                 </div>
                 <div>
                   <div className="text-xs text-[#857b6e]">Height</div>
-                  <div className="text-sm text-[#1C1917]">{audit.imageMeta.height || "ΓÇö"} px</div>
+                  <div className="text-sm text-[#1C1917]">{audit.imageMeta.height || "—"} px</div>
                 </div>
                 <div>
                   <div className="text-xs text-[#857b6e]">Original Size</div>
@@ -708,7 +708,7 @@ export default function AuditDetailPage() {
                 <div>
                   <div className="text-xs text-[#857b6e]">Compressed</div>
                   <div className="text-sm text-[#1C1917]">
-                    {audit.imageMeta.compressedSize ? formatBytes(audit.imageMeta.compressedSize) : "ΓÇö"}
+                    {audit.imageMeta.compressedSize ? formatBytes(audit.imageMeta.compressedSize) : "—"}
                   </div>
                 </div>
               </div>
@@ -815,7 +815,7 @@ export default function AuditDetailPage() {
 
               {reportTab === "report" && (
               <>
-              {/* ΓöÇΓöÇΓöÇ HERO: The Leak ΓöÇΓöÇΓöÇ */}
+              {/* ─── HERO: The Leak ─── */}
               {(() => {
                 const sortedLeaks = [...(displayResult.statusLeaks ?? [])].sort(
                   (a, b) => (a.severity === "high" ? 0 : a.severity === "medium" ? 1 : 2) - (b.severity === "high" ? 0 : b.severity === "medium" ? 1 : 2)
@@ -852,14 +852,14 @@ export default function AuditDetailPage() {
                           </div>
                           {otherLeaks.length > 0 && (
                             <p className="mt-4 text-center text-xs text-[#857b6e]">
-                              +{otherLeaks.length} more {otherLeaks.length === 1 ? "leak" : "leaks"} found ΓÇö see below
+                              +{otherLeaks.length} more {otherLeaks.length === 1 ? "leak" : "leaks"} found — see below
                             </p>
                           )}
                         </div>
                       </FadeInView>
                     )}
 
-                    {/* ΓöÇΓöÇΓöÇ Score Card ΓöÇΓöÇΓöÇ */}
+                    {/* ─── Score Card ─── */}
                     <ReshootCelebration audit={audit!} />
 
                     <FadeInView delay={100}>
@@ -1091,7 +1091,7 @@ export default function AuditDetailPage() {
                     </FadeInView>
                     </LockedSection>
 
-                    {/* ΓöÇΓöÇΓöÇ Remaining Leaks (Blurred Previews) ΓöÇΓöÇΓöÇ */}
+                    {/* ─── Remaining Leaks (Blurred Previews) ─── */}
                     {otherLeaks.length > 0 && (
                       <FadeInView delay={150}>
                         <div className="mb-6">
@@ -1113,7 +1113,7 @@ export default function AuditDetailPage() {
                                 {leak.evidence && (
                                   <p className="mt-1 text-[11px] font-medium text-[#B23A25]">📊 {leak.evidence}</p>
                                 )}
-                                {/* Blurred content ΓÇö visible shape, unreadable text */}
+                                {/* Blurred content — visible shape, unreadable text */}
                                 <div className="mt-2 blur-sm cursor-pointer" onClick={() => { setPaywallTrigger("Status leak details"); setPaywallOpen(true); }}>
                                   <p className="text-xs text-[#6f675e]">{leak.description}</p>
                                   <p className="mt-1 text-xs text-[#857b6e]">
@@ -1551,7 +1551,7 @@ export default function AuditDetailPage() {
                 </FadeInView>
               )}
 
-              {/* ΓöÇΓöÇΓöÇ Dating Profile Report Display ΓöÇΓöÇΓöÇ */}
+              {/* ─── Dating Profile Report Display ─── */}
               {audit.datingProfileReport && (
                 <FadeInView>
                   <Card className="mb-6">
@@ -1690,7 +1690,7 @@ export default function AuditDetailPage() {
                 </FadeInView>
               )}
 
-              {/* ΓöÇΓöÇΓöÇ Glow-Up Plan Display ΓöÇΓöÇΓöÇ */}
+              {/* ─── Glow-Up Plan Display ─── */}
               {audit.glowupPlan && (
                 <FadeInView>
                 <Card className="mb-6">
