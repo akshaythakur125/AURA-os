@@ -60,6 +60,7 @@ import { ConversionFunnel } from "@/components/conversion/ConversionFunnel";
 import { PaywallPopup } from "@/components/conversion/PaywallPopup";
 import { CelebrityMatch } from "@/components/celebrity/CelebrityMatch";
 import { SmartInsights } from "@/components/report/SmartInsights";
+import { PhotoReadCard } from "@/components/report/PhotoReadCard";
 import { ScoreBreakdown } from "@/components/report/ScoreBreakdown";
 import { ImprovementRoadmap } from "@/components/report/ImprovementRoadmap";
 import { DynamicGoalAdvice } from "@/components/report/DynamicGoalAdvice";
@@ -1037,6 +1038,13 @@ export default function AuditDetailPage() {
                         <BestPhotoCard currentId={id} />
                         <GlowupShareCard content={displayFull} auditId={id} />
                         <FullReport content={displayFull} />
+                      </div>
+                    )}
+                    {displayResult.imageMetrics != null && (
+                      <div className="mb-6">
+                        <LockedSection locked={!isUnlocked} label="Your Photo, Read" unlockHref={unlockHref}>
+                          <PhotoReadCard imageDataUrl={audit?.imageDataUrl} metrics={displayResult.imageMetrics as any} />
+                        </LockedSection>
                       </div>
                     )}
                     <LockedSection locked={!isUnlocked} label="Strongest Signals" unlockHref={unlockHref}>
