@@ -3,7 +3,7 @@
  * Change a price here → it updates the entire website.
  */
 
-export type PaymentProductId = "aura_report" | "dating_audit" | "glowup_plan";
+export type PaymentProductId = "aura_report" | "dating_audit" | "glowup_plan" | "aura_photoshoot";
 
 export interface PaymentProduct {
   id: PaymentProductId;
@@ -45,6 +45,21 @@ export const PAYMENT_PRODUCTS: Record<PaymentProductId, PaymentProduct> = {
       "Photo strategy — your lead photo + the 5-slot order that converts",
       "Platform playbook — tailored Hinge, Bumble & Tinder tactics",
       "Opening hooks engineered to make matches message first",
+    ],
+    isActive: true,
+  },
+  aura_photoshoot: {
+    id: "aura_photoshoot",
+    name: "AI Glow-Up Photoshoot",
+    price: 29900,
+    currency: "INR",
+    deliverables: [
+      "A studio-grade AI photoshoot generated from a few of your own selfies",
+      "Portraits rendered in your matched celebrity's aesthetic — lighting, wardrobe & mood",
+      "Ready-cropped sets for Instagram, LinkedIn & dating profiles",
+      "Multiple looks per style so you can pick your hero shot",
+      "High-resolution downloads you own and keep",
+      "Your uploads are used only to create your portraits, never shared or sold",
     ],
     isActive: true,
   },
