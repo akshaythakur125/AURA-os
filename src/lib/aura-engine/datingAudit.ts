@@ -7,16 +7,40 @@ import { extractProfileSignals, openersFromSignals, topBioHook, phraseList, type
  * free scan's measured signals when a photo is present.
  */
 function analyzePhotoStrategy(audit: Audit): PhotoStrategy {
-  const m = audit.fullReport?.freeResult?.imageMetrics as
-    | { lightingScore?: number; clarityScore?: number; scores?: { expression?: number; background?: number } }
-    | undefined;
-  const weakLight = typeof m?.lightingScore === "number" && m.lightingScore < 50;
-  const weakClarity = typeof m?.clarityScore === "number" && m.clarityScore < 45;
-  const strongExpression = (m?.scores?.expression ?? 0) >= 62;
+  const m = audit.fullReport?.freeResult?.imageMetrics;
+  // Real measured signals off the free scan (all guarded — there may be no photo).
+  const lightScore = m?.lightingScore;
+  const clarity = m?.clarityScore;
+  const faceB = m?.faceBrightness;
+  const bgB = m?.backgroundBrightness;
+  const centerX = m?.subjectCenterX;
+  const clutter = m?.backgroundObjects?.clutterLevel;
+  const presence = m?.presenceDetail;
+  const genuineSmile = presence?.genuineSmile === true;
+  const eyeContact = presence?.eyeContact === true;
+  const tilt = typeof presence?.tiltDeg === "number" ? Math.abs(presence.tiltDeg) : undefined;
 
-  const leadPhoto = strongExpression
-    ? "Lead with a clear, well-lit solo photo where your eyes are visible and you're giving a genuine smile — your scan shows expression is your strongest asset, so open on it."
-    : "Lead with a bright, front-facing solo shot from the chest up: eyes visible, soft natural light, clean background, a real (not forced) smile. This is the half-second decision photo — everything else only gets seen if this one lands.";
+  const weakLight = typeof lightScore === "number" && lightScore < 50;
+  const weakClarity = typeof clarity === "number" && clarity < 45;
+  const backlit = typeof faceB === "number" && typeof bgB === "number" && faceB < bgB - 14;
+  const offCentre = typeof centerX === "number" && Math.abs(centerX - 0.5) > 0.14;
+  const busyBg = typeof clutter === "number" && clutter > 55;
+  const offPct = offCentre ? Math.round(Math.abs((centerX as number) - 0.5) * 200) : 0;
+  const offSide = offCentre ? ((centerX as number) > 0.5 ? "right" : "left") : "";
+
+  // Lead on whatever the scan says is genuinely your strongest asset.
+  let leadPhoto: string;
+  if (genuineSmile && eyeContact) {
+    leadPhoto = "Lead with your smiling, eyes-to-camera solo shot — your scan measured a genuine smile with real eye contact, and that's the single most attractive thing a lead photo can carry. Open on your strength.";
+  } else if (genuineSmile) {
+    leadPhoto = "Lead on your smile — your scan read it as genuine (not forced), which is exactly what makes a lead photo warm. Just make sure your eyes are to the camera in the shot you pick.";
+  } else if (typeof lightScore === "number" && lightScore >= 65 && !backlit) {
+    leadPhoto = "Your lighting is your strong suit — the scan rated it well. Lead with a bright, front-facing solo shot from the chest up and let that clean light do the work; add a real (not posed) smile and you're set.";
+  } else {
+    leadPhoto = "Lead with a bright, front-facing solo shot from the chest up: eyes visible, soft natural light, clean background, a real (not forced) smile. This is the half-second decision photo — everything else only gets seen if this one lands.";
+  }
+  if (backlit) leadPhoto += " One fix first: your scan found your face came out darker than the background — turn to face the light instead of standing in front of it.";
+  else if (weakLight) leadPhoto += " One fix first: your scan flagged weak lighting — reshoot near a window in daylight; it's the cheapest points on this whole page.";
 
   const sequence: { slot: string; show: string }[] = [
     { slot: "1 · The hook", show: "Sharp solo headshot, natural light, genuine expression. No sunglasses, no group, no filter." },
@@ -26,17 +50,23 @@ function analyzePhotoStrategy(audit: Audit): PhotoStrategy {
     { slot: "5 · Warmth", show: "A candid with real emotion — laughing, relaxed. End the set on likeability, not another posed shot." },
   ];
 
-  const avoid: string[] = [
+  // Build the avoid-list from what the scan actually caught, most damaging first,
+  // then top up with the universal rules so there are always five.
+  const measured: string[] = [];
+  if (backlit) measured.push("Backlit shots like your scanned one — your face read darker than the background. Put the light in front of you, never behind.");
+  else if (weakLight) measured.push("Dark or yellow indoor lighting — your scan flagged weak light, and it looks even worse shrunk to a profile card. Shoot in daylight.");
+  if (busyBg) measured.push("A cluttered background — your scan read the scene behind you as busy, which splits attention. Shoot against a plain wall so you're the only thing to look at.");
+  if (offCentre) measured.push(`Framing yourself off to one side — your scan had you about ${offPct}% ${offSide} of centre; crop so your eyes sit on the upper third and you're centred.`);
+  if (weakClarity) measured.push("Soft / blurry shots — your scan flagged low sharpness. Wipe the lens and use the rear camera, not the front one.");
+  if (typeof tilt === "number" && tilt > 8) measured.push(`A tilted head like your scanned shot (~${Math.round(tilt)}°) — straighten up or the whole frame reads slightly off.`);
+
+  const universal = [
     "A group photo as photo #1 — matches can't tell which one is you and just swipe on.",
     "Sunglasses or a cap in every shot — hiding your eyes reads as hiding something.",
-    weakLight
-      ? "Dark or yellow indoor lighting — your scan flagged weak lighting, and it looks even worse shrunk to a profile card."
-      : "Heavy filters or beauty-smoothing — they read as 'catfish' and kill trust instantly.",
-    weakClarity
-      ? "Soft / blurry shots — your scan flagged low sharpness; wipe the lens and use the rear camera."
-      : "Mirror selfies with a cluttered background — they undercut every other signal you're sending.",
+    "Heavy filters or beauty-smoothing — they read as 'catfish' and kill trust instantly.",
     "Only stiff, posed photos — at least one genuine candid is what makes you look human and dateable.",
   ];
+  const avoid = [...measured, ...universal].slice(0, 5);
 
   return { leadPhoto, sequence, avoid };
 }
