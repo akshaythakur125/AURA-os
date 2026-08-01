@@ -408,26 +408,42 @@ function UnlockForm() {
                             unlockedAt: new Date().toISOString(),
                           });
                         } catch {}
-                        const updates: Record<string, unknown> = {};
-                        updates.unlockedProducts = [...(audit?.unlockedProducts || []), defaultProduct];
-                        // Persist the Razorpay ids so the report can re-verify the
-                        // payment against Razorpay on every load (hardens the paywall).
-                        updates.razorpayOrderId = response.razorpay_order_id;
-                        updates.razorpayPaymentId = response.razorpay_payment_id;
+                        // 1) Persist the unlock IMMEDIATELY. A paying customer must be
+                        //    unlocked even if the heavy report generation below fails, hangs,
+                        //    or the tab is closed mid-way. The report page self-heals the full
+                        //    content on load whenever it is missing, so this alone guarantees
+                        //    the buyer never pays and gets a locked report.
+                        const baseUpdates: Record<string, unknown> = {
+                          unlockedProducts: [...(audit?.unlockedProducts || []), defaultProduct],
+                          // Razorpay ids let the report re-verify against Razorpay on load.
+                          razorpayOrderId: response.razorpay_order_id,
+                          razorpayPaymentId: response.razorpay_payment_id,
+                        };
                         if (defaultProduct === "aura_report") {
-                          const fullContent = await generateFullAuraReport(audit!);
-                          updates.fullScore = fullContent.fullScore;
-                          updates.reportStatus = "unlocked";
-                          updates.unlockStatus = "unlocked";
-                          updates.fullReport = audit!.fullReport
-                            ? { ...audit!.fullReport, score: { ...audit!.fullReport.score, overall: fullContent.fullScore }, isPremium: true, fullContent }
-                            : { id: `${auditId}-report`, auditId, score: { overall: fullContent.fullScore, categories: { visual: fullContent.visualBreakdown.lighting, presentation: fullContent.visualBreakdown.clarity, signals: fullContent.visualBreakdown.colorSignal, cohesion: fullContent.visualBreakdown.overallConsistency } }, leaks: [], suggestions: [], summary: fullContent.detailedVerdict, createdAt: fullContent.generatedAt, isPremium: true, fullContent };
-                        } else if (defaultProduct === "dating_audit") {
-                          updates.datingProfileReport = generateDatingProfileReport(audit!);
-                        } else if (defaultProduct === "glowup_plan") {
-                          updates.glowupPlan = generateGlowupPlan(audit!);
+                          baseUpdates.reportStatus = "unlocked";
+                          baseUpdates.unlockStatus = "unlocked";
                         }
-                        updateAudit(auditId, updates as Partial<Audit>);
+                        updateAudit(auditId, baseUpdates as Partial<Audit>);
+
+                        // 2) Best-effort: generate the product content now for an instant
+                        //    experience. A failure here no longer costs the buyer their unlock.
+                        try {
+                          const enrich: Record<string, unknown> = {};
+                          if (defaultProduct === "aura_report") {
+                            const fullContent = await generateFullAuraReport(audit!);
+                            enrich.fullScore = fullContent.fullScore;
+                            enrich.fullReport = audit!.fullReport
+                              ? { ...audit!.fullReport, score: { ...audit!.fullReport.score, overall: fullContent.fullScore }, isPremium: true, fullContent }
+                              : { id: `${auditId}-report`, auditId, score: { overall: fullContent.fullScore, categories: { visual: fullContent.visualBreakdown.lighting, presentation: fullContent.visualBreakdown.clarity, signals: fullContent.visualBreakdown.colorSignal, cohesion: fullContent.visualBreakdown.overallConsistency } }, leaks: [], suggestions: [], summary: fullContent.detailedVerdict, createdAt: fullContent.generatedAt, isPremium: true, fullContent };
+                          } else if (defaultProduct === "dating_audit") {
+                            enrich.datingProfileReport = generateDatingProfileReport(audit!);
+                          } else if (defaultProduct === "glowup_plan") {
+                            enrich.glowupPlan = generateGlowupPlan(audit!);
+                          }
+                          if (Object.keys(enrich).length) updateAudit(auditId, enrich as Partial<Audit>);
+                        } catch (genErr) {
+                          console.warn("[unlock] post-payment content generation deferred to report page:", genErr);
+                        }
                         trackEvent({ eventName: "product_unlocked", auditId, productType: defaultProduct });
                         trackPH(EVENTS.PAYMENT_COMPLETED, { auditId, productType: defaultProduct, amount: finalPrice });
                         setStage("done");
