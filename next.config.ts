@@ -17,14 +17,14 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://cdn.razorpay.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https: images.unsplash.com",
       "font-src 'self'",
       // blob: lets the WebGL/glTF loader read the hero model's own bundled
       // textures (three.js fetches embedded resources via same-origin blob
       // URLs it creates itself). Still same-origin only — no external hosts.
-      "connect-src 'self' blob: https://*.supabase.co https://app.posthog.com https://us.i.posthog.com https://checkout.razorpay.com",
+      "connect-src 'self' blob: https://*.supabase.co https://app.posthog.com https://us.i.posthog.com https://checkout.razorpay.com https://lumberjack.razorpay.com",
       "frame-src https://api.razorpay.com https://checkout.razorpay.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
