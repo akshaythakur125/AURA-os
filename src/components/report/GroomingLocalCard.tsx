@@ -9,12 +9,14 @@ export interface NearbyPlace {
   type: string;
   area: string;
   rating: number;
+  totalRatings?: number;
   mapUrl: string;
   photoReference?: string | null;
   openNow?: boolean | null;
   priceLevel?: number | null;
   phone?: string | null;
   website?: string | null;
+  summary?: string | null;
 }
 
 interface Props {
@@ -91,16 +93,21 @@ function PlaceRow({ p }: { p: NearbyPlace }) {
       )}
       {/* Info */}
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-[#1C1917]">{p.name}</p>
+        <div className="flex items-baseline justify-between gap-2">
+          <p className="truncate text-sm font-medium text-[#1C1917]">{p.name}</p>
+          {p.type && <span className="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-[#B23A25]">{p.type}</span>}
+        </div>
         <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px]">
-          {p.rating > 0 && <span className="font-medium text-amber-500">★ {p.rating.toFixed(1)}</span>}
+          {p.rating > 0 && (
+            <span className="font-medium text-amber-500">★ {p.rating.toFixed(1)}{p.totalRatings ? <span className="font-normal text-[#857b6e]"> ({p.totalRatings.toLocaleString("en-IN")})</span> : null}</span>
+          )}
           {typeof p.priceLevel === "number" && p.priceLevel > 0 && (
             <span className="text-[#857b6e]">{"₹".repeat(p.priceLevel)}</span>
           )}
           {p.openNow === true && <span className="font-medium text-emerald-600">Open now</span>}
           {p.openNow === false && <span className="text-[#9c9184]">Closed</span>}
         </div>
-        <p className="mt-0.5 truncate text-[11px] text-[#9c9184]">{p.area}</p>
+        <p className="mt-0.5 truncate text-[11px] text-[#9c9184]">{p.summary || p.area}</p>
         <div className="mt-1.5 flex gap-1.5">
           {p.phone && (
             <a href={`tel:${p.phone}`} className="rounded-lg border border-[#1c1917]/12 px-2.5 py-1 text-[11px] font-medium text-[#4a443d] transition-colors hover:border-[#E14434]/40 hover:text-[#1C1917]">

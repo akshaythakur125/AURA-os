@@ -14,6 +14,8 @@ import { ScoreTrend } from "@/components/dashboard/ScoreTrend";
 import { StreakIndicator } from "@/components/dashboard/StreakIndicator";
 import { ImprovementCard } from "@/components/dashboard/ImprovementCard";
 import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
+import { DashboardPassport } from "@/components/dashboard/DashboardPassport";
+import { DashboardDailyBrief } from "@/components/dashboard/DashboardDailyBrief";
 import { getAudits, deleteAudit, getAuditStats } from "@/lib/storage/auditStore";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { getLocalUser, updateLocalUser } from "@/lib/storage/userStore";
@@ -143,6 +145,9 @@ export default function DashboardPage() {
 
       {!hasAudits && <EmptyDashboard />}
 
+      {/* Daily Aura Brief — weather-tuned daily companion; a reason to return */}
+      {hasAudits && <DashboardDailyBrief audits={audits} />}
+
       {/* Hero: Score Trend + Streak */}
       {hasAudits && (
         <div className="mb-8 grid gap-4 sm:grid-cols-2">
@@ -157,6 +162,9 @@ export default function DashboardPage() {
 
       {/* Improvement Celebration */}
       {hasAudits && <ImprovementCard audits={audits} />}
+
+      {/* Quick access to the keepable Style Passport (paid users) */}
+      {hasAudits && <DashboardPassport audits={audits} />}
 
       {/* Stats Row */}
       {hasAudits && stats && (

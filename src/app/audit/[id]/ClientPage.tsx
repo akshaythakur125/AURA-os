@@ -23,9 +23,11 @@ import { BestPhotoCard } from "@/components/report/BestPhotoCard";
 import { ReshootCelebration } from "@/components/report/ReshootCelebration";
 import { PhotoKitCard } from "@/components/report/PhotoKitCard";
 import { GroomingPicksCard } from "@/components/report/GroomingPicksCard";
+import { GroomingRoutineCard } from "@/components/report/GroomingRoutineCard";
 import { CompleteTheLookCard } from "@/components/report/CompleteTheLookCard";
 import { EditRecipeCard } from "@/components/report/EditRecipeCard";
 import { PresetDownloadCard } from "@/components/report/PresetDownloadCard";
+import { ReadyToPostPack } from "@/components/report/ReadyToPostPack";
 import { LockedSection } from "@/components/report/LockedSection";
 import { FeedbackPrompt } from "@/components/report/FeedbackPrompt";
 import { GroomingLocalCard, type NearbyPlace } from "@/components/report/GroomingLocalCard";
@@ -33,13 +35,20 @@ import { YourColorsCard } from "@/components/report/YourColorsCard";
 import { SkinDetailCard } from "@/components/report/SkinDetailCard";
 import { PresenceCard } from "@/components/report/PresenceCard";
 import { CapsuleWardrobeCard } from "@/components/report/CapsuleWardrobeCard";
+import { CapsuleChecklistCard } from "@/components/report/CapsuleChecklistCard";
 import { FaceShapeCard } from "@/components/report/FaceShapeCard";
+import { StylePassport } from "@/components/report/StylePassport";
+import { OccasionKitCard } from "@/components/report/OccasionKitCard";
+import { DateSpotsCard } from "@/components/report/DateSpotsCard";
+import { FragranceFinderCard } from "@/components/report/FragranceFinderCard";
+import { ImprovementConcierge } from "@/components/report/ImprovementConcierge";
 import { PhotoRankerWidget } from "@/components/vision/PhotoRankerWidget";
 import { AiPhotoReadCard } from "@/components/report/AiPhotoReadCard";
 import { GlowupTracker } from "@/components/report/GlowupTracker";
 import { ProgressProofCard } from "@/components/report/ProgressProofCard";
 import { buildDatingPlaybookHtml } from "@/lib/share/datingArtifact";
 import { DatingCoachVoice } from "@/components/dating/DatingCoachVoice";
+import { AiBioRewrite } from "@/components/dating/AiBioRewrite";
 import { downloadTextFile } from "@/lib/share/download";
 import { Scene3DAccent } from "@/components/hero/Scene3DAccent";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
@@ -60,7 +69,10 @@ import { ConversionFunnel } from "@/components/conversion/ConversionFunnel";
 import { PaywallPopup } from "@/components/conversion/PaywallPopup";
 import { CelebrityMatch } from "@/components/celebrity/CelebrityMatch";
 import { SmartInsights } from "@/components/report/SmartInsights";
+import { PhotoReadCard } from "@/components/report/PhotoReadCard";
+import { GridCheck } from "@/components/report/GridCheck";
 import { ScoreBreakdown } from "@/components/report/ScoreBreakdown";
+import { PlatformFitCard } from "@/components/report/PlatformFitCard";
 import { ImprovementRoadmap } from "@/components/report/ImprovementRoadmap";
 import { DynamicGoalAdvice } from "@/components/report/DynamicGoalAdvice";
 import { SignalSculpture, SignalSculptureFallback } from "@/components/report/SignalSculpture";
@@ -385,6 +397,8 @@ export default function AuditDetailPage() {
         const im = report.imageMetrics;
         const matches = matchCelebrity({
           goal: audit.goal || "dating",
+          gender: audit.gender,
+          undertone: im?.undertone?.undertone,
           lightingScore: im?.lightingScore ?? 50,
           groomingScore: im?.clarityScore ?? 50,
           outfitScore: im?.contrast ?? 50,
@@ -682,11 +696,11 @@ export default function AuditDetailPage() {
               <div className="mb-6 grid grid-cols-2 gap-3 rounded-xl border border-[#1c1917]/[0.08] bg-[#1c1917]/[0.03] p-4 sm:grid-cols-4">
                 <div>
                   <div className="text-xs text-[#857b6e]">Width</div>
-                  <div className="text-sm text-[#1C1917]">{audit.imageMeta.width || "ΓÇö"} px</div>
+                  <div className="text-sm text-[#1C1917]">{audit.imageMeta.width || "—"} px</div>
                 </div>
                 <div>
                   <div className="text-xs text-[#857b6e]">Height</div>
-                  <div className="text-sm text-[#1C1917]">{audit.imageMeta.height || "ΓÇö"} px</div>
+                  <div className="text-sm text-[#1C1917]">{audit.imageMeta.height || "—"} px</div>
                 </div>
                 <div>
                   <div className="text-xs text-[#857b6e]">Original Size</div>
@@ -695,7 +709,7 @@ export default function AuditDetailPage() {
                 <div>
                   <div className="text-xs text-[#857b6e]">Compressed</div>
                   <div className="text-sm text-[#1C1917]">
-                    {audit.imageMeta.compressedSize ? formatBytes(audit.imageMeta.compressedSize) : "ΓÇö"}
+                    {audit.imageMeta.compressedSize ? formatBytes(audit.imageMeta.compressedSize) : "—"}
                   </div>
                 </div>
               </div>
@@ -802,7 +816,7 @@ export default function AuditDetailPage() {
 
               {reportTab === "report" && (
               <>
-              {/* ΓöÇΓöÇΓöÇ HERO: The Leak ΓöÇΓöÇΓöÇ */}
+              {/* ─── HERO: The Leak ─── */}
               {(() => {
                 const sortedLeaks = [...(displayResult.statusLeaks ?? [])].sort(
                   (a, b) => (a.severity === "high" ? 0 : a.severity === "medium" ? 1 : 2) - (b.severity === "high" ? 0 : b.severity === "medium" ? 1 : 2)
@@ -839,14 +853,14 @@ export default function AuditDetailPage() {
                           </div>
                           {otherLeaks.length > 0 && (
                             <p className="mt-4 text-center text-xs text-[#857b6e]">
-                              +{otherLeaks.length} more {otherLeaks.length === 1 ? "leak" : "leaks"} found ΓÇö see below
+                              +{otherLeaks.length} more {otherLeaks.length === 1 ? "leak" : "leaks"} found — see below
                             </p>
                           )}
                         </div>
                       </FadeInView>
                     )}
 
-                    {/* ΓöÇΓöÇΓöÇ Score Card ΓöÇΓöÇΓöÇ */}
+                    {/* ─── Score Card ─── */}
                     <ReshootCelebration audit={audit!} />
 
                     <FadeInView delay={100}>
@@ -941,7 +955,7 @@ export default function AuditDetailPage() {
                     {!isUnlocked && celebMatches.length > 0 && (
                       <div className="relative overflow-hidden rounded-2xl border border-red-500/15 bg-red-500/5 p-4">
                         <div className="absolute inset-0 blur-md cursor-pointer" onClick={() => { setPaywallTrigger("Style inspiration"); setPaywallOpen(true); }}>
-                          <CelebrityMatch matches={celebMatches} />
+                          <CelebrityMatch matches={celebMatches} userImage={audit?.imageDataUrl} />
                         </div>
                         <div className="relative z-10 text-center py-6">
                           <div className="text-2xl mb-2">✨</div>
@@ -966,6 +980,16 @@ export default function AuditDetailPage() {
                         colorPalette={displayResult?.imageMetrics.colorPalette}
                       />
                     </FadeInView>
+
+                    <PlatformFitCard
+                      metrics={{
+                        lightingScore: displayResult.imageMetrics.lightingScore,
+                        clarityScore: displayResult.imageMetrics.clarityScore,
+                        compositionScore: displayResult.imageMetrics.compositionScore,
+                        backgroundComplexityEstimate: displayResult.imageMetrics.backgroundComplexityEstimate,
+                        colorHarmony: displayResult.imageMetrics.colorHarmony,
+                      }}
+                    />
 
                     <FadeInView delay={50}>
                       <div className="mb-6 rounded-2xl border border-emerald-500/20 bg-gradient-to-b from-emerald-500/[0.08] to-transparent p-5 sm:p-6">
@@ -1039,6 +1063,30 @@ export default function AuditDetailPage() {
                         <FullReport content={displayFull} />
                       </div>
                     )}
+                    {displayResult.imageMetrics != null && (
+                      <div className="mb-6">
+                        <LockedSection locked={!isUnlocked} label="Your Photo, Read" unlockHref={unlockHref}>
+                          <PhotoReadCard imageDataUrl={audit?.imageDataUrl} metrics={displayResult.imageMetrics as any} />
+                        </LockedSection>
+                      </div>
+                    )}
+                    {/* ─── "Which one should I post?" — rank all your candidate photos in-browser ─── */}
+                    <div className="mb-6">
+                      <LockedSection locked={!isUnlocked} label="Which One Should I Post?" unlockHref={unlockHref}>
+                        <div className="rounded-2xl border border-[#1c1917]/[0.08] bg-gradient-to-b from-[#1c1917]/[0.03] to-transparent p-5 sm:p-6">
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#B23A25]">Which one should I post?</p>
+                          <h3 className="mt-0.5 text-base font-bold text-[#1C1917]">Stop asking the group chat — rank them here</h3>
+                          <p className="mt-1 mb-3 text-xs text-[#6f675e]">Drop the shots you&apos;re choosing between and an on-device AI ranks which to lead with, keep, or cut — with the reason for each. No more polling friends or paying a photo-rating site. Photos never leave your browser.</p>
+                          <PhotoRankerWidget compact />
+                        </div>
+                      </LockedSection>
+                    </div>
+                    {/* ─── Instagram Grid Check — score the whole profile, not one photo ─── */}
+                    <div className="mb-6">
+                      <LockedSection locked={!isUnlocked} label="Instagram Grid Check" unlockHref={unlockHref}>
+                        <GridCheck />
+                      </LockedSection>
+                    </div>
                     <LockedSection locked={!isUnlocked} label="Strongest Signals" unlockHref={unlockHref}>
                     <FadeInView delay={100}>
                       <Card className="mb-6">
@@ -1054,7 +1102,7 @@ export default function AuditDetailPage() {
                     </FadeInView>
                     </LockedSection>
 
-                    {/* ΓöÇΓöÇΓöÇ Remaining Leaks (Blurred Previews) ΓöÇΓöÇΓöÇ */}
+                    {/* ─── Remaining Leaks (Blurred Previews) ─── */}
                     {otherLeaks.length > 0 && (
                       <FadeInView delay={150}>
                         <div className="mb-6">
@@ -1076,7 +1124,7 @@ export default function AuditDetailPage() {
                                 {leak.evidence && (
                                   <p className="mt-1 text-[11px] font-medium text-[#B23A25]">📊 {leak.evidence}</p>
                                 )}
-                                {/* Blurred content ΓÇö visible shape, unreadable text */}
+                                {/* Blurred content — visible shape, unreadable text */}
                                 <div className="mt-2 blur-sm cursor-pointer" onClick={() => { setPaywallTrigger("Status leak details"); setPaywallOpen(true); }}>
                                   <p className="text-xs text-[#6f675e]">{leak.description}</p>
                                   <p className="mt-1 text-xs text-[#857b6e]">
@@ -1219,6 +1267,65 @@ export default function AuditDetailPage() {
                 });
                 return (
                   <>
+                    {/* ─── Style Passport — the flagship ₹21 payload: every "what suits me"
+                        answer consolidated into one keepable, downloadable card ─── */}
+                    <div className="mb-6">
+                      <LockedSection locked={!isUnlocked} label="Your Style Passport" unlockHref={unlockHref}>
+                        <StylePassport
+                          imageDataUrl={audit?.imageDataUrl}
+                          undertone={undertone}
+                          undertoneConfident={undertoneConfident}
+                          paletteName={colorPalette?.name}
+                          powerColors={colorPalette?.colors}
+                          avoidColors={colorPalette?.avoid}
+                          archetype={personalization.archetype}
+                          detectedStyle={displayResult.imageMetrics?.detectedStyle?.detectedStyle}
+                          scentFamilies={scent.families}
+                          scentReason={scent.reason}
+                          groomingFocus={displayResult.imageMetrics?.groomingResult?.topFix}
+                          goal={audit!.goal}
+                        />
+                      </LockedSection>
+                    </div>
+                    {/* ─── Get It Done Near You — the concierge: real nearby providers for every fix ─── */}
+                    <div className="mb-6">
+                      <LockedSection locked={!isUnlocked} label="Get It Done Near You" unlockHref={unlockHref}>
+                        <ImprovementConcierge
+                          hair={displayResult.imageMetrics?.groomingResult?.hairNeatness}
+                          skin={displayResult.imageMetrics?.groomingResult?.skinClarity}
+                          beard={displayResult.imageMetrics?.groomingResult?.facialHair}
+                          gender={audit!.gender}
+                          goal={audit!.goal}
+                          hasGlasses={displayResult.imageMetrics?.accessoryDetection?.hasGlasses}
+                        />
+                      </LockedSection>
+                    </div>
+                    {/* ─── Date & Dining Playbook — social goals only (skip office/LinkedIn) ─── */}
+                    {audit!.goal !== "office" && audit!.goal !== "linkedin" && (
+                      <div className="mb-6">
+                        <LockedSection locked={!isUnlocked} label="Date & Dining Playbook" unlockHref={unlockHref}>
+                          <DateSpotsCard budget={audit!.budgetRange} powerColors={colorPalette?.colors} />
+                        </LockedSection>
+                      </div>
+                    )}
+                    {/* ─── Occasion Kits — apply the passport to wherever they're headed next ─── */}
+                    <div className="mb-6">
+                      <LockedSection locked={!isUnlocked} label="Occasion Kits" unlockHref={unlockHref}>
+                        <OccasionKitCard
+                          powerColors={colorPalette?.colors}
+                          undertone={undertone}
+                          archetype={personalization.archetype}
+                          groomingFocus={displayResult.imageMetrics?.groomingResult?.topFix}
+                          gender={audit!.gender}
+                        />
+                      </LockedSection>
+                    </div>
+                    {/* ─── Fragrance Finder — scent family → budget-tiered search (no fixed images) ─── */}
+                    <div className="mb-6">
+                      <LockedSection locked={!isUnlocked} label="Fragrance Finder" unlockHref={unlockHref}>
+                        <FragranceFinderCard scentFamilies={scent.families} gender={audit!.gender} budget={audit!.budgetRange} />
+                      </LockedSection>
+                    </div>
                     <PersonalizedShop
                       looks={shopLooks}
                       userScore={displayResult.auraScore ?? undefined}
@@ -1246,6 +1353,14 @@ export default function AuditDetailPage() {
                       <div className="mb-6">
                         <LockedSection locked={!isUnlocked} label="Your Photo Kit" unlockHref={unlockHref}>
                           <PhotoKitCard metrics={displayResult.imageMetrics as any} />
+                        </LockedSection>
+                      </div>
+                    )}
+                    {/* ─── Ready-to-Post Pack — the photo, auto-fixed and cropped, ready to download ─── */}
+                    {audit?.imageDataUrl && displayResult.imageMetrics != null && (
+                      <div className="mb-6">
+                        <LockedSection locked={!isUnlocked} label="Ready-to-Post Pack" unlockHref={unlockHref}>
+                          <ReadyToPostPack imageDataUrl={audit.imageDataUrl} metrics={displayResult.imageMetrics as any} score={displayResult.auraScore} verdict={displayResult.oneLineVerdict} />
                         </LockedSection>
                       </div>
                     )}
@@ -1288,6 +1403,15 @@ export default function AuditDetailPage() {
                 <div className="mb-6">
                   <LockedSection locked={!isUnlocked} label="Skin, Close Up" unlockHref={unlockHref}>
                     <SkinDetailCard skin={displayResult.imageMetrics.skinDetail} />
+                  </LockedSection>
+                </div>
+              )}
+
+              {/* ─── Grooming routine from your skin read — paid perk ─── */}
+              {displayResult?.imageMetrics?.skinDetail != null && (
+                <div className="mb-6">
+                  <LockedSection locked={!isUnlocked} label="Your Grooming Routine" unlockHref={unlockHref}>
+                    <GroomingRoutineCard skin={displayResult.imageMetrics.skinDetail} />
                   </LockedSection>
                 </div>
               )}
@@ -1358,6 +1482,20 @@ export default function AuditDetailPage() {
                   </LockedSection>
                 </div>
               )}
+
+              {/* ─── Capsule Checklist — the shoppable, tickable version — paid perk ─── */}
+              {displayResult != null && (
+                <div className="mb-6">
+                  <LockedSection locked={!isUnlocked} label="Capsule Checklist" unlockHref={unlockHref}>
+                    <CapsuleChecklistCard
+                      auditId={id}
+                      powerColors={displayResult.imageMetrics?.colorPalette?.colors}
+                      undertone={displayResult.imageMetrics?.undertone?.undertone}
+                      gender={audit!.gender}
+                    />
+                  </LockedSection>
+                </div>
+              )}
               </>
               )}
 
@@ -1424,7 +1562,7 @@ export default function AuditDetailPage() {
                 </FadeInView>
               )}
 
-              {/* ΓöÇΓöÇΓöÇ Dating Profile Report Display ΓöÇΓöÇΓöÇ */}
+              {/* ─── Dating Profile Report Display ─── */}
               {audit.datingProfileReport && (
                 <FadeInView>
                   <Card className="mb-6">
@@ -1492,6 +1630,15 @@ export default function AuditDetailPage() {
                           </div>
                         ))}
                       </div>
+                      {(audit.profileTexts?.bio || (audit.profileTexts?.prompts && audit.profileTexts.prompts.length > 0)) && (
+                        <div className="mt-3">
+                          <AiBioRewrite
+                            bio={audit.profileTexts?.bio || ""}
+                            prompts={audit.profileTexts?.prompts}
+                            context={{ goal: audit.goal, gender: audit.gender }}
+                          />
+                        </div>
+                      )}
                     </div>
                   )}
                   {audit.datingProfileReport.photoStrategy && (
@@ -1543,11 +1690,18 @@ export default function AuditDetailPage() {
                     <p className="mb-2 text-[11px] text-[#857b6e]">Upload the shots you&apos;re choosing between — an on-device AI ranks which to lead with, keep, or cut. Photos never leave your browser.</p>
                     <PhotoRankerWidget compact />
                   </div>
+                  {/* Date & Dining Playbook — the profile gets the match, this plans the date */}
+                  <div className="mt-5">
+                    <DateSpotsCard
+                      budget={audit.budgetRange}
+                      powerColors={audit.fullReport?.freeResult?.imageMetrics?.colorPalette?.colors}
+                    />
+                  </div>
                 </Card>
                 </FadeInView>
               )}
 
-              {/* ΓöÇΓöÇΓöÇ Glow-Up Plan Display ΓöÇΓöÇΓöÇ */}
+              {/* ─── Glow-Up Plan Display ─── */}
               {audit.glowupPlan && (
                 <FadeInView>
                 <Card className="mb-6">
@@ -1784,7 +1938,7 @@ export default function AuditDetailPage() {
           />
         </div>
       )}
-    <PaywallPopup open={paywallOpen} onClose={() => setPaywallOpen(false)} auditId={audit?.id || ""} trigger={paywallTrigger} />
+    <PaywallPopup open={paywallOpen} onClose={() => setPaywallOpen(false)} auditId={audit?.id || ""} trigger={paywallTrigger} score={displayResult?.auraScore ?? null} issueCount={displayResult?.statusLeaks?.length ?? 0} />
       </Container>
     </>
   );

@@ -44,7 +44,7 @@ export async function POST(request: Request) {
       return Response.json({ error: "Missing required fields: productType, auditId" }, { status: 400 });
     }
 
-    const validTypes: ProductType[] = ["aura_report", "dating_audit", "glowup_plan"];
+    const validTypes: ProductType[] = ["aura_report", "dating_audit", "glowup_plan", "aura_photoshoot"];
     if (!validTypes.includes(productType as ProductType)) {
       return Response.json({ error: "Invalid product type." }, { status: 400 });
     }

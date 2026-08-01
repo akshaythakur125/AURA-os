@@ -13,7 +13,7 @@ export default function PrivacyPage() {
     <Container className="py-16">
       <div className="mx-auto max-w-3xl">
         <h1 className="mb-2 text-3xl font-bold text-[#1C1917]">Privacy Policy</h1>
-        <p className="mb-8 text-sm text-[#857b6e]">Last updated: 2024</p>
+        <p className="mb-8 text-sm text-[#857b6e]">Last updated: August 2026</p>
 
         <div className="space-y-6 text-sm leading-relaxed text-[#6f675e]">
           <section>
@@ -42,10 +42,40 @@ export default function PrivacyPage() {
           <section>
             <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">Image Processing</h2>
             <p>
-              When you upload an image, AuraCheck reads pixel data from a canvas element to estimate 
-              lighting, clarity, contrast, saturation, composition, and background complexity scores. 
-              No image data is sent to any server, API, or third party. No AI model processes your image 
-              in this MVP version.
+              For the free Aura analysis, when you upload an image AuraCheck reads pixel data from a
+              canvas element to estimate lighting, clarity, contrast, saturation, composition, and
+              background complexity scores. For that analysis, no image data is sent to any server,
+              API, or third party — it stays on your device. The one exception is the paid AI
+              Glow-Up Photoshoot, described next.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="mb-3 text-lg font-semibold text-[#1C1917]">AI Glow-Up Photoshoot (paid add-on)</h2>
+            <p>
+              The AI Glow-Up Photoshoot is the only feature that sends your photo off your device. If
+              you buy it and choose to generate a shoot, the selfie you upload is sent to our
+              image-generation provider — currently Google&apos;s Gemini AI — which creates your
+              portraits from it. We ask for your explicit consent on the generation screen before any
+              upload leaves your device.
+            </p>
+            <p className="mt-2">
+              We do not sell your photos. Your uploaded photo and the generated portraits are not
+              stored on our servers — generation happens per request and the results are returned to
+              your browser for you to download. Once processing reaches Google, it is handled under
+              {" "}
+              <a
+                href="https://ai.google.dev/gemini-api/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-red-400 hover:underline"
+              >
+                Google&apos;s Gemini API terms
+              </a>
+              ; note that on Google&apos;s free tier, submitted content may be used by Google to
+              improve their services. If you would prefer not to have your photo processed by a third
+              party, simply don&apos;t purchase or run the photoshoot — nothing else on AuraCheck
+              sends your images anywhere.
             </p>
           </section>
 

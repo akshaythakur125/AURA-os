@@ -14,6 +14,7 @@ export const STORAGE_KEYS = {
   ONBOARDING: "auracheck:v1:onboarding",
   FEEDBACK: "auracheck:v1:feedback",
   GLOWUP_PROGRESS: "auracheck:v1:glowup_progress",
+  CAPSULE_PROGRESS: "auracheck:v1:capsule_progress",
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

@@ -3,7 +3,7 @@
  * Change a price here → it updates the entire website.
  */
 
-export type PaymentProductId = "aura_report" | "dating_audit" | "glowup_plan";
+export type PaymentProductId = "aura_report" | "dating_audit" | "glowup_plan" | "aura_photoshoot";
 
 export interface PaymentProduct {
   id: PaymentProductId;
@@ -21,14 +21,15 @@ export const PAYMENT_PRODUCTS: Record<PaymentProductId, PaymentProduct> = {
     price: 2100,
     currency: "INR",
     deliverables: [
+      "Instagram Grid Check — your whole profile (grid + bio) scored the way visitors see it",
+      "Ready-to-Post Pack — we auto-fix your photo & crop it for Instagram, Hinge or LinkedIn",
+      "Style Passport — your colours, frames, scent & grooming in one card you keep",
+      "‘Which one should I post?’ — on-device AI ranks your candidate photos",
+      "Occasion Kits — what to wear & how to prep for a date, interview or shaadi",
       "Every photo issue with its exact fix, ranked by measured impact",
-      "A 7-day reshoot plan built from your photo's own numbers",
-      "Expression & posture read — smile, eye contact, head tilt, shoulders",
-      "Which Instagram filter fits + exactly how to edit it",
-      "Your colour palette + capsule wardrobe, matched to your undertone",
-      "Face-shape studio — haircut, glasses & beard that suit you",
+      "Face-shape studio + colour palette & capsule wardrobe, matched to your undertone",
       "Celebrity style match + shop the look in your budget",
-      "Downloadable branded report + share-ready score card",
+      "Downloadable report + a shareable before → after glow-up card",
     ],
     isActive: true,
   },
@@ -44,6 +45,21 @@ export const PAYMENT_PRODUCTS: Record<PaymentProductId, PaymentProduct> = {
       "Photo strategy — your lead photo + the 5-slot order that converts",
       "Platform playbook — tailored Hinge, Bumble & Tinder tactics",
       "Opening hooks engineered to make matches message first",
+    ],
+    isActive: true,
+  },
+  aura_photoshoot: {
+    id: "aura_photoshoot",
+    name: "AI Glow-Up Photoshoot",
+    price: 29900,
+    currency: "INR",
+    deliverables: [
+      "A studio-grade AI photoshoot generated from a few of your own selfies",
+      "Portraits rendered in your matched celebrity's aesthetic — lighting, wardrobe & mood",
+      "Ready-cropped sets for Instagram, LinkedIn & dating profiles",
+      "Multiple looks per style so you can pick your hero shot",
+      "High-resolution downloads you own and keep",
+      "Your photo is sent to our AI provider (Google Gemini) only to generate your portraits — we don't sell your photos",
     ],
     isActive: true,
   },

@@ -165,20 +165,34 @@ function generateQuickFixes(metrics: import("@/types/audit").ImageSignalMetrics)
 }
 
 function findStrongestSignals(metrics: import("@/types/audit").ImageSignalMetrics): string[] {
+  // Short, chip-sized labels — but specific and flattering, and led by the
+  // human signals (a real smile, eye contact) that matter more than any
+  // technical metric. Each is gated on the value the engine actually measured,
+  // and tiered so a great score reads differently from a merely-good one.
   const signals: string[] = [];
+  const p = metrics.presenceDetail;
 
-  if (metrics.lightingScore >= 65) signals.push("Lighting");
-  if (metrics.sharpness >= 65) signals.push("Sharpness");
-  if (metrics.compositionScore >= 65) signals.push("Composition");
-  if (metrics.contrast >= 60) signals.push("Contrast");
-  if (metrics.saturation >= 40 && metrics.saturation <= 60) signals.push("Color balance");
-  if (metrics.resolutionScore >= 70) signals.push("Resolution");
+  // Human signals first — these move people, not megapixels.
+  if (p?.genuineSmile) signals.push("Genuine smile");
+  if (p?.eyeContact) signals.push("Strong eye contact");
+  if (typeof metrics.groomingResult?.overallScore === "number" && metrics.groomingResult.overallScore >= 68) signals.push("Sharp grooming");
+  if (typeof metrics.symmetryScore === "number" && metrics.symmetryScore >= 70) signals.push("Balanced features");
+
+  // Technical signals, tiered so "standout" ≠ "clean".
+  if (metrics.lightingScore >= 75) signals.push("Standout lighting");
+  else if (metrics.lightingScore >= 65) signals.push("Clean, even lighting");
+  if (metrics.sharpness >= 75) signals.push("Tack-sharp");
+  else if (metrics.sharpness >= 65) signals.push("Sharp & clear");
+  if (metrics.compositionScore >= 65) signals.push("Well-framed");
+  if (typeof metrics.colorHarmony === "number" && metrics.colorHarmony >= 65) signals.push("Colours suit you");
+  else if (metrics.contrast >= 60) signals.push("Punchy contrast");
+  if (metrics.resolutionScore >= 75) signals.push("Crisp resolution");
 
   if (signals.length === 0) {
-    signals.push("Potential for improvement across all signals");
+    signals.push("Room to grow on every signal");
   }
 
-  return signals;
+  return signals.slice(0, 5);
 }
 
 export async function generateFreeAuraReport(

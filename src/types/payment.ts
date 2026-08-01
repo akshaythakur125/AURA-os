@@ -1,4 +1,4 @@
-export type ProductType = "aura_report" | "dating_audit" | "glowup_plan";
+export type ProductType = "aura_report" | "dating_audit" | "glowup_plan" | "aura_photoshoot";
 
 export interface UnlockRecord {
   id: string;
