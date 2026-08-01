@@ -35,6 +35,7 @@ import { YourColorsCard } from "@/components/report/YourColorsCard";
 import { SkinDetailCard } from "@/components/report/SkinDetailCard";
 import { PresenceCard } from "@/components/report/PresenceCard";
 import { CapsuleWardrobeCard } from "@/components/report/CapsuleWardrobeCard";
+import { CapsuleChecklistCard } from "@/components/report/CapsuleChecklistCard";
 import { FaceShapeCard } from "@/components/report/FaceShapeCard";
 import { StylePassport } from "@/components/report/StylePassport";
 import { OccasionKitCard } from "@/components/report/OccasionKitCard";
@@ -1450,6 +1451,20 @@ export default function AuditDetailPage() {
                         gender: audit!.gender,
                         limit: 40,
                       })}
+                    />
+                  </LockedSection>
+                </div>
+              )}
+
+              {/* ─── Capsule Checklist — the shoppable, tickable version — paid perk ─── */}
+              {displayResult != null && (
+                <div className="mb-6">
+                  <LockedSection locked={!isUnlocked} label="Capsule Checklist" unlockHref={unlockHref}>
+                    <CapsuleChecklistCard
+                      auditId={id}
+                      powerColors={displayResult.imageMetrics?.colorPalette?.colors}
+                      undertone={displayResult.imageMetrics?.undertone?.undertone}
+                      gender={audit!.gender}
                     />
                   </LockedSection>
                 </div>
