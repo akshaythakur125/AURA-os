@@ -1050,6 +1050,17 @@ export default function AuditDetailPage() {
                         </LockedSection>
                       </div>
                     )}
+                    {/* ─── "Which one should I post?" — rank all your candidate photos in-browser ─── */}
+                    <div className="mb-6">
+                      <LockedSection locked={!isUnlocked} label="Which One Should I Post?" unlockHref={unlockHref}>
+                        <div className="rounded-2xl border border-[#1c1917]/[0.08] bg-gradient-to-b from-[#1c1917]/[0.03] to-transparent p-5 sm:p-6">
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#B23A25]">Which one should I post?</p>
+                          <h3 className="mt-0.5 text-base font-bold text-[#1C1917]">Stop asking the group chat — rank them here</h3>
+                          <p className="mt-1 mb-3 text-xs text-[#6f675e]">Drop the shots you&apos;re choosing between and an on-device AI ranks which to lead with, keep, or cut — with the reason for each. No more polling friends or paying a photo-rating site. Photos never leave your browser.</p>
+                          <PhotoRankerWidget compact />
+                        </div>
+                      </LockedSection>
+                    </div>
                     <LockedSection locked={!isUnlocked} label="Strongest Signals" unlockHref={unlockHref}>
                     <FadeInView delay={100}>
                       <Card className="mb-6">
