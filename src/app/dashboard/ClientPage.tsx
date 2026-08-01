@@ -15,6 +15,7 @@ import { StreakIndicator } from "@/components/dashboard/StreakIndicator";
 import { ImprovementCard } from "@/components/dashboard/ImprovementCard";
 import { EmptyDashboard } from "@/components/dashboard/EmptyDashboard";
 import { DashboardPassport } from "@/components/dashboard/DashboardPassport";
+import { DashboardDailyBrief } from "@/components/dashboard/DashboardDailyBrief";
 import { getAudits, deleteAudit, getAuditStats } from "@/lib/storage/auditStore";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { getLocalUser, updateLocalUser } from "@/lib/storage/userStore";
@@ -143,6 +144,9 @@ export default function DashboardPage() {
       </div>
 
       {!hasAudits && <EmptyDashboard />}
+
+      {/* Daily Aura Brief — weather-tuned daily companion; a reason to return */}
+      {hasAudits && <DashboardDailyBrief audits={audits} />}
 
       {/* Hero: Score Trend + Streak */}
       {hasAudits && (
