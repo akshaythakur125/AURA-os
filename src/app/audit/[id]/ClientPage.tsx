@@ -41,6 +41,7 @@ import { StylePassport } from "@/components/report/StylePassport";
 import { OccasionKitCard } from "@/components/report/OccasionKitCard";
 import { DateSpotsCard } from "@/components/report/DateSpotsCard";
 import { FragranceFinderCard } from "@/components/report/FragranceFinderCard";
+import { ImprovementConcierge } from "@/components/report/ImprovementConcierge";
 import { PhotoRankerWidget } from "@/components/vision/PhotoRankerWidget";
 import { AiPhotoReadCard } from "@/components/report/AiPhotoReadCard";
 import { GlowupTracker } from "@/components/report/GlowupTracker";
@@ -1270,6 +1271,19 @@ export default function AuditDetailPage() {
                           scentReason={scent.reason}
                           groomingFocus={displayResult.imageMetrics?.groomingResult?.topFix}
                           goal={audit!.goal}
+                        />
+                      </LockedSection>
+                    </div>
+                    {/* ─── Get It Done Near You — the concierge: real nearby providers for every fix ─── */}
+                    <div className="mb-6">
+                      <LockedSection locked={!isUnlocked} label="Get It Done Near You" unlockHref={unlockHref}>
+                        <ImprovementConcierge
+                          hair={displayResult.imageMetrics?.groomingResult?.hairNeatness}
+                          skin={displayResult.imageMetrics?.groomingResult?.skinClarity}
+                          beard={displayResult.imageMetrics?.groomingResult?.facialHair}
+                          gender={audit!.gender}
+                          goal={audit!.goal}
+                          hasGlasses={displayResult.imageMetrics?.accessoryDetection?.hasGlasses}
                         />
                       </LockedSection>
                     </div>
