@@ -36,6 +36,7 @@ import { PresenceCard } from "@/components/report/PresenceCard";
 import { CapsuleWardrobeCard } from "@/components/report/CapsuleWardrobeCard";
 import { FaceShapeCard } from "@/components/report/FaceShapeCard";
 import { StylePassport } from "@/components/report/StylePassport";
+import { OccasionKitCard } from "@/components/report/OccasionKitCard";
 import { PhotoRankerWidget } from "@/components/vision/PhotoRankerWidget";
 import { AiPhotoReadCard } from "@/components/report/AiPhotoReadCard";
 import { GlowupTracker } from "@/components/report/GlowupTracker";
@@ -1258,6 +1259,18 @@ export default function AuditDetailPage() {
                           scentReason={scent.reason}
                           groomingFocus={displayResult.imageMetrics?.groomingResult?.topFix}
                           goal={audit!.goal}
+                        />
+                      </LockedSection>
+                    </div>
+                    {/* ─── Occasion Kits — apply the passport to wherever they're headed next ─── */}
+                    <div className="mb-6">
+                      <LockedSection locked={!isUnlocked} label="Occasion Kits" unlockHref={unlockHref}>
+                        <OccasionKitCard
+                          powerColors={colorPalette?.colors}
+                          undertone={undertone}
+                          archetype={personalization.archetype}
+                          groomingFocus={displayResult.imageMetrics?.groomingResult?.topFix}
+                          gender={audit!.gender}
                         />
                       </LockedSection>
                     </div>
