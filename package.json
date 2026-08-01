@@ -20,6 +20,7 @@
     "fixtures:generate-images": "node scripts/generate-synthetic-images.mjs",
     "fixtures:benchmark": "node scripts/run-quality-gate-benchmark.mjs",
     "typecheck": "tsc --noEmit",
+    "shop:audit": "npx tsx scripts/audit-catalog.mts",
     "lint:new-errors": "npx eslint . --format compact 2>&1 | grep \"error\" | wc -l",
     "analyser:benchmark:gate": "node scripts/run-quality-gate-benchmark.mjs && node scripts/gate-check.mjs",
     "benchmarks:splits:generate": "node -e \"console.log(\"splits: placeholder — implement when real datasets available\")\"",
