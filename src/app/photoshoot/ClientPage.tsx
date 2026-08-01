@@ -205,7 +205,8 @@ function Flow() {
               </Link>
             )}
             <p className="mt-3 text-center text-[10px] text-[#9c9184]">
-              Secure payment via Razorpay · Your uploads are used only to make your portraits
+              Secure payment via Razorpay · Your photo is sent to our AI provider (Google Gemini) to
+              generate your portraits — we don&apos;t sell your photos
             </p>
           </div>
         </FadeInView>
@@ -326,9 +327,13 @@ function Flow() {
                 className="mt-0.5"
               />
               <span>
-                This is a photo of me (or someone who has consented), and I understand it will be sent
-                to our AI image provider to generate my portraits. It is used only to create this
-                shoot — never shared or sold.
+                This is a photo of me (or someone who has consented). I understand it&apos;s sent to
+                our AI provider, Google&apos;s Gemini AI, to generate my portraits and is processed
+                under Google&apos;s terms. We don&apos;t sell your photos.{" "}
+                <Link href="/privacy" className="underline hover:text-[#1c1917]">
+                  How we handle your photos
+                </Link>
+                .
               </span>
             </label>
             {error ? <p className="mt-3 text-xs font-medium text-red-600">{error}</p> : null}

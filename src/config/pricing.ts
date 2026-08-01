@@ -59,7 +59,7 @@ export const PAYMENT_PRODUCTS: Record<PaymentProductId, PaymentProduct> = {
       "Ready-cropped sets for Instagram, LinkedIn & dating profiles",
       "Multiple looks per style so you can pick your hero shot",
       "High-resolution downloads you own and keep",
-      "Your uploads are used only to create your portraits, never shared or sold",
+      "Your photo is sent to our AI provider (Google Gemini) only to generate your portraits — we don't sell your photos",
     ],
     isActive: true,
   },
