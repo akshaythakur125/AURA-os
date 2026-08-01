@@ -165,25 +165,43 @@ export default function AdminPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authenticated, refreshKey]);
 
-  const CHECKLIST_KEY = "auracheck:v1:founder_checklist";
+  const CHECKLIST_KEY = "auracheck:v2:live_activation_checklist";
   const [checklistState, setChecklistState] = useState<Record<string, boolean>>(() => getItem<Record<string, boolean>>(CHECKLIST_KEY, {}));
   const checklistItems = [
-    { id: "upi_id", label: "Set UPI ID in env (NEXT_PUBLIC_MANUAL_UPI_ID)" },
-    { id: "support_email", label: "Set support email (NEXT_PUBLIC_SUPPORT_EMAIL)" },
-    { id: "whatsapp", label: "Set owner WhatsApp (NEXT_PUBLIC_OWNER_WHATSAPP)" },
-    { id: "admin_code", label: "Set local admin code (NEXT_PUBLIC_LOCAL_ADMIN_CODE)" },
-    { id: "free_score", label: "Test free score generation" },
-    { id: "aura_report", label: "Test Aura Report unlock (₹25)" },
-    { id: "dating_audit", label: "Test Dating Audit unlock (₹299)" },
-    { id: "glowup_plan", label: "Test Glow-Up Plan unlock (₹499)" },
-    { id: "offer_codes", label: "Test offer codes (EARLY50, AURA99, etc.)" },
-    { id: "order_export", label: "Test order export (JSON + CSV)" },
-    { id: "data_export", label: "Test data export from /data page" },
-    { id: "mobile_upload", label: "Test mobile image upload" },
-    { id: "share_card", label: "Test share card download" },
-    { id: "privacy_terms", label: "Review privacy/terms/privacy-center pages" },
-    { id: "examples_pricing", label: "Review examples and pricing pages" },
-    { id: "challenges_progress", label: "Review challenges and progress pages" },
+    { id: "live_homepage", group: "0. Live", label: "Open production on phone and confirm the new homepage loads" },
+    { id: "live_branch", group: "0. Live", label: "Confirm production deploys from the intended repo and branch" },
+    { id: "health", group: "0. Live", label: "Open /api/health and note every warning" },
+    { id: "pay_21", group: "1. Payments", label: "Make one real Rs 21 Razorpay transaction and confirm unlock" },
+    { id: "pay_amounts", group: "1. Payments", label: "Confirm only Rs 21, Rs 200, and Rs 400 appear where expected" },
+    { id: "razorpay_only", group: "1. Payments", label: "Confirm Razorpay is the only payment path and manual UPI is hidden" },
+    { id: "webhook_registered", group: "1. Payments", label: "Confirm Razorpay webhook is registered and receives a successful event" },
+    { id: "free_scan", group: "2. Free scan", label: "Run a fresh free scan on mobile" },
+    { id: "undertone_hedging", group: "2. Free scan", label: "Confirm uncertain undertone reads use hedged language" },
+    { id: "shop_visible", group: "3. Shop", label: "Open /shop and confirm celebrity-inspired looks are visible" },
+    { id: "shop_details", group: "3. Shop", label: "Open three look detail pages and confirm each has shoppable pieces" },
+    { id: "shop_images", group: "3. Shop", label: "Confirm product images match item names closely enough" },
+    { id: "personalized_picks", group: "3. Shop", label: "Confirm personalized picks appear from a scan/report flow" },
+    { id: "clip_loads", group: "4. CLIP", label: "Open /photo-ranker and confirm the model loads" },
+    { id: "clip_ranks", group: "4. CLIP", label: "Rank real photos, including darker skin tones, and check output quality" },
+    { id: "voice_env", group: "5. Voice coach", label: "Confirm voice coach env vars are set" },
+    { id: "voice_paid_report", group: "5. Voice coach", label: "Talk to the voice coach for one minute inside a paid dating report" },
+    { id: "glowup_persist", group: "6. Glow-up", label: "Tick glow-up checklist items, refresh, and confirm they persist" },
+    { id: "glowup_download", group: "6. Glow-up", label: "Download the checklist and confirm the file opens" },
+    { id: "proof_card", group: "6. Glow-up", label: "Complete before/after flow and confirm the proof card appears" },
+    { id: "dating_depth", group: "7. Dating", label: "Confirm paid dating report advice is specific and changes with inputs" },
+    { id: "seo_pages", group: "8. SEO", label: "Check public page titles, descriptions, structured content, and OG previews" },
+    { id: "mobile_3d", group: "9. Mobile perf", label: "Confirm mobile 3D/animated areas render and do not appear blank" },
+    { id: "mobile_perf", group: "9. Mobile perf", label: "Run a basic mobile performance pass and check tap targets/text clipping" },
+  ];
+  const activationRows = [
+    { capability: "Live app", config: "Production deployment", verify: "Homepage and /api/health load" },
+    { capability: "Payments", config: "Razorpay live key, secret, webhook secret", verify: "Real Rs 21 payment unlocks" },
+    { capability: "Supabase", config: "Supabase URL, anon key, service role where required", verify: "/api/health reports connected state" },
+    { capability: "Email", config: "Resend API key and verified sender domain", verify: "Payment email arrives" },
+    { capability: "Voice coach", config: "OpenAI/voice env vars and feature flag", verify: "Paid dating report holds a voice session" },
+    { capability: "Shop affiliate", config: "Amazon Associate tag", verify: "Product links redirect with affiliate tag" },
+    { capability: "Live product feed", config: "RapidAPI key if enabled", verify: "/api/health reports live product feed set" },
+    { capability: "App URLs", config: "NEXT_PUBLIC_APP_URL", verify: "Generated links point to production" },
   ];
 
   function toggleChecklistItem(id: string) {
@@ -691,7 +709,10 @@ export default function AdminPage() {
         return (
           <Card className="mb-8">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-white">Founder Launch Checklist</h3>
+              <div>
+                <h3 className="text-sm font-semibold text-white">Live Site Activation Checklist</h3>
+                <p className="mt-1 text-xs text-gray-500">Run this on your phone against production. Blockers are first.</p>
+              </div>
               <span className="text-xs text-gray-500">{completedCount}/{checklistItems.length} completed</span>
             </div>
             <div className="mb-3 h-2 overflow-hidden rounded-full bg-white/5">
@@ -709,10 +730,34 @@ export default function AdminPage() {
                     onChange={() => toggleChecklistItem(item.id)}
                     className="mt-0.5 h-3.5 w-3.5 rounded border-white/20 bg-white/5 text-purple-600 focus:ring-purple-500"
                   />
-                  <span className={`text-xs ${checklistState[item.id] ? "text-gray-500 line-through" : "text-gray-300"}`}>{item.label}</span>
+                  <span className={`text-xs ${checklistState[item.id] ? "text-gray-500 line-through" : "text-gray-300"}`}>
+                    <span className="mb-1 block text-[10px] uppercase tracking-wide text-gray-600">{item.group}</span>
+                    {item.label}
+                  </span>
                 </label>
               ))}
             </div>
+            <div className="mt-6 overflow-x-auto rounded-lg border border-white/[0.04]">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-white/[0.03] text-gray-500">
+                  <tr>
+                    <th className="px-3 py-2 font-medium">Capability</th>
+                    <th className="px-3 py-2 font-medium">Required config</th>
+                    <th className="px-3 py-2 font-medium">How to verify</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {activationRows.map((row) => (
+                    <tr key={row.capability} className="border-t border-white/[0.04]">
+                      <td className="px-3 py-2 text-gray-300">{row.capability}</td>
+                      <td className="px-3 py-2 text-gray-500">{row.config}</td>
+                      <td className="px-3 py-2 text-gray-400">{row.verify}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-4 text-xs text-amber-300">Never paste API keys, webhook secrets, payment credentials, or private tokens in chat.</p>
           </Card>
         );
       })()}
