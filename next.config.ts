@@ -1,3 +1,5 @@
+// Deploy marker: ensure production builds from the commit that allows Razorpay
+// in the CSP (checkout modal was blocked by a prior 'connect-src self' policy).
 import type { NextConfig } from "next";
 
 const securityHeaders = [
