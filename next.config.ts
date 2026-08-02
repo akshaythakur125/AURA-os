@@ -17,11 +17,16 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://cdn.razorpay.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https: images.unsplash.com",
       "font-src 'self'",
-      "connect-src 'self'",
+      // Razorpay hosts are REQUIRED or the ₹21 checkout modal is blocked from
+      // loading (the Pay button silently does nothing). blob: lets the WebGL/glTF
+      // loader read the 3D hero model's bundled textures; supabase/posthog are the
+      // app's own backends.
+      "connect-src 'self' blob: https://*.supabase.co https://app.posthog.com https://us.i.posthog.com https://checkout.razorpay.com https://lumberjack.razorpay.com",
+      "frame-src https://api.razorpay.com https://checkout.razorpay.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",
       "form-action 'self'",
