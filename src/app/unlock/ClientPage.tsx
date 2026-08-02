@@ -259,25 +259,36 @@ function UnlockForm() {
       createUnlockRecord({ auditId, productType: defaultProduct, unlockCode: unlockCode.trim() });
       if (orderId) updateOrder(orderId, { status: "unlocked", generatedUnlockCode: unlockCode.trim(), unlockedAt: new Date().toISOString() });
 
-      const updates: Record<string, unknown> = {};
-      updates.unlockedProducts = [...(audit.unlockedProducts || []), defaultProduct];
-
+      // Persist the unlock immediately so a valid code never leaves the user
+      // locked if content generation below fails; the report self-heals on load.
+      const baseUpdates: Record<string, unknown> = {
+        unlockedProducts: [...(audit.unlockedProducts || []), defaultProduct],
+      };
       if (defaultProduct === "aura_report") {
-        const fullContent = await generateFullAuraReport(audit);
-        updates.fullScore = fullContent.fullScore;
-        updates.reportStatus = "unlocked";
-        updates.unlockStatus = "unlocked";
-        updates.fullReport = audit.fullReport
-          ? { ...audit.fullReport, score: { ...audit.fullReport.score, overall: fullContent.fullScore }, isPremium: true, fullContent }
-          : { id: `${auditId}-report`, auditId, score: { overall: fullContent.fullScore, categories: { visual: fullContent.visualBreakdown.lighting, presentation: fullContent.visualBreakdown.clarity, signals: fullContent.visualBreakdown.colorSignal, cohesion: fullContent.visualBreakdown.overallConsistency } }, leaks: [], suggestions: [], summary: fullContent.detailedVerdict, createdAt: fullContent.generatedAt, isPremium: true, fullContent };
-      } else if (defaultProduct === "dating_audit") {
-        updates.datingProfileReport = generateDatingProfileReport(audit);
-        updates.reportStatus = audit.reportStatus === "draft" ? "free_generated" : audit.reportStatus;
-      } else if (defaultProduct === "glowup_plan") {
-        updates.glowupPlan = generateGlowupPlan(audit);
-        updates.reportStatus = audit.reportStatus === "draft" ? "free_generated" : audit.reportStatus;
+        baseUpdates.reportStatus = "unlocked";
+        baseUpdates.unlockStatus = "unlocked";
       }
-      updateAudit(auditId, updates as Partial<Audit>);
+      updateAudit(auditId, baseUpdates as Partial<Audit>);
+
+      try {
+        const enrich: Record<string, unknown> = {};
+        if (defaultProduct === "aura_report") {
+          const fullContent = await generateFullAuraReport(audit);
+          enrich.fullScore = fullContent.fullScore;
+          enrich.fullReport = audit.fullReport
+            ? { ...audit.fullReport, score: { ...audit.fullReport.score, overall: fullContent.fullScore }, isPremium: true, fullContent }
+            : { id: `${auditId}-report`, auditId, score: { overall: fullContent.fullScore, categories: { visual: fullContent.visualBreakdown.lighting, presentation: fullContent.visualBreakdown.clarity, signals: fullContent.visualBreakdown.colorSignal, cohesion: fullContent.visualBreakdown.overallConsistency } }, leaks: [], suggestions: [], summary: fullContent.detailedVerdict, createdAt: fullContent.generatedAt, isPremium: true, fullContent };
+        } else if (defaultProduct === "dating_audit") {
+          enrich.datingProfileReport = generateDatingProfileReport(audit);
+          enrich.reportStatus = audit.reportStatus === "draft" ? "free_generated" : audit.reportStatus;
+        } else if (defaultProduct === "glowup_plan") {
+          enrich.glowupPlan = generateGlowupPlan(audit);
+          enrich.reportStatus = audit.reportStatus === "draft" ? "free_generated" : audit.reportStatus;
+        }
+        if (Object.keys(enrich).length) updateAudit(auditId, enrich as Partial<Audit>);
+      } catch (genErr) {
+        console.warn("[unlock] code-redeem content generation deferred to report page:", genErr);
+      }
       trackEvent({ eventName: "product_unlocked", auditId, productType: defaultProduct });
       setStage("done");
       setTimeout(() => router.push(`/audit/${auditId}`), 1500);
@@ -570,22 +581,37 @@ function UnlockForm() {
                         }
                         // Unlock report
                         createUnlockRecord({ auditId, productType: defaultProduct, unlockCode: response.razorpay_payment_id });
-                        const updates: Record<string, unknown> = {};
-                        updates.unlockedProducts = [...(audit?.unlockedProducts || []), defaultProduct];
+                        // 1) Persist the unlock IMMEDIATELY so a paying customer is
+                        //    unlocked even if the heavy report generation below fails,
+                        //    hangs, or the tab closes. The report page self-heals the
+                        //    full content on load whenever it is missing.
+                        const baseUpdates: Record<string, unknown> = {
+                          unlockedProducts: [...(audit?.unlockedProducts || []), defaultProduct],
+                        };
                         if (defaultProduct === "aura_report") {
-                          const fullContent = await generateFullAuraReport(audit!);
-                          updates.fullScore = fullContent.fullScore;
-                          updates.reportStatus = "unlocked";
-                          updates.unlockStatus = "unlocked";
-                          updates.fullReport = audit!.fullReport
-                            ? { ...audit!.fullReport, score: { ...audit!.fullReport.score, overall: fullContent.fullScore }, isPremium: true, fullContent }
-                            : { id: `${auditId}-report`, auditId, score: { overall: fullContent.fullScore, categories: { visual: fullContent.visualBreakdown.lighting, presentation: fullContent.visualBreakdown.clarity, signals: fullContent.visualBreakdown.colorSignal, cohesion: fullContent.visualBreakdown.overallConsistency } }, leaks: [], suggestions: [], summary: fullContent.detailedVerdict, createdAt: fullContent.generatedAt, isPremium: true, fullContent };
-                        } else if (defaultProduct === "dating_audit") {
-                          updates.datingProfileReport = generateDatingProfileReport(audit!);
-                        } else if (defaultProduct === "glowup_plan") {
-                          updates.glowupPlan = generateGlowupPlan(audit!);
+                          baseUpdates.reportStatus = "unlocked";
+                          baseUpdates.unlockStatus = "unlocked";
                         }
-                        updateAudit(auditId, updates as Partial<Audit>);
+                        updateAudit(auditId, baseUpdates as Partial<Audit>);
+                        // 2) Best-effort: generate the content now for an instant view.
+                        //    A failure here no longer costs the buyer their unlock.
+                        try {
+                          const enrich: Record<string, unknown> = {};
+                          if (defaultProduct === "aura_report") {
+                            const fullContent = await generateFullAuraReport(audit!);
+                            enrich.fullScore = fullContent.fullScore;
+                            enrich.fullReport = audit!.fullReport
+                              ? { ...audit!.fullReport, score: { ...audit!.fullReport.score, overall: fullContent.fullScore }, isPremium: true, fullContent }
+                              : { id: `${auditId}-report`, auditId, score: { overall: fullContent.fullScore, categories: { visual: fullContent.visualBreakdown.lighting, presentation: fullContent.visualBreakdown.clarity, signals: fullContent.visualBreakdown.colorSignal, cohesion: fullContent.visualBreakdown.overallConsistency } }, leaks: [], suggestions: [], summary: fullContent.detailedVerdict, createdAt: fullContent.generatedAt, isPremium: true, fullContent };
+                          } else if (defaultProduct === "dating_audit") {
+                            enrich.datingProfileReport = generateDatingProfileReport(audit!);
+                          } else if (defaultProduct === "glowup_plan") {
+                            enrich.glowupPlan = generateGlowupPlan(audit!);
+                          }
+                          if (Object.keys(enrich).length) updateAudit(auditId, enrich as Partial<Audit>);
+                        } catch (genErr) {
+                          console.warn("[unlock] post-payment content generation deferred to report page:", genErr);
+                        }
                         trackEvent({ eventName: "product_unlocked", auditId, productType: defaultProduct });
                         setStage("done");
                         setTimeout(() => router.push(`/audit/${auditId}`), 1500);

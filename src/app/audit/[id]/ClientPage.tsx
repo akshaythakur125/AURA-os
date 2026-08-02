@@ -14,6 +14,7 @@ import { CountUp } from "@/components/ui/CountUp";
 import { getAuditById, updateAudit, deleteAudit, createAudit } from "@/lib/storage/auditStore";
 import { trackEvent, EVENTS } from "@/lib/analytics/events";
 import { generateFreeAuraReport } from "@/lib/aura-engine/generateAuraReport";
+import { generateFullAuraReport } from "@/lib/aura-engine/generateFullAuraReport";
 import { runLocalVisionAnalysis } from "@/lib/aura-engine/localVision";
 import { generateStatusArchetype } from "@/lib/aura-engine/archetypes";
 import { ShareCardBuilder } from "@/components/share/ShareCardBuilder";
@@ -296,7 +297,7 @@ export default function AuditDetailPage() {
   const [reportReady, setReportReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<FreeAuraResult | null>(null);
-  const [fullContent] = useState<FullAuraReportContent | null>(null);
+  const [fullContent, setFullContent] = useState<FullAuraReportContent | null>(null);
   const [confirmAction, setConfirmAction] = useState<string | null>(null);
   const [userLocation, setUserLocation] = useState<{ city: string; lat: number; lng: number } | null>(null);
   const [nearbyPlaces, setNearbyPlaces] = useState<{ salons: { name: string; type: string; area: string; rating: number; mapUrl: string }[]; photographers: { name: string; type: string; area: string; rating: number; mapUrl: string }[]; gyms: { name: string; type: string; area: string; rating: number; mapUrl: string }[] }>({ salons: [], photographers: [], gyms: [] });
@@ -441,6 +442,30 @@ export default function AuditDetailPage() {
         } catch {}
       }
     }).catch(() => setServerVerified(true)); // On network error, don't lock out
+  }, [audit, id]);
+
+  // Self-heal a paid report: if the audit is unlocked but its full content is
+  // missing (e.g. report generation failed or was interrupted right after
+  // payment), regenerate it on load so a paying customer is NEVER left with a
+  // locked/empty report. This is the safety net behind the payment handler.
+  useEffect(() => {
+    if (!audit || audit.reportStatus !== "unlocked" || !audit.imageDataUrl) return;
+    if (audit.fullReport?.fullContent) return; // already have the content
+    let cancelled = false;
+    generateFullAuraReport(audit)
+      .then((fresh) => {
+        if (cancelled) return;
+        setFullContent(fresh);
+        const updated = updateAudit(id, {
+          fullScore: fresh.fullScore,
+          fullReport: audit.fullReport
+            ? { ...audit.fullReport, isPremium: true, fullContent: fresh }
+            : { id: `${audit.id}-report`, auditId: audit.id, score: { overall: fresh.fullScore, categories: { visual: fresh.visualBreakdown.lighting, presentation: fresh.visualBreakdown.clarity, signals: fresh.visualBreakdown.colorSignal, cohesion: fresh.visualBreakdown.overallConsistency } }, leaks: [], suggestions: [], summary: fresh.detailedVerdict, createdAt: fresh.generatedAt, isPremium: true, fullContent: fresh },
+        } as Partial<Audit>);
+        if (updated) rawSetAudit(updated);
+      })
+      .catch((e) => console.warn("[AuraCheck] full report self-heal failed:", e instanceof Error ? e.message : e));
+    return () => { cancelled = true; };
   }, [audit, id]);
 
   useEffect(() => {
