@@ -23,8 +23,9 @@ export const metadata: Metadata = {
     type: "website",
   },
 };
-
-
+export default function HomePage() {
+  return (
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -37,16 +38,12 @@ export const metadata: Metadata = {
           operatingSystem: "Web",
           offers: {
             "@type": "Offer",
-            price: "25",
+            price: "21",
             priceCurrency: "INR",
             description: "Full Aura Report — detailed visual analysis",
           },
         }) }}
       />
-
-export default function HomePage() {
-  return (
-    <>
       <HeroSection />
       <HowItWorks />
       <AuditDimensions />

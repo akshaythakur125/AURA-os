@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { FadeInView } from "@/components/ui/FadeInView";
+import { CampaignLink } from "@/components/marketing/CampaignLink";
 
 export function FinalCTA() {
   return (
@@ -14,14 +15,14 @@ export function FinalCTA() {
             Ready to see what your photo really says?
           </h2>
           <p className="mx-auto mt-4 max-w-md text-gray-500">
-            Free, instant, private. No account required.
+            Free score first. Unlock the complete report for ₹21. No account required for the scan.
           </p>
           <div className="mt-8">
-            <Link href="/audit/new">
+            <CampaignLink href="/audit/new">
               <Button size="lg" className="px-10 py-4 text-base font-semibold">
                 Check My Photo
               </Button>
-            </Link>
+            </CampaignLink>
           </div>
         </FadeInView>
       </Container>

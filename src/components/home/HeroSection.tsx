@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { FadeInView } from "@/components/ui/FadeInView";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
+import { CampaignLink } from "@/components/marketing/CampaignLink";
 import type { AuraDimension } from "./AuraCore";
 
 const AuraCore = dynamic(() => import("./AuraCore").then((m) => m.AuraCore), {
@@ -51,23 +52,29 @@ export function HeroSection() {
 
             <FadeInView delay={200}>
               <p className="mt-6 max-w-xl text-base text-gray-400 sm:text-lg leading-relaxed">
-                Upload one photo and receive a structured assessment of lighting, composition, background, colour, styling, and overall presentation — with clear actions to improve it.
+                Upload one photo and get a free score in under a minute. See what is holding your first impression back, then unlock the full report for ₹21 with exact fixes and a personalized upgrade plan.
               </p>
             </FadeInView>
 
             <FadeInView delay={300}>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <Link href="/audit/new">
+                <CampaignLink href="/audit/new">
                   <Button size="lg" className="w-full sm:w-auto px-8 py-4 text-base font-semibold">
                     Start My Aura Check
                   </Button>
-                </Link>
+                </CampaignLink>
                 <Link href="/examples">
                   <Button variant="secondary" size="lg" className="w-full sm:w-auto px-8 py-4 text-base">
                     Try a Sample Photo
                   </Button>
                 </Link>
               </div>
+            </FadeInView>
+
+            <FadeInView delay={350}>
+              <p className="mt-4 text-xs text-gray-500">
+                Free first scan <span className="mx-1 text-gray-700">·</span> Full report ₹21 <span className="mx-1 text-gray-700">·</span> One-time payment, no subscription
+              </p>
             </FadeInView>
 
             <FadeInView delay={400}>

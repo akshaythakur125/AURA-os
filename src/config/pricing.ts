@@ -18,7 +18,7 @@ export const PAYMENT_PRODUCTS: Record<PaymentProductId, PaymentProduct> = {
   aura_report: {
     id: "aura_report",
     name: "Full Aura Report",
-    price: 2500,
+    price: 2100,
     currency: "INR",
     deliverables: [
       "Full score breakdown across 7 dimensions",

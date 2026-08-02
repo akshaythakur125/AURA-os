@@ -1,7 +1,15 @@
 import { posthogCapture } from "@/components/providers/PostHogProvider";
 
 export function trackEvent(event: string, properties?: Record<string, unknown>): void {
-  posthogCapture(event, properties);
+  let attribution: Record<string, unknown> = {};
+  if (typeof window !== "undefined") {
+    try {
+      attribution = JSON.parse(localStorage.getItem("auracheck_attribution") || "{}");
+    } catch {
+      attribution = {};
+    }
+  }
+  posthogCapture(event, { ...attribution, ...properties });
 }
 
 export const EVENTS = {

@@ -82,7 +82,7 @@ export function ConversionFunnel({
               Small corrections can make a significant difference to how your photo is perceived.
             </p>
             <p className="text-[11px] text-gray-500">
-              Your report includes a personalized roadmap, celebrity style matches, and exact products to buy — all under ₹100.
+              Your report includes a personalized roadmap, celebrity style matches, and exact products to buy — all for ₹21.
             </p>
           </div>
 
@@ -92,7 +92,7 @@ export function ConversionFunnel({
             className="block"
           >
             <Button size="lg" className="w-full max-w-sm mx-auto text-base font-bold">
-              Unlock My Full Report — ₹25
+              Unlock My Full Report — {formatPrice(PAYMENT_PRODUCTS.aura_report.price)}
             </Button>
           </Link>
 
