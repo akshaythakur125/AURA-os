@@ -20,6 +20,11 @@ async function createRazorpayOrder(amount: number, receipt: string) {
       amount: amount * 100, // Razorpay expects paise
       currency: "INR",
       receipt,
+      // Auto-capture the payment so the order reaches status "paid" immediately.
+      // Without this, an account not set to auto-capture leaves the order at
+      // "attempted", and the report page's re-verify (which requires status
+      // "paid") would wrongly RE-LOCK a paying customer on their next reload.
+      payment_capture: 1,
     }),
   });
   if (!res.ok) {
