@@ -74,6 +74,15 @@ export async function POST(request: Request) {
       }
     }
 
+    // Razorpay rejects orders below ₹1 (100 paise). If an offer ever discounts
+    // the price to zero/near-zero, clamp to the ₹1 minimum so checkout can't 500
+    // and keep discountAmount consistent with what's actually charged. (True free
+    // unlocks should go through an admin unlock code, not a checkout offer.)
+    if (finalAmount < 1) {
+      finalAmount = 1;
+      discountAmount = originalAmount - finalAmount;
+    }
+
     const receipt = `aura_${auditId.slice(0, 16)}_${pt.slice(0, 4)}`.slice(0, 40);
     const order = await createRazorpayOrder(finalAmount, receipt);
 
